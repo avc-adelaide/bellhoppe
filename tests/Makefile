@@ -1,6 +1,14 @@
 
 ENVFIL = pekeris twersky  double scholte flused elsed atten norm -fal ice kupert kuperb kuperm -f
 
+.PHONY: install clean  help
+
+help:
+	@echo "This is the Bellhop test suite Makefile. Targets:"
+	@echo ""
+	@echo "    install - first runs 'make clean' and then does...nothing?"
+	@echo "      clean - removes temporary files and recurses through subfolders running 'make clean' on them too"
+
 install: clean $(ENVFIL)
 
 $(ENVFIL):
