@@ -110,7 +110,28 @@ export FC=gfortran
 # -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk/usr/lib
 # export FFLAGS= -march=corei7 -Bstatic -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation        -std=f2008 -O3 -ffast-math -funroll-all-loops -fomit-frame-pointer
 # export FFLAGS= -march=native          -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation -Wa,-q -std=f2008 -O3 -ffast-math -funroll-all-loops -fomit-frame-pointer -mtune=native
-export FFLAGS= -march=native -Bstatic -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation         -std=gnu  -O2 -g -ffast-math -funroll-all-loops -fomit-frame-pointer -mtune=native
+
+# Detect architecture
+UNAME_M := $(shell uname -m)
+
+# Base flags (common to all)
+FFLAGS_BASE = -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation -std=gnu -O2 -g -ffast-math -funroll-all-loops -fomit-frame-pointer
+
+# Arch-specific flags
+ifeq ($(UNAME_M),x86_64) # Windows/Intel/Linux Intel
+    FFLAGS_ARCH = -march=native -mtune=native
+else ifeq ($(UNAME_M),arm64) # Apple Silicon
+    FFLAGS_ARCH = -mcpu=apple-m2
+else ifeq ($(UNAME_M),aarch64) # Linux ARM (e.g., Raspberry Pi, ARM server)
+    FFLAGS_ARCH = -march=armv8.5-a
+else
+    $(warning Unknown architecture $(UNAME_M), using generic flags)
+    FFLAGS_ARCH =
+endif
+
+# Combine
+FFLAGS = $(FFLAGS_BASE) $(FFLAGS_ARCH)
+export FFLAGS
 
 # Compilation and run-time diagnostics on:
 # omni.env fails trap=invalid
