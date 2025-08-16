@@ -1,11 +1,14 @@
 # BELLHOP
-A mirror of the original Fortran `BELLHOP`/`BELLHOP3D` underwater acoustics
-simulators, with numerical properties and robustness improved and bugs fixed.
-These changes were made in support of the [multithreaded C++/CUDA version of
-BELLHOP/BELLHOP3D: `bellhopcxx`/`bellhopcuda`](https://github.com/A-New-BellHope/bellhopcuda).
+
+* Bellhop is an underwater acoustics simulator, part of the [Acoustics Toolbox](http://oalib.hlsresearch.com/AcousticsToolbox/)
+* It has been forked by UCal San Diego to support the [multithreaded C++/CUDA version of
+BELLHOP/BELLHOP3D: `bellhopcxx`/`bellhopcuda`](https://github.com/A-New-BellHope/bellhopcuda)
+* The UCal team maintain a fork with numerical properties and robustness improved and bugs fixed
+* This repository is a subsequent fork from Adelaide University, Australia, with the intention of providing a clean and well-documented repository to provide easier access to the code
 
 ### Impressum
 
+Copyright (C) 2025 Adelaide University, Australia \
 Copyright (C) 2021-2023 The Regents of the University of California \
 Marine Physical Lab at Scripps Oceanography, c/o Jules Jaffe, jjaffe@ucsd.edu \
 Copyright (C) 1983-2022 Michael B. Porter
