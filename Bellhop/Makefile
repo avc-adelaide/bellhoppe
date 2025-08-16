@@ -13,8 +13,9 @@ all: $(EXECUTABLES)
 	@echo " "
 
 install: all
+	mkdir -p ../bin
 	for f in $(EXECUTABLES) ; do \
-		echo "----- Installing $$f"; cp -p $$f ../bin; \
+		echo "----- Installing $$f"; cp -p $$f ../bin/; \
 	done
 
 clean:
