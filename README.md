@@ -28,6 +28,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 * See docs/CHANGES.md for University of California changes to the code
 * See docs/at_index.htm for historic changes
 
+# Installation
+
+## Mac
+
+Use Homebrew to install `gfortran`:
+
+    brew install gfortran
+
+## Linux
+
+(todo)
+
+## Windows
+
+(todo)
+
+
 # Other information
 
 See index.htm for information from the original repo.
