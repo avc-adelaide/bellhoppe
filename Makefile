@@ -115,7 +115,7 @@ export FC=gfortran
 UNAME_M := $(shell uname -m)
 
 # Base flags (common to all)
-FFLAGS_BASE = -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation -std=gnu -O2 -g -ffast-math -funroll-all-loops -fomit-frame-pointer
+FFLAGS_BASE = -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation -std=gnu -O2 -g -ffast-math -funroll-all-loops -fomit-frame-pointer -frecursive 
 
 # Arch-specific flags
 ifeq ($(UNAME_M),x86_64) # Windows/Intel/Linux Intel
