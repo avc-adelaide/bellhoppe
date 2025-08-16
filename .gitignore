@@ -1,6 +1,4 @@
 
-bin/
-
 # Prerequisites
 *.d
 
@@ -34,4 +32,8 @@ bin/
 *.out
 *.app
 
+# Test output
+*.prt
+
+# Mac thing
 *.DS_Store
