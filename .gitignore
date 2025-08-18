@@ -37,6 +37,8 @@ doc/
 
 # Test output
 *.prt
+*.shd
+*.shd.mat
 
 # Mac thing
 *.DS_Store
