@@ -7,7 +7,7 @@ BELLHOP/BELLHOP3D: `bellhopcxx`/`bellhopcuda`](https://github.com/A-New-BellHope
 * This repository is a subsequent fork from Adelaide University, Australia, with the intention of providing a clean and well-documented repository to provide easier access to the code
 * (Yes, it would be better to try not to proliferate forks; if this is successful we will open pull requests)
 
-### Impressum
+## Impressum
 
 Copyright (C) 2025 Adelaide University, Australia \
 Copyright (C) 2021-2023 The Regents of the University of California \
@@ -27,14 +27,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# Changes
+## Changes
 
 * See docs/CHANGES.md for University of California changes to the code
 * See docs/at_index.htm for changes by the Acoustics Toolbox team
 
-# Source build
+## Source build
 
-## Mac
+### Mac
 
 Use Homebrew to install `gfortran`:
 
@@ -49,21 +49,26 @@ This will install binaries `bellhop(3d).exe` into the `./bin` directory, which s
 added via your standard shell configuration. The Makefile message outputs an example of how
 to do this for a `.zshrc` setup.
 
-## Linux
+### Linux
 
 (todo)
 
-## Windows
+### Windows
 
 (todo)
 
-# Installation
+## Installation
 
-## Matlab
+### Matlab
 
-If you wish to use the Matlab interfaces 
+If you wish to use the Matlab interfaces, the following commands should be added to your
+`startup.m` file to add `bellhop` to the Matlab path:
 
-# Other information
+    addpath(genpath('<path to bellhop>/Matlab/'))
+    addpath('<path to bellhop>/bin/')
+
+
+## Other information
 
 See index.htm for information from the original repo.
 
@@ -74,6 +79,3 @@ and 11/4/20 releases was computed, and the changes were applied to this code
 
 Files pertaining to the other simulators (Krakel, Kraken, KrakenField, Scooter)
 have been removed.
-
-The Makefile has been set up to build with gfortran by default (Linux or
-Windows with mingw etc.)
