@@ -5,6 +5,7 @@
 BELLHOP/BELLHOP3D: `bellhopcxx`/`bellhopcuda`](https://github.com/A-New-BellHope/bellhopcuda)
 * The UCal team maintain a fork with numerical properties and robustness improved and bugs fixed
 * This repository is a subsequent fork from Adelaide University, Australia, with the intention of providing a clean and well-documented repository to provide easier access to the code
+* (Yes, it would be better to try not to proliferate forks; if this is successful we will open pull requests)
 
 ### Impressum
 
@@ -29,15 +30,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 # Changes
 
 * See docs/CHANGES.md for University of California changes to the code
-* See docs/at_index.htm for historic changes
+* See docs/at_index.htm for changes by the Acoustics Toolbox team
 
-# Installation
+# Source build
 
 ## Mac
 
 Use Homebrew to install `gfortran`:
 
     brew install gfortran
+
+The Makefile should automatically set up the correct compiler flags, in which case run:
+
+    make
+    make install
+
+This will install binaries `bellhop(3d).exe` into the `./bin` directory, which should be
+added via your standard shell configuration. The Makefile message outputs an example of how
+to do this for a `.zshrc` setup.
 
 ## Linux
 
@@ -47,6 +57,11 @@ Use Homebrew to install `gfortran`:
 
 (todo)
 
+# Installation
+
+## Matlab
+
+If you wish to use the Matlab interfaces 
 
 # Other information
 
