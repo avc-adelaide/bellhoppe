@@ -180,22 +180,11 @@ export CFLAGS=-g
 #export FFLAGS+= -I../misc -I../tslib -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
 export FFLAGS+= -I../misc #-I../tslib
 
-# KRAKEL is commented out below because it requires the LAPACK library.
-# If you have the LAPACK library installed on your system, first edit the
-# LAPACK_LIBS variable below to point to your installation, then you can
-# uncomment the make commands below (uncomment both the "all" and "install"
-# targets).
-
 export LAPACK_LIBS = -llapack
 
 all:
 	(cd misc;	make -k all)
-	# (cd tslib;	make -k all)
 	(cd Bellhop;	make -k all)
-	# (cd Kraken;	make -k all)
-	# (cd KrakenField;	make -k all)
-	# (cd Krakel;	make -k all)
-	# (cd Scooter;	make -k all)
 	@echo " "
 	@echo "*************************"
 	@echo "***** BELLHOP built *****"
@@ -203,15 +192,12 @@ all:
 
 install:
 	(cd misc;	make -k all)
-	# (cd tslib;	make -k all)
 	(cd Bellhop;	make -k install)
-	# (cd Kraken;	make -k install)
-	# (cd KrakenField;        make -k install)
-	# (cd Krakel;	make -k install)
-	# (cd Scooter;	make -k install)
 	@echo " "
 	@echo "*****************************"
 	@echo "***** BELLHOP installed *****"
+	@echo "Add it to your path using something like:"
+	@echo '    echo "export PATH=\$$PATH:$(shell pwd)/bin" >> "$$HOME/.zshrc"'
 	@echo "*****************************"
 
 clean:
@@ -225,10 +211,5 @@ clean:
 	find . -name '*.shd.mat'  -exec rm -r {} +
 	find . -name '*.prt'  -exec rm -r {} +
 	(cd misc;	make -k -i clean)
-	# (cd tslib;	make -k -i clean)
 	(cd Bellhop;	make -k -i clean)
-	# (cd Kraken;	make -k -i clean)
-	# (cd KrakenField;	make -k -i clean)
-	# (cd Krakel;	make -k -i clean)
-	# (cd Scooter;	make -k -i clean)
 	(cd tests;	make -k -i clean)
