@@ -49,6 +49,13 @@ This will install binaries `bellhop(3d).exe` into the `./bin` directory, which s
 added via your standard shell configuration. The Makefile message outputs an example of how
 to do this for a `.zshrc` setup.
 
+For using `arlpy` (Python), additional packages are needed. These can be fragile (at least on Mac),
+and at time of writing required a hard-coded Python version:
+
+    brew install python@3.12
+    brew install pipx
+    pipx install --python $(brew --prefix python@3.12)/bin/python3.12 arlpy
+
 ### Linux
 
 (todo)
@@ -66,6 +73,7 @@ If you wish to use the Matlab interfaces, the following commands should be added
 
     addpath(genpath('<path to bellhop>/Matlab/'))
     addpath('<path to bellhop>/bin/')
+
 
 
 ## Other information
