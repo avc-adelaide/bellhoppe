@@ -37,3 +37,6 @@
 
 # Mac thing
 *.DS_Store
+
+# Python
+__pycache__

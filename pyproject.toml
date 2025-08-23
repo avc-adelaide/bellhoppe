@@ -1,0 +1,77 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "bellhop"
+version = "0.1"
+
+description = "Bellhop underwater acoustic propogation model"
+readme = "README.md"
+license = {file = "LICENSE"}
+
+dependencies = [
+    "matplotlib",
+    "arlpy",
+]
+
+requires-python = ">=3.12, <3.13"
+
+authors = [
+  {name = "Will Robertson", email = "wspr81@gmail.com"},
+]
+maintainers = [
+  {name = "Will Robertson", email = "wspr81@gmail.com"},
+]
+
+classifiers = [
+  # How mature is this project? Common values are
+  #   3 - Alpha
+  #   4 - Beta
+  #   5 - Production/Stable
+  "Development Status :: 4 - Beta",
+
+  # Indicate who your project is intended for
+  # "Intended Audience :: Developers",
+  # "Topic :: Software Development :: Build Tools",
+
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+
+  # Specify the Python versions you support here.
+  "Programming Language :: Python :: 3.12",
+]
+
+
+[project.urls]
+Homepage = "https://github.com/AUMAG/bellhop"
+Documentation = "https://aumag.github.io/bellhop/"
+Repository = "https://github.com/AUMAG/bellhop.git"
+Issues = "https://github.com/AUMAG/bellhop/issues"
+Changelog = "https://github.com/AUMAG/bellhop/blob/master/CHANGES.md"
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["bellhop"]
+
+[tool.hatch.build.targets.sdist]
+ignore-vcs = true
+
+include = [
+  "/tests/*.py",
+]
+exclude = [
+  "/docs/*",
+]
+
+
+[tool.hatch.envs.test]
+dependencies = [
+    "pytest"
+]
+
+[tool.hatch.envs.test.scripts]
+test = "python3 -m pytest"
+
+[tool.ruff]
+output-format = "github"
