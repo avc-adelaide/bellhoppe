@@ -14,6 +14,7 @@ license = {file = "LICENSE"}
 dependencies = [
     "matplotlib",
     "arlpy",
+    "pytest",
 ]
 
 requires-python = ">=3.12, <3.13"
@@ -64,14 +65,8 @@ exclude = [
   "/docs/*",
 ]
 
-
-[tool.hatch.envs.test]
-dependencies = [
-    "pytest"
-]
-
-[tool.hatch.envs.test.scripts]
-test = "python3 -m pytest"
+[tool.hatch.envs.default.scripts]
+test = "pytest --capture=tee-sys"
 
 [tool.ruff]
 output-format = "github"
