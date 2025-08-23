@@ -68,6 +68,9 @@ which at time of writing required something like: (you may not wish to use `venv
 
 ### Linux
 
+> [!NOTE]
+> This section is work in progress and drafted by copilot.
+
 Install the required dependencies:
 
 **Ubuntu/Debian:**
