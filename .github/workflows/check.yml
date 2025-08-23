@@ -30,4 +30,4 @@ jobs:
     - name: Test with pytest
       run: |
           export PATH="$PWD/bin:$PATH"
-          hatch run test:test
+          hatch run test
