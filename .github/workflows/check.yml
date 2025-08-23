@@ -27,9 +27,9 @@ jobs:
     - name: make install
       run: |
           make install
-          export PATH="$PWD/bin:$PATH"
     - name: Test with pytest
       run: |
+          export PATH="$PWD/bin:$PATH"
           echo $PATH
           pwd
           ls bin/
