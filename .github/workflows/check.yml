@@ -27,6 +27,6 @@ jobs:
     - name: make install
       run: |
           make install
-          cp -f bin/bellhop.exe bellhop.exe
+          export PATH="$PWD/bin:$PATH"
     - name: Test with pytest
       run: hatch run test:test
