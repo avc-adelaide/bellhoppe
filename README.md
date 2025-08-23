@@ -68,7 +68,63 @@ which at time of writing required something like: (you may not wish to use `venv
 
 ### Linux
 
-(todo)
+Install the required dependencies:
+
+**Ubuntu/Debian:**
+```bash
+sudo apt update
+sudo apt install gfortran liblapack-dev liblapacke-dev python3.12 python3.12-pip python3.12-venv
+
+# If python3.12 is not available, python3 (>= 3.10) may work but python3.12 is recommended
+# sudo apt install gfortran liblapack-dev liblapacke-dev python3 python3-pip python3-venv
+```
+
+**RHEL/CentOS/Fedora:**
+```bash
+# For RHEL/CentOS/AlmaLinux/Rocky Linux:
+sudo dnf install gcc-gfortran lapack-devel python3 python3-pip python3-venv
+
+# For older versions, you might need:
+# sudo yum install gcc-gfortran lapack-devel python3 python3-pip python3-venv
+```
+
+**Arch Linux:**
+```bash
+sudo pacman -S gcc-fortran lapack python python-pip python-virtualenv
+```
+
+Build and install the Fortran executables:
+```bash
+make
+make install
+```
+
+This will install `bellhop.exe` and `bellhop3d.exe` in the `./bin` directory. Add this directory to your PATH:
+```bash
+echo "export PATH=\$PATH:$(pwd)/bin" >> ~/.bashrc
+source ~/.bashrc
+```
+
+For Python environment setup (recommended using virtual environment):
+```bash
+# Use python3.12 if installed, otherwise python3
+python3.12 -m venv ~/.venvs/bellhop
+# OR: python3 -m venv ~/.venvs/bellhop
+
+source ~/.venvs/bellhop/bin/activate
+
+# Install Python dependencies
+pip install hatch matplotlib arlpy pytest
+
+# Link bellhop executables to the virtual environment (optional)
+ln -s "$(pwd)/bin/bellhop.exe" ~/.venvs/bellhop/bin/bellhop.exe
+ln -s "$(pwd)/bin/bellhop3d.exe" ~/.venvs/bellhop/bin/bellhop3d.exe
+```
+
+**Note:** Remember to activate the virtual environment in future sessions:
+```bash
+source ~/.venvs/bellhop/bin/activate
+```
 
 ### Windows
 
@@ -89,7 +145,11 @@ If you wish to use the Matlab interfaces, the following commands should be added
 If the build and installation steps were successful, you should now be able to run
 the Python test suite:
 
-    hatch run test:test
+    hatch run test
+
+Alternatively, if you have pytest installed directly, you can run:
+
+    pytest --capture=tee-sys
 
 
 
