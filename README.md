@@ -71,29 +71,14 @@ which at time of writing required something like: (you may not wish to use `venv
 > [!NOTE]
 > This section is work in progress and drafted by copilot.
 
-Install the required dependencies:
+Install the required dependencies on Ubuntu (for other distributions like RHEL/CentOS/Fedora or Arch Linux, use the appropriate package manager):
 
-**Ubuntu/Debian:**
 ```bash
 sudo apt update
 sudo apt install gfortran liblapack-dev liblapacke-dev python3.12 python3.12-pip python3.12-venv
 
 # If python3.12 is not available, python3 (>= 3.10) may work but python3.12 is recommended
 # sudo apt install gfortran liblapack-dev liblapacke-dev python3 python3-pip python3-venv
-```
-
-**RHEL/CentOS/Fedora:**
-```bash
-# For RHEL/CentOS/AlmaLinux/Rocky Linux:
-sudo dnf install gcc-gfortran lapack-devel python3 python3-pip python3-venv
-
-# For older versions, you might need:
-# sudo yum install gcc-gfortran lapack-devel python3 python3-pip python3-venv
-```
-
-**Arch Linux:**
-```bash
-sudo pacman -S gcc-fortran lapack python python-pip python-virtualenv
 ```
 
 Build and install the Fortran executables:
@@ -131,7 +116,53 @@ source ~/.venvs/bellhop/bin/activate
 
 ### Windows
 
-(todo)
+Install MSYS2 following the instructions at [https://www.msys2.org/](https://www.msys2.org/).
+
+After installation, open the MSYS2 terminal and install the required development tools:
+
+```bash
+# Update the package database
+pacman -Syu
+
+# Install development tools and dependencies
+pacman -S mingw-w64-x86_64-gcc-fortran mingw-w64-x86_64-gcc make
+pacman -S mingw-w64-x86_64-python mingw-w64-x86_64-python-pip
+```
+
+Add the MinGW64 tools to your PATH by adding this line to your `~/.bashrc`:
+```bash
+export PATH="/mingw64/bin:$PATH"
+```
+
+Build and install the Fortran executables:
+```bash
+make
+make install
+```
+
+This will install `bellhop.exe` and `bellhop3d.exe` in the `./bin` directory. Add this directory to your PATH:
+```bash
+echo "export PATH=\$PATH:$(pwd)/bin" >> ~/.bashrc
+source ~/.bashrc
+```
+
+For Python environment setup (recommended using virtual environment):
+```bash
+python -m venv ~/.venvs/bellhop
+source ~/.venvs/bellhop/bin/activate
+
+# Install Python dependencies
+pip install hatch matplotlib arlpy pytest
+
+# Link bellhop executables to the virtual environment (optional)
+ln -s "$(pwd)/bin/bellhop.exe" ~/.venvs/bellhop/bin/bellhop.exe
+ln -s "$(pwd)/bin/bellhop3d.exe" ~/.venvs/bellhop/bin/bellhop3d.exe
+```
+
+**Note:** Remember to activate the virtual environment in future MSYS2 sessions:
+```bash
+source ~/.venvs/bellhop/bin/activate
+```
 
 ### Matlab
 
