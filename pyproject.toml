@@ -57,9 +57,6 @@ packages = ["bellhop"]
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true
 
-[tool.hatch.envs.default.env-vars]
-PATH = "{project}/bin:{env:PATH}"
-
 include = [
   "/tests/*.py",
 ]
