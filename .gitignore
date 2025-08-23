@@ -40,3 +40,26 @@
 
 # Python
 __pycache__
+build/
+dist/
+*.egg-info/
+*.pyc
+
+# Temporary files
+*~
+.DS_Store
+
+# Compiled MATLAB code
+*.asv
+
+# BELLHOP output files - examples should not be committed
+*.shd
+*.ray
+*.grn
+*.rts
+*.brc
+*.irc
+*.dat
+*.asc
+fort.*
+*.moA
