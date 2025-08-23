@@ -116,6 +116,9 @@ source ~/.venvs/bellhop/bin/activate
 
 ### Windows
 
+> [!NOTE]
+> This section is work in progress and drafted by copilot.
+
 Install MSYS2 following the instructions at [https://www.msys2.org/](https://www.msys2.org/).
 
 After installation, open the MSYS2 terminal and install the required development tools:
