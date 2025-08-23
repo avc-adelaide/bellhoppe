@@ -31,7 +31,6 @@ jobs:
     - name: Test with pytest
       run: |
           echo $PATH
-          which bellhop.exe
           pwd
           ls bin/
           hatch run test:test
