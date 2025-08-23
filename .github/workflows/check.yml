@@ -29,4 +29,9 @@ jobs:
           make install
           export PATH="$PWD/bin:$PATH"
     - name: Test with pytest
-      run: hatch run test:test
+      run: |
+          echo $PATH
+          which bellhop.exe
+          pwd
+          ls bin/
+          hatch run test:test
