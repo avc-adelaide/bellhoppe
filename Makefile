@@ -212,4 +212,4 @@ clean:
 	find . -name '*.prt'  -exec rm -r {} +
 	(cd misc;	make -k -i clean)
 	(cd Bellhop;	make -k -i clean)
-	(cd tests;	make -k -i clean)
+	(cd examples;	make -k -i clean)
