@@ -125,27 +125,27 @@ div.Section1
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;</p>
       <p style="font-family: monospace;" class="MsoPlainText">The angles
         used for calculating the reflection coefficient are calculated
-        based on the phase-velocity interval [CMIN, CMAX].&nbsp; For a
-        full 90 degree calculation set CMIN to the lowest speed in the
-        problem (say 1400.0) CMAX to 1.0E9.&nbsp; The actual number of
-        tabulated points is then determined by RMAX.</p>
+        based on the phase-velocity interval [ CMin, CMax ].&nbsp; For a
+        full 90 degree calculation set CMin to the lowest speed in the
+        problem (say 1400.0) CMax to 1.0E9.&nbsp; The actual number of
+        tabulated points is then determined by RMax.</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;</p>
       <p style="font-family: monospace;" class="MsoPlainText">If you are
         using the reflection coefficient for a coherent TL calculation
-        then RMAX should be the maximum range to which you are
+        then RMax should be the maximum range to which you are
         propagating. The further you go, the finer the sampling that is
         needed in the reflection coefficient. Run time is usually not an
         issue; however, if you pick an RMax that is insanely large then
         it could be.<br>
       </p>
       <p style="font-family: monospace;" class="MsoPlainText"><br>
-        Note that a reflection coefficient depends on the impedance
-        contrast between the halfspace from which the field is incident
-        and the reflecting medium. Therefore BOUNCE must know the sound
-        speed and other properties of the upper halfspace. If you're
-        using the reflection coefficient to replace the sub-bottom in
-        the ocean then you must set the speed of that upper halfspace to
-        match the sound speed at the bottom of the ocean.<br>
+        The reflection coefficient depends on the impedance contrast
+        between the halfspace from which the field is incident and the
+        reflecting medium. Therefore BOUNCE must know the sound speed
+        and other properties of the upper halfspace. If you're using the
+        reflection coefficient to replace the sub-bottom in the ocean
+        then you must set the speed of that upper halfspace to match the
+        sound speed at the bottom of the ocean.<br>
       </p>
       <p style="font-family: monospace;" class="MsoPlainText"><br>
       </p>
@@ -168,18 +168,14 @@ div.Section1
       <p style="font-family: monospace;" class="MsoPlainText">Files:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-
-
-
-
-
-        Unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Description</p>
+        Description</p>
       <p style="font-family: monospace;" class="MsoPlainText">Input</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-*.ENV&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*.ENV&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
 
 
 
@@ -188,20 +184,15 @@ Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
         ENVironmental data</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-*.BRC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*.BRC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-
-
-
-
-
-        10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Bottom&nbsp;&nbsp; Refl.
-        Coef.&nbsp; (optl)</p>
+        Bottom&nbsp;&nbsp; Refl. Coef.&nbsp; (optl)</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;</p>
       <p style="font-family: monospace;" class="MsoPlainText">Output</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-*.PRT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*.PRT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
 
 
 
@@ -210,8 +201,9 @@ Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
         PRinT file</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-&nbsp;&nbsp;*.BRC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;*.BRC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
 
 
 
@@ -220,14 +212,9 @@ Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
         Bottom&nbsp;&nbsp; Refl. Coef.</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-*.IRC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+*.IRC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-
-
-
-
-
-        12&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Internal Refl. Coef.</p>
+        Internal Refl. Coef.</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;</p>
       <h2>EXAMPLE OF ENV FILE:</h2>
@@ -249,9 +236,13 @@ Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 
+
+
         1600.0 400.0 1.8 0.2 0.5</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;
 20.0
+
+
 
 
 
@@ -262,6 +253,8 @@ Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <p style="font-family: monospace;" class="MsoPlainText">'A' 0.0</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;
 20.0
+
+
 
 
 
@@ -279,7 +272,9 @@ Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 
-        RMAX (km)</p>
+
+
+        RMax (km)</p>
       <p style="font-family: monospace;" class="MsoPlainText">1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 !
 
@@ -288,7 +283,9 @@ Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 
-        NSD</p>
+
+
+        NSz</p>
       <p style="font-family: monospace;" class="MsoPlainText">50.0
         /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 !
@@ -298,7 +295,9 @@ Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 
-        SD(1:NSD)</p>
+
+
+        Sz( 1 : NSz )</p>
       <p style="font-family: monospace;" class="MsoPlainText">501&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 !
 
@@ -307,10 +306,12 @@ Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 
-        NRD</p>
+
+
+        NRz</p>
       <p style="font-family: monospace;" class="MsoPlainText">0.0 150.0
         /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !
-        RD(1:NRD)</p>
+        Rz( 1 : NRz )</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;</p>
       <p style="font-family: monospace;" class="MsoPlainText">The above
@@ -396,14 +397,15 @@ Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             class="">
         </tt></p>
       <p><tt> </tt></p>
-      <p><tt>Note: Usually something like 10 points/wavelength in the
+      <p><tt>Usually something like 10 points/wavelength in the
           numerical grid is sufficient. However, one should keep in mind
-          that the shortest wavelength is the important one for the
-          sampling. Also, since BOUNCE is very fast, there's no reason
-          to skimp. The finer the grid, the more accurate the result.
-          I'll suggest perhaps 100 points/wavelength as a good balance
-          between run time and accuracy. I have seen cases where 10
-          points/wavelength gave very poor accuracy in R( theta ).<br>
+          that the shortest wavelength (often related to shear speed) is
+          the important one for the sampling. Also, since BOUNCE is very
+          fast, there's no reason to skimp. The finer the grid, the more
+          accurate the result. I'll suggest perhaps 100
+          points/wavelength as a good balance between run time and
+          accuracy. I have seen cases where 10 points/wavelength gave
+          very poor accuracy in R( theta ).<br>
         </tt></p>
       <br>
       <br>

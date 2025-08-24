@@ -15,8 +15,8 @@
     <title>BELLHOP</title>
   </head>
   <body style="color: rgb(0, 0, 0); background-color: rgb(255, 255,
-    255);" class="Normal" vlink="#990099" alink="#000099" link="#000099"
-    lang="EN-US">
+    255);" class="Normal" link="#000099" lang="EN-US" vlink="#990099"
+    alink="#000099">
     <div style="font-family: Helvetica,Arial,sans-serif;"
       class="Section1">
       <h1>BELLHOP</h1>
@@ -40,6 +40,7 @@
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="font-weight: bold;">BELLHOP</span><acronym> </acronym>computes
 acoustic
+
 
 
 
@@ -90,9 +91,11 @@ acoustic
 
 
 
+
         Main program for doing Gaussian beam tracing</p>
       <p style="margin-left: 40px; font-family: monospace;"
         class="MsoPlainText"><span style="font-weight: bold;">PLOTRAY</span>&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -145,9 +148,11 @@ speeds,
 
 
 
+
         computes the angle of the limiting ray.</p>
       <p style="margin-left: 40px; font-family: monospace;"
         class="MsoPlainText"><span style="font-weight: bold;">PLOTSSP</span>&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -189,9 +194,11 @@ speeds,
 
 
 
+
         1. Set up your environmental file and run PLOTSSP to make sure
         the SSP looks reasonable.</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;
+
 
 
 
@@ -231,6 +238,7 @@ trace
 
 
 
+
         option to calculate about 50 rays.</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 B.
@@ -240,6 +248,7 @@ to
 make
 sure
 you
+
 
 
 
@@ -273,6 +282,7 @@ you
 
 
 
+
         3. Re-run BELLHOP using the coherent, incoherent or semicoherent
         option for transmission loss. (Use the default number of beams.)</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;
@@ -291,8 +301,10 @@ you
 
 
 
+
         4. Run plotshd.m to plot a full range-depth field plot.</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;
+
 
 
 
@@ -326,11 +338,13 @@ you
 
 
 
+
         Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         Unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Description</p>
       <p style="font-family: monospace;" class="MsoPlainText">Input<br>
         &nbsp;&nbsp;
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.ENV&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -380,6 +394,7 @@ you
 
 
 
+
         ! FREQ (Hz)<br>
         1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -397,8 +412,10 @@ you
 
 
 
+
         ! NMEDIA<br>
         'SVN'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -461,6 +478,7 @@ you
 
 
 
+
         ! NSD<br>
         1000.0
         /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -479,8 +497,10 @@ you
 
 
 
+
         ! SD(1:NSD) (m)<br>
         2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -516,6 +536,7 @@ you
 
 
 
+
         ! NRR<br>
         0.0&nbsp; 100.0 /&nbsp;&nbsp;&nbsp;
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;! RR(1:NR ) (km)<br>
@@ -535,8 +556,10 @@ you
 
 
 
+
         ! Run-type: 'R/C/I/S'<br>
         51&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -586,8 +609,10 @@ you
 
 
 
+
         Syntax:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -633,8 +658,10 @@ you
 
 
 
+
         Description:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -700,8 +727,10 @@ you
 
 
 
+
         - RUN TYPE</h3>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -730,8 +759,10 @@ you
 
 
 
+
         <span style="font-style: italic;"> OPTION</span></p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -764,8 +795,10 @@ you
 
 
 
+
         OPTION(1:1): 'R' generates a ray file<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -798,8 +831,10 @@ you
 
 
 
+
         'A' generates an amplitude-delay file (ascii)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -833,8 +868,10 @@ you
 
 
 
+
         Coherent&nbsp;&nbsp;&nbsp;&nbsp; TL calculation<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -867,8 +904,10 @@ you
 
 
 
+
         'S' Semicoherent TL calculation<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -901,8 +940,17 @@ you
 
 
 
-        OPTION(2:2): 'G' Geometric hat beams in Cartesian coordinates
+
+        OPTION(2:2): 'G' Geometric hat
+        beams&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in Cartesian coordinates
         (default)<br>
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; '^' Geometric
+        hat beams&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in Cartesian coordinates
+        (same as 'G' but easier to remember)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        'g' Geometric hat beams&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; in
+        ray-centered coordinates<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
@@ -919,7 +967,8 @@ you
 
 
 
-        'g' Geometric hat beams in ray-centered coordinates<br>
+
+        'B' Geometric Gaussian beams in Cartesian coordinates<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
@@ -936,7 +985,9 @@ you
 
 
 
-        'B' Geometric Gaussian beams</p>
+
+        'b' Geometric Gaussian beams in ray-centered coordinates<br>
+      </p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 OPTION(3:3):
 '*'
@@ -944,6 +995,7 @@ read
 in
 a
 source
+
 
 
 
@@ -976,7 +1028,8 @@ source
 
 
 
-        'O' don't (default)</p>
+
+        'O' don't (omni-directional) (default)</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 OPTION(4:4):
 'R'
@@ -984,6 +1037,7 @@ point
 source
 (cylindrical
 coordinates)
+
 
 
 
@@ -1016,8 +1070,10 @@ coordinates)
 
 
 
-        'X' line&nbsp; source (cartesian coordinates)</p>
+
+        'X' line&nbsp; source (Cartesian coordinates)</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -1035,6 +1091,7 @@ coordinates)
 
         OPTION(5:5): 'R' rectilinear grid (default)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -1126,6 +1183,7 @@ coordinates)
 
 
 
+
         - BEAM FAN</h3>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -1143,8 +1201,10 @@ coordinates)
 
 
 
+
         Syntax:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -1177,8 +1237,10 @@ coordinates)
 
 
 
+
         Description:</p>
       <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -1201,6 +1263,7 @@ have
 the
 program
 calculate
+
 
 
 
@@ -1239,6 +1302,7 @@ compute
 
 
 
+
           a single beam in the fan is selected (top option)<br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 then
@@ -1247,6 +1311,7 @@ selects
 the
 index
 of
+
 
 
 
@@ -1271,6 +1336,7 @@ angles
 (negative
 angles
 toward
+
 
 
 
@@ -1311,8 +1377,10 @@ toward
 
 
 
+
         Syntax:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -1343,8 +1411,10 @@ toward
 
 
 
+
         Description:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -1540,6 +1610,7 @@ toward
         0px; text-decoration: none;">
         <p><tt><span class="Apple-tab-span" style="white-space: pre;">	</span></tt><tt>1)
 
+
             with the geometric beam, it creates an arrival for each of a
             pair of rays that bracket the receiver.</tt></p>
       </div>
@@ -1551,6 +1622,7 @@ toward
         0px; text-decoration: none;">
         <p><tt><span class="Apple-tab-span" style="white-space: pre;">	</span></tt><tt>2)
 
+
             with Gaussian beams you further get contributions from rays
             that are within a few beam widths of the receiver</tt></p>
       </div>
@@ -1561,6 +1633,7 @@ toward
         0px; -moz-text-size-adjust: auto; -webkit-text-stroke-width:
         0px; text-decoration: none;">
         <p><tt><span class="Apple-tab-span" style="white-space: pre;">	</span></tt><tt>3)
+
 
             with more complicated SSPs the ray fan can become unsmooth,
             producing a sort of micro-multipath.</tt></p>

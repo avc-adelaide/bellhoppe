@@ -71,6 +71,7 @@ CONTAINS
        WRITE( PRTFile, "( //, '      z         alphaR      betaR     rho        alphaI     betaI'    )" )
        WRITE( PRTFile, "(     '     (m)         (m/s)      (m/s)   (g/cm^3)      (m/s)     (m/s)', / )" )
     END IF
+
     CALL TopBot( HSTop )   ! read top BC
 
     !  *** Internal media *** 
@@ -80,7 +81,7 @@ CONTAINS
           READ(  ENVFile, *, END = 9999 ) NG( Medium ), SSP%sigma( Medium ), &
                SSP%Depth( Medium + 1 ), SSP%beta( Medium ), SSP%fT( Medium )
           WRITE( PRTFile, &
-               "( /, '  ( # mesh pts = ', I5, '  RMS roughness = ', G10.3, ' beta = ', G10.3, ' fT = ', G11.4, ' )')" ) &
+               "( /, '( # mesh points = ', I5, '  RMS roughness = ', G10.3, ' beta = ', G10.3, ' fT = ', G11.4, ' )')" ) &
                NG( Medium ), SSP%sigma( Medium ), SSP%beta( Medium ), SSP%fT( Medium )
 
        ELSE

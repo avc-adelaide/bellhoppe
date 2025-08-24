@@ -78,6 +78,15 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
 
 
 
+
+
+
+
+
+
+
+
+
         Duncan</a> from the <a
         href="http://www.curtin.edu.au/curtin/centre/cmst/">Centre for
         Marine Science and Technology</a> at <a
@@ -117,6 +126,15 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
         class="SpellE">ToolBox</span> includes five acoustic models:</p>
     <p style="margin-left: 40px;" class="MsoNormal">BELLHOP:&nbsp;&nbsp;&nbsp;&nbsp;
 
+
+
+
+
+
+
+
+
+
       A beam/ray trace code</p>
     <p style="margin-left: 40px;" class="MsoNormal">BELLHOP3D: A 3D
       beam/ray trace code</p>
@@ -124,6 +142,15 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
         style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>A normal
       mode code</p>
     <p style="margin-left: 40px;" class="MsoNormal"><o:p></o:p>SCOOTER:&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
 
 
       A finite element FFP code</p>
@@ -252,6 +279,15 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
 
 
 
+
+
+
+
+
+
+
+
+
       at the DOS command line, or kraken( 'pekeris') at the Matlab
       command line. </p>
     <span style="font-family: &quot;Times New Roman&quot;;">On
@@ -282,7 +318,7 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
     <p class="MsoNormal"><br>
       <span style="font-family: &quot;Times New Roman&quot;;"><o:p></o:p></span></p>
     <h1>Updates</h1>
-    <p class="MsoNormal">(Check also the individual subdirectories for
+    <p class="MsoNormal">(Check also the individual sub-directories for
       updates on individual components of the Acoustics Toolbox.)</p>
     <p class="MsoNormal"><span style="font-family: &quot;Times New
         Roman&quot;;"><o:p>&nbsp;</o:p></span></p>
@@ -310,7 +346,7 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
     <p class="MsoNormal"><span style="font-style: italic;">May 2009</span><br>
     </p>
     <p class="MsoNormal">The Matlab version of BELLHOP has been replaced
-      by a new version that traces one beam at a time. The ealier
+      by a new version that traces one beam at a time. The earlier
       version traced all the beams in parallel for efficiency; however,
       the logic is too complicated to maintain.<br>
     </p>
@@ -336,9 +372,9 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
       lengths of variable names to take advantage of Fortran 2003.
       Expanded use of structure-variables. Additional changes as
       described in the read.me files for the various models. This is a
-      fairly significant revision in terms of the evoloution from
-      Fortran 77 to Fortran 2003. However, there are virtually no
-      changes to the input and output files.<br>
+      fairly significant revision in terms of the evolution from Fortran
+      77 to Fortran 2003. However, there are virtually no changes to the
+      input and output files.<br>
     </p>
     <p class="MsoNormal"><span style="font-style: italic;">April 2011</span><br>
     </p>
@@ -385,7 +421,7 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
       bottom-depth of the layer, I had previously checked for agreement
       to within a tolerance. The tolerance was scaled based on the
       bottom depth of the layer so for a bottom depth of zero (in an
-      aeroacoustic problem) the tolerance was 0 and the bottom was not
+      aero-acoustic problem) the tolerance was 0 and the bottom was not
       detected.<br>
     </p>
     <p class="MsoNormal"><span style="font-style: italic;">February 2014</span><br>
@@ -394,7 +430,7 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
     </p>
     <p class="MsoNormal"><span style="font-style: italic;">November 2014</span><br>
       The Matlab routines that read altimetry and bathymetry files were
-      not clearing old data on subsequent calls. This occured only when
+      not clearing old data on subsequent calls. This occurred only when
       the flat boundary was selected and the routines were supposed to
       return dummy boundary information. Also, the ranges were not being
       converted to meters from kilometers. It effected SimplePE runs and
@@ -403,12 +439,12 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
       had no effect on the Matlab codes.<br>
     </p>
     <p class="MsoNormal"><i>June 2014</i><br>
-      Sometime around January of 2010 the Thorpe formula for volume
+      Sometime around January of 2010 the Thorp formula for volume
       attenuation was modified at the request of a user. The modified
       formula was slightly more accurate. The change was verified in
       BELLHOP; however, there an incorrect variable name was used in the
       crci routine used by KRAKEN and SCOOTER. That error mean the added
-      Thorpe attenuation was never added. This is corrected in the new
+      Thorp attenuation was never added. This is corrected in the new
       code. The volume attenuation was typically most important for
       higher frequency sources, which in turn were more often treated in
       BELLHOP. However, the error can be important for low frequency
@@ -582,6 +618,156 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
       errors. A trap has been added to detect and flag this sort of
       error.<br>
     </p>
+    <p class="MsoNormal"><i>October/November 2020</i><br>
+      There was a mismatch in the number of arguments for a call to
+      ANALYT in at/misc/sspMod.f90. This option for an analytic SSP was
+      rarely used; however, the mismatch caused a compiler error under
+      gfortran10. I fixed one such call in October; however, in November
+      the error persisted and was tracked to a second call. (I had been
+      using gfortran 9.0 and did not encounter the problem.)<br>
+    </p>
+    <p class="MsoNormal" style="caret-color: rgb(0, 0, 0); color: rgb(0,
+      0, 0); font-family: -webkit-standard; font-style: normal;
+      font-variant-caps: normal; font-weight: normal; letter-spacing:
+      normal; orphans: auto; text-align: start; text-indent: 0px;
+      text-transform: none; white-space: normal; widows: auto;
+      word-spacing: 0px; -webkit-text-size-adjust: auto;
+      -webkit-text-stroke-width: 0px; text-decoration: none;"><i>June
+        2021</i><br>
+      A couple of years ago I changed the Position variables (Pos.s,
+      Pos.r for source and receiver) to use (x, y, z), rather than (x,
+      y, sd) and (x, y, rd). So Pos.s.rd is now Pos.s.z for example.
+      This is just a more self-consistent notation. This change affected
+      many, many Matlab scripts. I changed the ones I was using;
+      however, there are lots of other ones that are rarely used, but
+      which people sometimes stumble upon. Laurel did a global replace
+      so that there should no longer be any remnants of the old variable
+      names anywhere in the code.<br>
+    </p>
+    <p class="MsoNormal" style="caret-color: rgb(0, 0, 0); color: rgb(0,
+      0, 0); font-family: -webkit-standard; font-style: normal;
+      font-variant-caps: normal; font-weight: normal; letter-spacing:
+      normal; orphans: auto; text-align: start; text-indent: 0px;
+      text-transform: none; white-space: normal; widows: auto;
+      word-spacing: 0px; -webkit-text-size-adjust: auto;
+      -webkit-text-stroke-width: 0px; text-decoration: none;"><i>April
+        2022</i><br>
+      After upgrading the MacOS to Monterey we are finding that the
+      model executables produced by gfortran are no longer consistently
+      flushing the buffers for output files. The Fortran standard seems
+      to indicate this should happen automatically but it is not clear
+      if this is a problem in gfortran or the new MacOS. I have added
+      FLUSH and CLOSE statements in appropriate places in the code and
+      this seems to have resolved the problem. This problem did not
+      occur with the Intel compiler.<br>
+    </p>
+    <p class="MsoNormal" style="caret-color: rgb(0, 0, 0); color: rgb(0,
+      0, 0); font-family: -webkit-standard; font-style: normal;
+      font-variant-caps: normal; font-weight: normal; letter-spacing:
+      normal; orphans: auto; text-align: start; text-indent: 0px;
+      text-transform: none; white-space: normal; widows: auto;
+      word-spacing: 0px; -webkit-text-size-adjust: auto;
+      -webkit-text-stroke-width: 0px; text-decoration: none;"><i>August
+        2022</i><br>
+      As mentioned above gfortran has not been consistently flushing
+      buffers. The main programs have 'close' statements at the end to
+      deal with that. However, in cases of fatal errors the termination
+      is handled by a separate routine that was missing a close
+      statement. So in such cases the output file was empty providing
+      the user with no information about why the program stopped. A
+      'close' statement has been added there as well. This problem did
+      not occur with the Intel compiler<br>
+    </p>
+    <p class="MsoNormal" style="caret-color: rgb(0, 0, 0); color: rgb(0,
+      0, 0); font-family: -webkit-standard; font-style: normal;
+      font-variant-caps: normal; font-weight: normal; letter-spacing:
+      normal; orphans: auto; text-align: start; text-indent: 0px;
+      text-transform: none; white-space: normal; widows: auto;
+      word-spacing: 0px; -webkit-text-size-adjust: auto;
+      -webkit-text-stroke-width: 0px; text-decoration: none;"><i>October
+        2022</i><br>
+      A user ran into a problem simulating a horizontal array at
+      near-broadside because the receiver ranges were nearly identical
+      to within millimeters. In fact, when the receiver offsets were
+      added to the nominal range of the array, the hydrophones appeared
+      to all be at identical ranges because the ranges are stored in
+      single precision internally. There is a test when this input is
+      read to see if the ranges are <i>strictly</i> monotonically
+      increasing and then -- depending on the particular model -- the
+      code would abort with a fatal error.<br>
+    </p>
+    <p class="MsoNormal" style="caret-color: rgb(0, 0, 0); color: rgb(0,
+      0, 0); font-family: -webkit-standard; font-style: normal;
+      font-variant-caps: normal; font-weight: normal; letter-spacing:
+      normal; orphans: auto; text-align: start; text-indent: 0px;
+      text-transform: none; white-space: normal; widows: auto;
+      word-spacing: 0px; -webkit-text-size-adjust: auto;
+      -webkit-text-stroke-width: 0px; text-decoration: none;">It's not
+      clear if strict monotonicity is required, but, for instance, some
+      of the BELLHOP beam options implicitly assume the ranges do not
+      decrease anywhere. In addition, some of the plotting routines will
+      likely be confused if the ranges are not increasing. For now, the
+      monotonicity test is being left in; however, the range vector has
+      been converted to double precision. That higher precision is
+      rarely going to matter, but it does mitigate this particular
+      problem. At some later point, I may change all the Position
+      vectors to double precision to be conservative. However, in some
+      cases this would unnecessarily double the file size and that is
+      often a concern for our global acoustic modeling.<br>
+    </p>
+    <p class="MsoNormal" style="caret-color: rgb(0, 0, 0); color: rgb(0,
+      0, 0); font-family: -webkit-standard; font-style: normal;
+      font-variant-caps: normal; font-weight: normal; letter-spacing:
+      normal; orphans: auto; text-align: start; text-indent: 0px;
+      text-transform: none; white-space: normal; widows: auto;
+      word-spacing: 0px; -webkit-text-size-adjust: auto;
+      -webkit-text-stroke-width: 0px; text-decoration: none;"><em>March
+        2023</em></p>
+    <p class="MsoNormal" style="caret-color: rgb(0, 0, 0); color: rgb(0,
+      0, 0); font-family: -webkit-standard; font-style: normal;
+      font-variant-caps: normal; font-weight: normal; letter-spacing:
+      normal; orphans: auto; text-align: start; text-indent: 0px;
+      text-transform: none; white-space: normal; widows: auto;
+      word-spacing: 0px; -webkit-text-size-adjust: auto;
+      -webkit-text-stroke-width: 0px; text-decoration: none;">A little
+      more clean-up on the double precision source/receiver positions
+      mentioned just above ... Anything related to the x-y coordinate of
+      a source or receiver is now double precision. This includes the
+      source lat./long. and receiver bearings. The SCOOTER Green's
+      function file (GRNFIL) likewise has wavenumbers in double
+      precision as the wavenumber vector is sort of the dual of the
+      range vector.&nbsp; These changes may improve the accuracy for
+      high-frequency cases and when sources are not at the origin. (When
+      sources are not at the origin a set of bearings may result in
+      small range offsets added to a large origin coordinate.BELLHOP3D
+      and KRAKEN3D/FIELD3D allow sources to be at arbitrary
+      locations.)&nbsp; Some other variables (frequency and attenuation)
+      were also converted to double precision.<br>
+    </p>
+    <p class="MsoNormal" style="caret-color: rgb(0, 0, 0); color: rgb(0,
+      0, 0); font-family: -webkit-standard; font-style: normal;
+      font-variant-caps: normal; font-weight: normal; letter-spacing:
+      normal; orphans: auto; text-align: start; text-indent: 0px;
+      text-transform: none; white-space: normal; widows: auto;
+      word-spacing: 0px; -webkit-text-size-adjust: auto;
+      -webkit-text-stroke-width: 0px; text-decoration: none;">In unusual
+      cases, this change may result in larger output shade files. This
+      would happen, for instance, if the field were computed on a very
+      large number of bearings so that the vector of bearings rather
+      than the vector of ranges determined the record size.<br>
+    </p>
+    <p class="MsoNormal" style="caret-color: rgb(0, 0, 0); color: rgb(0,
+      0, 0); font-family: -webkit-standard; font-style: normal;
+      font-variant-caps: normal; font-weight: normal; letter-spacing:
+      normal; orphans: auto; text-align: start; text-indent: 0px;
+      text-transform: none; white-space: normal; widows: auto;
+      word-spacing: 0px; -webkit-text-size-adjust: auto;
+      -webkit-text-stroke-width: 0px; text-decoration: none;">Source and
+      receiver depths have been left in single precision for now; I
+      thought the precision was much less likely to be an issue there
+      and there were some worries about side-effects in changing
+      that.&nbsp;&nbsp;</p>
+    <p class="MsoNormal"> </p>
     <h1>Frequently Asked Questions</h1>
     <p class="MsoNormal"><i style="">Why do I get an end-of-file in
         reading the very last line of the <span class="SpellE">envfil</span>?<o:p></o:p></i></p>
@@ -611,11 +797,12 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
       normal; orphans: auto; text-align: start; text-indent: 0px;
       text-transform: none; white-space: normal; widows: auto;
       word-spacing: 0px; -webkit-text-size-adjust: auto;
-      -webkit-text-stroke-width: 0px; text-decoration: none;">The source
-      is s( t ) = e(+i \omega t ) in the Acoustics Toolbox models. This
-      is the opposite convention of what we used in the book
-      Computational Ocean Acoustics. We had to standardize on one
-      convention and the models we used were inconsistent.<br>
+      -webkit-text-stroke-width: 0px; text-decoration: none;">
+      <p>The source is s( t ) = e(+i \omega t ) in the Acoustics Toolbox
+        models. This is the opposite convention of what we used in the
+        book Computational Ocean Acoustics. We had to standardize on one
+        convention and the models we used were inconsistent.</p>
+      <p> </p>
     </div>
     <div class="" style="caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);
       font-family: Helvetica; font-size: 13px; font-style: normal;
@@ -623,19 +810,11 @@ href="http://www.curtin.edu.au/curtin/centre/cmst/products/actoolbox/index.html"
       normal; orphans: auto; text-align: start; text-indent: 0px;
       text-transform: none; white-space: normal; widows: auto;
       word-spacing: 0px; -webkit-text-size-adjust: auto;
-      -webkit-text-stroke-width: 0px; text-decoration: none;"><br
-        class="">
+      -webkit-text-stroke-width: 0px; text-decoration: none;">
+      <p>The KRAKEN manual mimics the book in terms of the theoretical
+        presentation— the footnote on p. 6 of the manual is to warn the
+        user that the code has the opposite sign convention.</p>
     </div>
-    <div class="" style="caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);
-      font-family: Helvetica; font-size: 13px; font-style: normal;
-      font-variant-caps: normal; font-weight: normal; letter-spacing:
-      normal; orphans: auto; text-align: start; text-indent: 0px;
-      text-transform: none; white-space: normal; widows: auto;
-      word-spacing: 0px; -webkit-text-size-adjust: auto;
-      -webkit-text-stroke-width: 0px; text-decoration: none;">The KRAKEN
-      manual mimics the book in terms of the theoretical presentation—
-      the footnote on p. 6 of the manual is to warn the user that the
-      code has the opposite sign convention.</div>
     <div class="" style="caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0);
       font-family: Helvetica; font-size: 13px; font-style: normal;
       font-variant-caps: normal; font-weight: normal; letter-spacing:
