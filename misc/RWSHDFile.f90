@@ -26,10 +26,9 @@ CONTAINS
     ! Title   arbitrary title
 
     INTEGER, PARAMETER                :: PRTFile = 6
-    REAL      (KIND=8), INTENT( OUT ) :: atten           ! stabilizing attenuation for SCOOTER FFP runs
+    REAL,               INTENT( OUT ) :: atten           ! stabilizing attenuation for SCOOTER FFP runs
     CHARACTER (LEN=80), INTENT( OUT ) :: Title, FileName
     CHARACTER (LEN=10), INTENT( OUT ) :: PlotType
-    REAL      (KIND=8)                :: freq0           ! nominal frequency
     INTEGER                           :: IAllocStat, IOStat
 
     ! Open file, read header
@@ -46,7 +45,7 @@ CONTAINS
 
     READ( SHDFile, REC = 1  ) LRecl, Title
     READ( SHDFile, REC = 2  ) PlotType
-    READ( SHDFile, REC = 3  ) Nfreq, Pos%Ntheta, Pos%NSx, Pos%NSy, Pos%NSz, Pos%NRz, Pos%NRr, freq0, atten
+    READ( SHDFile, REC = 3  ) Nfreq, Pos%Ntheta, Pos%NSx, Pos%NSy, Pos%NSz, Pos%NRz, Pos%NRr, atten
 
     ALLOCATE( freqVec( Nfreq ), Pos%Sz( Pos%NSz ), Pos%Rz( Pos%NRz ), Pos%Rr( Pos%NRr ), Pos%theta( Pos%Ntheta ), Stat = IAllocStat)
     IF ( IAllocStat /= 0 ) CALL ERROUT( 'ReadHeader', 'Too many source/receiver combinations' )
@@ -68,14 +67,11 @@ CONTAINS
   SUBROUTINE WriteHeader( FileName, Title, freq0, atten, PlotType )
 
     ! Write header to disk file
-    ! The logical record length is always at least twice the number of ranges
-    ! because the complex pressure field uses two words per range
-    ! Separately, the new version writes receiver ranges in double precision and uses that same number of words
 
-    REAL (KIND=8), INTENT( IN ) :: freq0, atten      ! Nominal frequency, stabilizing attenuation (for wavenumber integration only)
-    CHARACTER,     INTENT( IN ) :: FileName*( * )    ! Name of the file (could be a shade file or a Green's function file)
-    CHARACTER,     INTENT( IN ) :: Title*( * )       ! Arbitrary title
-    CHARACTER,     INTENT( IN ) :: PlotType*( 10 )   ! 
+    REAL,      INTENT( IN ) :: freq0, atten      ! Nominal frequency, stabilizing attenuation (for wavenumber integration only)
+    CHARACTER, INTENT( IN ) :: FileName*( * )    ! Name of the file (could be a shade file or a Green's function file)
+    CHARACTER, INTENT( IN ) :: Title*( * )       ! Arbitrary title
+    CHARACTER, INTENT( IN ) :: PlotType*( 10 )   ! If 'TL', writes only first and last Sx and Sy
 
     ! receiver bearing angles
     IF ( .NOT. ALLOCATED( Pos%theta ) ) THEN
@@ -97,7 +93,7 @@ CONTAINS
 
     IF ( PlotType( 1 : 2 ) /= 'TL' ) THEN
        ! MAX( 41, ... ) below because Title is already 40 words (or 80 bytes)
-       LRecl = MAX( 41, 2 * Nfreq, 2 * Pos%Ntheta, 2 * Pos%NSx, 2 * Pos%NSy, Pos%NSz, Pos%NRz, 2 * Pos%NRr )   ! words/record
+       LRecl = MAX( 41, 2 * Nfreq, Pos%Ntheta, Pos%NSx, Pos%NSy, Pos%NSz, Pos%NRz, 2 * Pos%NRr )   ! words/record (NRr doubled for complex pressure storage)
 
        OPEN ( FILE = FileName, UNIT = SHDFile, STATUS = 'REPLACE', ACCESS = 'DIRECT', RECL = 4 * LRecl, FORM = 'UNFORMATTED')
        WRITE( SHDFile, REC = 1  ) LRecl, Title( 1 : 80 )
@@ -114,7 +110,7 @@ CONTAINS
        WRITE( SHDFile, REC = 10 ) Pos%Rr( 1 : Pos%NRr )
 
     ELSE   ! compressed format for TL from FIELD3D
-       LRecl = MAX( 41, 2 * Nfreq, Pos%NSz, Pos%NRz, 2 * Pos%NRr )   ! words/record
+       LRecl = MAX( 41, 2 * Nfreq, Pos%Ntheta, Pos%NSz, Pos%NRz, 2 * Pos%NRr )   ! words/record (NR doubled for complex pressure storage)
 
        OPEN ( FILE = FileName, UNIT = SHDFile, STATUS = 'REPLACE', ACCESS = 'DIRECT', RECL = 4 * LRecl, FORM = 'UNFORMATTED')
        WRITE( SHDFile, REC = 1  ) LRecl, Title( 1 : 80 )
@@ -135,7 +131,7 @@ CONTAINS
 
   !**********************************************************************!
 
-  SUBROUTINE WriteField( P, NRz, NRr, iRec )
+  SUBROUTINE WriteField( P, NRz, NRr, IRec )
 
     ! Write the field to disk
 
