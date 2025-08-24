@@ -72,7 +72,31 @@ def test_simple():
 
 
 def test_variable_soundspeed():
-    """Test BELLHOP with depth-dependent sound speed profile."""
+    """Test BELLHOP with depth-dependent sound speed profile.
+    
+    This test validates acoustic propagation with a variable sound speed profile
+    as requested in issue #8. The test:
+    
+    1. Defines a 5-point depth-dependent SSP from surface (0m) to bottom (30m)
+    2. Creates a 2D environment using the SSP
+    3. Validates default environment parameters remain correct
+    4. Computes acoustic ray arrivals and validates results
+    
+    The SSP represents a typical oceanic sound channel with:
+    - Surface speed: 1540 m/s (typical for warm surface water)
+    - Minimum at 10m: 1530 m/s (sound channel axis)
+    - Recovery toward bottom: 1535 m/s at 30m depth
+    
+    When arlpy dependencies are available, this test should:
+    1. Run successfully and generate actual arrival times
+    2. Have the expected_arrival_times list populated with real values
+    3. Include exact ray count assertions
+    
+    To update after first successful run:
+    - Replace len(arrivals) > 0 with exact count: assert(len(arrivals) == N)
+    - Fill expected_arrival_times list with actual values
+    - Uncomment the final exact time comparison section
+    """
     
     # Define depth-dependent sound speed profile as specified in issue
     ssp = [
@@ -138,7 +162,40 @@ def test_variable_soundspeed():
     assert((arrival_times > 0.6).all())  # Lower bound
     assert((arrival_times < 1.0).all())  # Upper bound
     
+    # Additional recommended assertions for comprehensive testing:
+    
+    # Test that the variable SSP actually affects the results vs constant SSP
+    # (This would require running both and comparing - useful for validation)
+    
+    # Test sound speed profile interpolation is working
+    # Verify the environment actually contains our SSP data
+    assert(isinstance(env["soundspeed"], list))
+    assert(len(env["soundspeed"]) == 5)
+    
+    # Test that different ray angles produce different arrival times
+    # (The variable SSP should cause ray bending and time variations)
+    if len(arrival_times) > 1:
+        # Should have some variation in arrival times due to ray bending
+        time_variation = arrival_times.max() - arrival_times.min()
+        assert(time_variation > 1e-6)  # Should have some spread
+    
+    # Test that ray paths exist and are reasonable
+    # This would require additional output from BELLHOP ray files if available
+    
+    # Test environment consistency
+    assert(env["depth"] == ssp[-1][0])  # Depth should match SSP bottom depth
+    
+    # Verify frequency-dependent behavior could be tested
+    # (Though this test uses single frequency like the original)
+    
     # TODO: Once actual arrival times are determined, add specific comparison:
+    # Steps to complete this test:
+    # 1. Run: export PATH="$PWD/bin:$PATH" && hatch run test -v -k test_variable_soundspeed
+    # 2. Print arrivals["time_of_arrival"] to get actual values
+    # 3. Replace expected_arrival_times = [] with the printed values
+    # 4. Update assert(len(arrivals) > 0) with exact count
+    # 5. Uncomment and adapt the final comparison section below:
+    # 
     # if len(expected_arrival_times) > 0:
     #     assert(len(arrivals) == len(expected_arrival_times))
     #     a_test = arrivals["time_of_arrival"] - expected_arrival_times < 1e-6
