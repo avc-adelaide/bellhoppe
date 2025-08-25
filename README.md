@@ -177,6 +177,31 @@ If you wish to use the Matlab interfaces, the following commands should be added
 
 
 
+## Documentation
+
+Comprehensive API documentation is automatically generated using [FORD](https://github.com/Fortran-FOSS-Programmers/ford) and published at:
+
+**[📖 BELLHOP Documentation](https://aumag.github.io/bellhop/)**
+
+The documentation includes:
+
+- **Module and subroutine references** with automatically extracted descriptions
+- **Call graphs** showing relationships between components  
+- **Source code browsing** with syntax highlighting
+- **Search functionality** for finding specific functions and variables
+
+### Building Documentation Locally
+
+To generate documentation on your local machine:
+
+1. Install FORD: `pip install FORD`
+2. Generate docs: `make docs` 
+3. Open `doc/index.html` in your web browser
+
+The documentation is automatically rebuilt and published whenever changes are pushed to the main branch.
+
+
+
 ## Testing
 
 If the build and installation steps were successful, you should now be able to run

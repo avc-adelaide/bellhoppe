@@ -212,3 +212,24 @@ clean:
 	find . -name '*.prt'  -exec rm -r {} +
 	(cd misc;	make -k -i clean)
 	(cd Bellhop;	make -k -i clean)
+	
+docs:
+	@echo "Generating FORD documentation..."
+	ford -d "Bellhop" -d "misc" ford.md
+	@echo "Documentation generated in ./doc/ directory"
+	@echo "Open ./doc/index.html in a web browser to view"
+
+clean-docs:
+	-rm -rf doc
+	
+.PHONY: all install clean docs clean-docs
+docs:
+	@echo "Generating FORD documentation..."
+	ford -d "Bellhop" -d "misc" ford.md
+	@echo "Documentation generated in ./doc/ directory"
+	@echo "Open ./doc/index.html in a web browser to view"
+
+clean-docs:
+	-rm -rf doc
+	
+.PHONY: all install clean docs clean-docs
