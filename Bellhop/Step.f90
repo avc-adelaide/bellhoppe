@@ -1,5 +1,6 @@
 !! Ray stepping module with adaptive step size control
 MODULE Step
+  !! Ray propagation with adaptive step size control and boundary interaction handling
 
   USE bellhopMod
   USE sspMod

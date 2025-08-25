@@ -1,5 +1,6 @@
 !! Sound speed profile module with interpolation and derivatives
 MODULE sspmod
+  !! Sound speed profile handling with interpolation, derivatives, and environment management
 
   ! Holds SSP input by user and associated variables
 

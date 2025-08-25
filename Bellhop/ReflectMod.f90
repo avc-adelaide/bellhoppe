@@ -1,5 +1,6 @@
 !! Reflection calculations for acoustic boundaries
 MODULE ReflectMod
+  !! Ray reflection computations at acoustic boundaries with loss and phase calculations
 
   USE bellhopMod
   IMPLICIT NONE

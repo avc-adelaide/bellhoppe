@@ -1,5 +1,6 @@
 !! Polynomial approximation utilities for mathematical computations
 MODULE PolyMod
+  !! Polynomial approximation and evaluation routines for numerical analysis
 
   ! Polynomial approximant of order N at X0
   ! mbp 7/2015 incorporating subroutines from decades past

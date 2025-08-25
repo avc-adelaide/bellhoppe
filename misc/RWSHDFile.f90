@@ -1,5 +1,6 @@
 !! Routines for reading and writing shade file format
 MODULE RWSHDFile
+  !! Shade file I/O operations including binary format handling for acoustic field data
 
   ! routines to read or write the SHDFile
 

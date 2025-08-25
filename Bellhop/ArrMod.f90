@@ -1,5 +1,6 @@
 !! Acoustic arrivals module for computing and storing arrival information
 MODULE ArrMod
+  !! Management of acoustic arrival data including storage, sorting, and output formatting
 
   USE MathConstants
   USE BellhopMod

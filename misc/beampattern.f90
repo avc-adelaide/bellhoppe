@@ -1,5 +1,6 @@
 !! Source beam pattern loading and processing
 MODULE beampattern
+  !! Source beam pattern handling including loading, interpolation, and angular weighting
 
   ! Loads a source beam pattern
 
