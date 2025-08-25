@@ -20,6 +20,7 @@ MODULE AttenMod
   TYPE( bioStructure ) :: bio( MaxBioLayers )
 
 CONTAINS
+!! Converts real wave speed and attenuation to complex wave speed
   FUNCTION CRCI( z, c, alpha, freq, freq0, AttenUnit, beta, fT )
 
     ! Converts real wave speed and attenuation to a single
@@ -126,6 +127,7 @@ CONTAINS
 
   !**********************************************************************!
 
+!! Computes Francois-Garrison volume attenuation
   FUNCTION Franc_Garr( f )
 
     ! Francois Garrison formulas for attenuation

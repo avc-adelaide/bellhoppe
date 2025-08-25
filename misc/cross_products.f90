@@ -10,6 +10,7 @@ MODULE cross_products
   END INTERFACE cross_product
 
 CONTAINS
+!! Computes cross product of single precision vectors
   FUNCTION cross_product_sngl( a, b )
     REAL (KIND=4), DIMENSION( 3 ) :: cross_product_sngl
     REAL (KIND=4), DIMENSION( 3 ), INTENT(  IN ) :: a, b
@@ -20,6 +21,7 @@ CONTAINS
 
   END FUNCTION cross_product_sngl
 
+!! Computes cross product of double precision vectors
   FUNCTION cross_product_dble( a, b )
     REAL (KIND=8), DIMENSION( 3 ) :: cross_product_dble
     REAL (KIND=8), DIMENSION( 3 ), INTENT(  IN ) :: a, b

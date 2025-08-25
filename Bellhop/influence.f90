@@ -653,6 +653,7 @@ CONTAINS
 
   ! **********************************************************************!
   
+!! Applies beam contribution to pressure field
   SUBROUTINE ApplyContribution( U )
     COMPLEX, INTENT( INOUT ) :: U
     COMPLEX ( KIND=4 ) :: dfield

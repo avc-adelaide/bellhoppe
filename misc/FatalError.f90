@@ -5,6 +5,7 @@ MODULE FatalError
   INTEGER, PRIVATE :: PRTFile = 6
 
   CONTAINS
+!! Outputs error message and terminates program
   SUBROUTINE ERROUT( WHERE, ErrMsg )
   !!     Outputs an error message
 
