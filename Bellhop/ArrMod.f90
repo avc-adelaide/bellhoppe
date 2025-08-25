@@ -21,6 +21,7 @@ MODULE ArrMod
 
 CONTAINS
 
+!! Adds an arrival to the arrival data structure
   SUBROUTINE AddArr( omega, id, ir, Amp, Phase, delay, SrcDeclAngle, RcvrDeclAngle, NumTopBnc, NumBotBnc )
 
     ! Adds the amplitude and delay for an ARRival into a matrix of same.
@@ -89,6 +90,7 @@ CONTAINS
 
   ! **********************************************************************!
 
+!! Writes arrival data in ASCII format
   SUBROUTINE WriteArrivalsASCII( r, Nrd, Nr, SourceType )
 
     ! Writes the arrival data (Amplitude, delay for each eigenray)
@@ -135,6 +137,7 @@ CONTAINS
 
   ! **********************************************************************!
 
+!! Writes arrival data in binary format
   SUBROUTINE WriteArrivalsBinary( r, Nrd, Nr, SourceType )
 
     ! Writes the arrival data (amplitude, delay for each eigenray)

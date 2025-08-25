@@ -5,6 +5,7 @@ MODULE ReflectMod
   IMPLICIT NONE
 CONTAINS
 
+!! Computes reflection of ray at acoustic boundary
   SUBROUTINE Reflect2D( is, HS, BotTop, nBdry3d, z_xx, z_xy, z_yy, kappa_xx, kappa_xy, kappa_yy, RefC, Npts, tradial )
 
     !USE norms

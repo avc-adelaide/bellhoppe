@@ -13,6 +13,7 @@ MODULE ReadEnvironmentBell
   IMPLICIT NONE
 
 CONTAINS
+!! Reads and parses the main environment file
   SUBROUTINE ReadEnvironment( FileRoot, ThreeD )
 
     ! Routine to read in and echo all the input data
@@ -353,6 +354,7 @@ CONTAINS
 
   !**********************************************************************!
 
+!! Reads and validates the run type parameters
   SUBROUTINE ReadRunType( RunType, PlotType )
 
     ! Read the RunType variable and echo with explanatory information to the print file
@@ -545,6 +547,7 @@ CONTAINS
 
   ! **********************************************************************!
 
+!! Opens output files based on run type
   SUBROUTINE OpenOutputFiles( FileRoot, ThreeD )
     ! Write appropriate header information
 

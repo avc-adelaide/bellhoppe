@@ -62,6 +62,7 @@ MODULE sspmod
 
 CONTAINS
 
+!! Evaluates sound speed profile at given location
   SUBROUTINE EvaluateSSP( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
 
     ! Call the particular profil routine indicated by the SSP%Type and perform Task
@@ -181,6 +182,7 @@ END SUBROUTINE EvaluateSSP2D
 
   !**********************************************************************!
 
+!! Linear interpolation for squared buoyancy frequency
   SUBROUTINE n2Linear( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
 
     ! N2-linear interpolation of SSP data
@@ -366,6 +368,7 @@ END SUBROUTINE EvaluateSSP2D
 
   !**********************************************************************!
 
+!! Quadrilateral interpolation for 3D sound speed profiles
   SUBROUTINE Quad( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
 
     ! Bilinear quadrilateral interpolation of SSP data in 2D

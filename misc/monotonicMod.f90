@@ -12,6 +12,7 @@ MODULE monotonicMod
   END INTERFACE monotonic
 
 CONTAINS
+!! Tests if single precision vector is monotonically increasing
   FUNCTION monotonic_sngl( x, N )
     LOGICAL :: monotonic_sngl
     INTEGER,                       INTENT( IN ) :: N
@@ -23,6 +24,7 @@ CONTAINS
 
   END FUNCTION monotonic_sngl
 
+!! Tests if double precision vector is monotonically increasing
   FUNCTION monotonic_dble( x, N )
     LOGICAL :: monotonic_dble
     INTEGER,                       INTENT( IN ) :: N
