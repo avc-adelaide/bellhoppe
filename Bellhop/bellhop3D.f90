@@ -1,5 +1,7 @@
-!! Gaussian beam tracing for ocean acoustics in three dimensions
+!! Provides BELLHOP3D program definition
+
 PROGRAM BELLHOP3D
+!! Gaussian beam tracing for ocean acoustics in three dimensions
 
   ! Gaussian beam tracing in three dimensions
   ! Michael B. Porter

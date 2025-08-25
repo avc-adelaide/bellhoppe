@@ -1,5 +1,7 @@
-!! BELLHOP beam tracing for ocean acoustics
+!! Provides BELLHOP program definition
+
 PROGRAM BELLHOP
+!! BELLHOP beam tracing for ocean acoustics
 
   ! BELLHOP Beam tracing for ocean acoustics
 
