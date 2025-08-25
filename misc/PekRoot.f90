@@ -1,3 +1,4 @@
+!! Pekeris root finding for leaky mode calculations
 MODULE PekRoot
 
   ! evaluates a particular branch of the square root that exposes leaky modes

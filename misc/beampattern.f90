@@ -1,3 +1,4 @@
+!! Source beam pattern loading and processing
 MODULE beampattern
 
   ! Loads a source beam pattern

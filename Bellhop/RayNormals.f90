@@ -1,3 +1,5 @@
+!! Ray normal calculations for acoustic beam tracing
+!! Provides ray normal vector calculations
 MODULE RayNormals
 
    IMPLICIT NONE

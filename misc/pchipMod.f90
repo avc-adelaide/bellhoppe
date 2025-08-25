@@ -1,3 +1,4 @@
+!! Piecewise Cubic Hermite Interpolating Polynomial calculations
 MODULE pchipmod
 
   ! subroutines and functions related to the calculation of the

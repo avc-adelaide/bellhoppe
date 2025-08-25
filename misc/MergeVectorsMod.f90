@@ -1,3 +1,4 @@
+!! Vector merging utilities for removing duplicates from sorted arrays
 MODULE MergeVectorsMod
 
   ! Merge two vectors x, y into z (duplicates are removed)

@@ -1,4 +1,6 @@
+!! Cone-shaped beam calculations for 3D acoustics
 
+!! Provides cone formulas for 3D beam computations
 MODULE Cone
   USE bellhopMod
   USE MathConstants

@@ -1,3 +1,4 @@
+!! Environment file reading utilities for acoustic models
 MODULE ReadEnvironmentMod
 
   ! mbp 12/2018, based on much older subroutine

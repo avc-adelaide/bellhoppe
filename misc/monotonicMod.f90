@@ -1,3 +1,4 @@
+!! Monotonicity testing utilities for input validation
 MODULE monotonicMod
 
 ! tests whether an input vector is strictly monotonically increasing

@@ -1,3 +1,5 @@
+!! Environment input file parsing and setup for BELLHOP
+!! Provides environment file reading and initialization
 MODULE ReadEnvironmentBell
 
   ! mbp 12/2018, based on much older subroutine

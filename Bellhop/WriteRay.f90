@@ -1,3 +1,4 @@
+!! Ray data compression and output formatting
 MODULE WriteRay
 
   ! Compress the ray data keeping every iSkip point, points near surface or bottom, and last point.
