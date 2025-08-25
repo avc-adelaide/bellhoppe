@@ -1,3 +1,4 @@
+!! Routines for reading and writing shade file format
 MODULE RWSHDFile
 
   ! routines to read or write the SHDFile

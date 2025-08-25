@@ -1,3 +1,5 @@
+!! Angle calculations and coordinate transformations for ray tracing
+!! Provides angle calculations and coordinate transformations
 MODULE anglemod
 
   USE MathConstants

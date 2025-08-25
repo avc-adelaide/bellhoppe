@@ -1,3 +1,4 @@
+!! Three-dimensional boundary conditions for altimetry and bathymetry
 MODULE bdry3Dmod
 
   ! Loads

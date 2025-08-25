@@ -1,3 +1,4 @@
+!! Interpolation utilities for acoustic computations
 MODULE interpolation
 
 CONTAINS

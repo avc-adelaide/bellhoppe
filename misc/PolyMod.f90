@@ -1,3 +1,4 @@
+!! Polynomial approximation utilities for mathematical computations
 MODULE PolyMod
 
   ! Polynomial approximant of order N at X0

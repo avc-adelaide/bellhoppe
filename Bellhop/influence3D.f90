@@ -1,3 +1,4 @@
+!! Three-dimensional beam influence computation for pressure fields
 MODULE Influence3D
 
   ! Compute the beam influence, i.e. the contribution of a single beam to the complex pressure

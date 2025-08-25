@@ -1,3 +1,4 @@
+!! Three-dimensional ray stepping with adaptive step control
 MODULE Step3DMod
 
   USE bellhopMod
