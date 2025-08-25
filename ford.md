@@ -116,3 +116,36 @@ paths determined by Snell's law. The implementation includes:
 
 The 3D version extends this by solving the full 3D ray equations with 
 azimuthal coupling effects.
+
+## Historic Documentation
+
+The BELLHOP code base includes extensive historic documentation from the original 
+Acoustics Toolbox project and subsequent development efforts:
+
+### Change Logs and Development History
+- **[University of California Changes](../docs/CHANGES.md)** - Detailed technical changes, bug fixes, and algorithmic improvements made by the UC San Diego team
+- **[Acoustics Toolbox Changes](../docs/at_changes.md)** - Historical change log from the original Acoustics Toolbox development
+- **[Acoustics Toolbox Index](../docs/at_index.htm)** - Overview of the complete Acoustics Toolbox suite
+
+### User Guides and Technical Documentation
+- **[Original Repository Information](../docs/index.htm)** - General information about the Acoustics Toolbox project structure
+- **[BELLHOP User Guide](../docs/bellhop.htm)** - Comprehensive guide for 2D acoustic modeling
+- **[BELLHOP3D User Guide](../docs/bellhop3d.htm)** - Guide for 3D acoustic modeling with azimuthal coupling
+- **[Environmental File Format](../docs/EnvironmentalFile.htm)** - Detailed specification of input file formats
+
+### Field Computation and Analysis
+- **[Field Documentation](../docs/fields.htm)** - General field computation methods
+- **[Field Processing](../docs/field.htm)** - Field output processing and analysis
+- **[3D Field Methods](../docs/field3d.htm)** - Three-dimensional field computation approaches
+
+### Additional Technical Resources
+- **[Reflection Coefficient Files](../docs/ReflectionCoefficientFile.htm)** - Format for specifying boundary reflection properties
+- **[Range-Dependent Sound Speed Profiles](../docs/RangeDepSSPFile.htm)** - Sound speed profile specification
+- **[Bathymetry Files](../docs/ATI_BTY_File.htm)** - Bathymetry data format specification
+
+### PDF Documentation
+- **[BELLHOP3D User Guide (PDF)](../docs/Bellhop3D%20User%20Guide%202016_7_25.pdf)** - Comprehensive PDF guide for 3D modeling
+- **[Technical Report HLS-2010-1](../docs/HLS-2010-1.pdf)** - Detailed technical documentation
+
+These documents provide valuable context for understanding the full capabilities and 
+history of the BELLHOP acoustic modeling system.
