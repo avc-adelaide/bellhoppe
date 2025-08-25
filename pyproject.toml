@@ -15,6 +15,7 @@ dependencies = [
     "matplotlib",
     "arlpy",
     "pytest",
+    "FORD",
 ]
 
 requires-python = ">=3.12, <3.13"
@@ -67,6 +68,7 @@ exclude = [
 
 [tool.hatch.envs.default.scripts]
 test = "pytest --capture=tee-sys"
+doc  = "ford -d Bellhop -d misc ford.md"
 
 [tool.ruff]
 output-format = "github"

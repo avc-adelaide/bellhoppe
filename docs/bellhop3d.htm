@@ -12,11 +12,11 @@
 	{page:Section1;}
 -->
   </style>
-    <title>BELLHOP</title>
+    <title>BELLHOP3D</title>
   </head>
   <body style="color: rgb(0, 0, 0); background-color: rgb(255, 255,
-    255);" class="Normal" alink="#000099" link="#000099" lang="EN-US"
-    vlink="#990099">
+    255);" class="Normal" vlink="#990099" link="#000099" lang="EN-US"
+    alink="#000099">
     <div style="font-family: Helvetica,Arial,sans-serif;"
       class="Section1">
       <h1>BELLHOP3D</h1>
@@ -53,6 +53,12 @@ acoustic
 
 
 
+
+
+
+
+
+
         fields in 3D oceanic environments via beam tracing. The
         environment treated consists of an acoustic medium with a sound
         speed that may depend on x, y, and z coordinates. Similarly, the
@@ -65,6 +71,12 @@ acoustic
         following programs are used with BELLHOP3D :</p>
       <p style="margin-left: 40px; font-family: monospace;"
         class="MsoPlainText"><span style="font-weight: bold;">BELLHOP3D</span>&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -108,9 +120,21 @@ speeds,
 
 
 
+
+
+
+
+
+
         computes the angle of the limiting ray.</p>
       <p style="margin-left: 40px; font-family: monospace;"
         class="MsoPlainText"><span style="font-weight: bold;">PLOTSSP</span>&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -148,9 +172,21 @@ speeds,
 
 
 
+
+
+
+
+
+
         1. Set up your environmental file and run PLOTSSP to make sure
         the SSP looks reasonable.</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -186,6 +222,12 @@ trace
 
 
 
+
+
+
+
+
+
         option to calculate about 50 rays.</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 B.
@@ -208,9 +250,21 @@ you
 
 
 
+
+
+
+
+
+
         have the angular coverage you expect.&nbsp; Do the rays behave
         irregularly? If so reduce the step-size and try again.</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -241,8 +295,20 @@ you
 
 
 
+
+
+
+
+
+
         4. Run plotshd.m to plot a full range-depth field plot.</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -272,40 +338,37 @@ you
 
 
 
+
+
+
+
+
+
         Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        Unit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Description</p>
+        Description</p>
       <p style="font-family: monospace;" class="MsoPlainText">Input<br>
         &nbsp;&nbsp;
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.ENV&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*.ENV&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 
 
 
-
-
-
-
-
-
-
-
-        1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ENVironmental data<br>
+        ENVironmental data<br>
         &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; *.SSP
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 40
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sound Speed Profile data
-        (optional)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sound Speed
+        Profile data (optional)<br>
       </p>
       <p style="font-family: monospace;" class="MsoPlainText">Output<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        *.PRT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; PRinT file<br>
+        *.PRT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        PRinT file<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        *.RAY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; RAY&nbsp;&nbsp; file<br>
+        *.RAY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        RAY&nbsp;&nbsp; file<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        *.SHD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        25&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SHaDe file</p>
+        *.SHD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        SHaDe file</p>
       <h2 style="font-family: monospace;"><a
           name="Sample_Input_Environmental_File:_"></a>Sample Input
         (Environmental) File:<br>
@@ -314,6 +377,12 @@ you
       <p style="font-family: monospace;" class="MsoPlainText">'Munk
         profile'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ! TITLE<br>
         50.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -342,8 +411,20 @@ you
 
 
 
+
+
+
+
+
+
         ! NMEDIA<br>
-        'CVN'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        'CVW'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -399,10 +480,22 @@ you
 
 
 
+
+
+
+
+
+
         ! NSx number of source coordinates in x<br>
         0.0 / &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; !
         x coordinate of source (km)<br>
         1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -423,10 +516,22 @@ you
 
 
 
+
+
+
+
+
+
         ! NSz<br>
         1000.0 /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; !
         Sz(1 : NSz) (m)<br>
         501&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -447,9 +552,21 @@ you
 
 
 
-        ! NR<br>
-        0.0&nbsp; 100.0 /&nbsp;&nbsp; &nbsp;&nbsp; ! R(1 : NR ) (km)<br>
+
+
+
+
+
+
+        ! NRr<br>
+        0.0&nbsp; 100.0 /&nbsp;&nbsp; &nbsp;&nbsp; ! Rr(1 : NRr ) (km)<br>
         2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -474,11 +591,23 @@ you
 
 
 
+
+
+
+
+
+
         ! Nalpha<br>
         -14.66 14.66 /&nbsp;&nbsp;&nbsp; ! alpha1, 2 (degrees)
         Elevation/declination angle fan<br>
         11
         46&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -496,7 +625,6 @@ you
       </p>
       <h2 style="font-family: monospace;"><a
           name="Description_of_Inputs_"></a>Description of Inputs</h2>
-      <p style="font-family: monospace;" class="MsoPlainText"></p>
       <p style="font-family: monospace;">The <a
           href="EnvironmentalFile.html">first 6 blocks</a> in the ENVFIL
         are common to all the programs in the Acoustics Toolbox. The
@@ -522,8 +650,20 @@ you
 
 
 
+
+
+
+
+
+
         Syntax:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -555,9 +695,9 @@ you
         <span style="font-style: italic;">
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; R(1:NR
           )<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; NTheta<br>
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; THETA(
-          1:NTheta )<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Ntheta<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; theta(
+          1:Ntheta )<br>
         </span></p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -573,8 +713,20 @@ you
 
 
 
+
+
+
+
+
+
         Description:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -604,13 +756,13 @@ you
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rz(): The
         receiver depths (m)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        NR:&nbsp;&nbsp; The number of receiver ranges<br>
+        NRr:&nbsp; The number of receiver ranges<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rr(): The
+        receiver ranges (km)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        R():&nbsp; The receiver ranges (km)<br>
+        Ntheta:&nbsp;&nbsp; The number of receiver bearings (radials)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        NTheta:&nbsp;&nbsp; The number of receiver bearings (radials)<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        THETA():&nbsp; The receiver bearings (degrees)</p>
+        theta():&nbsp; The receiver bearings (degrees)</p>
       <p style="margin-left: 80px; font-family: monospace;"
         class="MsoPlainText">This data is read in using list-directed
         I/O you can type it just about any way you want, e.g. on one
@@ -625,6 +777,12 @@ you
         returned as zero.<br>
       </p>
       <h3 style="font-family: monospace;"><a name="8_-_RUN_TYPE"></a>&nbsp;(8)
+
+
+
+
+
+
 
 
 
@@ -653,6 +811,12 @@ you
 
 
 
+
+
+
+
+
+
         Syntax:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -664,8 +828,20 @@ you
 
 
 
+
+
+
+
+
+
         <span style="font-style: italic;"> OPTION</span></p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -694,8 +870,20 @@ you
 
 
 
+
+
+
+
+
+
         OPTION(1:1): 'R' generates a ray file<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -724,8 +912,20 @@ you
 
 
 
+
+
+
+
+
+
         'A' generates an amplitude-delay file (ascii)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -755,8 +955,20 @@ you
 
 
 
+
+
+
+
+
+
         Coherent&nbsp;&nbsp;&nbsp;&nbsp; TL calculation<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -785,6 +997,12 @@ you
 
 
 
+
+
+
+
+
+
         'S' Semicoherent TL calculation<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -800,8 +1018,20 @@ you
 
 
 
+
+
+
+
+
+
         (Lloyd mirror source pattern)</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -832,6 +1062,12 @@ you
 
 
 
+
+
+
+
+
+
         'g' Geometric hat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; beams in
         ray-centered coordinates (slow)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -848,9 +1084,21 @@ you
 
 
 
+
+
+
+
+
+
         'B' Geometric Gaussian beams in cartesian&nbsp;&nbsp;&nbsp;
         coordinates<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -886,8 +1134,20 @@ source
 
 
 
+
+
+
+
+
+
         beam pattern file<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -922,8 +1182,20 @@ coordinates)
 
 
 
+
+
+
+
+
+
         (default)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -954,8 +1226,20 @@ coordinates)
 
 
 
+
+
+
+
+
+
         OPTION(5:5): 'R' rectilinear grid (default)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -973,6 +1257,12 @@ coordinates)
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;
         &nbsp; &nbsp; &nbsp; &nbsp; OPTION(6:6): '2' Nx2D run (default)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -1058,8 +1348,20 @@ coordinates)
 
 
 
+
+
+
+
+
+
         - BEAM FAN</h3>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -1084,18 +1386,30 @@ coordinates)
 
 
 
-        <span style="font-style: italic;"> NAlpha ISINGLE</span><br
+
+
+
+
+
+
+        <span style="font-style: italic;"> Nalpha ISINGLE</span><br
           style="font-style: italic;">
         <span style="font-style: italic;">
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          Alpha(1:NBEAMS)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; alpha(
+          1 : Nalpha )<br>
         </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span
-          style="font-style: italic;"> NBeta ISINGLE</span><br
+          style="font-style: italic;"> Nbeta ISINGLE</span><br
           style="font-style: italic;">
         <span style="font-style: italic;">
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          Beta(1:NBEAMS)</span></p>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; beta( 1
+          : Nbeta )</span></p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -1121,7 +1435,13 @@ coordinates)
 
 
 
-        <span style="font-family: monospace;">NAlpha: Number of beams in
+
+
+
+
+
+
+        <span style="font-family: monospace;">Nalpha: Number of beams in
           elevation</span><span style="font-family: monospace;"><br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 (use
@@ -1144,6 +1464,12 @@ calculate
 
 
 
+
+
+
+
+
+
           a value automatically, but conservatively).</span></p>
       <p><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ISINGLE:
@@ -1152,6 +1478,12 @@ the
 option
 to
 compute
+
+
+
+
+
+
 
 
 
@@ -1186,21 +1518,22 @@ of
 
 
 
+
+
+
+
+
+
           the beam that is traced.<br>
         </span></p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Alpha():
-Beam
-elevation
 
 
 
 
 
-
-
-
-        angles (degrees) (negative angles toward surface)<br>
+        alpha(): Beam elevation angles (degrees) (negative angles toward
+        surface)<br>
       </p>
       <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -1213,7 +1546,13 @@ elevation
 
 
 
-        <span style="font-family: monospace;">NBeta: Number of beams in
+
+
+
+
+
+
+        <span style="font-family: monospace;">Nbeta: Number of beams in
           azimuth</span><span style="font-family: monospace;"><br>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 (use
@@ -1236,6 +1575,12 @@ calculate
 
 
 
+
+
+
+
+
+
           a value automatically, but conservatively).</span></p>
       <p><span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ISINGLE:
@@ -1244,6 +1589,12 @@ the
 option
 to
 compute
+
+
+
+
+
+
 
 
 
@@ -1278,6 +1629,12 @@ of
 
 
 
+
+
+
+
+
+
           the beam that is traced.<br>
         </span></p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -1286,10 +1643,7 @@ of
 
 
 
-
-
-
-        Beta(): Beam azimuth angles (degrees) (math convention with 0
+        beta(): Beam azimuth angles (degrees) (math convention with 0
         degrees pointing along the x-axis)</p>
       <p style="margin-left: 80px; font-family: monospace;"
         class="MsoPlainText">For a ray trace you can type in a sequence
@@ -1313,8 +1667,20 @@ of
 
 
 
+
+
+
+
+
+
         Syntax:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -1342,8 +1708,20 @@ of
 
 
 
+
+
+
+
+
+
         Description:</p>
       <p style="font-family: monospace;" class="MsoPlainText">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
 
 
 
@@ -1376,11 +1754,17 @@ of
         the results are convergent to your required accuracy.&nbsp; To
         obtain a smooth ray trace you should use the spline SSP
         interpolation and a step-size less than the smallest distance
-        between SSP data points. Rays are traced until they exit the box
-        ( Box%x, Box%y, Box%z ). The box is defined with the source at
-        the center of the coordinate system.&nbsp; Make the box a bit
-        (say 1%) roomy too make sure rays are not killed the moment they
-        hit the bottom or are just reaching your furthest receiver.<br>
+        between SSP data points.<br>
+      </p>
+      <p style="margin-left: 80px; font-family: monospace;"
+        class="MsoPlainText">Rays are traced until they exit the box (
+        Box%x, Box%y, Box%z ). The box is defined with the source ( x_s,
+        y_s, 0 ) at the center of the coordinate system. The
+        z-coordinate of the source, z_s, is not used, so the box is
+        oriented around the epicenter of the source.&nbsp; You can make
+        the box a bit (say 1%) roomy too make sure rays are not killed
+        the moment they hit the bottom or are just reaching your
+        furthest receiver.<br>
       </p>
       <br>
       <p> <tt>BELLHOP3D assumes that the SSP and bathymetry are

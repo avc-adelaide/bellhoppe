@@ -29,10 +29,47 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-## Changes
+## Documentation Overview
 
-* See docs/CHANGES.md for University of California changes to the code
-* See docs/at_index.htm for changes by the Acoustics Toolbox team
+### 📚 Complete Documentation Suite
+
+**[📖 BELLHOP Documentation](https://aumag.github.io/bellhop/)** - Comprehensive API documentation with:
+- Automatically generated module and subroutine references
+- Interactive call graphs showing code relationships  
+- Source code browsing with syntax highlighting
+- Full-text search functionality
+
+### 🔧 User Guides and Technical References
+
+**Core Documentation:**
+- **[BELLHOP User Guide](docs/bellhop.htm)** - Complete guide for 2D acoustic modeling
+- **[BELLHOP3D User Guide](docs/bellhop3d.htm)** - 3D acoustic modeling with azimuthal coupling
+- **[Environmental File Format](docs/EnvironmentalFile.htm)** - Input file specifications
+- **[BELLHOP3D PDF Guide](docs/Bellhop3D%20User%20Guide%202016_7_25.pdf)** - Comprehensive PDF documentation
+
+**Input File Formats:**
+- **[Range-Dependent SSP Files](docs/RangeDepSSPFile.htm)** - Sound speed profile specification
+- **[Reflection Coefficient Files](docs/ReflectionCoefficientFile.htm)** - Boundary reflection properties
+- **[Bathymetry Files](docs/ATI_BTY_File.htm)** - Bathymetry data format
+
+### 📝 Development History and Changes
+
+**Recent Developments:**
+- **[UC San Diego Changes](docs/CHANGES.md)** - Technical improvements, bug fixes, and algorithmic changes
+- **[Acoustics Toolbox Changes](docs/at_changes.md)** - Historical development log
+
+**Project Background:**
+- **[Acoustics Toolbox Overview](docs/at_index.htm)** - Complete toolbox suite information
+- **[Original Repository Info](docs/index.htm)** - Project structure and background
+
+### 🏗️ Building Documentation Locally
+
+Generate documentation on your machine:
+```bash
+pip install FORD
+make docs
+open doc/index.html  # View generated documentation
+```
 
 
 ## Installation
@@ -174,6 +211,10 @@ If you wish to use the Matlab interfaces, the following commands should be added
 
     addpath(genpath('<path to bellhop>/Matlab/'))
     addpath('<path to bellhop>/bin/')
+
+
+
+
 
 
 

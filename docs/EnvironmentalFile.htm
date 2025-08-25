@@ -85,6 +85,7 @@ Number
 
 
 
+
       of Media<br>
     </h3>
     <p style="margin-left: 40px; font-family: monospace;"
@@ -123,8 +124,10 @@ the
 
 
 
+
       density changes discontinuously. The<span style=""> </span>number
       of media in the problem is defined excluding the<span style=""> </span>upper
+
 
 
 
@@ -253,6 +256,7 @@ at
 
 
 
+
       this time. A complicated reflection coefficient may well cause <span
         style=""></span>problems for the mode-finder. Finally, a
       reflection coefficient <span style=""></span>tabulated only for
@@ -279,10 +283,12 @@ of
 
 
 
+
       incidence. This happens when the sediment <span style=""></span>sound
 speed
 is
 less
+
 
 
 
@@ -340,6 +346,7 @@ less
 
 
 
+
       </span>(F as in Freq. dependent)<br>
       <span style=""></span>'M' dB/m<span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -361,8 +368,10 @@ less
 
 
 
+
       </span>(M as in per Meter)<br>
       'm' dB/m<span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -458,6 +467,7 @@ less
 
 
 
+
       how long it takes. Period.<br>
     </p>
     <div style="margin-left: 120px; font-family: monospace;"> The '.'
@@ -479,12 +489,26 @@ less
       </p>
     </div>
     <div style="margin-left: 80px; font-family: monospace;">
-      <div align="left">Broadband run (currently implemented in KRAKEN
-        and SCOOTER)<br>
-      </div>
-      'B' Select a broadband run where multiple frequencies are
-      specified<br>
+      <blockquote>
+        <blockquote>
+          <blockquote>
+            <div align="left">Broadband run (currently implemented in
+              KRAKEN and SCOOTER)<br>
+            </div>
+            'B' Select a broadband run where multiple frequencies are
+            specified.<br>
+            The actual frequencies are given as a vector in the last two
+            lines of the envfil using the standard format:<br>
+            <br>
+            2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            ! Nfreq<br>
+            50 500 /&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ! freqVec( 1 : Nfreq
+            )<br>
+          </blockquote>
+        </blockquote>
+      </blockquote>
     </div>
+    <br>
     <br>
     <div style="margin-left: 80px; font-family: monospace;">
       <div align="left">TOPOPT(7:7): Use 0 (zero) to disable stabilizing
@@ -498,6 +522,7 @@ less
       class="MsoPlainText"><span style=""></span>Syntax:</p>
     <p style="margin-left: 80px; font-family: monospace;"
       class="MsoPlainText"><span style=""></span><var>ZT<span style="">&nbsp;
+
 
 
 
@@ -538,11 +563,13 @@ less
 
 
 
+
         </span>AST</var></p>
     <p style="margin-left: 40px; font-family: monospace;"
       class="MsoPlainText"><span style=""></span>Description:</p>
     <div style="margin-left: 80px; font-family: monospace;">
       <p><span style=""></span>ZT:<span style="">&nbsp;&nbsp; </span>Depth
+
 
 
 
@@ -590,7 +617,9 @@ less
 
 
 
+
         </span>"<span style="">&nbsp;&nbsp; </span>"<span style="">&nbsp;&nbsp;
+
 
 
 
@@ -641,8 +670,10 @@ less
 
 
 
+
         &nbsp; Q(1) &nbsp; a0(1)</var><br>
       <var><var>Z1<span style="">(2)&nbsp; </span>Z2(2)<span style="">&nbsp;
+
 
 
 
@@ -720,6 +751,7 @@ less
 
 
 
+
         </span>RHO(1)<span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>AP(1)<span
           style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>AS(1)<br>
         <span style=""></span>Z(2)<span style="">&nbsp;&nbsp;&nbsp;&nbsp;
@@ -742,8 +774,10 @@ less
 
 
 
+
         </span>CP(2)<span style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>CS(2)<span
           style="">&nbsp;&nbsp;&nbsp;&nbsp; </span>RHO(2)<span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -793,6 +827,7 @@ less
 
 
 
+
       </span>Number of mesh points used in the internal discretization.<br>
     </p>
     <p style="margin-left: 120px; font-family: monospace;"
@@ -801,6 +836,7 @@ less
       wavelength in acoustic media. In<span style=""> </span>elastic
       media, the number needed can vary quite<span style=""> </span>a
       bit; 20 per wavelength is a reasonable<span style=""> </span>starting
+
 
 
 
@@ -862,6 +898,7 @@ less
 
 
 
+
       </span>RMS roughness at the interface (ignored by BELLHOP and
       SPARC)<br>
     </p>
@@ -873,6 +910,7 @@ less
     </p>
     <p style="margin-left: 80px; font-family: monospace;"
       class="MsoPlainText"><span style=""></span>Z():<span style="">&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -914,6 +952,7 @@ less
     <p style="margin-left: 80px; font-family: monospace;"
       class="MsoPlainText"> <span style=""></span><var>NMESH<span
           style="">&nbsp; </span>SIGMA<span style="">&nbsp; </span>Z(NSSP)
+
 
 
 
@@ -968,6 +1007,7 @@ attenuation
 
 
 
+
       as given in Block 2)<br>
       AS():<span style="">&nbsp;&nbsp;&nbsp; </span>S-wave attenuation
       ( <span style="">&nbsp;</span>"<span style="">&nbsp;&nbsp; </span>"<span
@@ -991,7 +1031,9 @@ attenuation
 
 
 
+
       </span>"<span style="">&nbsp;&nbsp; </span>"<span style="">&nbsp;&nbsp;
+
 
 
 
@@ -1056,6 +1098,7 @@ Bottom
 
 
 
+
       Option<br>
     </h3>
     <p style="font-family: monospace;" class="MsoPlainText"><span
@@ -1065,6 +1108,7 @@ Bottom
           style="">&nbsp; </span>SIGMA<br>
       </var></p>
     <p style="font-family: monospace;" class="MsoPlainText"><var>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
 
 
@@ -1085,6 +1129,7 @@ Bottom
         style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Description:</p>
     <p style="font-family: monospace;" class="MsoPlainText"><span
         style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>BOTOPT(1:1):
+
 
 
 
@@ -1143,6 +1188,7 @@ Bottom
 
 
 
+
       for the mode-finder. Finally, a reflection coefficient <span
         style=""></span>tabulated only for real angles does not provide
       a good result <span style=""></span>for complex angles of
@@ -1150,6 +1196,7 @@ Bottom
 speed
 is
 less
+
 
 
 
@@ -1211,6 +1258,7 @@ less
 
 
 
+
       </span>Interfacial roughness (m).<br>
     </p>
     <p style="margin-left: 80px; font-family: monospace;"
@@ -1229,6 +1277,7 @@ less
       class="MsoPlainText"><span style=""></span>Syntax:</p>
     <p style="margin-left: 80px; font-family: monospace;"
       class="MsoPlainText"><span style=""></span><var>ZB<span style="">&nbsp;
+
 
 
 
@@ -1269,11 +1318,13 @@ less
 
 
 
+
         </span>ASB</var></p>
     <p style="margin-left: 40px; font-family: monospace;"
       class="MsoPlainText"><span style=""></span>Description:</p>
     <div style="margin-left: 80px; font-family: monospace;">
       <p><span style=""></span>ZB:<span style="">&nbsp;&nbsp; </span>Depth
+
 
 
 
@@ -1321,7 +1372,9 @@ less
 
 
 
+
         </span>"<span style="">&nbsp;&nbsp; </span>"<span style="">&nbsp;&nbsp;
+
 
 
 
@@ -1378,6 +1431,7 @@ at
 
 
 
+
       this time. A complicated reflection coefficient may well cause <span
         style=""></span>problems for the mode-finder. Finally, a
       reflection coefficient <span style=""></span>tabulated only for
@@ -1385,6 +1439,7 @@ at
 complex
 angles
 of
+
 
 
 
@@ -1427,6 +1482,7 @@ less
 
 
 
+
       than the water sound speed. In that case, the modes are evanescent
       in the upper part of the water column and therefore have a complex
       angle of incidence.<br>
@@ -1444,6 +1500,7 @@ less
       class="MsoPlainText"><span style=""></span>Syntax:</p>
     <p style="margin-left: 80px; font-family: monospace;"
       class="MsoPlainText"><span style=""></span><var>ZB<span style="">&nbsp;
+
 
 
 

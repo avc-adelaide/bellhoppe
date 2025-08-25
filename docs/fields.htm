@@ -112,54 +112,40 @@ div.Section1
       <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Name<span
-          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-        </span>Unit<span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
         </span>Description</p>
       <p style="font-family: monospace;" class="MsoPlainText">Input</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>*.FLP<span
-          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-        </span>1<span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>FieLd
-
-        Parameters</p>
+          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+          style="">&nbsp;&nbsp;&nbsp; </span>FieLd Parameters</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>*.GRN<span
-          style="">&nbsp;&nbsp; </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>20<span
-          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>GReen's
-        function</p>
+          style="">&nbsp;&nbsp; </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span
+          style="">&nbsp;&nbsp;&nbsp; </span>GReen's function</p>
       <p style="font-family: monospace;" class="MsoPlainText">Output</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>*.PRT<span
-          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-        </span>6<span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>PRinT
-
-        file</p>
+          style="">&nbsp;&nbsp;&nbsp; &nbsp;</span><span style="">
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>PRinT file</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>*.SHD<span
-          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-        </span>25<span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>SHaDe
-
-        file</p>
+          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        </span>SHaDe file</p>
       <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
       <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
       <h2>EXAMPLE AND DESCRIPTION OF FLP FILE:</h2>
       <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
-      <p style="font-family: monospace;" class="MsoPlainText">'RDB'<span
-          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-        </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>!
-        'R/X (coord), Lin/DB, Pos/Neg/Both' </p>
-      <p style="font-family: monospace;" class="MsoPlainText">200.0<span
-          style="">&nbsp; </span>220.0<span style="">&nbsp; </span>501<span
-          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-        </span>! RMIN, RMAX, NR</p>
-      <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
+      <p style="font-family: monospace;" class="MsoPlainText"><o:p>'RP'&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; !
+          'R/X (coord), Pos/Neg/Both' <br>
+          1001&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp; ! NRr number of receiver ranges<br>
+          0.0&nbsp; 100.0 /&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ! Rr( 1
+          : Nrr ) receiver ranges (km)<br>
+          &nbsp;</o:p></p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;</span>(1) - OPTIONS</p>
       <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
@@ -172,36 +158,45 @@ div.Section1
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>OPT(1:1):
 
+
         Coordinates</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
         </span>'R' Cylindrical (R-Z) coordinates using the far-field
         approximation to the Hankel functions.</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>'X'
 
+
         Cartesian<span style="">&nbsp;&nbsp; </span>(X-Z) coordinates.<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
         'H' Hankel functions used to provide the exact transform (a bit
         slower but more accurate)<br>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
         (only available in the Matlab fieldsco.m)<br>
       </p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>OPT(2:2):
 
+
         Spectrum</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
         </span>'P' Positive (recommended)</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
+
         </span>'N' Negative</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
         </span>'B' Both positive and negative</p>
       <p style="margin-left: 160px; font-family: monospace;"
@@ -209,6 +204,7 @@ div.Section1
         should formally be done from all along the real k-axis, however
         the negative portion contributes significantly <span style=""></span>only
 in
+
 
         the near-field.<span style="">&nbsp; </span>Run-time is less if
         it is neglected.</p>
@@ -218,11 +214,14 @@ in
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
+
         </span>'O' POlynomial (for broadband runs) (default)</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
+
         </span>'A' PAde<span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
         </span>(can produce better results for CW runs but is less
         reliable)</p>
@@ -233,47 +232,72 @@ in
       <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>OPT(4:4):
 
+
         Selects a source beam pattern<br>
       </p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
+
         </span>'*' Read in a source beam pattern file.</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
+
         </span>'O' Omnidirectional (default).</p>
       <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
-          style="">&nbsp;</span>(2) - RECEIVER RANGES</p>
+          style="">&nbsp;</span>(3) - NUMBER OF RECEIVER RANGES </p>
       <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Syntax:
-        RMIN<span style="">&nbsp; </span>RMAX<span style="">&nbsp; </span>NR</p>
+        NRr<span style=""></span><span style=""><br>
+        </span></p>
       <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;</span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+        </span>Description:</p>
+      <p style="font-family: monospace;" class="MsoPlainText"><br>
+      </p>
+      <p style="font-family: monospace;" class="MsoPlainText"><span
+          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+        </span>NRr:<span style="">&nbsp;&nbsp; </span>Number of
+        receiver ranges</p>
+      <p style="margin-left: 120px; font-family: monospace;"
+        class="MsoPlainText"><span style=""></span>In the Fortran field
+        routine, the actual number of ranges used may be increased to
+        satisfy FFT sampling requirements.</p>
+      <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
+      <p style="font-family: monospace;" class="MsoPlainText">(3) -
+        RECEIVER RANGES</p>
+      <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
+      <p style="font-family: monospace;" class="MsoPlainText"><span
+          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>Syntax:
+        Rr( 1 : NRr )<span style=""></span><span style=""><br>
+        </span></p>
+      <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
+      <p style="font-family: monospace;" class="MsoPlainText"><span
+          style="">&nbsp;</span><span style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 
         </span>Description:</p>
       <p style="font-family: monospace;" class="MsoPlainText"><span
           style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-        </span>RMIN: First receiver range (km)</p>
-      <p style="font-family: monospace;" class="MsoPlainText"><span
-          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-        </span>RD:<span style="">&nbsp;&nbsp; </span>Last<span style="">&nbsp;
-
-        </span>receiver range (km)</p>
-      <p style="font-family: monospace;" class="MsoPlainText"><span
-          style="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-        </span>NR:<span style="">&nbsp;&nbsp; </span>Minimum number of
-        receiver ranges</p>
-      <p style="margin-left: 120px; font-family: monospace;"
-        class="MsoPlainText"><span style=""></span>The actual number of
-        ranges used is increased slightly to satisfy FFT sampling
-        requirements.</p>
+        </span>Rr: Vector of receiver range (km)<br>
+        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; If the
+        vector is terminated with a '/', then a uniformly spaced vector
+        of ranges is generated between Rr( 1 ) and Rr( 2 )<br>
+      </p>
+      <p style="font-family: monospace;" class="MsoPlainText"><br>
+      </p>
+      <p style="font-family: monospace;" class="MsoPlainText"><br>
+      </p>
       <p style="font-family: monospace;" class="MsoPlainText"><o:p>&nbsp;</o:p></p>
     </div>
   </body>
