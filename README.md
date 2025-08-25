@@ -66,7 +66,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Generate documentation on your machine:
 ```bash
+# Install FORD and system dependencies
 pip install FORD
+sudo apt install graphviz  # Required for call graphs and flow diagrams
+
+# Generate documentation with graphs
 make docs
 open doc/index.html  # View generated documentation
 ```
@@ -112,10 +116,10 @@ Install the required dependencies on Ubuntu (for other distributions like RHEL/C
 
 ```bash
 sudo apt update
-sudo apt install gfortran liblapack-dev liblapacke-dev python3.12 python3.12-pip python3.12-venv
+sudo apt install gfortran liblapack-dev liblapacke-dev python3.12 python3.12-pip python3.12-venv graphviz
 
 # If python3.12 is not available, python3 (>= 3.10) may work but python3.12 is recommended
-# sudo apt install gfortran liblapack-dev liblapacke-dev python3 python3-pip python3-venv
+# sudo apt install gfortran liblapack-dev liblapacke-dev python3 python3-pip python3-venv graphviz
 ```
 
 Build and install the Fortran executables:
