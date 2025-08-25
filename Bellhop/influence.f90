@@ -1,5 +1,6 @@
 !! Beam influence computation for pressure field calculation
 MODULE Influence
+  !! Computes beam contributions to complex pressure fields using various beam weighting approaches
 
   ! Compute the beam influence, i.e. the contribution of a single beam to the complex pressure
   ! mbp 12/2018, based on much older subroutines

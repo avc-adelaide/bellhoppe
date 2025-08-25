@@ -1,5 +1,6 @@
 !! Three-dimensional boundary conditions for altimetry and bathymetry
 MODULE bdry3Dmod
+  !! 3D boundary handling for complex altimetry and bathymetry with spatial interpolation
 
   ! Loads
   ! altimetry (top bdry) and bathymetry (bottom bdry) data

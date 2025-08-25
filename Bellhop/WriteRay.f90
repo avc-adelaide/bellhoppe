@@ -1,5 +1,6 @@
 !! Ray data compression and output formatting
 MODULE WriteRay
+  !! Ray data compression, formatting, and output to ray files with selective point retention
 
   ! Compress the ray data keeping every iSkip point, points near surface or bottom, and last point.
   ! Write to RAYFile.

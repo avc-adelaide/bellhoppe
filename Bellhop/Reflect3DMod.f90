@@ -1,5 +1,6 @@
 !! Three-dimensional reflection calculations for acoustic boundaries
 MODULE Reflect3DMod
+  !! 3D ray reflection computations at boundaries with complex geometry and loss calculations
 
   USE bellhopMod
 

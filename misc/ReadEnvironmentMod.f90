@@ -1,5 +1,6 @@
 !! Environment file reading utilities for acoustic models
 MODULE ReadEnvironmentMod
+  !! Environment file parsing and configuration setup for acoustic modeling applications
 
   ! mbp 12/2018, based on much older subroutine
 

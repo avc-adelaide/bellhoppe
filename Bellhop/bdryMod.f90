@@ -1,5 +1,6 @@
 !! Boundary conditions module for altimetry and bathymetry data
 MODULE bdrymod
+  !! Boundary handling for altimetry (top) and bathymetry (bottom) with interpolation capabilities
 
   ! Loads altimetry (top bdry) and bathymetry (bottom bdry) data
 

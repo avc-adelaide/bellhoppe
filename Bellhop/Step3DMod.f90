@@ -1,5 +1,6 @@
 !! Three-dimensional ray stepping with adaptive step control
 MODULE Step3DMod
+  !! 3D ray propagation with adaptive step control and complex boundary interactions
 
   USE bellhopMod
   USE Bdry3DMod

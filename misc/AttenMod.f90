@@ -1,6 +1,7 @@
 !! Attenuation module for converting sound speed and attenuation to complex values
 !! Provides routines to convert sound speed and attenuation in user units to complex sound speed
 MODULE AttenMod
+  !! Acoustic attenuation calculations including volume attenuation formulas and unit conversions
 
   ! Attenuation module
   ! Routines to convert a sound speed and attenuation in user units to a complex sound speed
