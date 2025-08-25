@@ -1,3 +1,5 @@
+!! Provides interface for computing weights and indices for lonear interpolation
+
 MODULE CalculateWeights
 
   ! mbp 12/2018, based on much older subroutine

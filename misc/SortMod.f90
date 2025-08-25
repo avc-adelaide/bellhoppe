@@ -1,7 +1,7 @@
 MODULE SortMod
+!! Provides an insertion sort on a vector of real numbers
 
   ! mbp 1/2015 incorporating subroutines from decades past
-  ! Does an insertion sort on a vector of real numbers
 
   ! At the Ith step, the first I-1 positions contain a sorted
   ! vector.  We shall insert the Ith value into its place in that

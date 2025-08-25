@@ -1,3 +1,5 @@
+!! Provides function to generate Munk profile
+
 SUBROUTINE ANALYT( cP, cS, rho, Medium, N1 )
 
   !     Munk profile

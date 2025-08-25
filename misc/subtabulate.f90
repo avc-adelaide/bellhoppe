@@ -1,4 +1,7 @@
+!! Provides module `SubTabulate`
+
 MODULE SubTabulate
+!! Provides "subtabulation" functions (single and double) for creating interpolated ranges
 
   ! If x( 3 ) = -999.9 then subtabulation is performed
   ! i.e., a vector is generated with Nx points in [ x( 1 ), x( 2 ) ]
@@ -16,6 +19,7 @@ MODULE SubTabulate
 CONTAINS
 
   SUBROUTINE SubTab_sngl( x, Nx )
+  !! Subtabulate array `x`, creating interpolated array of length `Nx`
 
     INTEGER, INTENT( IN )    :: Nx
     REAL,    INTENT( INOUT ) :: x( Nx )
@@ -32,7 +36,8 @@ CONTAINS
   END SUBROUTINE SubTab_sngl
 
   SUBROUTINE SubTab_dble( x, Nx )
-
+  !! Subtabulate array `x`, creating interpolated array of length `Nx`
+ 
     INTEGER,       INTENT( IN )    :: Nx
     REAL (KIND=8), INTENT( INOUT ) :: x( Nx )
     REAL (KIND=8)                  :: deltax

@@ -1,5 +1,5 @@
 MODULE SourceReceiverPositions
-  ! Reads in source depths, receiver depths, receiver ranges, and receiver bearings
+!! Reads in source depths, receiver depths, receiver ranges, and receiver bearings
 
   USE monotonicMod
   USE SortMod

@@ -1,5 +1,5 @@
 MODULE FatalError
-!! Provides ERROUT error message
+!! Provides `ERROUT` error message
 
   IMPLICIT NONE
   INTEGER, PRIVATE :: PRTFile = 6

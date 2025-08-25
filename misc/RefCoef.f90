@@ -1,3 +1,5 @@
+!! Provides data and functions for working with reflection coefficients
+
 MODULE RefCoef
 
   ! reflection coefficient data
