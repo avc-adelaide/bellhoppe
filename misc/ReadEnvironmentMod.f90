@@ -150,7 +150,7 @@ CONTAINS
 
   END SUBROUTINE ReadEnvironment
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE ReadTopOpt( TopOpt, BC, AttenUnit )
 
@@ -242,7 +242,7 @@ CONTAINS
 
   END SUBROUTINE ReadTopOpt
 
-  !**********************************************************************!
+  ! **********************************************************************!
   SUBROUTINE TopBot( HS )
 
     ! Handles top and bottom boundary conditions

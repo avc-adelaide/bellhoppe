@@ -196,7 +196,7 @@ SUBROUTINE CSPLINE (TAU, C, N, IBCBEG, IBCEND, NDIM)
    20 CONTINUE
       RETURN
       END
-!**********************************************************************C
+! **********************************************************************C
       FUNCTION SPLINE ( C, H )
 
 !     THIS FUNCTION EVALUATES THE SPLINE AT THE POINT H
@@ -229,7 +229,7 @@ SUBROUTINE CSPLINE (TAU, C, N, IBCBEG, IBCEND, NDIM)
       SPLINEXX = C(3) + H * C(4)
       RETURN
       END
-!**********************************************************************C
+! **********************************************************************C
       SUBROUTINE SPLINEALL ( C, H, F, FX, FXX )
 
 !     THIS ROUTINE EVALUATES THE

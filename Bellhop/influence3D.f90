@@ -146,7 +146,7 @@ CONTAINS
 
   END SUBROUTINE Influence3DGeoHatRayCen
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE Influence3DGeoHatCart( alpha, beta, Dalpha, Dbeta, P, x_rcvrMat, t_rcvr )
 
@@ -336,7 +336,7 @@ CONTAINS
 
   END SUBROUTINE Influence3DGeoHatCart
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE Influence3DGeoGaussianRayCen( alpha, beta, Dalpha, Dbeta, P )
 
@@ -547,7 +547,7 @@ CONTAINS
   END SUBROUTINE Influence3DGeoGaussianRayCen
 
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE Influence3DGeoGaussianCart( alpha, beta, Dalpha, Dbeta, P, x_rcvrMat, t_rcvr )
 

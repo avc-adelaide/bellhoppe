@@ -87,7 +87,7 @@ CONTAINS
 
   END SUBROUTINE ReadRayElevationAngles
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE ReadRayBearingAngles( freq, TopOpt, RunType )
 

@@ -108,7 +108,7 @@ CONTAINS
 
   END SUBROUTINE EvaluateSSP
   
-!**********************************************************************!
+! **********************************************************************!
 
 SUBROUTINE EvaluateSSP2D( x2D, t2D, c, cimag, gradc, crr, crz, czz, rho, xs, tradial, freq )
 
@@ -134,7 +134,7 @@ SUBROUTINE EvaluateSSP2D( x2D, t2D, c, cimag, gradc, crr, crz, czz, rho, xs, tra
   RETURN
 END SUBROUTINE EvaluateSSP2D
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE EvaluateSSP3D( x, t, c, cimag, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho, freq, Task )
 
@@ -181,7 +181,7 @@ END SUBROUTINE EvaluateSSP2D
 
   END SUBROUTINE EvaluateSSP3D
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
 !! Linear interpolation for squared buoyancy frequency
   SUBROUTINE n2Linear( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
@@ -224,7 +224,7 @@ END SUBROUTINE EvaluateSSP2D
 
   END SUBROUTINE n2Linear
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE cLinear( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
 
@@ -256,7 +256,7 @@ END SUBROUTINE EvaluateSSP2D
 
   END SUBROUTINE cLinear
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE cPCHIP( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
 
@@ -311,7 +311,7 @@ END SUBROUTINE EvaluateSSP2D
 
   END SUBROUTINE cPCHIP
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE cCubic( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
 
@@ -367,7 +367,7 @@ END SUBROUTINE EvaluateSSP2D
 
   END SUBROUTINE cCubic
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
 !! Quadrilateral interpolation for 3D sound speed profiles
   SUBROUTINE Quad( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
@@ -492,7 +492,7 @@ END SUBROUTINE EvaluateSSP2D
 
   END SUBROUTINE Quad
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE Hexahedral( x, t, c, cimag, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho, freq, Task )
 
@@ -696,7 +696,7 @@ END SUBROUTINE EvaluateSSP2D
 
   END SUBROUTINE Hexahedral
 
-!**********************************************************************!
+! **********************************************************************!
 
   SUBROUTINE Analytic( x, t, c, cimag, gradc, crr, crz, czz, rho )
 
@@ -735,7 +735,7 @@ END SUBROUTINE EvaluateSSP2D
     RETURN
   END SUBROUTINE Analytic
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE AnalyticCosh( x, t, c, cimag, gradc, crr, crz, czz, rho )
 
@@ -768,7 +768,7 @@ END SUBROUTINE EvaluateSSP2D
     RETURN
   END SUBROUTINE AnalyticCosh
 
-!**********************************************************************!
+! **********************************************************************!
 
 SUBROUTINE Analytic3D( x, t, c, cimag, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho )
 
@@ -811,7 +811,7 @@ SUBROUTINE Analytic3D( x, t, c, cimag, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho 
   RETURN
 END SUBROUTINE Analytic3D
 
-!**********************************************************************!
+! **********************************************************************!
 
   SUBROUTINE ReadSSP( Depth, freq )
 

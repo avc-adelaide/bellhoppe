@@ -126,7 +126,7 @@ CONTAINS
     RETURN
   END FUNCTION CRCI
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
 !! Computes Francois-Garrison volume attenuation
   FUNCTION Franc_Garr( f )

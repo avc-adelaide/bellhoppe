@@ -487,7 +487,7 @@ SUBROUTINE PickEpsilon( BeamType, omega, c, Dalpha, Dbeta, rLoop, EpsMultiplier,
 END SUBROUTINE PickEpsilon
 
 
-!**********************************************************************!
+! **********************************************************************!
 
 SUBROUTINE TraceRay2D( alpha, beta, Amp0 )
 
@@ -811,8 +811,8 @@ SUBROUTINE Step2D( ray0, ray2, tradial, topRefl, botRefl )
 
 END SUBROUTINE Step2D
 
-!! Transform ray coordinates to ocean coordinates
 FUNCTION RayToOceanX( x, xs, tradial )
+!! Transform ray coordinates to ocean coordinates
   REAL ( KIND=8 ) :: RayToOceanX( 3 )
   REAL ( KIND=8 ), INTENT( IN ) :: x( 2 ), xs( 3 ), tradial( 2 )
   RayToOceanX = [ xs( 1 ) + x( 1 ) * tradial( 1 ), &
@@ -820,8 +820,8 @@ FUNCTION RayToOceanX( x, xs, tradial )
                   x( 2 ) ]
 END FUNCTION
 
-!! Transform ray tangent to ocean tangent coordinates
 FUNCTION RayToOceanT( t, tradial )
+!! Transform ray tangent to ocean tangent coordinates
   REAL ( KIND=8 ) :: RayToOceanT( 3 )
   REAL ( KIND=8 ), INTENT( IN  ) :: t( 2 ), tradial( 2 )
   RayToOceanT = [ t( 1 ) * tradial( 1 ), &
@@ -829,8 +829,8 @@ FUNCTION RayToOceanT( t, tradial )
                   t( 2 ) ]
 END FUNCTION
 
-!! Transform ocean coordinates to ray coordinates
 FUNCTION OceanToRayX( x, xs, tradial, t, snapDim )
+!! Transform ocean coordinates to ray coordinates
   
   ! LP: Going back and forth through the coordinate transform won't
   ! always keep the precise value, so we may have to finesse the floats.
@@ -895,11 +895,10 @@ FUNCTION OceanToRayX( x, xs, tradial, t, snapDim )
   OceanToRayX = ret
 END FUNCTION
 
-!**********************************************************************!
+! **********************************************************************!
 
 SUBROUTINE TraceRay3D( alpha, beta, epsilon, Amp0 )
-
-  ! Traces the beam corresponding to a particular take off angle
+!! Traces the beam corresponding to a particular take off angle
 
   USE Step3DMod
   USE Reflect3DMod
@@ -1100,8 +1099,8 @@ END SUBROUTINE TraceRay3D
 ! **********************************************************************!
 
 SUBROUTINE Distances3D( rayx, Topx, Botx, Topn, Botn, DistTop, DistBot )
+!! Computes distances from ray to boundaries
 
-  ! Computes distances from ray to boundaries
   ! Formula differs from JKPS because code uses outward pointing normals
   ! Note that Topx, Botx, just need to be any node on the diagonal that divides each square into triangles
   ! In bdry3DMod, the node is selected as the one at the lowest x, y, index and that defines the triangles

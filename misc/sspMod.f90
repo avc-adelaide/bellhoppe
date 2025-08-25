@@ -93,7 +93,7 @@ CONTAINS
     RETURN
   END SUBROUTINE EvaluateSSP
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE n2Linear( cP, cS, rho, Medium, N1, Task )
 
@@ -154,7 +154,7 @@ CONTAINS
     RETURN
   END SUBROUTINE n2Linear
   
-  !**********************************************************************!
+  ! **********************************************************************!
   
   SUBROUTINE cLinear( cP, cS, rho, Medium, N1, Task )
 
@@ -198,7 +198,7 @@ CONTAINS
     RETURN
   END SUBROUTINE cLinear
 
-  !**********************************************************************!
+  ! **********************************************************************!
   
   SUBROUTINE cPCHIP( cP, cS, rho, Medium, N1, Task )
 
@@ -252,7 +252,7 @@ CONTAINS
     RETURN
   END SUBROUTINE cPCHIP
 
-  !**********************************************************************!
+  ! **********************************************************************!
   
   SUBROUTINE cCubic( cP, cS, rho, Medium, N1, Task )
 
@@ -298,7 +298,7 @@ CONTAINS
     RETURN
   END SUBROUTINE cCubic
 
-!**********************************************************************!
+! **********************************************************************!
 
   SUBROUTINE ReadSSP( Medium, N1 )
 
@@ -371,7 +371,7 @@ CONTAINS
 
   END SUBROUTINE ReadSSP
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE UpdateSSPLoss( freq, freq0 )
     ! Updates the imaginary part of the sound speed based on the frequency
@@ -419,7 +419,7 @@ CONTAINS
   END SUBROUTINE UpdateSSPLoss
 
   
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE UpdateHSLoss( freq, freq0 )
 

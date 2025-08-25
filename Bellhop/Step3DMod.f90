@@ -206,7 +206,7 @@ CONTAINS
 
     END SUBROUTINE CurvatureCorrection
 
-    !**********************************************************************!
+    ! **********************************************************************!
 
     SUBROUTINE Get_c_partials( cxx, cxy, cxz, cyy, cyz, czz, e1, e2, cnn, cmn, cmm )
 

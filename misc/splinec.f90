@@ -198,7 +198,7 @@ SUBROUTINE VSPLINE (TAU, C, M, MDIM, F, N)
 END SUBROUTINE VSPLINE
 
 
-!**********************************************************************C
+! **********************************************************************C
       FUNCTION SPLINE ( C, H )
 
 !     THIS FUNCTION EVALUATES THE SPLINE AT THE POINT H
@@ -231,7 +231,7 @@ END SUBROUTINE VSPLINE
       SPLINEXX = C(3) + H * C(4)
       RETURN
       END FUNCTION SPLINEXX
-!**********************************************************************C
+! **********************************************************************C
       SUBROUTINE SPLINEALL ( C, H, F, FX, FXX )
 
 !     THIS ROUTINE EVALUATES THE

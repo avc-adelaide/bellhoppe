@@ -237,7 +237,7 @@ CONTAINS
 
   END SUBROUTINE ReadEnvironment
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE ReadTopOpt( TopOpt, BC, AttenUnit, FileRoot )
 
@@ -352,7 +352,7 @@ CONTAINS
 
   END SUBROUTINE ReadTopOpt
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
 !! Reads and validates the run type parameters
   SUBROUTINE ReadRunType( RunType, PlotType )
@@ -439,7 +439,7 @@ CONTAINS
 
   END SUBROUTINE ReadRunType
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE TopBot( freq, AttenUnit, HS )
 

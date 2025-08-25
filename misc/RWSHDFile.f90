@@ -64,7 +64,7 @@ CONTAINS
 
   END SUBROUTINE ReadHeader
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE WriteHeader( FileName, Title, freq0, atten, PlotType )
 
@@ -131,7 +131,7 @@ CONTAINS
 
   END SUBROUTINE WriteHeader
 
-  !**********************************************************************!
+  ! **********************************************************************!
 
   SUBROUTINE WriteField( P, NRz, NRr, IRec )
 
