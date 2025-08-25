@@ -1,3 +1,4 @@
+!! Boundary conditions module for altimetry and bathymetry data
 MODULE bdrymod
 
   ! Loads altimetry (top bdry) and bathymetry (bottom bdry) data

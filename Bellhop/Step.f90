@@ -1,3 +1,4 @@
+!! Ray stepping module with adaptive step size control
 MODULE Step
 
   USE bellhopMod
