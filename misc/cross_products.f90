@@ -1,4 +1,5 @@
 MODULE cross_products
+!! Provides a cross product function for both single and double reals
 
 ! mbp 1/2012
 

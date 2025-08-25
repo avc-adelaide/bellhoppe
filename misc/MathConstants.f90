@@ -1,4 +1,5 @@
 MODULE MathConstants
+!! Provides maths constants such as `pi`
 
    SAVE
    REAL    (KIND=8), PARAMETER :: pi = 3.1415926535897932D0, RadDeg = 180.0D0 / pi, DegRad = pi / 180.0D0
