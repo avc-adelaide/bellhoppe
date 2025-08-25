@@ -1,3 +1,4 @@
+!! Core BELLHOP module with global variables and data structures
 MODULE bellhopMod
 
   USE MathConstants

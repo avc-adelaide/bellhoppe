@@ -1,3 +1,4 @@
+!! Acoustic arrivals module for computing and storing arrival information
 MODULE ArrMod
 
   USE MathConstants

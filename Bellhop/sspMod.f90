@@ -1,3 +1,4 @@
+!! Sound speed profile module with interpolation and derivatives
 MODULE sspmod
 
   ! Holds SSP input by user and associated variables

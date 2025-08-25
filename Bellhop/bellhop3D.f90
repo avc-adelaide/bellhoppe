@@ -1,3 +1,4 @@
+!! Gaussian beam tracing for ocean acoustics in three dimensions
 PROGRAM BELLHOP3D
 
   ! Gaussian beam tracing in three dimensions
@@ -808,6 +809,7 @@ SUBROUTINE Step2D( ray0, ray2, tradial, topRefl, botRefl )
 
 END SUBROUTINE Step2D
 
+!! Transform ray coordinates to ocean coordinates
 FUNCTION RayToOceanX( x, xs, tradial )
   REAL ( KIND=8 ) :: RayToOceanX( 3 )
   REAL ( KIND=8 ), INTENT( IN ) :: x( 2 ), xs( 3 ), tradial( 2 )
@@ -816,6 +818,7 @@ FUNCTION RayToOceanX( x, xs, tradial )
                   x( 2 ) ]
 END FUNCTION
 
+!! Transform ray tangent to ocean tangent coordinates
 FUNCTION RayToOceanT( t, tradial )
   REAL ( KIND=8 ) :: RayToOceanT( 3 )
   REAL ( KIND=8 ), INTENT( IN  ) :: t( 2 ), tradial( 2 )
@@ -824,6 +827,7 @@ FUNCTION RayToOceanT( t, tradial )
                   t( 2 ) ]
 END FUNCTION
 
+!! Transform ocean coordinates to ray coordinates
 FUNCTION OceanToRayX( x, xs, tradial, t, snapDim )
   
   ! LP: Going back and forth through the coordinate transform won't
