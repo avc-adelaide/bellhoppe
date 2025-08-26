@@ -40,6 +40,10 @@ jobs:
       run: |
         make coverage-report
         
+    - name: Generate HTML coverage reports for FORD integration
+      run: |
+        make coverage-html
+        
     - name: Create coverage summary
       run: |
         echo "# Coverage Report Summary" > coverage-summary.md
@@ -76,6 +80,7 @@ jobs:
         name: coverage-reports
         path: |
           **/*.gcov
+          docs/*.html
           coverage-summary.md
         retention-days: 30
         
