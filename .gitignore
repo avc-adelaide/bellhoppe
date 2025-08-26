@@ -73,3 +73,7 @@ fort.*
 *.gcda
 *.gcno
 *.gcov
+
+# Generated coverage HTML reports (regenerated automatically)
+docs/coverage-index.html
+docs/*.coverage.html

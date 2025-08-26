@@ -284,7 +284,18 @@ coverage-report:
 	@cd Bellhop && ls -la *.gcov 2>/dev/null | head -5 || echo "No .gcov files found in Bellhop/"
 	@cd misc && ls -la *.gcov 2>/dev/null | head -5 || echo "No .gcov files found in misc/"
 
-coverage-full: coverage-test coverage-report
+coverage-html:
+	@echo "Generating HTML coverage reports for FORD integration..."
+	@if [ ! $$(find . -name '*.gcov' | wc -l) -gt 0 ]; then \
+		echo "No .gcov files found. Run 'make coverage-report' first."; \
+		exit 1; \
+	fi
+	@echo "Creating HTML reports in docs/ directory for FORD media integration..."
+	python3 scripts/generate_coverage_html.py docs/
+	@echo "HTML coverage reports generated and integrated with FORD documentation."
+	@echo "Reports will be accessible through FORD as media files at /media/"
+
+coverage-full: coverage-test coverage-report coverage-html
 	@echo "Full coverage analysis complete."
 
-.PHONY: all install clean docs clean-docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-full
+.PHONY: all install clean docs clean-docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full

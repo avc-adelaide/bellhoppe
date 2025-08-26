@@ -306,6 +306,9 @@ Taken at least once:62.50% of 16
 
 ### Viewing Coverage Reports
 
+Coverage reports are available in multiple formats:
+
+#### 1. Raw GCOV Files
 Coverage reports are created as `.gcov` files in the source directories (`Bellhop/` and `misc/`). Each report shows the original source code with execution counts:
 
 ```
@@ -319,9 +322,50 @@ Where:
 - `-` indicates non-executable lines (comments, declarations)
 - `#####` indicates executable lines that were never run
 
+#### 2. Interactive HTML Reports (FORD Integration)
+
+For enhanced browsability, coverage reports are automatically integrated with the FORD documentation system as interactive HTML reports:
+
+```bash
+make coverage-html    # Generate HTML reports in docs/ directory
+make docs            # Generate FORD documentation with coverage integration
+```
+
+The HTML reports provide:
+- **Interactive Coverage Dashboard** - Overview of all source files with coverage statistics
+- **Color-Coded Source Views** - Line-by-line coverage visualization with execution counts
+- **Coverage Metrics** - Detailed line, branch, and call coverage percentages
+- **Browsable Navigation** - Easy switching between different source files
+
+**Accessing HTML Coverage Reports:**
+- Locally: Open `./doc/media/coverage-index.html` after running `make docs`
+- Online: Browse to the coverage section in the published FORD documentation
+- The coverage reports are accessible as "media" files within the FORD documentation system
+
+#### 3. Coverage Report Features
+
+The HTML coverage reports include:
+- **Green highlighting**: Lines executed during testing
+- **Red highlighting**: Lines that were never executed  
+- **Gray highlighting**: Non-executable lines (comments, declarations)
+- **Execution counts**: Number of times each line was executed
+- **Summary statistics**: Overall coverage percentages for lines, branches, and calls
+
 ### GitHub Actions Integration
 
-Code coverage analysis runs automatically in GitHub Actions on pull requests and pushes to the main branch. Coverage reports are uploaded as workflow artifacts and can be downloaded from the Actions page.
+Code coverage analysis runs automatically in GitHub Actions:
+
+#### Coverage Workflow
+- **Triggered on**: Pull requests and pushes to the main branch
+- **Generates**: Raw GCOV files and HTML coverage reports
+- **Uploads**: Coverage artifacts available for download from the Actions page
+
+#### Documentation Workflow
+- **Integrates coverage**: Automatically generates HTML coverage reports during documentation builds  
+- **Publishes**: Coverage reports are included in the published FORD documentation as browsable media files
+- **Updates**: Coverage data is refreshed with each documentation build
+
+This ensures coverage reports are always current and easily accessible through the project's documentation site.
 
 ### Cleaning Coverage Files
 

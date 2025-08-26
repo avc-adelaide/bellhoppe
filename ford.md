@@ -100,3 +100,28 @@ Acoustics Toolbox project and subsequent development efforts:
 
 These documents provide valuable context for understanding the full capabilities and 
 history of the BELLHOP acoustic modeling system.
+
+## Code Coverage Analysis
+
+BELLHOP includes comprehensive code coverage analysis capabilities using GCOV to assess 
+test suite effectiveness and identify untested code paths.
+
+### Coverage Reports
+- **[Coverage Index](media/coverage-index.html)** - Interactive dashboard showing coverage statistics for all source files
+- **Individual File Reports** - Detailed line-by-line coverage analysis for each source file, accessible through the coverage index
+
+### Coverage Analysis Features
+- **Line Coverage** - Shows which lines of code are executed during testing
+- **Branch Coverage** - Identifies which conditional branches are taken or not taken
+- **Call Coverage** - Tracks function and subroutine call execution
+- **Color-Coded Display** - Visual highlighting of executed (green), unexecuted (red), and non-executable (gray) code
+
+### Generating Coverage Reports
+To generate fresh coverage reports locally:
+```bash
+make coverage-full    # Complete coverage analysis workflow
+make coverage-html    # Generate HTML reports from existing .gcov data
+```
+
+The coverage system provides quantitative assessment of test suite completeness and helps
+identify areas requiring additional testing to ensure robust acoustic simulation reliability.
