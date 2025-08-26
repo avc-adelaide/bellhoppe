@@ -130,7 +130,7 @@ else
 endif
 
 # Coverage flags (for GCOV code coverage analysis)
-FFLAGS_COVERAGE = --coverage
+FFLAGS_COVERAGE = -fprofile-arcs -ftest-coverage
 
 # Combine
 FFLAGS = $(FFLAGS_BASE) $(FFLAGS_ARCH)
@@ -176,6 +176,9 @@ export FFLAGS
 # export FFLAGS= -g -Minfo=ccff -Minform=inform -C
 
 # ______________________________________________________________________________
+
+# use gcov-15 if available (needed on Mac) otherwise just use normal gcov (normal on Linux)
+GCOV := $(shell command -v gcov-15 2>/dev/null || command -v gcov)
 
 export RM=rm
 export CC=gcc
@@ -261,7 +264,7 @@ coverage-report:
 			base=$$(basename $$gcda_file .gcda); \
 			if [ -f "$$base.gcno" ]; then \
 				echo "Processing $$base..."; \
-				gcov -b -c "$$gcda_file"; \
+				$(GCOV) -b -c "$$gcda_file"; \
 			else \
 				echo "Warning: No .gcno file found for $$base"; \
 			fi; \
@@ -273,7 +276,7 @@ coverage-report:
 			base=$$(basename $$gcda_file .gcda); \
 			if [ -f "$$base.gcno" ]; then \
 				echo "Processing $$base..."; \
-				gcov -b -c "$$gcda_file"; \
+				$(GCOV) -b -c "$$gcda_file"; \
 			else \
 				echo "Warning: No .gcno file found for $$base"; \
 			fi; \
