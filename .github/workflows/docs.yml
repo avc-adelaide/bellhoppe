@@ -40,15 +40,6 @@ jobs:
     - name: Install gfortran and graphviz
       run: sudo apt-get update && sudo apt-get install -y gfortran graphviz gcc
       
-    - name: Generate code coverage for documentation integration
-      run: |
-        # Build with coverage and run basic tests to generate coverage data
-        make coverage-build
-        make coverage-install
-        make coverage-test || true  # Don't fail if some tests fail
-        make coverage-report || true  # Generate .gcov files
-        make coverage-html || true   # Generate HTML reports in docs/
-        
     - name: Generate documentation
       run: |
         ford -g -d "Bellhop" -d "misc" ford.md
