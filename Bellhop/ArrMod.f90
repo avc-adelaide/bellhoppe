@@ -112,7 +112,7 @@ CONTAINS
              IF ( r ( ir ) == 0 ) THEN
                 factor = 1e5                   ! avoid /0 at origin
              ELSE
-                factor = 1. / SQRT( r( ir ) )  ! cyl. spreading
+                factor = 1. / SQRT( ABS( r( ir ) ) )  ! cyl. spreading [CF] ABS() used to eliminate NaN for -ve range values
              END IF
           END IF
 
