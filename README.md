@@ -328,7 +328,8 @@ For enhanced browsability, coverage reports are automatically integrated with th
 
 ```bash
 make coverage-html    # Generate HTML reports in docs/ directory
-make docs            # Generate FORD documentation with coverage integration
+# Note: Coverage reports are no longer integrated with documentation
+make docs            # Generate FORD documentation (separate from coverage)
 ```
 
 The HTML reports provide:
@@ -338,9 +339,8 @@ The HTML reports provide:
 - **Browsable Navigation** - Easy switching between different source files
 
 **Accessing HTML Coverage Reports:**
-- Locally: Open `./doc/media/coverage-index.html` after running `make docs`
-- Online: Browse to the coverage section in the published FORD documentation
-- The coverage reports are accessible as "media" files within the FORD documentation system
+- Locally: Generate with `make coverage-html` then open generated HTML files in the `docs/` directory
+- The coverage reports are standalone HTML files, not integrated with FORD documentation
 
 #### 3. Coverage Report Features
 
@@ -361,11 +361,8 @@ Code coverage analysis runs automatically in GitHub Actions:
 - **Uploads**: Coverage artifacts available for download from the Actions page
 
 #### Documentation Workflow
-- **Integrates coverage**: Automatically generates HTML coverage reports during documentation builds  
-- **Publishes**: Coverage reports are included in the published FORD documentation as browsable media files
-- **Updates**: Coverage data is refreshed with each documentation build
-
-This ensures coverage reports are always current and easily accessible through the project's documentation site.
+- **Separate from coverage**: The documentation workflow generates FORD documentation without coverage integration
+- **Independent**: Documentation builds are not dependent on coverage data
 
 ### Cleaning Coverage Files
 
