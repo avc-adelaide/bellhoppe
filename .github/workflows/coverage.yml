@@ -17,7 +17,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y gfortran gcov
+        sudo apt install -y gfortran gcc
         
     - name: Verify compiler and tools
       run: |
