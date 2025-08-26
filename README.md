@@ -233,6 +233,106 @@ Alternatively, if you have pytest installed directly, you can run:
 
     pytest --capture=tee-sys
 
+## Code Coverage Analysis
+
+BELLHOP includes integrated support for code coverage analysis using GCOV. This helps assess how much of the codebase is exercised by tests and identify areas that may need additional testing.
+
+### Prerequisites
+
+Coverage analysis requires:
+- `gfortran` (GNU Fortran compiler) with GCOV support
+- Standard make utility
+
+These are typically available on most Linux systems. On Ubuntu/Debian:
+
+```bash
+sudo apt install gfortran
+```
+
+### Generating Coverage Reports Locally
+
+To generate and view code coverage reports:
+
+1. **Clean any previous coverage data:**
+   ```bash
+   make coverage-clean
+   ```
+
+2. **Build with coverage instrumentation:**
+   ```bash
+   make coverage-build
+   ```
+
+3. **Install coverage-enabled executables:**
+   ```bash
+   make coverage-install
+   ```
+
+4. **Run tests to generate coverage data:**
+   ```bash
+   make coverage-test
+   ```
+
+5. **Generate coverage reports:**
+   ```bash
+   make coverage-report
+   ```
+
+6. **Or run the complete workflow in one command:**
+   ```bash
+   make coverage-full
+   ```
+
+### Understanding Coverage Reports
+
+The coverage analysis generates several types of files:
+
+- **`.gcno` files**: Coverage note files created during compilation
+- **`.gcda` files**: Coverage data files created when running instrumented executables  
+- **`.gcov` files**: Human-readable coverage reports showing line-by-line execution counts
+
+Coverage reports show:
+- **Lines executed**: Percentage of executable lines that were run
+- **Branches executed**: Percentage of conditional branches that were taken
+- **Calls executed**: Percentage of function/procedure calls that were made
+
+Example coverage output:
+```
+File 'monotonicMod.f90'
+Lines executed:100.00% of 8
+Branches executed:100.00% of 16
+Taken at least once:62.50% of 16
+```
+
+### Viewing Coverage Reports
+
+Coverage reports are created as `.gcov` files in the source directories (`Bellhop/` and `misc/`). Each report shows the original source code with execution counts:
+
+```
+        -: 1:!! Monotonicity testing utilities
+        1: 2:MODULE monotonicMod  
+        -: 3:  IMPLICIT NONE
+```
+
+Where:
+- Numbers indicate how many times each line was executed
+- `-` indicates non-executable lines (comments, declarations)
+- `#####` indicates executable lines that were never run
+
+### GitHub Actions Integration
+
+Code coverage analysis runs automatically in GitHub Actions on pull requests and pushes to the main branch. Coverage reports are uploaded as workflow artifacts and can be downloaded from the Actions page.
+
+### Cleaning Coverage Files
+
+To remove all coverage-related files:
+
+```bash
+make coverage-clean
+```
+
+This removes `.gcda`, `.gcno`, and `.gcov` files from the repository.
+
 
 
 

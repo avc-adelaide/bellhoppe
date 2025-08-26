@@ -68,3 +68,8 @@ dist/
 *.asc
 fort.*
 *.moA
+
+# Coverage files
+*.gcda
+*.gcno
+*.gcov
