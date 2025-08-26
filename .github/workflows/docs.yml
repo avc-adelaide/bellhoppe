@@ -38,7 +38,7 @@ jobs:
       run: pip install FORD
       
     - name: Install gfortran and graphviz
-      run: sudo apt-get update && sudo apt-get install -y gfortran graphviz gcov
+      run: sudo apt-get update && sudo apt-get install -y gfortran graphviz gcc
       
     - name: Generate code coverage for documentation integration
       run: |
