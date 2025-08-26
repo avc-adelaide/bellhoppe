@@ -129,6 +129,9 @@ else
     FFLAGS_ARCH =
 endif
 
+# Coverage flags (for GCOV code coverage analysis)
+FFLAGS_COVERAGE = --coverage
+
 # Combine
 FFLAGS = $(FFLAGS_BASE) $(FFLAGS_ARCH)
 export FFLAGS
@@ -221,5 +224,67 @@ docs:
 
 clean-docs:
 	-rm -rf doc
-	
-.PHONY: all install clean docs clean-docs
+
+coverage-clean:
+	@echo "Cleaning coverage data files..."
+	find . -name '*.gcda' -exec rm {} +
+	find . -name '*.gcno' -exec rm {} +
+	find . -name '*.gcov' -exec rm {} +
+
+coverage-build: coverage-clean
+	@echo "Building BELLHOP with coverage instrumentation..."
+	$(MAKE) FC=gfortran FFLAGS="$(FFLAGS_BASE) $(FFLAGS_ARCH) $(FFLAGS_COVERAGE) -I../misc" all
+
+coverage-install: coverage-build
+	@echo "Installing BELLHOP with coverage instrumentation..."
+	$(MAKE) FC=gfortran FFLAGS="$(FFLAGS_BASE) $(FFLAGS_ARCH) $(FFLAGS_COVERAGE) -I../misc" install
+
+coverage-test: coverage-install
+	@echo "Running basic coverage test..."
+	export PATH="$(shell pwd)/bin:$$PATH" && \
+	cd examples/Munk && \
+	bellhop.exe MunkB_ray && \
+	bellhop.exe MunkB_Coh
+
+coverage-report:
+	@echo "Generating coverage report from existing data..."
+	@echo "Coverage data files found:"
+	@find . -name '*.gcda' | head -10
+	@if [ ! $$(find . -name '*.gcda' | wc -l) -gt 0 ]; then \
+		echo "No coverage data found. Run 'make coverage-test' first."; \
+		exit 1; \
+	fi
+	@echo "Generating GCOV reports for main source files..."
+	cd Bellhop && \
+	for gcda_file in *.gcda; do \
+		if [ -f "$$gcda_file" ]; then \
+			base=$$(basename $$gcda_file .gcda); \
+			if [ -f "$$base.gcno" ]; then \
+				echo "Processing $$base..."; \
+				gcov -b -c "$$gcda_file"; \
+			else \
+				echo "Warning: No .gcno file found for $$base"; \
+			fi; \
+		fi; \
+	done
+	cd misc && \
+	for gcda_file in *.gcda; do \
+		if [ -f "$$gcda_file" ]; then \
+			base=$$(basename $$gcda_file .gcda); \
+			if [ -f "$$base.gcno" ]; then \
+				echo "Processing $$base..."; \
+				gcov -b -c "$$gcda_file"; \
+			else \
+				echo "Warning: No .gcno file found for $$base"; \
+			fi; \
+		fi; \
+	done
+	@echo "Coverage reports generated. .gcov files created in Bellhop/ and misc/ directories."
+	@echo "Summary of coverage for main executables:"
+	@cd Bellhop && ls -la *.gcov 2>/dev/null | head -5 || echo "No .gcov files found in Bellhop/"
+	@cd misc && ls -la *.gcov 2>/dev/null | head -5 || echo "No .gcov files found in misc/"
+
+coverage-full: coverage-test coverage-report
+	@echo "Full coverage analysis complete."
+
+.PHONY: all install clean docs clean-docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-full

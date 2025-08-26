@@ -1,0 +1,141 @@
+        -:    0:Source:beampattern.f90
+        -:    0:Graph:beampattern.gcno
+        -:    0:Data:beampattern.gcda
+        -:    0:Runs:2
+        -:    1:!! Source beam pattern loading and processing
+        -:    2:MODULE beampattern
+        -:    3:  !! Source beam pattern handling including loading, interpolation, and angular weighting
+        -:    4:
+        -:    5:  ! Loads a source beam pattern
+        -:    6:
+        -:    7:  USE FatalError
+        -:    8:  USE monotonicMod
+        -:    9:  SAVE
+        -:   10:  INTEGER, PARAMETER         :: SBPFile = 50
+        -:   11:  INTEGER                    :: NSBPPts          ! Number of source beam-pattern points
+        -:   12:  REAL (KIND=8), ALLOCATABLE :: SrcBmPat( :, : )
+        -:   13:  CHARACTER (LEN=1)          :: SBPFlag          ! '*' or 'O' to indicate a directional or omni pattern
+        -:   14:
+        -:   15:CONTAINS
+        -:   16:
+function __beampattern_MOD_readpat called 2 returned 100% blocks executed 24%
+        2:   17:  SUBROUTINE ReadPat( FileRoot, PRTFile )
+        -:   18:
+        -:   19:    IMPLICIT NONE
+        -:   20:    INTEGER,            INTENT( IN ) :: PRTFile  ! Unit for print file
+        -:   21:    INTEGER                          :: I, IAllocStat, IOStat
+        -:   22:    CHARACTER (LEN=80), INTENT( IN ) :: FileRoot
+        -:   23:
+        2:   24:    IF ( SBPFlag == '*' ) THEN
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+    #####:   25:       WRITE( PRTFile, * )
+call    0 never executed
+call    1 never executed
+    #####:   26:       WRITE( PRTFile, * ) '______________________________'
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   27:       WRITE( PRTFile, * ) 'Using source beam pattern file'
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   28:
+    #####:   29:       OPEN( UNIT = SBPFile,   FILE = TRIM( FileRoot ) // '.sbp', STATUS = 'OLD', IOSTAT = IOStat, ACTION = 'READ' )
+call    0 never executed
+call    1 never executed
+    #####:   30:       IF ( IOstat /= 0 ) THEN
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:   31:          WRITE( PRTFile, * ) 'SBPFile = ', TRIM( FileRoot ) // '.sbp'
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+    #####:   32:          CALL ERROUT( 'BELLHOP-ReadPat', 'Unable to open source beampattern file' )
+call    0 never executed
+        -:   33:       END IF
+        -:   34:
+    #####:   35:       READ(  SBPFile, * ) NSBPPts
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   36:       WRITE( PRTFile, * ) 'Number of source beam pattern points', NSBPPts
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+        -:   37:
+    #####:   38:       ALLOCATE( SrcBmPat( NSBPPts, 2 ), Stat = IAllocStat )
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+branch  6 never executed (fallthrough)
+branch  7 never executed
+branch  8 never executed (fallthrough)
+branch  9 never executed
+    #####:   39:       IF ( IAllocStat /= 0 ) &
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:   40:            CALL ERROUT( 'BELLHOP-ReadPat', 'Insufficient memory for source beam pattern data: reduce # SBP points' )
+call    0 never executed
+        -:   41:
+    #####:   42:       WRITE( PRTFile, * )
+call    0 never executed
+call    1 never executed
+    #####:   43:       WRITE( PRTFile, * ) ' Angle (degrees)  Power (dB)'
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   44:
+    #####:   45:       DO I = 1, NSBPPts
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:   46:          READ(  SBPFile, * ) SrcBmPat( I, : )
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:   47:          WRITE( PRTFile, FMT = "( 2G11.3 )" ) SrcBmPat( I, : )
+call    0 never executed
+call    1 never executed
+call    2 never executed
+        -:   48:       END DO
+        -:   49:
+        -:   50:    ELSE   ! no pattern given, use omni source pattern
+        2:   51:       NSBPPts = 2
+       2*:   52:       ALLOCATE( SrcBmPat( 2, 2 ), Stat = IAllocStat )
+branch  0 taken 2 (fallthrough)
+branch  1 taken 0
+branch  2 taken 0 (fallthrough)
+branch  3 taken 2
+branch  4 taken 2 (fallthrough)
+branch  5 taken 0
+       2*:   53:       IF ( IAllocStat /= 0 ) CALL ERROUT( 'BELLHOP-ReadPat', 'Insufficient memory'  )
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+call    2 never executed
+        6:   54:       SrcBmPat( 1, : ) = [ -180.0, 0.0 ]
+branch  0 taken 4 (fallthrough)
+branch  1 taken 2
+        6:   55:       SrcBmPat( 2, : ) = [  180.0, 0.0 ]
+branch  0 taken 4 (fallthrough)
+branch  1 taken 2
+        -:   56:    ENDIF
+        -:   57:
+        2:   58:    IF ( .NOT. monotonic( SrcBmPat( :, 1 ) , NSBPPts ) ) &
+branch  0 taken 0 (fallthrough)
+branch  1 taken 2
+    #####:   59:       CALL ERROUT( 'beampattern : ReadPat', 'Source beam-pattern angles are not monotonic' )
+call    0 never executed
+        -:   60:
+        6:   61:    SrcBmPat( :, 2 ) = 10 ** ( SrcBmPat( :, 2 ) / 20 )  ! convert dB to linear scale
+branch  0 taken 4 (fallthrough)
+branch  1 taken 2
+        -:   62:
+        2:   63:  END SUBROUTINE ReadPat
+        -:   64:
+        -:   65:END MODULE beampattern
