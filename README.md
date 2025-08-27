@@ -3,7 +3,7 @@
 * Bellhop is an underwater acoustics simulator, part of the [Acoustics Toolbox](http://oalib.hlsresearch.com/AcousticsToolbox/)
 * It has been forked by UCal San Diego to support the [multithreaded C++/CUDA version of
 BELLHOP/BELLHOP3D: `bellhopcxx`/`bellhopcuda`](https://github.com/A-New-BellHope/bellhopcuda)
-* The UCal team maintain a fork with numerical properties and robustness improved and bugs fixed
+* The UCal team maintain a fork with numerical properties and robustness improved and bugs fixed; some of these changes have been back-ported into the Acoustics Toolbox directly but the codebases are no longer identical
 * This repository is a subsequent fork from Adelaide University, Australia, with the intention of providing a clean and well-documented repository to provide easier access to the code
 * (Yes, it would be better to try not to proliferate forks; if this is successful we will open pull requests)
 
@@ -35,19 +35,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 **[📖 BELLHOP Documentation](https://aumag.github.io/bellhop/)** - Comprehensive API documentation with:
 - Automatically generated module and subroutine references
-- Interactive call graphs showing code relationships  
+- Interactive call graphs showing code relationships
 - Source code browsing with syntax highlighting
 - Full-text search functionality
 
 ### 🔧 User Guides and Technical References
 
 **Core Documentation:**
-- **[BELLHOP User Guide](docs/bellhop.htm)** - Complete guide for 2D acoustic modeling
+- **[BELLHOP User Guide](docs/bellhop.htm)** - 2D acoustic modeling
 - **[BELLHOP3D User Guide](docs/bellhop3d.htm)** - 3D acoustic modeling with azimuthal coupling
-- **[Environmental File Format](docs/EnvironmentalFile.htm)** - Input file specifications
 - **[BELLHOP3D PDF Guide](docs/Bellhop3D%20User%20Guide%202016_7_25.pdf)** - Comprehensive PDF documentation
 
 **Input File Formats:**
+- **[Environmental File Format](docs/EnvironmentalFile.htm)** - Input file specifications
 - **[Range-Dependent SSP Files](docs/RangeDepSSPFile.htm)** - Sound speed profile specification
 - **[Reflection Coefficient Files](docs/ReflectionCoefficientFile.htm)** - Boundary reflection properties
 - **[Bathymetry Files](docs/ATI_BTY_File.htm)** - Bathymetry data format
@@ -60,20 +60,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 **Project Background:**
 - **[Acoustics Toolbox Overview](docs/at_index.htm)** - Complete toolbox suite information
-- **[Original Repository Info](docs/index.htm)** - Project structure and background
+- **[Original Repository Info](docs/doc_index.htm)** - Project structure and background
 
-### 🏗️ Building Documentation Locally
-
-Generate documentation on your machine:
-```bash
-# Install FORD and system dependencies
-pip install FORD
-sudo apt install graphviz  # Required for call graphs and flow diagrams
-
-# Generate documentation with graphs
-make docs
-open doc/index.html  # View generated documentation
-```
 
 
 ## Installation
@@ -99,7 +87,7 @@ which at time of writing required something like: (you may not wish to use `venv
     brew install python@3.12
     brew install pipx
     brew install hatch
-    
+
     $(brew --prefix python@3.12)/bin/python3.12 -m venv ~/.venvs/bellhop
     source ~/.venvs/bellhop/bin/activate
     ln -fs `pwd`/bin/bellhop.exe ~/.venvs/bellhop/bin/bellhop.exe
@@ -233,15 +221,31 @@ Alternatively, if you have pytest installed directly, you can run:
 
     pytest --capture=tee-sys
 
+
+## 🏗️ Building Documentation Locally
+
+Generate documentation on your machine:
+```bash
+# Install FORD and system dependencies
+pip install FORD
+sudo apt install graphviz  # Required for call graphs and flow diagrams
+
+# Generate documentation with graphs
+make docs
+open doc/index.html  # View generated documentation
+```
+
+
 ## Code Coverage Analysis
 
 BELLHOP includes integrated support for code coverage analysis using GCOV. This helps assess how much of the codebase is exercised by tests and identify areas that may need additional testing.
+This is not currently integrated into the documentation build. Further information can be found in [Coverage Docs](docs/coverage.md).
 
 ### Prerequisites
 
 Coverage analysis requires:
 - `gfortran` (GNU Fortran compiler) with GCOV support
-- Standard make utility
+- `gcc` to provide `gcov` binary
 
 These are typically available on most Linux systems. On Ubuntu/Debian:
 
@@ -288,7 +292,7 @@ To generate and view code coverage reports:
 The coverage analysis generates several types of files:
 
 - **`.gcno` files**: Coverage note files created during compilation
-- **`.gcda` files**: Coverage data files created when running instrumented executables  
+- **`.gcda` files**: Coverage data files created when running instrumented executables
 - **`.gcov` files**: Human-readable coverage reports showing line-by-line execution counts
 
 Coverage reports show:
@@ -313,7 +317,7 @@ Coverage reports are created as `.gcov` files in the source directories (`Bellho
 
 ```
         -: 1:!! Monotonicity testing utilities
-        1: 2:MODULE monotonicMod  
+        1: 2:MODULE monotonicMod
         -: 3:  IMPLICIT NONE
 ```
 
@@ -346,7 +350,7 @@ The HTML reports provide:
 
 The HTML coverage reports include:
 - **Green highlighting**: Lines executed during testing
-- **Red highlighting**: Lines that were never executed  
+- **Red highlighting**: Lines that were never executed
 - **Gray highlighting**: Non-executable lines (comments, declarations)
 - **Execution counts**: Number of times each line was executed
 - **Summary statistics**: Overall coverage percentages for lines, branches, and calls
