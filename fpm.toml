@@ -2,12 +2,12 @@
 
 [extra.ford]
 project = "Bellhop"
-author = "Michael B. Porter / UC San Diego / Adelaide University"  
+author = "Michael B. Porter / UC San Diego / Adelaide University"
 version = "2025-08-25"
 license = "gpl"
 summary = '''
-  BELLHOP is an underwater acoustic simulator that uses beam/ray tracing 
-  to model acoustic wave propagation in ocean environments. It is part of 
+  BELLHOP is an underwater acoustic simulator that uses beam/ray tracing
+  to model acoustic wave propagation in ocean environments. It is part of
   the Acoustics Toolbox and provides both 2D and 3D acoustic modeling capabilities.
 '''
 
@@ -29,4 +29,4 @@ project_github = "https://github.com/AUMAG/bellhop"
 github = "https://github.com/AUMAG/bellhop"
 source = true
 graph = true
-search = true
+search = false
