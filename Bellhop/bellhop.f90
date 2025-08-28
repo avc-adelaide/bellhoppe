@@ -363,8 +363,7 @@ END SUBROUTINE BellhopCore
 ! **********************************************************************!
 
 COMPLEX (KIND=8 ) FUNCTION PickEpsilon( BeamType, omega, c, gradc, alpha, Dalpha, rLoop, EpsMultiplier )
-
-  ! Picks the optimum value for epsilon
+!! Picks the optimum value for epsilon
 
   REAL      (KIND=8), INTENT( IN  ) :: omega, c, gradc( 2 ) ! angular frequency, sound speed and gradient
   REAL      (KIND=8), INTENT( IN  ) :: alpha, Dalpha        ! angular spacing for ray fan
@@ -438,8 +437,7 @@ END FUNCTION PickEpsilon
 ! **********************************************************************!
 
 SUBROUTINE TraceRay2D( xs, alpha, Amp0 )
-
-  ! Traces the beam corresponding to a particular take-off angle
+!! Traces the beam corresponding to a particular take-off angle
 
   USE Step
   USE WriteRay
@@ -614,8 +612,8 @@ END SUBROUTINE TraceRay2D
 ! **********************************************************************!
 
 SUBROUTINE Distances2D( rayx, Topx, Botx, dTop, dBot, Topn, Botn, DistTop, DistBot )
+!! Calculates the distances to the boundaries
 
-  ! Calculates the distances to the boundaries
   ! Formula differs from JKPS because code uses outward pointing normals
 
   REAL (KIND=8), INTENT( IN  ) :: rayx( 2 )              ! ray coordinate
