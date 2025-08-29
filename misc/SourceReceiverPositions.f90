@@ -1,3 +1,5 @@
+!! Provides methods to read in depths, depths, bearing data
+
 MODULE SourceReceiverPositions
 !! Reads in source depths, receiver depths, receiver ranges, and receiver bearings
 

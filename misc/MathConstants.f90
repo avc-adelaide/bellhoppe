@@ -1,3 +1,5 @@
+!! Provides maths constants such as `pi`
+
 MODULE MathConstants
 !! Provides maths constants such as `pi`
 

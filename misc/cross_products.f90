@@ -1,3 +1,5 @@
+!! Provides a standard cross product function
+
 MODULE cross_products
 !! Provides a cross product function for both single and double reals
 

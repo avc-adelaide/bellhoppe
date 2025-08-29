@@ -1,4 +1,7 @@
+!! Provides root finding methods
+
 MODULE RootFinderSecantMod
+!! Provides root finding subroutines using the secant method 
 
   ! Secant method
 
@@ -21,8 +24,9 @@ MODULE RootFinderSecantMod
 
 CONTAINS
 
-!! Secant method root finding for real functions
+
   SUBROUTINE ZSecantX( x2, Tolerance, Iteration, MaxIteration, ErrorMessage, Funct ) 
+!! Secant method root finding for real functions
 
     INTEGER,            INTENT( IN    ) :: MaxIteration
     INTEGER,            INTENT( OUT   ) :: Iteration
@@ -84,8 +88,9 @@ CONTAINS
 
   ! _____________________________________
 
-!! Secant method root finding for complex functions
+
   SUBROUTINE ZSecantCX( x2, Tolerance, Iteration, MaxIteration, ErrorMessage, Funct )
+!! Secant method root finding for complex functions
 
     INTEGER,            INTENT( IN    ) :: MaxIteration
     INTEGER,            INTENT( OUT   ) :: Iteration

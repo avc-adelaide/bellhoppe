@@ -1,3 +1,5 @@
+!! Provides error message subroutine
+
 MODULE FatalError
 !! Provides `ERROUT` error message
 
