@@ -1,7 +1,8 @@
 !! Sound speed profile utilities for acoustic modeling
+
 MODULE sspmod
 
-  ! holds SSP input by user and associated variables
+  !! Holds SSP input by user and associated variables
 
   USE FatalError
 

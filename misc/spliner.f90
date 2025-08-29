@@ -1,3 +1,5 @@
+!! Provides various spline-related subroutines
+
       SUBROUTINE CSPLINE (TAU, C, N, IBCBEG, IBCEND, NDIM)
 
 !  TAKEN FROM "A PRACTICAL GUIDE TO SPLINES", BY CARL DE BOOR. 1978.

@@ -1,8 +1,7 @@
 !! Piecewise Cubic Hermite Interpolating Polynomial calculations
-MODULE pchipmod
 
-  ! subroutines and functions related to the calculation of the
-  ! Piecewise Cubic Hermite Interpolating Polynomial (PCHIP)
+MODULE pchipmod
+  !! Subroutines and functions related to the calculation of the Piecewise Cubic Hermite Interpolating Polynomial (PCHIP)
 
   IMPLICIT NONE
   SAVE

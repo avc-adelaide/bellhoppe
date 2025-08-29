@@ -1,3 +1,5 @@
+!! Provides an insertion sort on a vector of real numbers
+
 MODULE SortMod
 !! Provides an insertion sort on a vector of real numbers
 

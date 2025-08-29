@@ -1,5 +1,7 @@
-!! Interpolation utilities for acoustic computations
+!! Provides interpolation subroutines
+
 MODULE interpolation
+!! Provides interpolation subroutine `interp1`
 
 CONTAINS
   SUBROUTINE interp1( x, y, xi, yi )

@@ -2,7 +2,7 @@
 
 MODULE RefCoef
 
-  ! reflection coefficient data
+  !! Provides reflection coefficient data
 
   USE FatalError
   USE monotonicMod

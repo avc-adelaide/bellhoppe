@@ -1,6 +1,7 @@
-!! Provides interface for computing weights and indices for lonear interpolation
+!! Provides interface for computing weights and indices for linear interpolation
 
 MODULE CalculateWeights
+!! Provides interface for computing weights and indices for linear interpolation
 
   ! mbp 12/2018, based on much older subroutine
   ! Given 
