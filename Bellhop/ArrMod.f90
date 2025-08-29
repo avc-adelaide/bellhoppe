@@ -1,4 +1,5 @@
 !! Acoustic arrivals module for computing and storing arrival information
+
 MODULE ArrMod
   !! Management of acoustic arrival data including storage, sorting, and output formatting
 
@@ -22,8 +23,8 @@ MODULE ArrMod
 
 CONTAINS
 
-!! Adds an arrival to the arrival data structure
   SUBROUTINE AddArr( omega, id, ir, Amp, Phase, delay, SrcDeclAngle, RcvrDeclAngle, NumTopBnc, NumBotBnc )
+!! Adds an arrival to the arrival data structure
 
     ! Adds the amplitude and delay for an ARRival into a matrix of same.
     ! Extra logic included to keep only the strongest arrivals.
@@ -91,8 +92,8 @@ CONTAINS
 
   ! **********************************************************************!
 
-!! Writes arrival data in ASCII format
   SUBROUTINE WriteArrivalsASCII( r, Nrd, Nr, SourceType )
+!! Writes arrival data in ASCII format
 
     ! Writes the arrival data (Amplitude, delay for each eigenray)
     ! ASCII output file
@@ -138,8 +139,9 @@ CONTAINS
 
   ! **********************************************************************!
 
-!! Writes arrival data in binary format
+
   SUBROUTINE WriteArrivalsBinary( r, Nrd, Nr, SourceType )
+!! Writes arrival data in binary format
 
     ! Writes the arrival data (amplitude, delay for each eigenray)
     ! Binary output file
@@ -187,8 +189,8 @@ CONTAINS
 
   SUBROUTINE AddArr3D( omega, itheta, id, ir, Amp, Phase, delay, SrcDeclAngle, &
        SrcAzimAngle, RcvrDeclAngle, RcvrAzimAngle, NumTopBnc, NumBotBnc )
-
-    ! Adds the amplitude and delay for an ARRival into a matrix of same.
+!! Adds the amplitude and delay for an ARRival into a matrix of same.
+    
     ! Extra logic included to keep only the strongest arrivals.
 
     INTEGER,              INTENT( IN ) :: itheta, id, ir
@@ -262,9 +264,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE WriteArrivalsASCII3D( r, Ntheta, Nrd, Nr )
-
-    ! Writes the arrival data (Amplitude, delay for each eigenray)
-    ! ASCII output file
+!! Writes the arrival data (Amplitude, delay for each eigenray); ASCII output file
 
     INTEGER, INTENT( IN ) :: Ntheta, Nrd, Nr
     REAL,    INTENT( IN ) :: r( Nr )
@@ -310,9 +310,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE WriteArrivalsBinary3D( r, Ntheta, Nrd, Nr )
-
-    ! Writes the arrival data (amplitude, delay for each eigenray)
-    ! Binary output file
+!! Writes the arrival data (amplitude, delay for each eigenray); Binary output file
 
     INTEGER, INTENT( IN ) :: Ntheta, Nrd, Nr
     REAL,    INTENT( IN ) :: r( Nr )

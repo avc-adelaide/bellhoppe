@@ -1,7 +1,8 @@
 !! Cone-shaped beam calculations for 3D acoustics
 
-!! Provides cone formulas for 3D beam computations
 MODULE Cone
+!! Provides cone formulas for 3D beam computations
+
   USE bellhopMod
   USE MathConstants
   IMPLICIT NONE
@@ -9,8 +10,8 @@ MODULE Cone
 CONTAINS
 
   SUBROUTINE ConeFormulas2D( z_xx, z_xy, z_yy, nBdry, xs, tradial, xray, BotTop )
-
-    ! analytic formula for the conical seamount
+  !! analytic formula for the conical seamount
+    
     REAL (KIND=8),     INTENT( IN  ) :: xs( 3 ), tradial( 2 ), xray( 2 )
     CHARACTER (LEN=3), INTENT( IN  ) :: BotTop                  ! Flag indicating bottom or top reflection
     REAL (KIND=8),     INTENT( OUT ) :: z_xx, z_xy, z_yy, nBdry( 2 )
@@ -46,8 +47,7 @@ CONTAINS
 END SUBROUTINE ConeFormulas2D
 
   SUBROUTINE ConeFormulas3D( z_xx, z_xy, z_yy, nBdry, xs, xray, BotTop )
-
-    ! analytic formula for the conical seamount
+  !! analytic formula for the conical seamount
 
     REAL (KIND=8),     INTENT( IN  ) :: xs( 3 ), xray( 3 )
     CHARACTER (LEN=3), INTENT( IN  ) :: BotTop                  ! Flag indicating bottom or top reflection

@@ -1,6 +1,7 @@
 !! Angle calculations and coordinate transformations for ray tracing
-!! Provides angle calculations and coordinate transformations
+
 MODULE anglemod
+!! Provides angle calculations and coordinate transformations
 
   USE MathConstants
   USE SubTabulate

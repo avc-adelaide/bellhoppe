@@ -1,4 +1,5 @@
 !! Boundary conditions module for altimetry and bathymetry data
+
 MODULE bdrymod
   !! Boundary handling for altimetry (top) and bathymetry (bottom) with interpolation capabilities
 
@@ -40,8 +41,7 @@ MODULE bdrymod
 CONTAINS
 
   SUBROUTINE ReadATI( FileRoot, TopATI, DepthT, PRTFile )
-
-    ! Reads in the top altimetry
+  !! Reads in the top altimetry
 
     INTEGER,            INTENT( IN ) :: PRTFile
     CHARACTER (LEN= 1), INTENT( IN ) :: TopATI
@@ -132,8 +132,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE ReadBTY( FileRoot, BotBTY, DepthB, PRTFile )
-
-    ! Reads in the bottom bathymetry
+  !! Reads in the bottom bathymetry
 
     INTEGER,            INTENT( IN ) :: PRTFile
     CHARACTER (LEN= 1), INTENT( IN ) :: BotBTY

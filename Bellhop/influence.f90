@@ -1,4 +1,5 @@
 !! Beam influence computation for pressure field calculation
+
 MODULE Influence
   !! Computes beam contributions to complex pressure fields using various beam weighting approaches
 
@@ -19,8 +20,7 @@ MODULE Influence
 
 CONTAINS
   SUBROUTINE InfluenceCervenyRayCen( U, eps, alpha, iBeamWindow2, RadiusMax )
-
-    ! Paraxial (Cerveny-style) beams in ray-centered coordinates
+  !! Paraxial (Cerveny-style) beams in ray-centered coordinates
 
     INTEGER,          INTENT( IN    ) :: IBeamWindow2
     REAL    (KIND=8), INTENT( IN    ) :: alpha, RadiusMax                ! take-off angle
@@ -171,8 +171,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE InfluenceCervenyCart( U, eps, alpha, iBeamWindow2, RadiusMax )
-
-    ! Paraxial (Cerveny-style) beams in Cartesian coordinates
+  !! Paraxial (Cerveny-style) beams in Cartesian coordinates
 
     INTEGER,          INTENT( IN    ) :: IBeamWindow2
     REAL    (KIND=8), INTENT( IN    ) :: alpha, RadiusMax                ! take-off angle
@@ -310,8 +309,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE InfluenceGeoHatRayCen( U, alpha, dalpha )
-
-    ! Geometrically-spreading beams with a hat-shaped beam in ray-centered coordinates
+  !! Geometrically-spreading beams with a hat-shaped beam in ray-centered coordinates
 
     REAL (KIND=8), INTENT( IN    ) :: alpha, dalpha                 ! take-off angle
     COMPLEX,       INTENT( INOUT ) :: U( NRz_per_range, Pos%NRr )   ! complex pressure field
@@ -321,7 +319,7 @@ CONTAINS
     COMPLEX (KIND=8) :: dtau( Beam%Nsteps - 1 )
     REAL    (KIND=8) :: KMAHphase( Beam%Nsteps )
 
-    !!! need to add logic related to NRz_per_range
+    ! need to add logic related to NRz_per_range
     
     ! LP: See discussion of this change in the readme.
     qOld = ray2D( 1 )%q( 1 )
@@ -420,8 +418,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE InfluenceGeoHatCart( U, alpha, Dalpha )
-
-    ! Geometric, hat-shaped beams in Cartesisan coordinates
+  !! Geometric, hat-shaped beams in Cartesisan coordinates
 
     REAL (KIND=8), INTENT( IN    ) :: alpha, dalpha                 ! take-off angle, angular spacing
     COMPLEX,       INTENT( INOUT ) :: U( NRz_per_range, Pos%NRr )   ! complex pressure field
@@ -526,8 +523,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE InfluenceGeoGaussianCart( U, alpha, Dalpha )
-
-    ! Geometric, Gaussian beams in Cartesian coordintes
+  !! Geometric, Gaussian beams in Cartesian coordintes
 
     INTEGER,       PARAMETER       :: BeamWindow = 4               ! beam window: kills beams outside e**(-0.5 * ibwin**2 )
     REAL (KIND=8), INTENT( IN    ) :: alpha, dalpha                ! take-off angle, angular spacing
@@ -654,8 +650,9 @@ CONTAINS
 
   ! **********************************************************************!
   
-!! Applies beam contribution to pressure field
   SUBROUTINE ApplyContribution( U )
+  !! Applies beam contribution to pressure field
+ 
     COMPLEX, INTENT( INOUT ) :: U
     COMPLEX ( KIND=4 ) :: dfield
     
@@ -686,8 +683,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE InfluenceSGB( U, alpha, Dalpha, RadiusMax )
-
-    ! Bucker's Simple Gaussian Beams in Cartesian coordinates
+  !! Bucker's Simple Gaussian Beams in Cartesian coordinates
 
     REAL (KIND=8), INTENT( IN    ) :: alpha, dalpha, RadiusMax      ! take-off angle, angular spacing
     COMPLEX,       INTENT( INOUT ) :: U( NRz_per_range, Pos%NRr )   ! complex pressure field
@@ -776,8 +772,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE BranchCut( q1C, q2C, BeamType, KMAH )
-
-    ! Checks for a branch cut crossing and updates KMAH accordingly
+  !! Checks for a branch cut crossing and updates KMAH accordingly
 
     COMPLEX  (KIND=8), INTENT( IN )    :: q1C, q2C
     CHARACTER (LEN=4), INTENT( IN )    :: BeamType
@@ -804,8 +799,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE ScalePressure( Dalpha, c, r, U, NRz, Nr, RunType, freq )
-
-    ! Scale the pressure field
+  !! Scale the pressure field
 
     REAL,              PARAMETER       :: pi = 3.14159265
     INTEGER,           INTENT( IN    ) :: NRz, Nr
@@ -878,8 +872,9 @@ CONTAINS
     LOGICAL, INTENT( IN ) :: isGaussian
     INTEGER :: phaseStepNum
     
-    ! phase shifts at caustics
-    !!! this should be precomputed [LP: While IncPhaseIfCaustic can be
+    !! phase shifts at caustics
+    
+    ! this should be precomputed [LP: While IncPhaseIfCaustic can be
     ! precomputed, FinalPhase cannot, as it is dependent on the interpolated `q`
     ! value which is not known until the main run.]
     ! LP: All 2D functions discard the ray point phase if the condition is met,
@@ -902,7 +897,7 @@ CONTAINS
   
   SUBROUTINE IncPhaseIfCaustic( qleq0 )
       
-    ! phase shifts at caustics
+    !! phase shifts at caustics
     
     LOGICAL, INTENT( IN ) :: qleq0
     

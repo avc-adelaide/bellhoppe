@@ -1,4 +1,5 @@
 !! Three-dimensional boundary conditions for altimetry and bathymetry
+
 MODULE bdry3Dmod
   !! 3D boundary handling for complex altimetry and bathymetry with spatial interpolation
 
@@ -186,8 +187,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE ReadBTY3D( FileRoot, BotBTY, DepthB, PRTFile )
-
-    ! Reads in the bottom bathymetry
+!! Reads in the bottom bathymetry
 
     CHARACTER (LEN= 1), INTENT( IN ) :: BotBTY        ! Set to '~' if bathymetry is not flat
     INTEGER,            INTENT( IN ) :: PRTFile       ! unit number for print file
@@ -327,6 +327,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE GetTopSeg3D( x, t, isInit )
+!! Gets the Top segment info
 
     ! Get the Top segment info (index and range interval) for XY position, x
     ! sets Topx and Topn
@@ -429,7 +430,8 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE GetBotSeg3D( x, t, isInit )
-    
+!! Gets the Bottom segment info
+
     ! Get the Bottom segment info (index and range interval) for XY position, x
     ! sets Botx and Botn
     ! LP: See comment in GetTopSeg3D.
