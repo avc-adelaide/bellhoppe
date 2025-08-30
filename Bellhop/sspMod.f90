@@ -1,4 +1,5 @@
 !! Sound speed profile module with interpolation and derivatives
+
 MODULE sspmod
   !! Sound speed profile handling with interpolation, derivatives, and environment management
 
@@ -63,8 +64,8 @@ MODULE sspmod
 
 CONTAINS
 
-!! Evaluates sound speed profile at given location
   SUBROUTINE EvaluateSSP( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
+    !! Evaluates sound speed profile at given location
 
     ! Call the particular profil routine indicated by the SSP%Type and perform Task
     !   Task = 'TAB'  then tabulate cp, cs, rhoT 
@@ -111,8 +112,8 @@ CONTAINS
 ! **********************************************************************!
 
 SUBROUTINE EvaluateSSP2D( x2D, t2D, c, cimag, gradc, crr, crz, czz, rho, xs, tradial, freq )
-
-  ! Converts cartesian gradients to polar
+  !! Converts cartesian gradients to polar
+  
   ! Called from BELLHOP3D to get a 2D slice out of the 3D SSP
 
   REAL (KIND=8), INTENT( IN  ) :: x2D( 2 ), t2D( 2 ), xs( 3 ), tradial( 2 ), freq
@@ -183,8 +184,8 @@ END SUBROUTINE EvaluateSSP2D
 
   ! **********************************************************************!
 
-!! Linear interpolation for squared buoyancy frequency
   SUBROUTINE n2Linear( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
+    !! Linear interpolation for squared buoyancy frequency
 
     ! N2-linear interpolation of SSP data
 
@@ -227,8 +228,7 @@ END SUBROUTINE EvaluateSSP2D
   ! **********************************************************************!
 
   SUBROUTINE cLinear( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
-
-    ! c-linear interpolation of SSP data
+    !! c-linear interpolation of SSP data
 
     REAL     (KIND=8), INTENT( IN  ) :: freq
     REAL     (KIND=8), INTENT( IN  ) :: x( 2 )   ! r-z coordinate where sound speed is evaluated
@@ -259,6 +259,7 @@ END SUBROUTINE EvaluateSSP2D
   ! **********************************************************************!
 
   SUBROUTINE cPCHIP( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
+    !! PCHIP for interpolation of sound speed
 
     ! This implements the new monotone piecewise cubic Hermite interpolating
     ! polynomial (PCHIP) algorithm for the interpolation of the sound speed c.
@@ -314,8 +315,7 @@ END SUBROUTINE EvaluateSSP2D
   ! **********************************************************************!
 
   SUBROUTINE cCubic( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
-
-    ! Cubic spline interpolation
+    !! Cubic spline interpolation for sound speed
 
     REAL     (KIND=8), INTENT( IN )  :: freq
     REAL     (KIND=8), INTENT( IN  ) :: x( 2 )   ! r-z coordinate where sound speed is evaluated
@@ -369,8 +369,8 @@ END SUBROUTINE EvaluateSSP2D
 
   ! **********************************************************************!
 
-!! Quadrilateral interpolation for 3D sound speed profiles
   SUBROUTINE Quad( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, Task )
+    !! Quadrilateral interpolation for sound speed profiles
 
     ! Bilinear quadrilateral interpolation of SSP data in 2D
 
@@ -495,8 +495,8 @@ END SUBROUTINE EvaluateSSP2D
   ! **********************************************************************!
 
   SUBROUTINE Hexahedral( x, t, c, cimag, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho, freq, Task )
-
-    ! Trilinear hexahedral interpolation of SSP data in 3D
+    !! Trilinear hexahedral interpolation of SSP data
+ 
     ! assumes a rectilinear case (not the most general hexahedral)
 
     INTEGER,            PARAMETER     :: SSPFile = 40
@@ -814,8 +814,7 @@ END SUBROUTINE Analytic3D
 ! **********************************************************************!
 
   SUBROUTINE ReadSSP( Depth, freq )
-
-    ! reads the SSP data from the environmental file and convert to Nepers/m
+    !! Reads SSP data from the environmental file and convert to Nepers/m
 
     USE AttenMod
 
