@@ -7,14 +7,16 @@ MODULE FatalError
   INTEGER, PRIVATE :: PRTFile = 6
 
   CONTAINS
-!! Outputs error message and terminates program
+
   SUBROUTINE ERROUT( WHERE, ErrMsg )
-  !!     Outputs an error message
+  !! Outputs error message and terminates program
 
-    !     WHERE  in which program or subroutine
-    !     ErrMsg error message
-
-    CHARACTER (LEN=*), INTENT( IN ) :: WHERE, ErrMsg
+    ! Arguments
+    CHARACTER (LEN=*), INTENT( IN ) :: WHERE
+        !! Program or subroutine the error is being called from
+    CHARACTER (LEN=*), INTENT( IN ) :: ErrMsg
+        !! The error message itself
+ 
     INTEGER   Last
 
     WRITE( PRTFile, * )
