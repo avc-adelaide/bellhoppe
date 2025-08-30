@@ -1,9 +1,7 @@
-!! Provides an insertion sort on a vector of real numbers
+!! Provides an interface for performing an insertion sort on a vector
 
 MODULE SortMod
-!! Provides an insertion sort on a vector of real numbers
-
-  ! mbp 1/2015 incorporating subroutines from decades past
+  !! Provides an interface for performing an insertion sort on a vector
 
   ! At the Ith step, the first I-1 positions contain a sorted
   ! vector.  We shall insert the Ith value into its place in that
@@ -19,6 +17,7 @@ MODULE SortMod
 CONTAINS
 
   SUBROUTINE Sort_sngl( x, N )
+    !! Subroutine to perform an insertion sort on a vector (single)
 
     INTEGER, INTENT( IN ) :: N
     REAL    :: x( * ), xTemp
@@ -59,6 +58,7 @@ CONTAINS
   ! ________________________________________________________________________
 
   SUBROUTINE Sort_dble( x, N )
+    !! Subroutine to perform an insertion sort on a vector (double)
 
     INTEGER, INTENT( IN ) :: N
     REAL (KIND=8) :: x( * ), xTemp
@@ -99,6 +99,7 @@ CONTAINS
   ! ________________________________________________________________________
 
   SUBROUTINE Sort_cmplx( x, N )
+    !! Subroutine to perform an insertion sort on a vector (complex, double)
 
     ! Based on order of decreasing real part
 

@@ -1,8 +1,7 @@
 !! Source beam pattern loading and processing
+
 MODULE beampattern
   !! Source beam pattern handling including loading, interpolation, and angular weighting
-
-  ! Loads a source beam pattern
 
   USE FatalError
   USE monotonicMod
@@ -15,11 +14,20 @@ MODULE beampattern
 CONTAINS
 
   SUBROUTINE ReadPat( FileRoot, PRTFile )
+    !! ReadPat:
+    !!    Reads a source beam pattern file (`.sbp`) based on `FileRoot``.
+    !!    Reports status messages to the print/log file connected to `PRTFile``.
 
     IMPLICIT NONE
-    INTEGER,            INTENT( IN ) :: PRTFile  ! Unit for print file
-    INTEGER                          :: I, IAllocStat, IOStat
+    
+    ! Arguments
     CHARACTER (LEN=80), INTENT( IN ) :: FileRoot
+        !! Source beampattern filename *without* `.sbp` extension
+    INTEGER,            INTENT( IN ) :: PRTFile
+        !! I/O Unit for print file
+
+    ! Local variables
+    INTEGER :: I, IAllocStat, IOStat
 
     IF ( SBPFlag == '*' ) THEN
        WRITE( PRTFile, * )

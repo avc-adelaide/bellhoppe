@@ -1,10 +1,7 @@
 !! Monotonicity testing utilities for input validation
-MODULE monotonicMod
-  !! Utilities for testing and enforcing monotonic ordering in input data vectors
 
-! tests whether an input vector is strictly monotonically increasing
-!
-! mbp February 2014
+MODULE monotonicMod
+  !! Provides interface to test whether an input vector is strictly monotonically increasing
 
   IMPLICIT NONE
   
@@ -13,8 +10,10 @@ MODULE monotonicMod
   END INTERFACE monotonic
 
 CONTAINS
-!! Tests if single precision vector is monotonically increasing
+
   FUNCTION monotonic_sngl( x, N )
+    !! Tests if single precision vector is monotonically increasing
+
     LOGICAL :: monotonic_sngl
     INTEGER,                       INTENT( IN ) :: N
     REAL (KIND=4), DIMENSION( N ), INTENT( IN ) :: x
@@ -25,8 +24,9 @@ CONTAINS
 
   END FUNCTION monotonic_sngl
 
-!! Tests if double precision vector is monotonically increasing
   FUNCTION monotonic_dble( x, N )
+    !! Tests if double precision vector is monotonically increasing
+
     LOGICAL :: monotonic_dble
     INTEGER,                       INTENT( IN ) :: N
     REAL (KIND=8), DIMENSION( N ), INTENT( IN ) :: x
@@ -36,4 +36,5 @@ CONTAINS
     IF ( ANY( x( 2 : N ) <= x( 1 : N - 1 ) ) ) monotonic_dble = .FALSE.   
 
   END FUNCTION monotonic_dble
+
 END MODULE monotonicMod
