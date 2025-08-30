@@ -1,8 +1,7 @@
 !! Provides function to generate Munk profile
 
 SUBROUTINE ANALYT( cP, cS, rho, Medium, N1 )
-
-  !     Munk profile
+  !! Generate the Munk speed of sound profile
 
   !     Returns
   !        cS, cP, rho at depths i*h i = 1, N

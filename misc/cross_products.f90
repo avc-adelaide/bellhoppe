@@ -1,7 +1,7 @@
-!! Provides a standard cross product function
+!! Provides a standard 3D cross product function
 
 MODULE cross_products
-!! Provides a cross product function for both single and double reals
+!! Provides a 3D cross product function for both single and double reals
 
   IMPLICIT NONE
   
@@ -12,7 +12,7 @@ MODULE cross_products
 CONTAINS
 
   FUNCTION cross_product_sngl( a, b )
-    !! Computes cross product of single precision vectors
+    !! Computes 3D cross product of single precision vectors
  
     REAL (KIND=4), DIMENSION( 3 ) :: cross_product_sngl
     REAL (KIND=4), DIMENSION( 3 ), INTENT(  IN ) :: a, b
@@ -24,7 +24,7 @@ CONTAINS
   END FUNCTION cross_product_sngl
 
   FUNCTION cross_product_dble( a, b )
-    !! Computes cross product of double precision vectors
+    !! Computes 3D cross product of double precision vectors
  
     REAL (KIND=8), DIMENSION( 3 ) :: cross_product_dble
     REAL (KIND=8), DIMENSION( 3 ), INTENT(  IN ) :: a, b
