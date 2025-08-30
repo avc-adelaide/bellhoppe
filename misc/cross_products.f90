@@ -3,8 +3,6 @@
 MODULE cross_products
 !! Provides a cross product function for both single and double reals
 
-! mbp 1/2012
-
   IMPLICIT NONE
   
   INTERFACE cross_product
@@ -12,8 +10,10 @@ MODULE cross_products
   END INTERFACE cross_product
 
 CONTAINS
-!! Computes cross product of single precision vectors
+
   FUNCTION cross_product_sngl( a, b )
+    !! Computes cross product of single precision vectors
+ 
     REAL (KIND=4), DIMENSION( 3 ) :: cross_product_sngl
     REAL (KIND=4), DIMENSION( 3 ), INTENT(  IN ) :: a, b
 
@@ -23,8 +23,9 @@ CONTAINS
 
   END FUNCTION cross_product_sngl
 
-!! Computes cross product of double precision vectors
   FUNCTION cross_product_dble( a, b )
+    !! Computes cross product of double precision vectors
+ 
     REAL (KIND=8), DIMENSION( 3 ) :: cross_product_dble
     REAL (KIND=8), DIMENSION( 3 ), INTENT(  IN ) :: a, b
 
@@ -33,4 +34,5 @@ CONTAINS
     cross_product_dble( 3 ) = a( 1 ) * b( 2 ) - a( 2 ) * b( 1 )
 
   END FUNCTION cross_product_dble
+
 END MODULE cross_products

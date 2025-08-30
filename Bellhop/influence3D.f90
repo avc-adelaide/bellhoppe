@@ -1,4 +1,5 @@
 !! Three-dimensional beam influence computation for pressure fields
+
 MODULE Influence3D
   !! 3D beam influence calculations with complex pressure field contributions and spatial weighting
 
@@ -26,9 +27,9 @@ MODULE Influence3D
        INFL_DEBUGGING_IZ = 0
 
 CONTAINS
-  SUBROUTINE Influence3DGeoHatRayCen( alpha, beta, Dalpha, Dbeta, P )
 
-    ! Geometrically-spreading beams with a hat-shaped beam in ray-centered coordinates
+  SUBROUTINE Influence3DGeoHatRayCen( alpha, beta, Dalpha, Dbeta, P )
+    !! Geometrically-spreading beams with a hat-shaped beam in ray-centered coordinates
 
     REAL ( KIND=8 ), INTENT( IN  ) :: alpha, beta, Dalpha, Dbeta         ! ray take-off angle
     COMPLEX        , INTENT( OUT ) :: P( Pos%Ntheta, Pos%Nrz, Pos%NRr )  ! complex pressure
@@ -149,8 +150,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE Influence3DGeoHatCart( alpha, beta, Dalpha, Dbeta, P, x_rcvrMat, t_rcvr )
-
-    ! Geometrically-spreading beams with a hat-shaped beam
+    !! Geometrically-spreading beams with a hat-shaped beam
 
     REAL ( KIND=8 ), INTENT( IN  ) :: alpha, beta, Dalpha, Dbeta         ! ray take-off angle
     REAL ( KIND=8 ), INTENT( IN  ) :: x_rcvrMat( 2, Pos%Ntheta, Pos%NRr ), t_rcvr( 2, Pos%Ntheta ) ! rcvr coordinates and tangent
@@ -339,8 +339,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE Influence3DGeoGaussianRayCen( alpha, beta, Dalpha, Dbeta, P )
-
-    ! Geometrically-spreading beams with a hat-shaped beam in ray-centered coordinates
+    !! Geometrically-spreading beams with a hat-shaped beam in ray-centered coordinates
 
     REAL, PARAMETER                :: BeamWindow = 4.0                   ! kills beams outside e**(-0.5 * BeamWindow**2 )
     REAL ( KIND=8 ), INTENT( IN  ) :: alpha, beta, Dalpha, Dbeta         ! ray take-off angle
@@ -550,8 +549,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE Influence3DGeoGaussianCart( alpha, beta, Dalpha, Dbeta, P, x_rcvrMat, t_rcvr )
-
-    ! Geometrically-spreading beams with a Gaussian-shaped beam
+    !! Geometrically-spreading beams with a Gaussian-shaped beam
 
     REAL, PARAMETER                :: BeamWindow = 4.0                   ! kills beams outside e**(-0.5 * BeamWindow**2 )
     REAL ( KIND=8 ), INTENT( IN  ) :: alpha, beta, Dalpha, Dbeta         ! ray take-off angle
@@ -764,12 +762,11 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE ScaleBeam( alpha, Dalpha, Dbeta )
+    !! Scaling for geometric beams
 
     REAL ( KIND = 8 ), INTENT( IN ) :: alpha, Dalpha, Dbeta
 
     ray3D( 1 : Beam%Nsteps )%Amp = Ratio1 * ray3D( 1 : Beam%Nsteps )%c * ray3D( 1 : Beam%Nsteps )%Amp   ! pre-apply some scaling
-
-    ! scaling for geometric beams
 
     ray3D( 1 : Beam%Nsteps )%DetQ = ray3D( 1 : Beam%Nsteps )%q_tilde( 1 ) * ray3D( 1 : Beam%Nsteps )%q_hat(   2 ) - &
                                     ray3D( 1 : Beam%Nsteps )%q_tilde( 2 ) * ray3D( 1 : Beam%Nsteps )%q_hat(   1 )
@@ -785,9 +782,11 @@ CONTAINS
 
   SUBROUTINE ApplyContribution( alpha, beta, U )
 
-    REAL ( KIND=8 ), INTENT( IN    ) :: alpha, beta         ! ray take-off angle
+    REAL ( KIND=8 ), INTENT( IN    ) :: alpha, beta
+      !! ray take-off angle
     COMPLEX,         INTENT( INOUT ) :: U
-    REAL ( KIND=8 )                  :: rayt2( 3 ) ! LP: Don't want to clobber rayt!
+    REAL ( KIND=8 )                  :: rayt2( 3 )
+    ! LP: Don't want to clobber rayt!
 
     SELECT CASE( Beam%RunType( 1 : 1 ) )
     CASE ( 'E' )      ! eigenrays
@@ -816,8 +815,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE ScalePressure3D( Dalpha, Dbeta, c, epsilon, P, Ntheta, Nrz, Nr, RunType, freq )
-
-    ! Scale the pressure field
+    !! Scale the pressure field
 
     INTEGER,            INTENT( IN    ) :: Ntheta, Nrz, Nr
     REAL    ( KIND=8 ), INTENT( IN    ) :: Dalpha, Dbeta        ! angular spacing between rays

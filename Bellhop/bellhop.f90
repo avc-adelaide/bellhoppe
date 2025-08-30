@@ -153,6 +153,7 @@ PROGRAM BELLHOP
 ! **********************************************************************!
 
 SUBROUTINE BellhopCore
+  !! Core subroutine to run Bellhop algorithm
 
   USE ArrMod
   USE AttenMod

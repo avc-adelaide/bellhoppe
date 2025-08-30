@@ -103,17 +103,20 @@ PROGRAM BELLHOP3D
 ! **********************************************************************!
 
 SUBROUTINE BellhopCore
-
+  !! Core subroutine to run Bellhop algorithm
+  
   USE angleMod
   USE SourceReceiverPositions
   USE ArrMod
   USE WriteRay
 
-  ! LP: Was 400M; this translates to 16 GB of arrivals, which is half my computer's
+  ! @note "LP"
+  ! Was 400M; this translates to 16 GB of arrivals, which is half my computer's
   ! memory, so I can't run this and the C++/CUDA version in parallel. This large
   ! a size should not be necessary for most runs anyway, and it's not great for
   ! a program to allocate this kind of memory just as a default (rather than in
   ! response to the user specifying a very large problem size). So, cut in half.
+  ! @endnote
   INTEGER,   PARAMETER :: ArrivalsStorage = 200000000
   INTEGER              :: IBPvec( 1 ), ibp, iBeamWindow2, irz, itheta, isx, isy, isz, iRec, ir
   REAL      ( KIND=8 ) :: Tstart, Tstop
