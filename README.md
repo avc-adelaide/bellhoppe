@@ -41,6 +41,16 @@ BELLHOP/BELLHOP3D: `bellhopcxx`/`bellhopcuda`](https://github.com/A-New-BellHope
 - **[Acoustics Toolbox Overview](docs/at_index.htm)** - Complete toolbox suite information
 - **[Original Repository Info](docs/doc_index.htm)** - Project structure and background
 
+### 🏗️ Architecture Notes
+
+**Sound Speed Profile Modules (`sspMod.f90`)**
+
+This codebase contains two different `sspMod.f90` files by design:
+- **`Bellhop/sspMod.f90`** - BELLHOP-specific module with advanced 2D/3D interpolation capabilities for ray tracing
+- **`misc/sspMod.f90`** - General-purpose module used by other Acoustics Toolbox programs (SCOOTER, SPARC, BOUNCE)
+
+The build system compiles both: the `misc/` version goes into `libmisc.a` for use by other toolbox programs, while the `Bellhop/` version takes precedence for BELLHOP executables, providing specialized functionality for acoustic ray tracing.
+
 
 
 ## Installation
