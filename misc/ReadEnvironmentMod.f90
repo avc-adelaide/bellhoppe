@@ -1,4 +1,5 @@
 !! Environment file reading utilities for acoustic models
+
 MODULE ReadEnvironmentMod
   !! Environment file parsing and configuration setup for acoustic modeling applications
 
@@ -243,9 +244,9 @@ CONTAINS
   END SUBROUTINE ReadTopOpt
 
   ! **********************************************************************!
+ 
   SUBROUTINE TopBot( HS )
-
-    ! Handles top and bottom boundary conditions
+    !! Handles top and bottom boundary conditions
 
     ! Input:
     !     HS%BC:   Boundary condition type

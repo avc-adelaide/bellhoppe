@@ -1,6 +1,7 @@
 !! Environment input file parsing and setup for BELLHOP
-!! Provides environment file reading and initialization
+
 MODULE ReadEnvironmentBell
+  !! Provides environment file reading and initialization
 
   ! mbp 12/2018, based on much older subroutine
 
@@ -13,8 +14,9 @@ MODULE ReadEnvironmentBell
   IMPLICIT NONE
 
 CONTAINS
-!! Reads and parses the main environment file
+
   SUBROUTINE ReadEnvironment( FileRoot, ThreeD )
+    !! Reads and parses the main environment file
 
     ! Routine to read in and echo all the input data
     ! Note that default values of SSP, DENSITY, Attenuation will not work
@@ -354,8 +356,8 @@ CONTAINS
 
   ! **********************************************************************!
 
-!! Reads and validates the run type parameters
   SUBROUTINE ReadRunType( RunType, PlotType )
+    !! Reads and validates the run type parameters
 
     ! Read the RunType variable and echo with explanatory information to the print file
 
@@ -442,8 +444,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE TopBot( freq, AttenUnit, HS )
-
-    ! Handles top and bottom boundary conditions
+    !! Handles top and bottom boundary conditions
 
     REAL     (KIND=8), INTENT( IN    ) :: freq     ! center / nominal frequency (wideband not supported)
     CHARACTER (LEN=2), INTENT( IN    ) :: AttenUnit
@@ -547,8 +548,9 @@ CONTAINS
 
   ! **********************************************************************!
 
-!! Opens output files based on run type
   SUBROUTINE OpenOutputFiles( FileRoot, ThreeD )
+    !! Opens output files based on run type
+ 
     ! Write appropriate header information
 
     USE SourceReceiverPositions
