@@ -3,6 +3,7 @@
 MODULE pchipmod
   !! Subroutines and functions related to the calculation of the Piecewise Cubic Hermite Interpolating Polynomial (PCHIP)
 
+  USE splinec
   IMPLICIT NONE
   SAVE
 

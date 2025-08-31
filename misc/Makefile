@@ -60,8 +60,8 @@ MathConstants.o mathconstants.mod: MathConstants.f90
 RefCoef.o refcoef.mod: RefCoef.f90 polymod.mod
 	$(FC) -c $(FFLAGS) $< 
 
-pchipMod.o pchipmod.mod: pchipMod.f90
-	$(FC) -c $(FFLAGS) $< 
+pchipMod.o pchipmod.mod: pchipMod.f90 splinec.mod
+	$(FC) -c $(FFLAGS) $<
 
 splinec.o splinec.mod: splinec.f90
 	$(FC) -c $(FFLAGS) $< 
