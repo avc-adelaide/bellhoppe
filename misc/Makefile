@@ -9,7 +9,7 @@ ARFLAGS = r
 RANLIB = ranlib
 
 # include norm2.o below, if your compiler is missing that intrinsic
-OBJECTS = FatalError.o beampattern.o MathConstants.o RefCoef.o SourceReceiverPositions.o  pchipMod.o AttenMod.o sspMod.o RWSHDFile.o interpolation.o MergeVectorsMod.o munk.o ReadEnvironmentMod.o SortMod.o splinec.o subtabulate.o calculateweights.o cross_products.o monotonicMod.o PolyMod.o PekRoot.o RootFinderSecantMod.o
+OBJECTS = FatalError.o beampattern.o MathConstants.o RefCoef.o SourceReceiverPositions.o  pchipMod.o AttenMod.o RWSHDFile.o interpolation.o MergeVectorsMod.o munk.o SortMod.o splinec.o subtabulate.o calculateweights.o cross_products.o monotonicMod.o PolyMod.o PekRoot.o RootFinderSecantMod.o
 
 all: libmisc.a
 
@@ -69,9 +69,6 @@ MathConstants.o mathconstants.mod: MathConstants.f90
 RefCoef.o refcoef.mod: RefCoef.f90 polymod.mod
 	$(FC) -c $(FFLAGS) $< 
 
-sspMod.o sspmod.mod: sspMod.f90 pchipmod.mod attenmod.mod
-	$(FC) -c $(FFLAGS) $< 
-
 pchipMod.o pchipmod.mod: pchipMod.f90
 	$(FC) -c $(FFLAGS) $< 
 
@@ -90,8 +87,6 @@ FatalError.o fatalerror.mod: FatalError.f90
 MergeVectorsMod.o: MergeVectorsMod.f90
 
 munk.o: munk.f90
-
-ReadEnvironmentMod.o readenvironmentmod.mod: ReadEnvironmentMod.f90 sspmod.mod
 
 splinec.o: splinec.f90
 
