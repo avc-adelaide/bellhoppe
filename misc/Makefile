@@ -9,7 +9,7 @@ ARFLAGS = r
 RANLIB = ranlib
 
 # include norm2.o below, if your compiler is missing that intrinsic
-OBJECTS = FatalError.o beampattern.o MathConstants.o RefCoef.o SourceReceiverPositions.o  pchipMod.o AttenMod.o RWSHDFile.o interpolation.o MergeVectorsMod.o munk.o SortMod.o splinec.o subtabulate.o calculateweights.o cross_products.o monotonicMod.o PolyMod.o PekRoot.o RootFinderSecantMod.o
+OBJECTS = FatalError.o beampattern.o MathConstants.o RefCoef.o SourceReceiverPositions.o  pchipMod.o AttenMod.o RWSHDFile.o SortMod.o subtabulate.o cross_products.o monotonicMod.o PolyMod.o
 
 all: libmisc.a
 
@@ -39,13 +39,7 @@ libmisc.a: $(OBJECTS)
 	$(RANLIB) $@
 	@echo "Routines needed by SCOOTER\SPARC\BELLHOP\BOUNCE built"
 
-subtabultate.o subtabulate.mod: subtabulate.f90
-	$(FC) -c $(FFLAGS) $<
-
-calculateweights.o calculateweights.mod: calculateweights.f90
-	$(FC) -c $(FFLAGS) $<
-
-RootFinderSecantMod.o rootfindersecantmod.mod: RootFinderSecantMod.f90
+subtabulate.o subtabulate.mod: subtabulate.f90
 	$(FC) -c $(FFLAGS) $<
 
 SourceReceiverPositions.o sourcereceiverpositions.mod: SourceReceiverPositions.f90 monotonicmod.mod sortmod.mod subtabulate.mod
@@ -58,9 +52,6 @@ AttenMod.o: AttenMod.f90 MathConstants.mod
 	$(FC) -c $(FFLAGS) $<
 
 beampattern.o beampattern.mod: beampattern.f90 fatalerror.mod monotonicMod.mod
-	$(FC) -c $(FFLAGS) $<
-
-interpolation.o interpolation.mod: interpolation.f90
 	$(FC) -c $(FFLAGS) $<
 
 MathConstants.o mathconstants.mod: MathConstants.f90
@@ -78,17 +69,9 @@ monotonicMod.o monotonicmod.mod: monotonicMod.f90
 SortMod.o sortmod.mod: SortMod.f90
 	$(FC) -c $(FFLAGS) $< 
 
-PekRoot.o pekroot.mod : PekRoot.f90
-
 RWSHDFile.o: RWSHDFile.f90 sourcereceiverpositions.mod
 
 FatalError.o fatalerror.mod: FatalError.f90
-
-MergeVectorsMod.o: MergeVectorsMod.f90
-
-munk.o: munk.f90
-
-splinec.o: splinec.f90
 
 cross_products.o cross_products.mod: cross_products.f90
 	$(FC) -c $(FFLAGS) $< 
