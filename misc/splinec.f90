@@ -1,5 +1,11 @@
 !! Provides spline functions
 
+MODULE splinec
+  !! Cubic spline interpolation functions and procedures
+  IMPLICIT NONE
+  
+CONTAINS
+
 SUBROUTINE CSPLINE (TAU, C, N, IBCBEG, IBCEND, NDIM)
 
   !  TAKEN FROM "A PRACTICAL GUIDE TO SPLINES", BY CARL DE BOOR. 1978.
@@ -53,9 +59,13 @@ SUBROUTINE CSPLINE (TAU, C, N, IBCBEG, IBCEND, NDIM)
 
   ! **********************************************************************
 
-  IMPLICIT REAL (KIND=8) (A-H,O-Z)
-  REAL    (KIND=8) ::  TAU(N)
-  COMPLEX (KIND=8) :: C(4,NDIM), G, DTAU, DIVDF1, DIVDF3
+  INTEGER, INTENT(IN) :: N, IBCBEG, IBCEND, NDIM
+  REAL    (KIND=8), INTENT(IN)  :: TAU(N)
+  COMPLEX (KIND=8), INTENT(INOUT) :: C(4,NDIM)
+  
+  ! Local variables
+  INTEGER :: L, M, I, J
+  COMPLEX (KIND=8) :: G, DTAU, DIVDF1, DIVDF3
 
   L = N - 1
 
@@ -180,9 +190,14 @@ SUBROUTINE VSPLINE (TAU, C, M, MDIM, F, N)
   !     POINTS WHICH ARE OUT OF ORDER WILL BE EXTRAPOLATED FROM THE CURRENT
   !     INTERVAL AGAIN RESULTING IN WILD VALUES.
 
-  IMPLICIT REAL (KIND=8) (A-H,O-Z)
-  REAL    (KIND=8) :: TAU(M)
-  COMPLEX (KIND=8) :: C(4,MDIM), F(N), SPLINE
+  INTEGER, INTENT(IN) :: M, N, MDIM
+  REAL    (KIND=8), INTENT(IN) :: TAU(M)
+  COMPLEX (KIND=8), INTENT(IN) :: C(4,MDIM)
+  COMPLEX (KIND=8), INTENT(INOUT) :: F(N)
+  
+  ! Local variables
+  INTEGER :: I, J, J1
+  REAL (KIND=8) :: H
 
   J = 1
   DO I = 1,N
@@ -203,8 +218,9 @@ END SUBROUTINE VSPLINE
 
 !     THIS FUNCTION EVALUATES THE SPLINE AT THE POINT H
 
-      IMPLICIT REAL (KIND=8) ( A-H, O-Z )
-      COMPLEX (KIND=8) C(4), SPLINE
+      COMPLEX (KIND=8), INTENT(IN) :: C(4)
+      REAL (KIND=8), INTENT(IN) :: H
+      COMPLEX (KIND=8) :: SPLINE
 
       SPLINE = C(1) + H * ( C(2) + H * ( C(3) / 2.0 + H * C(4) / 6.0 ) )
       RETURN
@@ -214,8 +230,9 @@ END SUBROUTINE VSPLINE
 
 !     THIS FUNCTION EVALUATES THE SPLINE DERIVATIVE AT THE POINT H
 
-      IMPLICIT REAL (KIND=8) ( A-H, O-Z )
-      COMPLEX (KIND=8) :: C(4), SPLINEX
+      COMPLEX (KIND=8), INTENT(IN) :: C(4)
+      REAL (KIND=8), INTENT(IN) :: H
+      COMPLEX (KIND=8) :: SPLINEX
 
       SPLINEX = C(2) + H * ( C(3) + H * C(4) / 2.0 )
       RETURN
@@ -225,8 +242,9 @@ END SUBROUTINE VSPLINE
 
 !     THIS FUNCTION EVALUATES THE SPLINE 2ND DERIVATIVE AT THE POINT H
 
-      IMPLICIT REAL (KIND=8) ( A-H, O-Z )
-      COMPLEX (KIND=8) :: C(4), SPLINEXX
+      COMPLEX (KIND=8), INTENT(IN) :: C(4)
+      REAL (KIND=8), INTENT(IN) :: H
+      COMPLEX (KIND=8) :: SPLINEXX
 
       SPLINEXX = C(3) + H * C(4)
       RETURN
@@ -239,9 +257,11 @@ END SUBROUTINE VSPLINE
 !        SPLINE DERIVATIVE, AND
 !        SPLINE 2ND DERIVATIVE AT THE POINT H
 
-      IMPLICIT REAL (KIND=8) ( A-H, O-Z )
-      PARAMETER ( HALF = 0.5, SIXTH = 1.0 / 6.0 )
-      COMPLEX (KIND=8) :: C(4), F, FX, FXX
+      COMPLEX (KIND=8), INTENT(IN) :: C(4)
+      REAL (KIND=8), INTENT(IN) :: H
+      COMPLEX (KIND=8), INTENT(OUT) :: F, FX, FXX
+      
+      REAL (KIND=8), PARAMETER :: HALF = 0.5, SIXTH = 1.0 / 6.0
 
       F   = C(1) + H * ( C(2) + H * ( HALF * C(3) + SIXTH * H * C(4) ) )
       FX  = C(2) + H * ( C(3) + H * HALF * C(4) )
@@ -249,3 +269,5 @@ END SUBROUTINE VSPLINE
 
       RETURN
       END SUBROUTINE SPLINEALL
+
+END MODULE splinec

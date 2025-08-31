@@ -13,6 +13,7 @@ MODULE sspmod
 
   USE FatalError
   USE monotonicMod
+  USE splinec
   IMPLICIT NONE
 
   SAVE
