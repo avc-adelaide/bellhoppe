@@ -36,7 +36,7 @@ jobs:
 
     - name: Build and install with coverage instrumentation
       run: |
-        make coverage-build && make converage-install
+        make coverage-build && make coverage-install
 
     - name: Run tests to generate coverage data
       run: |
