@@ -27,6 +27,7 @@ output_dir = "doc" # default
 preprocessor = "gfortran -E"
 project_github = "https://github.com/AUMAG/bellhop"
 github = "https://github.com/AUMAG/bellhop"
+
 source = true
 graph = true
 search = false
