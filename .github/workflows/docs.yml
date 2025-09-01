@@ -79,25 +79,32 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
-        
+
     - name: Install FORD
       run: pip install FORD
-      
+
     - name: Install gfortran and graphviz
       run: sudo apt-get update && sudo apt-get install -y gfortran graphviz gcc
-      
+
+    - name: Download coverage reports
+      uses: actions/download-artifact@v4
+      with:
+        name: coverage-reports
+        path: ./docs
+
     - name: Generate documentation
       run: |
+        ls -lR docs
         ford -g -d "Bellhop" -d "misc" ford.md
-        
+
     - name: Setup Pages
       uses: actions/configure-pages@v5
-      
+
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
