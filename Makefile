@@ -206,7 +206,7 @@ install: all
 	@echo '    echo "export PATH=\$$PATH:$(shell pwd)/bin" >> "$$HOME/.zshrc"'
 	@echo "*****************************"
 
-clean:
+clean: coverage-clean
 	-rm -f bin/*.exe
 	find . -name '*.dSYM' -exec rm -r {} +
 	find . -name '*.png'  -exec rm -r {} +
@@ -216,10 +216,7 @@ clean:
 	find . -name '*.shd'  -exec rm -r {} +
 	find . -name '*.shd.mat'  -exec rm -r {} +
 	find . -name '*.prt'  -exec rm -r {} +
-	@echo "Cleaning coverage data files..."
-	find . -name '*.gcda' -exec rm {} +
 	find . -name '*.gcno' -exec rm {} +
-	find . -name '*.gcov' -exec rm {} +
 	(cd misc;	make -k -i clean)
 	(cd Bellhop;	make -k -i clean)
 	
@@ -236,6 +233,11 @@ coverage-build: clean
 	@echo "Building BELLHOP with coverage instrumentation..."
 	$(MAKE) FC=gfortran FFLAGS="$(FFLAGS_BASE) $(FFLAGS_ARCH) $(FFLAGS_COVERAGE) -I../misc" all
 
+coverage-clean:
+	@echo "Cleaning coverage output files..."
+	find . -name '*.gcda' -exec rm {} +
+	find . -name '*.gcov' -exec rm {} +
+
 coverage-install: coverage-build
 	@echo "Installing BELLHOP with coverage instrumentation..."
 	$(MAKE) install
@@ -247,12 +249,12 @@ coverage-test: coverage-install
 	bellhop.exe MunkB_ray && \
 	bellhop.exe MunkB_Coh
 
-coverage-report: coverage-test
+coverage-report:
 	@echo "Generating coverage report from existing data..."
 	@echo "Coverage data files found:"
 	@find . -name '*.gcda' | head -10
 	@if [ ! $$(find . -name '*.gcda' | wc -l) -gt 0 ]; then \
-		echo "No coverage data found. Run 'make coverage-test' first."; \
+		echo "No coverage data found. Run 'make coverage-test' as a check first."; \
 		exit 1; \
 	fi
 	@echo "Generating GCOV reports for main source files..."

@@ -1,3 +1,4 @@
+
 name: Code Coverage Analysis
 
 on:
@@ -5,37 +6,43 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   coverage:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Install dependencies
       run: |
         sudo apt update
         sudo apt install -y gfortran gcc
-        
+
     - name: Verify compiler and tools
       run: |
         gfortran --version
         gcov --version
-        
-    - name: Build with coverage instrumentation
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Hatch
+      run: pipx install hatch
+
+    - name: Build and install with coverage instrumentation
       run: |
-        make coverage-build
-        
-    - name: Install coverage-enabled executables
-      run: |
-        make coverage-install
-        
+        make coverage-build && make converage-install
+
     - name: Run tests to generate coverage data
       run: |
-        make coverage-test
-        
+        export PATH="$PWD/bin:$PATH"
+        hatch run test
+
     - name: Generate coverage reports
       run: |
         make coverage-report
@@ -44,36 +51,6 @@ jobs:
       run: |
         make coverage-html
         
-    - name: Create coverage summary
-      run: |
-        echo "# Coverage Report Summary" > coverage-summary.md
-        echo "" >> coverage-summary.md
-        echo "## Files with Coverage Data" >> coverage-summary.md
-        echo "" >> coverage-summary.md
-        
-        # Find all .gcov files and extract coverage stats
-        echo "| File | Lines Executed | Branches Executed | Calls Executed |" >> coverage-summary.md
-        echo "|------|----------------|-------------------|----------------|" >> coverage-summary.md
-        
-        for gcov_file in $(find . -name "*.gcov" | head -10); do
-          if [ -f "$gcov_file" ]; then
-            filename=$(basename "$gcov_file" .gcov)
-            lines=$(grep "Lines executed:" "$gcov_file" | tail -1 | sed 's/Lines executed://' | awk '{print $1}')
-            branches=$(grep "Branches executed:" "$gcov_file" | tail -1 | sed 's/Branches executed://' | awk '{print $1}')
-            calls=$(grep "Calls executed:" "$gcov_file" | tail -1 | sed 's/Calls executed://' | awk '{print $1}')
-            echo "| $filename | ${lines:-N/A} | ${branches:-N/A} | ${calls:-N/A} |" >> coverage-summary.md
-          fi
-        done
-        
-        echo "" >> coverage-summary.md
-        echo "## Coverage Data Files Generated" >> coverage-summary.md
-        echo "" >> coverage-summary.md
-        echo "Total .gcda files: $(find . -name '*.gcda' | wc -l)" >> coverage-summary.md
-        echo "Total .gcno files: $(find . -name '*.gcno' | wc -l)" >> coverage-summary.md  
-        echo "Total .gcov files: $(find . -name '*.gcov' | wc -l)" >> coverage-summary.md
-        
-        cat coverage-summary.md
-        
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
       with:
@@ -81,14 +58,4 @@ jobs:
         path: |
           **/*.gcov
           docs/*.html
-          coverage-summary.md
-        retention-days: 30
-        
-    - name: Upload coverage data
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-data
-        path: |
-          **/*.gcda
-          **/*.gcno
-        retention-days: 30
+        retention-days: 3
