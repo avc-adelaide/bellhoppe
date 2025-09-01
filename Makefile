@@ -240,7 +240,11 @@ coverage-clean:
 
 coverage-install: coverage-build
 	@echo "Installing BELLHOP with coverage instrumentation..."
-	$(MAKE) install
+	mkdir -p ./bin
+	for f in Bellhop/*.exe ; do \
+		echo "----- Installing $$f"; cp -p $$f ./bin/; \
+	done
+
 
 coverage-test: coverage-install
 	@echo "Running basic coverage test..."
