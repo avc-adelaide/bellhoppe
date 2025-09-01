@@ -73,6 +73,10 @@ which at time of writing required something like: (you may not wish to use `venv
 
     pip3 install matplotlib
     pip3 install arlpy
+    pip3 install pytest
+
+These steps are needed for manually running the test suite, etc. You might be able to get
+away with `hatch` taking care of most of these things for you.
 
 ### Linux
 

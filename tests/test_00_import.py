@@ -8,7 +8,7 @@ def test_import_arlpy():
 
     # sanity check: make sure bellhop is registered
     if "bellhop" not in pm.models():
-        pytest.exit("❌ 'bellhop' model not available in arlpy.uwapm", returncode=1)
+        pytest.exit("❌ 'bellhop' model not available in arlpy.uwapm. This probably means that bellhop.exe is not available on the current $PATH.", returncode=1)
 
     # If everything is fine, the test passes
     assert True
