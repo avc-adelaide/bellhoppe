@@ -3,15 +3,11 @@ import arlpy.uwapm as pm
 
 
 def test_interp_linear():
-    """Test BELLHOP with depth-dependent sound speed profile.
+    """Test BELLHOP with depth-dependent sound speed profile and linear interpolation.
 
-    This test validates acoustic propagation with a variable sound speed profile
-    as requested in issue #8. The test:
-
-    1. Defines a 5-point depth-dependent SSP from surface (0m) to bottom (30m)
-    2. Creates a 2D environment using the SSP
-    3. Validates default environment parameters remain correct
-    4. Computes acoustic ray arrivals and validates results
+    This is exactly the same test as `test_variable_soundspeed()` in `test_simple.py` but
+    with linear interpolation instead of spline. There are a different number of arrivals
+    with slightly different arrival times.
     """
 
     # Define depth-dependent sound speed profile as specified in issue
