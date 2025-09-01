@@ -69,6 +69,7 @@ exclude = [
 [tool.hatch.envs.default.scripts]
 test = "pytest --capture=tee-sys"
 doc  = "ford -g -d Bellhop -d misc ford.md"
+cov  = "make coverage-full"
 
 [tool.ruff]
 output-format = "github"

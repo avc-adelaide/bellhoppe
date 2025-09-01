@@ -13,62 +13,80 @@ from pathlib import Path
 from html import escape
 
 def parse_gcov_file(gcov_path):
-    """Parse a .gcov file and extract coverage information."""
+    """
+    Parse a Fortran .gcov file and extract line, branch, and call coverage.
+    """
+    coverage_data = []
+    branch_data = []
+    call_data = []
+
     with open(gcov_path, 'r', encoding='utf-8', errors='ignore') as f:
         lines = f.readlines()
-    
-    coverage_data = []
-    
+
+    # Parse lines for line coverage
     for line in lines:
-        # GCOV format: execution_count:line_number:source_code
         parts = line.split(':', 2)
-        if len(parts) >= 3:
-            execution_count = parts[0].strip()
-            line_number = parts[1].strip()
-            source_code = parts[2].rstrip('\n')
-            
-            if line_number.isdigit():
-                executed = execution_count != '#####' and execution_count != '-'
-                
-                coverage_data.append({
-                    'line_number': int(line_number),
-                    'execution_count': execution_count,
-                    'source_code': source_code,
-                    'executed': executed
-                })
-    
-    # Extract summary information from the end of the file
+        if len(parts) < 3:
+            continue
+
+        execution_count = parts[0].strip()
+        line_number = parts[1].strip()
+        source_code = parts[2].rstrip('\n')
+
+        if line_number.isdigit():
+            executed = execution_count not in ('#####', '-')
+            coverage_data.append({
+                'line_number': int(line_number),
+                'execution_count': execution_count,
+                'source_code': source_code,
+                'executed': executed
+            })
+
+    # Parse branch coverage
+    for line in lines:
+        match = re.match(r'branch\s+(\d+)\s+taken\s+(\d+)', line)
+        if match:
+            branch_data.append({
+                'branch_id': int(match.group(1)),
+                'taken': int(match.group(2))
+            })
+
+    # Parse call coverage
+    for line in lines:
+        match = re.match(r'call\s+(\d+)\s+returned\s+(\d+)', line)
+        if match:
+            call_data.append({
+                'call_id': int(match.group(1)),
+                'executed': int(match.group(2))
+            })
+
+    # Compute percentages
+    total_lines = sum(1 for d in coverage_data if d['execution_count'] != '-')
+    executed_lines = sum(1 for d in coverage_data if d['executed'])
+    line_percentage = 100 * executed_lines / total_lines if total_lines > 0 else 0
+
+    total_branches = len(branch_data)
+    executed_branches = sum(1 for b in branch_data if b['taken'] > 0)
+    branch_percentage = 100 * executed_branches / total_branches if total_branches > 0 else 0
+
+    total_calls = len(call_data)
+    executed_calls = sum(1 for c in call_data if c['executed'] > 0)
+    call_percentage = 100 * executed_calls / total_calls if total_calls > 0 else 0
+
     summary_info = {
-        'line_percentage': 0,
-        'total_lines': 0,
-        'branch_percentage': 0,
-        'total_branches': 0,
-        'call_percentage': 0,
-        'total_calls': 0
+        'line_percentage': line_percentage,
+        'total_lines': total_lines,
+        'branch_percentage': branch_percentage,
+        'total_branches': total_branches,
+        'call_percentage': call_percentage,
+        'total_calls': total_calls
     }
-    
-    for line in lines[-10:]:  # Check last 10 lines for summary
-        if 'Lines executed:' in line:
-            match = re.search(r'Lines executed:(\d+\.\d+)% of (\d+)', line)
-            if match:
-                summary_info['line_percentage'] = float(match.group(1))
-                summary_info['total_lines'] = int(match.group(2))
-        elif 'Branches executed:' in line:
-            match = re.search(r'Branches executed:(\d+\.\d+)% of (\d+)', line)
-            if match:
-                summary_info['branch_percentage'] = float(match.group(1))
-                summary_info['total_branches'] = int(match.group(2))
-        elif 'Calls executed:' in line:
-            match = re.search(r'Calls executed:(\d+\.\d+)% of (\d+)', line)
-            if match:
-                summary_info['call_percentage'] = float(match.group(1))
-                summary_info['total_calls'] = int(match.group(2))
-    
-    return coverage_data, summary_info
+
+    return coverage_data, branch_data, call_data, summary_info
 
 def generate_html_report(gcov_file, output_dir):
     """Generate an HTML report for a single .gcov file."""
-    coverage_data, summary_info = parse_gcov_file(gcov_file)
+    coverage_data, branch_data, call_data, summary_info = parse_gcov_file(gcov_file)
     filename = os.path.basename(gcov_file)
     source_name = filename.replace('.gcov', '')
     

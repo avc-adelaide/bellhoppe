@@ -115,7 +115,8 @@ export FC=gfortran
 UNAME_M := $(shell uname -m)
 
 # Base flags (common to all)
-FFLAGS_BASE = -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation -std=gnu -O2 -g -ffast-math -funroll-all-loops -fomit-frame-pointer -frecursive 
+FFLAGS_BASE = -g -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation -std=gnu -frecursive 
+FFLAGS_OPTIM = -O2 -ffast-math -funroll-all-loops -fomit-frame-pointer
 
 # Arch-specific flags
 ifeq ($(UNAME_M),x86_64) # Windows/Intel/Linux Intel
@@ -133,7 +134,7 @@ endif
 FFLAGS_COVERAGE = -fprofile-arcs -ftest-coverage
 
 # Combine
-FFLAGS = $(FFLAGS_BASE) $(FFLAGS_ARCH)
+FFLAGS = $(FFLAGS_BASE) $(FFLAGS_OPTIM) $(FFLAGS_ARCH)
 export FFLAGS
 
 # Compilation and run-time diagnostics on:
@@ -196,8 +197,7 @@ all:
 	@echo "***** BELLHOP built *****"
 	@echo "*************************"
 
-install:
-	(cd misc;	make -k all)
+install: all
 	(cd Bellhop;	make -k install)
 	@echo " "
 	@echo "*****************************"
@@ -216,6 +216,10 @@ clean:
 	find . -name '*.shd'  -exec rm -r {} +
 	find . -name '*.shd.mat'  -exec rm -r {} +
 	find . -name '*.prt'  -exec rm -r {} +
+	@echo "Cleaning coverage data files..."
+	find . -name '*.gcda' -exec rm {} +
+	find . -name '*.gcno' -exec rm {} +
+	find . -name '*.gcov' -exec rm {} +
 	(cd misc;	make -k -i clean)
 	(cd Bellhop;	make -k -i clean)
 	
@@ -228,19 +232,13 @@ docs:
 clean-docs:
 	-rm -rf doc
 
-coverage-clean:
-	@echo "Cleaning coverage data files..."
-	find . -name '*.gcda' -exec rm {} +
-	find . -name '*.gcno' -exec rm {} +
-	find . -name '*.gcov' -exec rm {} +
-
-coverage-build: coverage-clean
+coverage-build: clean
 	@echo "Building BELLHOP with coverage instrumentation..."
 	$(MAKE) FC=gfortran FFLAGS="$(FFLAGS_BASE) $(FFLAGS_ARCH) $(FFLAGS_COVERAGE) -I../misc" all
 
 coverage-install: coverage-build
 	@echo "Installing BELLHOP with coverage instrumentation..."
-	$(MAKE) FC=gfortran FFLAGS="$(FFLAGS_BASE) $(FFLAGS_ARCH) $(FFLAGS_COVERAGE) -I../misc" install
+	$(MAKE) install
 
 coverage-test: coverage-install
 	@echo "Running basic coverage test..."
@@ -249,7 +247,7 @@ coverage-test: coverage-install
 	bellhop.exe MunkB_ray && \
 	bellhop.exe MunkB_Coh
 
-coverage-report:
+coverage-report: coverage-test
 	@echo "Generating coverage report from existing data..."
 	@echo "Coverage data files found:"
 	@find . -name '*.gcda' | head -10
@@ -287,7 +285,7 @@ coverage-report:
 	@cd Bellhop && ls -la *.gcov 2>/dev/null | head -5 || echo "No .gcov files found in Bellhop/"
 	@cd misc && ls -la *.gcov 2>/dev/null | head -5 || echo "No .gcov files found in misc/"
 
-coverage-html:
+coverage-html: coverage-report
 	@echo "Generating HTML coverage reports for FORD integration..."
 	@if [ ! $$(find . -name '*.gcov' | wc -l) -gt 0 ]; then \
 		echo "No .gcov files found. Run 'make coverage-report' first."; \
