@@ -27,17 +27,17 @@ MODULE SourceReceiverPositions
   TYPE ( Position ) :: Pos   ! structure containing source and receiver positions
 
 CONTAINS
-    
+
   FUNCTION RToIR( r )
-      
+
     ! index of nearest rcvr before normal
     ! Compute upper index on rcvr line
     !!! Assumes Pos%r is a vector of equally spaced points
-    
+
     REAL ( KIND=8 ), INTENT( IN ) :: r
     INTEGER                       :: RToIR, ti
     REAL ( KIND=8 )               :: temp
-    
+
     temp = ( r - Pos%Rr( 1 ) ) / Pos%Delta_r
     ! LP: Added snapping to deal with floating-point error at the int boundaries.
     IF ( ABS( temp - REAL( NINT( temp ), 8 ) ) < 1D-6 ) THEN
@@ -45,7 +45,7 @@ CONTAINS
     END IF
     ! mbp: should be ", 0 )" ? [LP: on 2D Cerveny cart]
     RToIR = MAX( MIN( INT( temp ) + 1, Pos%NRr ), 1 )
-    
+
   END FUNCTION RToIR
 
   SUBROUTINE ReadfreqVec( freq0, BroadbandOption )
@@ -153,11 +153,11 @@ CONTAINS
 
 !!$    IF ( .NOT. monotonic( Pos%sz, Pos%NSz ) ) THEN
 !!$       CALL ERROUT( 'SzRzRMod', 'Source depths are not monotonically increasing' )
-!!$    END IF 
-!!$ 
+!!$    END IF
+!!$
 !!$    IF ( .NOT. monotonic( Pos%rz, Pos%NRz ) ) THEN
 !!$       CALL ERROUT( 'SzRzRMod', 'Receiver depths are not monotonically increasing' )
-!!$    END IF 
+!!$    END IF
 
     RETURN
   END SUBROUTINE ReadSzRz
@@ -174,8 +174,8 @@ CONTAINS
 
     IF ( .NOT. monotonic( Pos%rr, Pos%NRr ) ) THEN
        CALL ERROUT( 'ReadRcvrRanges', 'Receiver ranges are not monotonically increasing' )
-    END IF 
- 
+    END IF
+
     RETURN
   END SUBROUTINE ReadRcvrRanges
 
@@ -197,8 +197,8 @@ CONTAINS
 
     IF ( .NOT. monotonic( Pos%theta, Pos%Ntheta ) ) THEN
        CALL ERROUT( 'ReadRcvrBearings', 'Receiver bearings are not monotonically increasing' )
-    END IF 
- 
+    END IF
+
     RETURN
   END SUBROUTINE ReadRcvrBearings
 
@@ -209,12 +209,12 @@ CONTAINS
     ! Read a vector x
     ! Description is something like 'receiver ranges'
     ! Units       is something like 'km'
- 
+
     INTEGER,   INTENT( OUT ) :: Nx
     REAL,      ALLOCATABLE, INTENT( OUT ) :: x( : )
     CHARACTER, INTENT( IN  ) :: Description*( * ), Units*( * )
     INTEGER                  :: ix
-   
+
     WRITE( PRTFile, * )
     WRITE( PRTFile, * ) '__________________________________________________________________________'
     WRITE( PRTFile, * )

@@ -37,7 +37,7 @@ CONTAINS
 
   SUBROUTINE SubTab_dble( x, Nx )
   !! Subtabulate array `x`, creating interpolated array of length `Nx`
- 
+
     INTEGER,       INTENT( IN )    :: Nx
     REAL (KIND=8), INTENT( INOUT ) :: x( Nx )
     REAL (KIND=8)                  :: deltax

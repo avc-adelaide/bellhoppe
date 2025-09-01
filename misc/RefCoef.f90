@@ -57,7 +57,7 @@ CONTAINS
        IF ( .NOT. monotonic( RBot( : )%theta, NBotPts ) ) THEN
           CALL ERROUT( 'ReadReflectionCoefficient', 'Bottom reflection coefficients must be monotonically increasing'  )
        END IF
-       
+
        CLOSE( BRCFile )
        RBot%phi = DegRad * RBot%phi   ! convert to radians
 
@@ -90,7 +90,7 @@ CONTAINS
        IF ( .NOT. monotonic( RTop( : )%theta, NTopPts ) ) THEN
           CALL ERROUT( 'ReadReflectionCoefficient', 'Top    reflection coefficients must be monotonically increasing'  )
        END IF
-       
+
        CLOSE( TRCFile )
        RTop%phi = DegRad *  RTop%phi   ! convert to radians
     ELSE   ! should allocate something anyway, since variable is passed

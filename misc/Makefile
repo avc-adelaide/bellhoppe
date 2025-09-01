@@ -23,13 +23,13 @@ clean:
 .SUFFIXES: .a .o .mod .f .f90
 
 .f.o:
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
 .f90.o:
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
 .f90.mod:
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
 
 # Declare explicit dependencies (and explicit build rules as needed)
@@ -43,10 +43,10 @@ subtabulate.o subtabulate.mod: subtabulate.f90
 	$(FC) -c $(FFLAGS) $<
 
 SourceReceiverPositions.o sourcereceiverpositions.mod: SourceReceiverPositions.f90 monotonicmod.mod sortmod.mod subtabulate.mod
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
 PolyMod.o polymod.mod: PolyMod.f90
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
 AttenMod.o: AttenMod.f90 MathConstants.mod
 	$(FC) -c $(FFLAGS) $<
@@ -55,26 +55,26 @@ beampattern.o beampattern.mod: beampattern.f90 fatalerror.mod monotonicMod.mod
 	$(FC) -c $(FFLAGS) $<
 
 MathConstants.o mathconstants.mod: MathConstants.f90
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
 RefCoef.o refcoef.mod: RefCoef.f90 polymod.mod
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
 pchipMod.o pchipmod.mod: pchipMod.f90 splinec.mod
 	$(FC) -c $(FFLAGS) $<
 
 splinec.o splinec.mod: splinec.f90
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
 monotonicMod.o monotonicmod.mod: monotonicMod.f90
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
 SortMod.o sortmod.mod: SortMod.f90
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
 RWSHDFile.o: RWSHDFile.f90 sourcereceiverpositions.mod
 
 FatalError.o fatalerror.mod: FatalError.f90
 
 cross_products.o cross_products.mod: cross_products.f90
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<

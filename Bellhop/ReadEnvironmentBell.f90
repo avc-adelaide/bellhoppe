@@ -162,7 +162,7 @@ CONTAINS
 
     ! *** Beam characteristics ***
     Beam%Type( 4 : 4 ) = Beam%RunType( 7 : 7 )   ! selects beam shift option
-          
+
     SELECT CASE ( Beam%Type( 4 : 4 ) )
     CASE ( 'S' )
           WRITE( PRTFile, * ) 'Beam shift in effect'
@@ -532,7 +532,7 @@ CONTAINS
        ! AttenUnit = 'L'   ! loss parameter
 !!! following uses a reference sound speed of 1500 ???
 !!! should be sound speed in the water, just above the sediment
-       ! the term vr / 1000 converts vr to units of m per ms 
+       ! the term vr / 1000 converts vr to units of m per ms
        alphaR = vr * 1500.0
        alphaI = alpha2_f * ( vr / 1000 ) * 1500.0 * log( 10.0 ) / ( 40.0 * pi )   ! loss parameter Sect. IV., Eq. (4) of handbook
 
@@ -550,7 +550,7 @@ CONTAINS
 
   SUBROUTINE OpenOutputFiles( FileRoot, ThreeD )
     !! Opens output files based on run type
- 
+
     ! Write appropriate header information
 
     USE SourceReceiverPositions
