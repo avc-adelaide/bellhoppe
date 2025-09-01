@@ -94,7 +94,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: coverage-reports
-        path: ./
+        path: './docs/'
 
     - name: Generate documentation
       run: |
