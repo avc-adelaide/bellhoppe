@@ -1,11 +1,19 @@
 # BELLHOP
 
 * Bellhop is an underwater acoustics simulator, part of the [Acoustics Toolbox](http://oalib.hlsresearch.com/AcousticsToolbox/)
-* It has been forked by UCal San Diego to support the [multithreaded C++/CUDA version of
+
+* The Bellhop component of the Acoustics Toolbox has been extracted and forked by UCal San Diego to support the [multithreaded C++/CUDA version of
 BELLHOP/BELLHOP3D: `bellhopcxx`/`bellhopcuda`](https://github.com/A-New-BellHope/bellhopcuda)
+
 * The UCal team maintain a fork with numerical properties and robustness improved and bugs fixed; some of these changes have been back-ported into the Acoustics Toolbox directly but the codebases are no longer identical
+
 * This repository is a subsequent fork from Adelaide University, Australia, with the intention of providing a clean and well-documented repository to provide easier access to the code
-* (Yes, it would be better to try not to proliferate forks; if this is successful we will open pull requests)
+
+* The main features of the AU work are:
+    * Consolidation of code files and build processes with a single set of clean sources
+    * Source code documentation using FORD, using consistent formatting of code comments
+    * Addition of explicit regression and unit test files
+    * Continuous integration through Github for test suite and code coverage
 
 
 ## Documentation Overview
@@ -221,8 +229,9 @@ open doc/index.html  # View generated documentation
 
 ## Code Coverage Analysis
 
-BELLHOP includes integrated support for code coverage analysis using GCOV. This helps assess how much of the codebase is exercised by tests and identify areas that may need additional testing.
-This is not currently integrated into the documentation build. Further information can be found in [Coverage Docs](docs/coverage.md).
+BELLHOP includes integrated support for code coverage analysis using GCOV.
+This helps assess how much of the codebase is exercised by tests and identify areas that may need additional testing.
+Further information can be found in [Coverage Docs](docs/coverage.md).
 
 ### Prerequisites
 
