@@ -9,7 +9,7 @@ def test_arrivals():
 
     env = pm.create_env2d()
     arr = pm.compute_arrivals(env)
-    print(arr)
+    #print(arr)
 
 
 
@@ -19,6 +19,26 @@ def test_eigenrays():
 
     env = pm.create_env2d()
     rays = pm.compute_eigenrays(env)
-    print(rays)
+    #print(rays)
+
+
+
+def test_rays():
+    """Test with default settings to calculate rays. Just check that there are no execution errors.
+    """
+
+    env = pm.create_env2d()
+    rays = pm.compute_rays(env)
+    #print(rays)
+
+
+
+def test_tl():
+    """Test with default settings to calculate transmission loss. Just check that there are no execution errors.
+    """
+
+    env = pm.create_env2d()
+    tl = pm.compute_transmission_loss(env)
+    #print(tl)
 
 
