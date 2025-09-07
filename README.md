@@ -1,6 +1,6 @@
-# BELLHOP
+# The BELLHOP underwater acoustics ray tracing tool
 
-* Bellhop is an underwater acoustics simulator, part of the [Acoustics Toolbox](http://oalib.hlsresearch.com/AcousticsToolbox/)
+* Bellhop is an underwater acoustics simulator, part of the [Acoustics Toolbox](http://oalib.hlsresearch.com/AcousticsToolbox/) by Michael B. Porter and colleagues.
 
 * The Bellhop component of the Acoustics Toolbox has been extracted UCal San Diego to support the [multithreaded C++/CUDA version: `bellhopcuda`](https://github.com/A-New-BellHope/bellhopcuda). The UCal team also [maintain a fork of the Fortran sources](https://github.com/A-New-BellHope/bellhop) with numerical properties and robustness improved and bugs fixed; some of these changes have been back-ported into the Acoustics Toolbox directly but the codebases are no longer identical
 
@@ -13,9 +13,9 @@
 
 ## Documentation
 
-### 📚 Modern documentation suite
+### Modern documentation suite
 
-**[📖 BELLHOP Documentation](https://aumag.github.io/bellhop/)** — Main documentation landing page with:
+**[BELLHOP Documentation](https://aumag.github.io/bellhop/)** — Main documentation landing page with:
 - Collated user guides and technical reference documentation
 - Source code browsing with syntax highlighting
 - Automatically generated module and subroutine references
@@ -139,20 +139,13 @@ into the `doc/media` subdirectory, with main page `doc/index.html`.
 
 BELLHOP includes integrated support for code coverage analysis using GCOV.
 This helps assess how much of the codebase is exercised by tests and identify areas that may need additional testing.
-Further information can be found in [Coverage Docs](docs/coverage.md).
 
+Generate the code coverage locally with:
 
-## Other information
+    make coverage-full
 
-See index.htm for information from the original repo.
-
-Code initially retrieved 12/17/21 from http://oalib.hlsresearch.com/AcousticsToolbox/ ,
-the version labeled 11/4/20. In late 2022, the diff between mbp's newer 4/20/22
-and 11/4/20 releases was computed, and the changes were applied to this code
-(with appropriate changes to integrate them).
-
-Files pertaining to the other simulators (Krakel, Kraken, KrakenField, Scooter)
-have been removed.
+This requires a complete rebuild of the binary to enable the coverage instrumentation.
+The resulting coverage report is saved to `docs/coverage-index.html`.
 
 
 

@@ -79,7 +79,6 @@ PATH = "{root}/bin:{env:PATH}"
 debug = "echo  ' 'PWD: `pwd`; echo PATH: $PATH; echo ' 'EXE: `command -v bellhop.exe`"
 test = "pytest --capture=tee-sys"
 doc  = "ford -g -d Bellhop -d misc ford.md"
-cov  = "make coverage-full"
 
 [tool.hatch.build.targets.wheel]
 packages = ["bellhop"]

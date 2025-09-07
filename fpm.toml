@@ -1,7 +1,7 @@
 # TOML allows comments, which is handy
 
 [extra.ford]
-project = "Bellhop"
+project = "The BELLHOP underwater acoustics ray tracing tool"
 author = "Michael B. Porter / UC San Diego / Adelaide University"
 version = "2025-08-25"
 license = "gpl"

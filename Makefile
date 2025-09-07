@@ -181,7 +181,6 @@ export FFLAGS
 # use gcov-15 if available (needed on Mac) otherwise just use normal gcov (normal on Linux)
 GCOV := $(shell command -v gcov-15 2>/dev/null || command -v gcov)
 
-export RM=rm
 export CC=gcc
 export CFLAGS=-g
 #export FFLAGS+= -I../misc -I../tslib -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
@@ -189,7 +188,10 @@ export FFLAGS+= -I../misc #-I../tslib
 
 export LAPACK_LIBS = -llapack
 
-VENV_DIR = .venv
+
+####### TARGETS #######
+
+.PHONY: all install clean test docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full
 
 all:
 	(cd misc;	make -k all)
@@ -212,6 +214,7 @@ install: all
 
 clean: coverage-clean
 	-rm -f bin/*.exe
+	-rm -rf doc
 	find . -name '*.dSYM' -exec rm -r {} +
 	find . -name '*.png'  -exec rm -r {} +
 	find . -name '*.eps'  -exec rm -r {} +
@@ -225,25 +228,28 @@ clean: coverage-clean
 	(cd Bellhop;	make -k -i clean)
 
 
-# building docs
+###### HATCH ######
+
+test:
+	@echo "Running Python test suite..."
+	hatch run test
 
 docs:
 	@echo "Generating FORD documentation..."
-	ford -g -d "Bellhop" -d "misc" ford.md
+	hatch run doc
 	@echo "Documentation generated in ./doc/ directory"
 	@echo "Open ./doc/index.html in a web browser to view"
 
-clean-docs:
-	-rm -rf doc
-
-coverage-build: clean
-	@echo "Building BELLHOP with coverage instrumentation..."
-	$(MAKE) FC=gfortran FFLAGS="$(FFLAGS_BASE) $(FFLAGS_ARCH) $(FFLAGS_COVERAGE) -I../misc" all
+###### COVERAGE ######
 
 coverage-clean:
 	@echo "Cleaning coverage output files..."
 	find . -name '*.gcda' -exec rm {} +
 	find . -name '*.gcov' -exec rm {} +
+
+coverage-build: clean
+	@echo "Building BELLHOP with coverage instrumentation..."
+	$(MAKE) FC=gfortran FFLAGS="$(FFLAGS_BASE) $(FFLAGS_ARCH) $(FFLAGS_COVERAGE) -I../misc" all
 
 coverage-install: coverage-build
 	@echo "Installing BELLHOP with coverage instrumentation..."
@@ -309,7 +315,6 @@ coverage-html: coverage-report
 	@echo "HTML coverage reports generated and integrated with FORD documentation."
 	@echo "Reports will be accessible through FORD as media files at /media/"
 
-coverage-full: coverage-test coverage-report coverage-html
+coverage-full: clean coverage-build coverage-install test coverage-report coverage-html
 	@echo "Full coverage analysis complete."
 
-.PHONY: all install clean docs clean-docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full

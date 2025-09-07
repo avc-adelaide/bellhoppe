@@ -4,39 +4,15 @@
 BELLHOP is a beam/ray tracing model for predicting acoustic pressure fields in ocean environments. The model accounts for:
 
 - Sound speed profiles (SSPs) varying with depth and range
-- Ocean boundaries (surface and seafloor) with complex reflection properties  
+- Ocean boundaries (surface and seafloor) with complex reflection properties
 - Acoustic sources and receiver arrays in arbitrary geometries
 - Both 2D (range-depth) and 3D (range-depth-azimuth) propagation modeling
 
 The core algorithms implement:
-- Geometric ray tracing 
+- Geometric ray tracing
 - Gaussian beam superposition for smooth field predictions
 - Arrival time and amplitude calculations
 - Coherent and incoherent field summation
-
-## Key Components
-
-The BELLHOP system consists of several main modules:
-
-### Core Acoustic Engine
-- `bellhop.f90` - Main 2D acoustic propagation program
-- `bellhop3D.f90` - 3D acoustic propagation with azimuthal coupling
-- `influence.f90` / `influence3D.f90` - Field computation from ray/beam contributions
-
-### Physical Models  
-- `sspMod.f90` - Sound speed profile handling and interpolation
-- `bdryMod.f90` / `bdry3DMod.f90` - Boundary condition modeling
-- `ReflectMod.f90` / `Reflect3DMod.f90` - Reflection coefficient calculations
-
-### Numerical Methods
-- `Step.f90` / `Step3DMod.f90` - Ray stepping algorithms with adaptive step control
-- `angleMod.f90` - Ray angle calculations and coordinate transformations
-- `ArrMod.f90` - Arrival management and caustic handling
-
-### Utilities
-- `ReadEnvironmentBell.f90` - Input file parsing and environment setup
-- `WriteRay.f90` - Output formatting for ray data
-- Mathematical support modules in `misc/`
 
 
 ## Usage
@@ -45,24 +21,24 @@ See the main [README.md](../README.md) for build instructions.
 
 Basic usage:
 ```
-bellhop.exe inputfile  
+bellhop.exe inputfile
 bellhop3d.exe inputfile
 ```
 
 Input files use `.env` extension and specify:
 - Ocean environment (sound speed, boundaries, bathymetry)
-- Source characteristics (frequency, depth, beam pattern)  
+- Source characteristics (frequency, depth, beam pattern)
 - Receiver array geometry
 - Run parameters (ray angles, output options)
 
 Rather than using the traditional text file inputs, a modern Python interface is provided by the [`arlpy` module `uwapm`](https://arlpy.readthedocs.io/en/latest/uwapm.html).
 
-The test suite for this repository is written using the `arlpy` interface.
+The automated test suite for this repository is written using the `arlpy` interface.
 
 
 ## Documentation
 
-The BELLHOP code base includes extensive historic documentation from the original 
+The BELLHOP code base includes extensive historic documentation from the original
 Acoustics Toolbox project and subsequent development efforts:
 
 ### User Guides and Technical Documentation
@@ -95,9 +71,9 @@ Acoustics Toolbox project and subsequent development efforts:
 BELLHOP includes code coverage analysis using GCOV to assess test suite effectiveness and identify untested code paths.
 
 - **[Coverage Index](media/coverage-index.html)** - Interactive dashboard showing coverage statistics for all source files
- 
 
-## Repository architecture 
+
+## Repository architecture
 
 As a historic codebase, Bellhop is impressively portable and easy to compile.
 This repository serves as a largely untouched extraction of Bellhop from the broader Acoustics Toolbox code.
@@ -110,43 +86,31 @@ The following are the major changes or additions:
 
 * Improve Makefile to attempt to auto-configure compiler flags. This is mostly a stub as I have limited platforms and compilers to experiment with.
 
-* Alter the commenting style of the code to permit automatic documentation using  FORD. This tool creates the current documentation you are reading.
+* Alter the commenting style of the code to permit automatic documentation using FORD. This tool creates the current documentation you are reading.
 
 * Add a Python test suite. This has multiple purposes:
 
     * Provide a fully documented and automated regression test suite that checks numerical outputs. The original Bellhop tests required manual checking that the output was valid.
- 
-    * Integrate the tests with a code coverage tool that allows us to ensure that all possible code paths are tested (work in progress). 
 
-    * Allow GitHub workflows to automatically test the repository for every code change. This allows refactoring and algorithm improvements without added risk of introducing bugs.  
+    * Integrate the tests with a code coverage tool that allows us to ensure that all possible code paths are tested (work in progress).
+
+    * Allow GitHub workflows to automatically test the repository for every code change. This allows refactoring and algorithm improvements without added risk of introducing bugs.
 
 ### Technical details
 
-* The base code compilation processes are  still based on Makefiles. These have been extended to support the code coverage tool. The [key Makefile](https://github.com/AUMAG/bellhop/blob/main/Makefile) is at the root of the repository.
+* The base code compilation processes are based on Makefiles. These have been extended to support the code coverage tool. The [key Makefile](https://github.com/AUMAG/bellhop/blob/main/Makefile) is at the root of the repository.
 
 * A modern build system using Hatch is also used for building documentation and running tests. These are configured using [pyproject.toml](https://github.com/AUMAG/bellhop/blob/main/pyproject.toml). This build system makes the GitHub CI processes quite straightforward to define.
 
 * The documentation system uses FORD, configured using [fdm.toml](https://github.com/AUMAG/bellhop/blob/main/fpm.toml). Executing the documentation process is managed by Hatch with
 
-    hatch run doc 
+    hatch run doc
 
 * The test suite uses `pytest` with a build process set up using Hatch. Run the test suite using
 
     make && make install # if necessary
-    hatch run test 
+    hatch run test
 
 * The code coverage system uses the GCC tool `gcov`. This is controlled via the Makefile, with results compiled into HTML files using an ad hoc Python script. Improvements to this process to use more standardised COTS tools would be good. (ChatGPT/Copilot helped me a fair degree with this.) Hatch doesn’t yet run the code coverage tool; WIL to streamline.
 
 * There are two GitHub CI workflows: regression testing, and documentation build (which includes code coverage). They are set up using [check.yml](https://github.com/AUMAG/bellhop/blob/main/.github/workflows/check.yml) and [docs.yml](https://github.com/AUMAG/bellhop/blob/main/.github/workflows/docs.yml).
-
-## Code Coverage Analysis
- 
-To generate fresh coverage reports from the test suite:
-```bash
-make coverage-build # Enable coverage diagnostics in the binary
-make install
-hatch run test
-make coverage-html    # Create reports from generated coverage data
-```
-
-The coverage system provides quantitative assessment of test suite completeness and helps identify areas requiring additional testing.
