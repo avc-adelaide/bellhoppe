@@ -19,7 +19,7 @@
 # Not sure if this is still necessary, but we used to have to change the options -O3 to -O2 below when using gfortran
 
 # *** Linux ***
-# Most Linux distributions have gfortran already packaged and it can be installed with the respective 
+# Most Linux distributions have gfortran already packaged and it can be installed with the respective
 # package manager (e.g. apt-get, dnf, yum). The packaged versions of the LAPACK library are generally
 # compatible with Krakel. If you want statically linked executables, "-static" works with gfortran.
 
@@ -115,7 +115,7 @@ export FC=gfortran
 UNAME_M := $(shell uname -m)
 
 # Base flags (common to all)
-FFLAGS_BASE = -g -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation -std=gnu -frecursive 
+FFLAGS_BASE = -g -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation -std=gnu -frecursive
 FFLAGS_OPTIM = -O2 -ffast-math -funroll-all-loops -fomit-frame-pointer
 
 # Arch-specific flags
@@ -189,6 +189,8 @@ export FFLAGS+= -I../misc #-I../tslib
 
 export LAPACK_LIBS = -llapack
 
+VENV_DIR = .venv
+
 all:
 	(cd misc;	make -k all)
 	(cd Bellhop;	make -k all)
@@ -200,11 +202,13 @@ all:
 install: all
 	(cd Bellhop;	make -k install)
 	@echo " "
-	@echo "*****************************"
-	@echo "***** BELLHOP installed *****"
-	@echo "Add it to your path using something like:"
-	@echo '    echo "export PATH=\$$PATH:$(shell pwd)/bin" >> "$$HOME/.zshrc"'
-	@echo "*****************************"
+	@echo "***************************************"
+	@echo "***** BELLHOP installed in ./bin/ *****"
+	@echo "Add it to your path using something like: (zsh — macOS default)"
+	@echo '    echo "export PATH=\$$PATH:$(shell pwd)/bin" >> "$$HOME/.zshrc"  && source ~/.zshrc'
+	@echo 'or: (bash — Linux / Windows-MSYS2 default)'
+	@echo '    echo "export PATH=\$$PATH:$(shell pwd)/bin" >> "$$HOME/.bashrc" && source ~/.bashrc'
+	@echo "***************************************"
 
 clean: coverage-clean
 	-rm -f bin/*.exe
@@ -219,7 +223,10 @@ clean: coverage-clean
 	find . -name '*.gcno' -exec rm {} +
 	(cd misc;	make -k -i clean)
 	(cd Bellhop;	make -k -i clean)
-	
+
+
+# building docs
+
 docs:
 	@echo "Generating FORD documentation..."
 	ford -g -d "Bellhop" -d "misc" ford.md

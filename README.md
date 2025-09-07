@@ -11,38 +11,17 @@
     * Continuous integration through Github for test suite and code coverage
 
 
-## Documentation Overview
+## Documentation
 
-### 📚 Complete Documentation Suite
+### 📚 Modern documentation suite
 
-**[📖 BELLHOP Documentation](https://aumag.github.io/bellhop/)** - Comprehensive API documentation with:
+**[📖 BELLHOP Documentation](https://aumag.github.io/bellhop/)** — Main documentation landing page with:
+- Collated user guides and technical reference documentation
 - Source code browsing with syntax highlighting
 - Automatically generated module and subroutine references
 - Interactive call graphs showing code relationships
+- **[Code coverage for the new test suite](https://aumag.github.io/bellhop/media/coverage-index.html)**
 
-
-### 🔧 User Guides and Technical References
-
-**Core Documentation:**
-- **[BELLHOP User Guide](docs/bellhop.htm)** - 2D acoustic modeling
-- **[BELLHOP3D User Guide](docs/bellhop3d.htm)** - 3D acoustic modeling with azimuthal coupling
-- **[BELLHOP3D PDF Guide](docs/Bellhop3D%20User%20Guide%202016_7_25.pdf)** - Comprehensive PDF documentation
-
-**Project Background:**
-- **[Acoustics Toolbox Overview](docs/at_index.htm)** - Complete toolbox suite information
-- **[Original Repository Info](docs/doc_index.htm)** - Project structure and background
-
-**Input File Formats:**
-- **[Environmental File Format](docs/EnvironmentalFile.htm)** - Input file specifications
-- **[Range-Dependent SSP Files](docs/RangeDepSSPFile.htm)** - Sound speed profile specification
-- **[Reflection Coefficient Files](docs/ReflectionCoefficientFile.htm)** - Boundary reflection properties
-- **[Bathymetry Files](docs/ATI_BTY_File.htm)** - Bathymetry data format
-
-### 📝 Technical documentation
-
-- **[UC San Diego Changes](docs/CHANGES.md)** - Technical improvements, bug fixes, and algorithmic changes
-- **[Acoustics Toolbox Changes](docs/at_changes.md)** - Historical development log
-- **[Coverage Index](media/coverage-index.html)** - Interactive dashboard showing coverage statistics for all source files
 
 ## Installation
 
@@ -52,88 +31,30 @@ Use Homebrew to install `gfortran`:
 
     brew install gfortran
 
-The Makefile should automatically set up the correct compiler flags, in which case run:
-
-    make
-    make install
-
-This will install binaries `bellhop(3d).exe` into the `./bin` directory, which should be
-added via your standard shell configuration. The Makefile message outputs an example of how
-to do this for a `.zshrc` setup.
-
-For using `arlpy` (Python), additional packages are needed. These sometimes require a fixed version of Python,
-which at time of writing required something like: (you may not wish to use `venv`, for instance)
+For using `arlpy` (Python), additional packages are needed.
+These sometimes require a fixed version of Python,
+which at time of writing required something like:
 
     brew install python@3.12
-    brew install pipx
-    brew install hatch
+    pip3 install matplotlib arlpy
 
-    $(brew --prefix python@3.12)/bin/python3.12 -m venv ~/.venvs/bellhop
-    source ~/.venvs/bellhop/bin/activate
-    ln -fs `pwd`/bin/bellhop.exe ~/.venvs/bellhop/bin/bellhop.exe
+To run the test suite and compile the package documentation, you will also need:
 
-    pip3 install matplotlib
-    pip3 install arlpy
-    pip3 install pytest
-
-These steps are needed for manually running the test suite, etc. You might be able to get
-away with `hatch` taking care of most of these things for you.
+    brew install hatch FORD graphvis
 
 ### Linux
-
-> [!NOTE]
-> This section is work in progress and drafted by copilot.
 
 Install the required dependencies on Ubuntu (for other distributions like RHEL/CentOS/Fedora or Arch Linux, use the appropriate package manager):
 
 ```bash
 sudo apt update
 sudo apt install gfortran liblapack-dev liblapacke-dev python3.12 python3.12-pip python3.12-venv graphviz
-
-# If python3.12 is not available, python3 (>= 3.10) may work but python3.12 is recommended
-# sudo apt install gfortran liblapack-dev liblapacke-dev python3 python3-pip python3-venv graphviz
 ```
 
-Build and install the Fortran executables:
-```bash
-make
-make install
-```
-
-This will install `bellhop.exe` and `bellhop3d.exe` in the `./bin` directory. Add this directory to your PATH:
-```bash
-echo "export PATH=\$PATH:$(pwd)/bin" >> ~/.bashrc
-source ~/.bashrc
-```
-
-For Python environment setup (recommended using virtual environment):
-```bash
-# Use python3.12 if installed, otherwise python3
-python3.12 -m venv ~/.venvs/bellhop
-# OR: python3 -m venv ~/.venvs/bellhop
-
-source ~/.venvs/bellhop/bin/activate
-
-# Install Python dependencies
-pip install hatch matplotlib arlpy pytest
-
-# Link bellhop executables to the virtual environment (optional)
-ln -s "$(pwd)/bin/bellhop.exe" ~/.venvs/bellhop/bin/bellhop.exe
-ln -s "$(pwd)/bin/bellhop3d.exe" ~/.venvs/bellhop/bin/bellhop3d.exe
-```
-
-**Note:** Remember to activate the virtual environment in future sessions:
-```bash
-source ~/.venvs/bellhop/bin/activate
-```
 
 ### Windows
 
-> [!NOTE]
-> This section is work in progress and drafted by copilot.
-
 Install MSYS2 following the instructions at [https://www.msys2.org/](https://www.msys2.org/).
-
 After installation, open the MSYS2 terminal and install the required development tools:
 
 ```bash
@@ -150,35 +71,40 @@ Add the MinGW64 tools to your PATH by adding this line to your `~/.bashrc`:
 export PATH="/mingw64/bin:$PATH"
 ```
 
-Build and install the Fortran executables:
-```bash
-make
-make install
-```
+### Make
 
-This will install `bellhop.exe` and `bellhop3d.exe` in the `./bin` directory. Add this directory to your PATH:
-```bash
-echo "export PATH=\$PATH:$(pwd)/bin" >> ~/.bashrc
-source ~/.bashrc
-```
+Once you have proceeded with the steps above for your relevant platform, the Makefile
+can be used to build the source code.
+It should automatically set up the correct compiler flags, in which case run:
 
-For Python environment setup (recommended using virtual environment):
-```bash
-python -m venv ~/.venvs/bellhop
-source ~/.venvs/bellhop/bin/activate
+    make
+    make install
 
-# Install Python dependencies
-pip install hatch matplotlib arlpy pytest
+This will install binaries `bellhop(3d).exe` into the `./bin` directory, which should be
+added via your standard shell configuration. The Makefile message outputs an example of how
+to do this for a ZSH or BASH setup.
 
-# Link bellhop executables to the virtual environment (optional)
-ln -s "$(pwd)/bin/bellhop.exe" ~/.venvs/bellhop/bin/bellhop.exe
-ln -s "$(pwd)/bin/bellhop3d.exe" ~/.venvs/bellhop/bin/bellhop3d.exe
-```
 
-**Note:** Remember to activate the virtual environment in future MSYS2 sessions:
-```bash
-source ~/.venvs/bellhop/bin/activate
-```
+### Python
+
+Although the `hatch` build system should set up paths and environments automatically,
+you will likely wish to run Bellhop locally for your own purposes. You can do this with
+`hatch` with:
+
+    hatch shell
+    <custom scripts running Bellhop>
+    exit
+
+Alternatively, to use `venv` directly in a local environment:
+
+    $(brew --prefix python@3.12)/bin/python3.12 -m venv ~/.venv
+    ln -fs "$(pwd)/bin/bellhop.exe" ~/.venv/bin/bellhop.exe
+    ln -fs "$(pwd)/bin/bellhop3d.exe" ~/.venv/bin/bellhop3d.exe
+
+    source .venv/bin/activate
+    <custom scripts running Bellhop>
+    deactivate
+
 
 ### Matlab
 
@@ -191,30 +117,25 @@ If you wish to use the Matlab interfaces, the following commands should be added
 
 
 
-
-
-
 ## Testing
 
 If the build and installation steps were successful, you should now be able to run
-the Python test suite:
+the Python test suite located in the `tests/` subfolder:
 
     hatch run test
 
 
-## 🏗️ Building Documentation Locally
+## Building documentation locally
 
-Generate documentation on your machine:
+Generate documentation locally with:
 ```bash
-sudo apt install graphviz  # Required for call graphs and flow diagrams
-
-# Generate documentation with graphs
 hatch run doc
-open doc/index.html  # View generated documentation
 ```
+This uses FORD to build the HTML documentation in `doc/` with the static pages `docs/` copied
+into the `doc/media` subdirectory, with main page `doc/index.html`.
 
 
-## Code Coverage Analysis
+## Code coverage analysis
 
 BELLHOP includes integrated support for code coverage analysis using GCOV.
 This helps assess how much of the codebase is exercised by tests and identify areas that may need additional testing.

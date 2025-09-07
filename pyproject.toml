@@ -1,21 +1,17 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
 
+####### PROJECT #######
 
 [project]
 name = "bellhop"
 version = "0.1"
 
-description = "Bellhop underwater acoustic propogation model"
+description = "Bellhop underwater acoustic propagation model"
 readme = "README.md"
 license = {file = "LICENSE"}
 
 dependencies = [
     "matplotlib",
     "arlpy",
-    "pytest",
-    "FORD",
 ]
 
 requires-python = ">=3.12, <3.13"
@@ -52,13 +48,44 @@ Repository = "https://github.com/AUMAG/bellhop.git"
 Issues = "https://github.com/AUMAG/bellhop/issues"
 Changelog = "https://github.com/AUMAG/bellhop/blob/master/CHANGES.md"
 
+####### BUILD #######
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+####### RUFF #######
+
+[tool.ruff]
+output-format = "github"
+
+
+
+####### HATCH #######
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[tool.hatch.envs.default]
+features = ["dev"]  # includes pytest
+
+[tool.hatch.envs.default.env-vars]
+PATH = "{root}/bin:{env:PATH}"
+
+[tool.hatch.envs.default.scripts]
+debug = "echo  ' 'PWD: `pwd`; echo PATH: $PATH; echo ' 'EXE: `command -v bellhop.exe`"
+test = "pytest --capture=tee-sys"
+doc  = "ford -g -d Bellhop -d misc ford.md"
+cov  = "make coverage-full"
 
 [tool.hatch.build.targets.wheel]
 packages = ["bellhop"]
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true
-
 include = [
   "/tests/*.py",
 ]
@@ -66,10 +93,3 @@ exclude = [
   "/docs/*",
 ]
 
-[tool.hatch.envs.default.scripts]
-test = "pytest --capture=tee-sys"
-doc  = "ford -g -d Bellhop -d misc ford.md"
-cov  = "make coverage-full"
-
-[tool.ruff]
-output-format = "github"
