@@ -4,16 +4,16 @@
 
 * The Bellhop component of the Acoustics Toolbox has been extracted UCal San Diego to support the [multithreaded C++/CUDA version: `bellhopcuda`](https://github.com/A-New-BellHope/bellhopcuda). The UCal team also [maintain a fork of the Fortran sources](https://github.com/A-New-BellHope/bellhop) with numerical properties and robustness improved and bugs fixed; some of these changes have been back-ported into the Acoustics Toolbox directly but the codebases are no longer identical
 
-* This repository is a subsequent fork from Adelaide University, Australia, with the intention of providing a clean and well-documented repository to provide easier access to the code. The main features of the AU work are:
+* A Python wrapper for Bellhop was provided within the [`arlpy` package](https://github.com/org-arl/arlpy) by Mandar Chitre at the Acoustic Research Laboratory, National University of Singapore.
+
+* This repository, from Adelaide University, Australia, is a subsequent fork and consolidation of these works, with the intention of providing a clean and well-documented repository to provide easier access to the code. The main features of the AU work are:
     * Consolidation of code files and build processes with a single set of clean sources
-    * Source code documentation using FORD, using consistent formatting of code comments
+    * Fortran source code documentation using FORD
     * Addition of explicit regression and unit test files
     * Continuous integration through Github for test suite and code coverage
 
 
 ## Documentation
-
-### Modern documentation suite
 
 **[BELLHOP Documentation](https://aumag.github.io/bellhop/)** — Main documentation landing page with:
 - Collated user guides and technical reference documentation
@@ -31,12 +31,12 @@ Use Homebrew to install `gfortran`:
 
     brew install gfortran
 
-For using `arlpy` (Python), additional packages are needed.
+For using the Python wrapper, additional packages are needed.
 These sometimes require a fixed version of Python,
 which at time of writing required something like:
 
     brew install python@3.12
-    pip3 install matplotlib arlpy
+    pip3 install -e .
 
 To run the test suite and compile the package documentation, you will also need:
 

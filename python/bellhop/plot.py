@@ -1,10 +1,10 @@
 ##############################################################################
 #
-# Copyright (c) 2018, Mandar Chitre
+# Copyright (c) 2025-, Will Robertson
+# Copyright (c) 2018-2025, Mandar Chitre
 #
-# This file is part of arlpy which is released under Simplified BSD License.
-# See file LICENSE or go to http://www.opensource.org/licenses/BSD-3-Clause
-# for full license details.
+# This file was originally part of arlpy, released under Simplified BSD License.
+# It has been relicensed in this repository to be compatible with the Bellhop licence (GPL).
 #
 ##############################################################################
 
