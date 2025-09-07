@@ -16,7 +16,7 @@ MODULE FatalError
         !! Program or subroutine the error is being called from
     CHARACTER (LEN=*), INTENT( IN ) :: ErrMsg
         !! The error message itself
- 
+
     INTEGER   Last
 
     WRITE( PRTFile, * )
@@ -32,7 +32,7 @@ MODULE FatalError
 
     ! Intel Fortran can't handle the following
     ! ERROR STOP 'Fatal Error in ' // WHERE( 1 : Last1 ) // ': ' // ErrMsg( 1 : Last2 )
-    STOP 'Fatal Error: Check the print file for details'
+    ERROR STOP 'Fatal Error: Check the print file for details'
 
   END SUBROUTINE ERROUT
 
