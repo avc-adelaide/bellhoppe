@@ -12,6 +12,7 @@ license = {file = "LICENSE"}
 dependencies = [
     "matplotlib",
     "arlpy",
+    "gcovr",
 ]
 
 requires-python = ">=3.12, <3.13"

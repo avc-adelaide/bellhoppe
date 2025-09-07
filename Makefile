@@ -315,6 +315,22 @@ coverage-html: coverage-report
 	@echo "HTML coverage reports generated and integrated with FORD documentation."
 	@echo "Reports will be accessible through FORD as media files at /media/"
 
+# although this is much lighter, I don't like the output -- maybe it needs more finetuning
+coverage-gcovr:
+	@echo "Generating HTML coverage reports with gcovr..."
+	mkdir -p docs/coverage
+	gcovr --verbose --html --html-details \
+		--gcov-executable gcov-15 \
+		--gcov-object-directory ./Bellhop \
+		--output docs/coverage/index.html \
+		--root ./Bellhop \
+		--exclude-directories examples \
+		--exclude-directories tests \
+		--html-medium-threshold 50 \
+		--html-high-threshold 80 \
+		--html-tab-size 4 \
+		./Bellhop/
+
 coverage-full: clean coverage-build coverage-install test coverage-report coverage-html
 	@echo "Full coverage analysis complete."
 
