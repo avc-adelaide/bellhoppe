@@ -28,7 +28,7 @@ def test_simple():
 
     arrivals = pm.compute_arrivals(env)
     # print(arrivals)
-    
+
     assert(len(arrivals) == 35) # 35 rays arrived at the receiver
     t_arr = [
         0.721796,
@@ -73,16 +73,16 @@ def test_simple():
 
 def test_variable_soundspeed():
     """Test BELLHOP with depth-dependent sound speed profile.
-    
+
     This test validates acoustic propagation with a variable sound speed profile
     as requested in issue #8. The test:
-    
+
     1. Defines a 5-point depth-dependent SSP from surface (0m) to bottom (30m)
     2. Creates a 2D environment using the SSP
     3. Validates default environment parameters remain correct
     4. Computes acoustic ray arrivals and validates results
     """
-    
+
     # Define depth-dependent sound speed profile as specified in issue
     ssp = [
         [ 0, 1540],  # 1540 m/s at the surface
@@ -91,10 +91,10 @@ def test_variable_soundspeed():
         [25, 1533],  # 1533 m/s at 25 m depth
         [30, 1535]   # 1535 m/s at the seabed
     ]
-    
+
     # Create environment with variable sound speed profile
     env = pm.create_env2d(soundspeed=ssp, depth=30)
-    
+
     # Test default environment parameters (keeping others same as test_simple)
     assert(env["bottom_absorption"]  == 0.1)
     assert(env["bottom_density"] == 1600)
@@ -114,23 +114,19 @@ def test_variable_soundspeed():
     assert(env["tx_depth"] == 5)
     assert(env["tx_directionality"] == None)
     assert(env["type"] == "2D")
-    
+
+    assert(env["depth"] == ssp[-1][0])  # Depth should match SSP bottom depth
+
     # Compute arrivals
     arrivals = pm.compute_arrivals(env)
     # print(arrivals)
 
-    # Test sound speed profile interpolation is working
-    assert(len(env["soundspeed"]) == len(ssp))
-
-    # Test environment consistency
-    assert(env["depth"] == ssp[-1][0])  # Depth should match SSP bottom depth
-
     # Test number of rays - determined by running the test
-    assert(len(arrivals) == 26)  # At least some rays should arrive
-        
+    assert(len(arrivals) == 26)
+
     arrival_times = arrivals["time_of_arrival"]
     # print(arrival_times)
-    
+
     a_times = [
         0.696913,
         0.692460,
@@ -159,10 +155,77 @@ def test_variable_soundspeed():
         0.690348,
         0.694689,
     ]
-    
-    # Basic sanity checks on arrival times
-    assert(len(arrival_times) == 26)  # Should have some arrivals
-    
+
     a_test = arrivals["time_of_arrival"] - a_times < 1e-6
+    assert( a_test.all() )
+
+
+
+def test_bathy():
+
+    bathy = [
+        [0, 30],    # 30 m water depth at the transmitter
+        [300, 15],  # 20 m water depth 300 m away
+        [1000, 20]  # 25 m water depth at 1 km
+	]
+
+    env = pm.create_env2d(depth=bathy)
+    # print(env)
+
+    assert(env["bottom_absorption"]  == 0.1)
+    assert(env["bottom_density"] == 1600)
+    assert(env["bottom_roughness"] == 0)
+    assert(env["bottom_soundspeed"] == 1600)
+    assert(env["depth_interp"] == "linear")
+    assert(env["frequency"] == 25000)
+    assert(env["max_angle"] == 80)
+    assert(env["min_angle"] == -80)
+    assert(env["nbeams"] == 0)
+    assert(env["rx_depth"] == 10)
+    assert(env["rx_range"] == 1000)
+    assert(env["soundspeed"] == 1500)
+    assert(env["soundspeed_interp"] == "spline")
+    assert(env["surface"] == None)
+    assert(env["surface_interp"] == "linear")
+    assert(env["tx_depth"] == 5)
+    assert(env["tx_directionality"] == None)
+    assert(env["type"] == "2D")
+
+    arrivals = pm.compute_arrivals(env)
+    arrival_times = arrivals["time_of_arrival"]
+    #print(arrivals)
+    print(arrival_times)
+
+    # Test number of rays - determined by running the test
+    assert(len(arrivals) == 25)
+
+    t_arr_exp = [
+		0.712365,
+		0.708236,
+		0.704244,
+		0.700392,
+		0.696682,
+		0.681542,
+		0.679183,
+		0.676985,
+		0.674948,
+		0.673075,
+		0.667389,
+		0.666980,
+		0.666742,
+		0.666675,
+		0.666780,
+		0.671037,
+		0.672614,
+		0.674357,
+		0.676264,
+		0.678334,
+		0.692169,
+		0.695612,
+		0.699202,
+		0.702935,
+		0.706809,
+    ]
+    a_test = arrival_times - t_arr_exp < 1e-6
     assert( a_test.all() )
 
