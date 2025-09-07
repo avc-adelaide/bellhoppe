@@ -15,7 +15,7 @@
 # Compiled Dynamic libraries
 *.so
 
-# Documentation build directory 
+# Documentation build directory
 doc/
 *.dylib
 *.dll
@@ -77,3 +77,6 @@ fort.*
 # Generated coverage HTML reports (regenerated automatically)
 docs/coverage-index.html
 docs/*.coverage.html
+
+docs/coverage
+
