@@ -2,7 +2,7 @@ import pytest
 
 def test_import_arlpy():
     try:
-        import arlpy.uwapm as pm
+        import bellhop.bellhop as pm
     except ImportError as e:
         pytest.exit(f"❌ Cannot import arlpy.uwapm: {e}", returncode=1)
 

@@ -1,5 +1,5 @@
 import pytest
-import arlpy.uwapm as pm
+import bellhop.bellhop as pm
 
 def test_simple():
 
@@ -194,7 +194,7 @@ def test_bathy():
     arrivals = pm.compute_arrivals(env)
     arrival_times = arrivals["time_of_arrival"]
     #print(arrivals)
-    print(arrival_times)
+    #print(arrival_times)
 
     # Test number of rays - determined by running the test
     assert(len(arrivals) == 25)

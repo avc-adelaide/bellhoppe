@@ -11,8 +11,11 @@ license = {file = "LICENSE"}
 
 dependencies = [
     "matplotlib",
-    "arlpy",
     "gcovr",
+    "numpy",
+    "scipy",
+    "pandas",
+    "bokeh",
 ]
 
 requires-python = ">=3.12, <3.13"
@@ -65,6 +68,12 @@ output-format = "github"
 
 ####### HATCH #######
 
+[tool.hatch.build.targets.wheel]
+packages = ["bellhop","python/bellhop"]
+
+[tool.hatch.build]
+sources = [".", "python"]
+
 [project.optional-dependencies]
 dev = [
     "pytest",
@@ -75,14 +84,19 @@ features = ["dev"]  # includes pytest
 
 [tool.hatch.envs.default.env-vars]
 PATH = "{root}/bin:{env:PATH}"
+PYTHONPATH = "{root}/python:{env:PYTHONPATH:}"
 
 [tool.hatch.envs.default.scripts]
-debug = "echo  ' 'PWD: `pwd`; echo PATH: $PATH; echo ' 'EXE: `command -v bellhop.exe`"
-test = "pytest --capture=tee-sys"
+install-dev = "pip install -e ."
+test = [
+    "install-dev",
+    "pytest --capture=tee-sys"
+]
+debug = [
+    "install-dev",
+    "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import bellhop; print(\"bellhop:\", bellhop.__file__)'"
+]
 doc  = "ford -g -d Bellhop -d misc ford.md"
-
-[tool.hatch.build.targets.wheel]
-packages = ["bellhop"]
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true

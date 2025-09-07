@@ -311,7 +311,7 @@ coverage-html: coverage-report
 		exit 1; \
 	fi
 	@echo "Creating HTML reports in docs/ directory for FORD media integration..."
-	python3 scripts/generate_coverage_html.py docs/
+	python3 python/generate_coverage_html.py docs/
 	@echo "HTML coverage reports generated and integrated with FORD documentation."
 	@echo "Reports will be accessible through FORD as media files at /media/"
 

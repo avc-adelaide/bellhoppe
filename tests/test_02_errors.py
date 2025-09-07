@@ -1,11 +1,9 @@
 import pytest
-import arlpy.uwapm as pm
+import bellhop.bellhop as pm
 
 
 def test_missing_key_error():
     """Test that KeyError is raised for unknown key 'missing_key'."""
-    # Import your module that calls arlpy.uwapm
-    import arlpy.uwapm as pm
 
     # Test that the specific KeyError is raised
     with pytest.raises(KeyError, match=r"Unknown key: missing_key"):

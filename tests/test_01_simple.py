@@ -1,5 +1,5 @@
 import pytest
-import arlpy.uwapm as pm
+import bellhop.bellhop as pm
 
 
 
