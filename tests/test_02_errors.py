@@ -1,5 +1,5 @@
 import pytest
-import bellhop.bellhop as pm
+import bellhop as bh
 
 
 def test_missing_key_error():
@@ -7,7 +7,7 @@ def test_missing_key_error():
 
     # Test that the specific KeyError is raised
     with pytest.raises(KeyError, match=r"Unknown key: missing_key"):
-	    env = pm.create_env2d(missing_key=7)
+	    env = bh.create_env2d(missing_key=7)
 
 
 
@@ -26,5 +26,5 @@ def test_variable_soundspeed_error():
 
     # Create environment with variable sound speed profile
     with pytest.raises(ValueError, match=r"Soundspeed array must be strictly monotonic in depth"):
-    	env = pm.create_env2d(soundspeed=ssp, depth=30)
+    	env = bh.create_env2d(soundspeed=ssp, depth=30)
 

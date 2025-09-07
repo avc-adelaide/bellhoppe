@@ -1,9 +1,9 @@
 import pytest
-import bellhop.bellhop as pm
+import bellhop as bh
 
 def test_simple():
 
-    env = pm.create_env2d()
+    env = bh.create_env2d()
     # print(env)
 
     assert(env["bottom_absorption"]  == 0.1)
@@ -26,7 +26,7 @@ def test_simple():
     assert(env["tx_directionality"] == None)
     assert(env["type"] == "2D")
 
-    arrivals = pm.compute_arrivals(env)
+    arrivals = bh.compute_arrivals(env)
     # print(arrivals)
 
     assert(len(arrivals) == 35) # 35 rays arrived at the receiver
@@ -93,7 +93,7 @@ def test_variable_soundspeed():
     ]
 
     # Create environment with variable sound speed profile
-    env = pm.create_env2d(soundspeed=ssp, depth=30)
+    env = bh.create_env2d(soundspeed=ssp, depth=30)
 
     # Test default environment parameters (keeping others same as test_simple)
     assert(env["bottom_absorption"]  == 0.1)
@@ -118,7 +118,7 @@ def test_variable_soundspeed():
     assert(env["depth"] == ssp[-1][0])  # Depth should match SSP bottom depth
 
     # Compute arrivals
-    arrivals = pm.compute_arrivals(env)
+    arrivals = bh.compute_arrivals(env)
     # print(arrivals)
 
     # Test number of rays - determined by running the test
@@ -169,7 +169,7 @@ def test_bathy():
         [1000, 20]  # 25 m water depth at 1 km
 	]
 
-    env = pm.create_env2d(depth=bathy)
+    env = bh.create_env2d(depth=bathy)
     # print(env)
 
     assert(env["bottom_absorption"]  == 0.1)
@@ -191,7 +191,7 @@ def test_bathy():
     assert(env["tx_directionality"] == None)
     assert(env["type"] == "2D")
 
-    arrivals = pm.compute_arrivals(env)
+    arrivals = bh.compute_arrivals(env)
     arrival_times = arrivals["time_of_arrival"]
     #print(arrivals)
     #print(arrival_times)

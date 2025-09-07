@@ -1,5 +1,5 @@
 import pytest
-import bellhop.bellhop as pm
+import bellhop as bh
 
 
 def test_interp_linear():
@@ -20,7 +20,7 @@ def test_interp_linear():
     ]
 
     # Create environment with variable sound speed profile
-    env = pm.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="linear")
+    env = bh.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="linear")
 
     # Test default environment parameters (keeping others same as test_simple)
     assert(env["bottom_absorption"]  == 0.1)
@@ -43,7 +43,7 @@ def test_interp_linear():
     assert(env["type"] == "2D")
 
     # Compute arrivals
-    arrivals = pm.compute_arrivals(env)
+    arrivals = bh.compute_arrivals(env)
     # print(arrivals)
 
     # Test sound speed profile interpolation is working
