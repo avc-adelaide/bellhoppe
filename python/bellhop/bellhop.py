@@ -129,9 +129,67 @@ def read_env2d(fname):
     :param fname: path to .env file (with or without .env extension)
     :returns: environment dictionary compatible with create_env2d()
 
+    The returned environment dictionary contains the following keys:
+    
+    - name: environment title/name
+    - type: '2D' (fixed for 2D environments)
+    - frequency: acoustic frequency in Hz
+    - soundspeed: sound speed profile (scalar for constant, array for depth-dependent)
+    - soundspeed_interp: interpolation method ('linear', 'spline', 'quadrilateral')
+    - bottom_soundspeed: bottom sediment sound speed in m/s
+    - bottom_density: bottom sediment density in kg/m³
+    - bottom_absorption: bottom sediment absorption in dB/wavelength
+    - bottom_roughness: bottom roughness RMS in meters
+    - surface: surface altimetry profile (None if flat surface)
+    - surface_interp: surface interpolation method ('linear', 'curvilinear')
+    - tx_depth: transmitter depth(s) in meters
+    - tx_directionality: transmitter beam pattern (None if omnidirectional)
+    - rx_depth: receiver depth(s) in meters
+    - rx_range: receiver range(s) in meters
+    - depth: maximum water depth in meters
+    - depth_interp: bathymetry interpolation method ('linear', 'curvilinear')
+    - min_angle: minimum beam angle in degrees
+    - max_angle: maximum beam angle in degrees  
+    - nbeams: number of beams (0 for automatic)
+
+    **Supported ENV file formats:**
+    
+    - Standard BELLHOP format with various boundary conditions
+    - Constant or depth-dependent sound speed profiles
+    - Compressed vector notation (e.g., "0.0 5000.0 /" for linearly spaced values)
+    - Comments (lines with ! are handled correctly)
+    - Different top/bottom boundary options (halfspace, file-based, etc.)
+
+    **Unit conversions performed:**
+    
+    - Receiver ranges: km → m
+    - Bottom density: g/cm³ → kg/m³
+    - All other units preserved as in ENV file
+
+    **Examples:**
+    
     >>> import bellhop as bh
     >>> env = bh.read_env2d('examples/Munk/MunkB_ray.env')
-    >>> # env can now be passed to create_env2d() or used for computations
+    >>> print(env['name'])
+    'Munk profile'
+    >>> print(env['frequency'])
+    50.0
+    
+    >>> # Use with existing functions
+    >>> checked_env = bh.check_env2d(env)
+    >>> rays = bh.compute_rays(env)
+    
+    >>> # Round-trip compatibility
+    >>> env_orig = bh.create_env2d(name="test", frequency=100)
+    >>> # ... write to file via BELLHOP ...
+    >>> env_read = bh.read_env2d("test.env")
+    >>> assert env_read['frequency'] == env_orig['frequency']
+
+    **Limitations:**
+    
+    - External files (.ssp, .bty, .ati, .sbp) are noted but not automatically loaded
+    - Some advanced BELLHOP features may not be fully supported
+    - Assumes standard 2D BELLHOP format (not BELLHOP3D)
     """
     import os
     import re
