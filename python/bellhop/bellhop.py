@@ -642,7 +642,7 @@ def check_env2d(env):
             assert env['soundspeed'][0,0] <= 0, 'First depth in soundspeed array must be 0 m'
             assert env['soundspeed'][-1,0] >= max_depth, 'Last depth in soundspeed array must be beyond water depth: '+str(max_depth)+' m'
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
-            assert env['soundspeed_interp'] == spline or env['soundspeed_interp'] == linear, 'Invalid interpolation type: '+str(env['soundspeed_interp'])
+            assert env['soundspeed_interp'] == spline or env['soundspeed_interp'] == linear or env['soundspeed_interp'] == 'quadrilateral', 'Invalid interpolation type: '+str(env['soundspeed_interp'])
             if not(max_depth in env['soundspeed'][:,0]):
                 indlarger = _np.argwhere(env['soundspeed'][:,0]>max_depth)[0][0]
                 if env['soundspeed_interp'] == spline:
