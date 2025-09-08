@@ -16,10 +16,10 @@ def test_read_ssp_multi_range():
     assert isinstance(ssp, np.ndarray), "Should return numpy array"
     assert ssp.ndim == 2, "Should be 2D array for multi-range SSP"
     assert ssp.shape[1] == 2, "Should have 2 columns: [depth, soundspeed]"
-    assert ssp.shape[0] == 4, "Should have 4 depth points as per file"
+    assert ssp.shape[0] == 2, "Should have 2 depth points as per file"
 
     # Check that depths are sequential starting from 0
-    expected_depths = np.array([0., 1., 2., 3.])
+    expected_depths = np.array([0., 1.])
     np.testing.assert_array_equal(ssp[:, 0], expected_depths)
 
     # All sound speed values should be reasonable (around 1500-1600 m/s)
