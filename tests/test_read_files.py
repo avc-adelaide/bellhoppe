@@ -12,15 +12,19 @@ def test_read_ssp_multi_range():
 
     ssp = bh.read_ssp(ssp_file)
 
-    # Multi-range file should return the raw matrix
+    # Multi-range file should return the profile closest to range 0 in Nx2 format
     assert isinstance(ssp, np.ndarray), "Should return numpy array"
     assert ssp.ndim == 2, "Should be 2D array for multi-range SSP"
-    assert ssp.shape[0] == 30, "Should have 30 ranges as per file"
-    assert ssp.shape[1] == 2, "Should have 2 depth points as per file"
+    assert ssp.shape[1] == 2, "Should have 2 columns: [depth, soundspeed]"
+    assert ssp.shape[0] == 2, "Should have 2 depth points as per file"
 
-    # All values should be reasonable sound speeds (around 1500-1600 m/s)
-    assert np.all(ssp >= 1400), "Sound speeds should be >= 1400 m/s"
-    assert np.all(ssp <= 1700), "Sound speeds should be <= 1700 m/s"
+    # Check that depths are sequential starting from 0
+    expected_depths = np.array([0., 1.])
+    np.testing.assert_array_equal(ssp[:, 0], expected_depths)
+
+    # All sound speed values should be reasonable (around 1500-1600 m/s)
+    assert np.all(ssp[:, 1] >= 1400), "Sound speeds should be >= 1400 m/s"
+    assert np.all(ssp[:, 1] <= 1700), "Sound speeds should be <= 1700 m/s"
 
 def test_read_ssp_single_range():
     """Test reading .ssp file with single range"""

@@ -446,7 +446,8 @@ def read_ssp(fname):
     :returns: numpy array with sound speed data compatible with create_env2d()
 
     For single-profile files (one range), returns a 2D array with [depth, soundspeed] pairs.
-    For multi-profile files, returns the raw sound speed matrix for advanced use.
+    For multi-profile files, returns the profile closest to range 0 as [depth, soundspeed] pairs
+    for compatibility with create_env2d() and compute_arrivals().
 
     **Examples:**
 
@@ -510,9 +511,20 @@ def read_ssp(fname):
             depths = _np.linspace(0, ndepths-1, ndepths, dtype=float)
             return _np.column_stack([depths, ssp_array.flatten()])
         else:
-            # Multiple ranges - return full matrix for range-dependent SSP
-            # This is for advanced use cases with quadrilateral interpolation
-            return ssp_array
+            # Multiple ranges - extract profile closest to range 0 for compatibility
+            # with create_env2d() and compute_arrivals()
+            
+            # Find the range closest to 0
+            zero_idx = _np.argmin(_np.abs(ranges))
+            
+            # Extract the profile at that range
+            profile_data = ssp_array[:, zero_idx]
+            
+            # Create depth values - linearly spaced from 0 to number of depth points  
+            ndepths = ssp_array.shape[0]
+            depths = _np.linspace(0, ndepths-1, ndepths, dtype=float)
+            
+            return _np.column_stack([depths, profile_data])
 
 def read_bty(fname):
     """Read a bathymetry (.bty) file used by BELLHOP.
