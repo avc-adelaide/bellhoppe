@@ -433,6 +433,159 @@ def read_env2d(fname):
     
     return env
 
+def read_ssp(fname):
+    """Read a 2D sound speed profile (.ssp) file used by BELLHOP.
+    
+    This function reads BELLHOP's .ssp files which contain range-dependent 
+    sound speed profiles. The file format is:
+    - Line 1: Number of range profiles (NPROFILES)
+    - Line 2: Range coordinates in km (space-separated)  
+    - Line 3+: Sound speed values, one line per depth point across all ranges
+    
+    :param fname: path to .ssp file (with or without .ssp extension)
+    :returns: numpy array with sound speed data compatible with create_env2d()
+    
+    For single-profile files (one range), returns a 2D array with [depth, soundspeed] pairs.
+    For multi-profile files, returns the raw sound speed matrix for advanced use.
+    
+    **Examples:**
+    
+    >>> import bellhop as bh
+    >>> ssp = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")
+    >>> env = bh.create_env2d()
+    >>> env["soundspeed"] = ssp
+    >>> arrivals = bh.calculate_arrivals(env)
+    
+    **File format example:**
+    
+    ::
+    
+        30
+        -50 -5 -1 -.8 -.75 -.6 -.4 -.2 0 0.2 0.4 0.6 0.8 1.0 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.2 3.4 3.6 3.8 4.0 10.0
+        1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
+        1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
+    """
+    import os
+    
+    # Add .ssp extension if not present
+    if not fname.endswith('.ssp'):
+        fname = fname + '.ssp'
+    
+    if not os.path.exists(fname):
+        raise FileNotFoundError(f"SSP file not found: {fname}")
+    
+    with open(fname, 'r') as f:
+        # Read number of range profiles  
+        nprofiles = int(f.readline().strip())
+        
+        # Read range coordinates (in km)
+        range_line = f.readline().strip()
+        ranges = _np.array([float(x) for x in range_line.split()])
+        
+        if len(ranges) != nprofiles:
+            raise ValueError(f"Expected {nprofiles} range profiles, but found {len(ranges)} ranges")
+        
+        # Read sound speed data - read all remaining lines as a matrix
+        ssp_data = []
+        for line in f:
+            line = line.strip()
+            if line:  # Skip empty lines
+                values = [float(x) for x in line.split()]
+                if len(values) == nprofiles:
+                    ssp_data.append(values)
+        
+        ssp_array = _np.array(ssp_data)
+        
+        if ssp_array.size == 0:
+            raise ValueError(f"No sound speed data found in file")
+        
+        # For compatibility with existing bellhop env structure:
+        # - Single profile: return as [depth, soundspeed] pairs
+        # - Multiple profiles: return the raw matrix for advanced handling
+        
+        if nprofiles == 1:
+            # Single profile - return as [depth, soundspeed] pairs
+            # Create depth values - linearly spaced from 0 to number of depth points
+            ndepths = ssp_array.shape[0]
+            depths = _np.linspace(0, ndepths-1, ndepths, dtype=float)
+            return _np.column_stack([depths, ssp_array.flatten()])
+        else:
+            # Multiple ranges - return full matrix for range-dependent SSP
+            # This is for advanced use cases with quadrilateral interpolation
+            return ssp_array
+
+def read_bty(fname):
+    """Read a bathymetry (.bty) file used by BELLHOP.
+    
+    This function reads BELLHOP's .bty files which define the bottom depth 
+    profile. The file format is:
+    - Line 1: Interpolation type ('L' for linear, 'C' for curvilinear)
+    - Line 2: Number of points
+    - Line 3+: Range (km) and depth (m) pairs
+    
+    :param fname: path to .bty file (with or without .bty extension)  
+    :returns: numpy array with [range, depth] pairs compatible with create_env2d()
+    
+    The returned array can be assigned to env["depth"] for range-dependent bathymetry.
+    
+    **Examples:**
+    
+    >>> import bellhop as bh
+    >>> bty = bh.read_bty("tests/MunkB_geo_rot/MunkB_geo_rot.bty")
+    >>> env = bh.create_env2d()
+    >>> env["depth"] = bty
+    >>> arrivals = bh.calculate_arrivals(env)
+    
+    **File format example:**
+    
+    ::
+    
+        'L'
+        5
+        0 3000
+        10 3000
+        20 500
+        30 3000
+        100 3000
+    """
+    import os
+    
+    # Add .bty extension if not present
+    if not fname.endswith('.bty'):
+        fname = fname + '.bty'
+        
+    if not os.path.exists(fname):
+        raise FileNotFoundError(f"BTY file not found: {fname}")
+    
+    with open(fname, 'r') as f:
+        # Read interpolation type (usually 'L' or 'C')
+        interp_type = f.readline().strip().strip("'\"")
+        
+        # Read number of points
+        npoints = int(f.readline().strip())
+        
+        # Read range,depth pairs
+        ranges = []
+        depths = []
+        
+        for i in range(npoints):
+            line = f.readline().strip()
+            if line:  # Skip empty lines
+                parts = line.split()
+                if len(parts) >= 2:
+                    ranges.append(float(parts[0]))  # Range in km
+                    depths.append(float(parts[1]))  # Depth in m
+        
+        if len(ranges) != npoints:
+            raise ValueError(f"Expected {npoints} bathymetry points, but found {len(ranges)}")
+        
+        # Convert ranges from km to m for consistency with bellhop env structure
+        ranges_m = _np.array(ranges) * 1000
+        depths_array = _np.array(depths)
+        
+        # Return as [range, depth] pairs
+        return _np.column_stack([ranges_m, depths_array])
+
 def check_env2d(env):
     """Check the validity of a 2D underwater environment definition.
 
