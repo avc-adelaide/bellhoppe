@@ -638,7 +638,11 @@ def check_env2d(env):
         elif _np.size(env['soundspeed']) > 1:
             assert env['soundspeed'].ndim == 2, 'soundspeed must be a scalar or an Nx2 array'
             assert env['soundspeed'].shape[1] == 2, 'soundspeed must be a scalar or an Nx2 array'
-            assert env['soundspeed'].shape[0] > 3, 'soundspeed profile must have at least 4 points'
+            # Minimum points depend on interpolation type
+            if env['soundspeed_interp'] == 'spline':
+                assert env['soundspeed'].shape[0] > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
+            else:
+                assert env['soundspeed'].shape[0] > 1, 'soundspeed profile must have at least 2 points'
             assert env['soundspeed'][0,0] <= 0, 'First depth in soundspeed array must be 0 m'
             assert env['soundspeed'][-1,0] >= max_depth, 'Last depth in soundspeed array must be beyond water depth: '+str(max_depth)+' m'
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
