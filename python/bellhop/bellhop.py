@@ -130,7 +130,7 @@ def read_env2d(fname):
     :returns: environment dictionary compatible with create_env2d()
 
     The returned environment dictionary contains the following keys:
-    
+
     - name: environment title/name
     - type: '2D' (fixed for 2D environments)
     - frequency: acoustic frequency in Hz
@@ -149,11 +149,11 @@ def read_env2d(fname):
     - depth: maximum water depth in meters
     - depth_interp: bathymetry interpolation method ('linear', 'curvilinear')
     - min_angle: minimum beam angle in degrees
-    - max_angle: maximum beam angle in degrees  
+    - max_angle: maximum beam angle in degrees
     - nbeams: number of beams (0 for automatic)
 
     **Supported ENV file formats:**
-    
+
     - Standard BELLHOP format with various boundary conditions
     - Constant or depth-dependent sound speed profiles
     - Compressed vector notation (e.g., "0.0 5000.0 /" for linearly spaced values)
@@ -161,24 +161,24 @@ def read_env2d(fname):
     - Different top/bottom boundary options (halfspace, file-based, etc.)
 
     **Unit conversions performed:**
-    
+
     - Receiver ranges: km → m
     - Bottom density: g/cm³ → kg/m³
     - All other units preserved as in ENV file
 
     **Examples:**
-    
+
     >>> import bellhop as bh
     >>> env = bh.read_env2d('examples/Munk/MunkB_ray.env')
     >>> print(env['name'])
     'Munk profile'
     >>> print(env['frequency'])
     50.0
-    
+
     >>> # Use with existing functions
     >>> checked_env = bh.check_env2d(env)
     >>> rays = bh.compute_rays(env)
-    
+
     >>> # Round-trip compatibility
     >>> env_orig = bh.create_env2d(name="test", frequency=100)
     >>> # ... write to file via BELLHOP ...
@@ -186,21 +186,21 @@ def read_env2d(fname):
     >>> assert env_read['frequency'] == env_orig['frequency']
 
     **Limitations:**
-    
+
     - External files (.ssp, .bty, .ati, .sbp) are noted but not automatically loaded
     - Some advanced BELLHOP features may not be fully supported
     - Assumes standard 2D BELLHOP format (not BELLHOP3D)
     """
     import os
     import re
-    
+
     # Add .env extension if not present
     if not fname.endswith('.env'):
         fname = fname + '.env'
-    
+
     if not os.path.exists(fname):
         raise FileNotFoundError(f"Environment file not found: {fname}")
-    
+
     # Initialize environment with default values from create_env2d
     env = {
         'name': 'arlpy',
@@ -224,39 +224,39 @@ def read_env2d(fname):
         'max_angle': 80,
         'nbeams': 0
     }
-    
+
     def _parse_quoted_string(line):
         """Extract string from within quotes"""
         match = re.search(r"'([^']*)'", line)
         return match.group(1) if match else line.strip()
-    
+
     def _parse_line(line):
         """Parse a line, removing comments and whitespace"""
         # Remove comments (everything after !)
         if '!' in line:
             line = line[:line.index('!')].strip()
         return line.strip()
-    
+
     def _parse_vector(f, dtype=float):
         """Parse a vector that starts with count then values, ending with '/'"""
         line = f.readline().strip()
         if not line:
             raise ValueError("Unexpected end of file while reading vector")
-        
+
         # First line is the count
         count = int(_parse_line(line))
-        
+
         # Second line has the values
         values_line = f.readline().strip()
         values_line = _parse_line(values_line)
-        
+
         # Split by '/' and take only the first part (before the '/')
         if '/' in values_line:
             values_line = values_line.split('/')[0].strip()
-        
+
         parts = values_line.split()
         values = [dtype(p) for p in parts]
-        
+
         # Handle compressed notation: if we have exactly 2 values and count > 2, it's start and end
         if len(values) == 2 and count > 2:
             start, end = values
@@ -264,27 +264,27 @@ def read_env2d(fname):
             return _np.linspace(start, end, count)
         else:
             return _np.array(values)
-    
+
     def _read_ssp_points(f):
         """Read sound speed profile points until we find the bottom boundary line"""
         ssp_points = []
-        
+
         while True:
             line = f.readline().strip()
             if not line:
                 break
-            
+
             # Check if this is a bottom boundary line (starts with quote)
             if line.startswith("'"):
                 # This is the bottom boundary line, put it back
                 f.seek(f.tell() - len(line.encode()) - 1)
                 break
-            
+
             # Parse SSP point
             line = _parse_line(line)
             if line.endswith('/'):
                 line = line[:-1].strip()
-            
+
             parts = line.split()
             if len(parts) >= 2:
                 try:
@@ -296,28 +296,28 @@ def read_env2d(fname):
                     # Put the line back and break
                     f.seek(f.tell() - len(line.encode()) - 1)
                     break
-        
+
         return _np.array(ssp_points) if ssp_points else None
-    
+
     with open(fname, 'r') as f:
         # Line 1: Title
         title_line = f.readline().strip()
         env['name'] = _parse_quoted_string(title_line)
-        
+
         # Line 2: Frequency
         freq_line = f.readline().strip()
         env['frequency'] = float(_parse_line(freq_line))
-        
+
         # Line 3: NMedia (should be 1 for BELLHOP)
         nmedia_line = f.readline().strip()
         nmedia = int(_parse_line(nmedia_line))
         if nmedia != 1:
             raise ValueError(f"BELLHOP only supports 1 medium, found {nmedia}")
-        
+
         # Line 4: Top boundary options
         topopt_line = f.readline().strip()
         topopt = _parse_quoted_string(topopt_line)
-        
+
         # Parse SSP interpolation type from first character
         if topopt[0] == 'S':
             env['soundspeed_interp'] = spline
@@ -327,27 +327,27 @@ def read_env2d(fname):
             env['soundspeed_interp'] = 'quadrilateral'  # 2D SSP from file
         else:
             env['soundspeed_interp'] = linear  # default
-        
+
         # Check for surface altimetry (indicated by * in topopt)
         if '*' in topopt:
             # Surface altimetry file exists - would need to read .ati file
             # For now, just note that surface is present
             env['surface'] = _np.array([[0, 0], [1000, 0]])  # placeholder
-        
+
         # Check if top boundary has halfspace parameters (indicated by 'A' option)
         if 'A' in topopt:
             # Read halfspace parameters line
             halfspace_line = f.readline().strip()
             # This line contains: depth, alphaR, betaR, rho, alphaI, betaI
             # We skip this for now as it's not part of the standard env structure
-        
+
         # Line 5 or 6: SSP depth specification (format: npts sigma_z max_depth)
         ssp_spec_line = f.readline().strip()
         ssp_parts = _parse_line(ssp_spec_line).split()
         if len(ssp_parts) >= 3:
             max_depth = float(ssp_parts[2])
             env['depth'] = max_depth
-        
+
         # Read SSP points
         ssp_points = _read_ssp_points(f)
         if ssp_points is not None and len(ssp_points) > 0:
@@ -357,134 +357,134 @@ def read_env2d(fname):
             else:
                 # Multiple points - depth, sound speed pairs
                 env['soundspeed'] = ssp_points
-        
+
         # Bottom boundary options
         bottom_line = f.readline().strip()
         bottom_parts = _parse_line(bottom_line).split()
         if len(bottom_parts) >= 2:
             bottom_opt = _parse_quoted_string(bottom_parts[0])
             env['bottom_roughness'] = float(bottom_parts[1])
-            
+
             # Check for bathymetry file (indicated by * in bottom option)
             if '*' in bottom_opt:
                 # Bathymetry file exists - would need to read .bty file
                 # For now, note that depth is range-dependent
                 pass
-        
+
         # Bottom properties (depth, sound_speed, density, absorption)
         bottom_props_line = f.readline().strip()
         bottom_props_line = _parse_line(bottom_props_line)
         if bottom_props_line.endswith('/'):
             bottom_props_line = bottom_props_line[:-1].strip()
-        
+
         bottom_props = bottom_props_line.split()
         if len(bottom_props) >= 5:
             env['bottom_soundspeed'] = float(bottom_props[1])
             # Skip shear speed (bottom_props[2])
             env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
             env['bottom_absorption'] = float(bottom_props[4])
-        
+
         # Source depths
         tx_depths = _parse_vector(f)
         if len(tx_depths) == 1:
             env['tx_depth'] = tx_depths[0]
         else:
             env['tx_depth'] = tx_depths
-        
-        # Receiver depths  
+
+        # Receiver depths
         rx_depths = _parse_vector(f)
         if len(rx_depths) == 1:
             env['rx_depth'] = rx_depths[0]
         else:
             env['rx_depth'] = rx_depths
-        
+
         # Receiver ranges (in km, need to convert to m)
         rx_ranges = _parse_vector(f)
         env['rx_range'] = rx_ranges * 1000  # convert km to m
-        
+
         # Task/run type (e.g., 'R', 'C', etc.)
         task_line = f.readline().strip()
         task_code = _parse_quoted_string(task_line)
-        
+
         # Check for source directionality (indicated by * in task code)
         if '*' in task_code:
             # Source directionality file exists - would need to read .sbp file
             # For now, just note that directionality is present
             env['tx_directionality'] = _np.array([[0, 0]])  # placeholder
-        
+
         # Number of beams
         nbeams_line = f.readline().strip()
         env['nbeams'] = int(_parse_line(nbeams_line))
-        
+
         # Beam angles (min_angle, max_angle)
         angles_line = f.readline().strip()
         angles_line = _parse_line(angles_line)
         if angles_line.endswith('/'):
             angles_line = angles_line[:-1].strip()
-        
+
         angle_parts = angles_line.split()
         if len(angle_parts) >= 2:
             env['min_angle'] = float(angle_parts[0])
             env['max_angle'] = float(angle_parts[1])
-        
+
         # Ray tracing limits (step, max_depth, max_range) - last line
         limits_line = f.readline().strip()
         # We don't store these in the env structure as they're computational parameters
-    
+
     return env
 
 def read_ssp(fname):
     """Read a 2D sound speed profile (.ssp) file used by BELLHOP.
-    
-    This function reads BELLHOP's .ssp files which contain range-dependent 
+
+    This function reads BELLHOP's .ssp files which contain range-dependent
     sound speed profiles. The file format is:
     - Line 1: Number of range profiles (NPROFILES)
-    - Line 2: Range coordinates in km (space-separated)  
+    - Line 2: Range coordinates in km (space-separated)
     - Line 3+: Sound speed values, one line per depth point across all ranges
-    
+
     :param fname: path to .ssp file (with or without .ssp extension)
     :returns: numpy array with sound speed data compatible with create_env2d()
-    
+
     For single-profile files (one range), returns a 2D array with [depth, soundspeed] pairs.
     For multi-profile files, returns the raw sound speed matrix for advanced use.
-    
+
     **Examples:**
-    
+
     >>> import bellhop as bh
     >>> ssp = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")
     >>> env = bh.create_env2d()
     >>> env["soundspeed"] = ssp
     >>> arrivals = bh.calculate_arrivals(env)
-    
+
     **File format example:**
-    
+
     ::
-    
+
         30
         -50 -5 -1 -.8 -.75 -.6 -.4 -.2 0 0.2 0.4 0.6 0.8 1.0 1.2 1.4 1.6 1.8 2.0 2.2 2.4 2.6 2.8 3.0 3.2 3.4 3.6 3.8 4.0 10.0
         1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
         1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
     """
     import os
-    
+
     # Add .ssp extension if not present
     if not fname.endswith('.ssp'):
         fname = fname + '.ssp'
-    
+
     if not os.path.exists(fname):
         raise FileNotFoundError(f"SSP file not found: {fname}")
-    
+
     with open(fname, 'r') as f:
-        # Read number of range profiles  
+        # Read number of range profiles
         nprofiles = int(f.readline().strip())
-        
+
         # Read range coordinates (in km)
         range_line = f.readline().strip()
         ranges = _np.array([float(x) for x in range_line.split()])
-        
+
         if len(ranges) != nprofiles:
             raise ValueError(f"Expected {nprofiles} range profiles, but found {len(ranges)} ranges")
-        
+
         # Read sound speed data - read all remaining lines as a matrix
         ssp_data = []
         for line in f:
@@ -493,16 +493,16 @@ def read_ssp(fname):
                 values = [float(x) for x in line.split()]
                 if len(values) == nprofiles:
                     ssp_data.append(values)
-        
+
         ssp_array = _np.array(ssp_data)
-        
+
         if ssp_array.size == 0:
             raise ValueError(f"No sound speed data found in file")
-        
+
         # For compatibility with existing bellhop env structure:
         # - Single profile: return as [depth, soundspeed] pairs
         # - Multiple profiles: return the raw matrix for advanced handling
-        
+
         if nprofiles == 1:
             # Single profile - return as [depth, soundspeed] pairs
             # Create depth values - linearly spaced from 0 to number of depth points
@@ -516,30 +516,30 @@ def read_ssp(fname):
 
 def read_bty(fname):
     """Read a bathymetry (.bty) file used by BELLHOP.
-    
-    This function reads BELLHOP's .bty files which define the bottom depth 
+
+    This function reads BELLHOP's .bty files which define the bottom depth
     profile. The file format is:
     - Line 1: Interpolation type ('L' for linear, 'C' for curvilinear)
     - Line 2: Number of points
     - Line 3+: Range (km) and depth (m) pairs
-    
-    :param fname: path to .bty file (with or without .bty extension)  
+
+    :param fname: path to .bty file (with or without .bty extension)
     :returns: numpy array with [range, depth] pairs compatible with create_env2d()
-    
+
     The returned array can be assigned to env["depth"] for range-dependent bathymetry.
-    
+
     **Examples:**
-    
+
     >>> import bellhop as bh
     >>> bty = bh.read_bty("tests/MunkB_geo_rot/MunkB_geo_rot.bty")
     >>> env = bh.create_env2d()
     >>> env["depth"] = bty
     >>> arrivals = bh.calculate_arrivals(env)
-    
+
     **File format example:**
-    
+
     ::
-    
+
         'L'
         5
         0 3000
@@ -549,25 +549,25 @@ def read_bty(fname):
         100 3000
     """
     import os
-    
+
     # Add .bty extension if not present
     if not fname.endswith('.bty'):
         fname = fname + '.bty'
-        
+
     if not os.path.exists(fname):
         raise FileNotFoundError(f"BTY file not found: {fname}")
-    
+
     with open(fname, 'r') as f:
         # Read interpolation type (usually 'L' or 'C')
         interp_type = f.readline().strip().strip("'\"")
-        
+
         # Read number of points
         npoints = int(f.readline().strip())
-        
+
         # Read range,depth pairs
         ranges = []
         depths = []
-        
+
         for i in range(npoints):
             line = f.readline().strip()
             if line:  # Skip empty lines
@@ -575,14 +575,14 @@ def read_bty(fname):
                 if len(parts) >= 2:
                     ranges.append(float(parts[0]))  # Range in km
                     depths.append(float(parts[1]))  # Depth in m
-        
+
         if len(ranges) != npoints:
             raise ValueError(f"Expected {npoints} bathymetry points, but found {len(ranges)}")
-        
+
         # Convert ranges from km to m for consistency with bellhop env structure
         ranges_m = _np.array(ranges) * 1000
         depths_array = _np.array(depths)
-        
+
         # Return as [range, depth] pairs
         return _np.column_stack([ranges_m, depths_array])
 
