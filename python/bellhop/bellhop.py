@@ -119,6 +119,262 @@ def create_env2d(**kv):
     env = check_env2d(env)
     return env
 
+def read_env2d(fname):
+    """Read a 2D underwater environment from a BELLHOP .env file.
+
+    This function parses a BELLHOP .env file and returns a Python data structure
+    that is compatible with create_env2d(). This enables round-trip testing and
+    compatibility between file-based and programmatic environment definitions.
+
+    :param fname: path to .env file (with or without .env extension)
+    :returns: environment dictionary compatible with create_env2d()
+
+    >>> import bellhop as bh
+    >>> env = bh.read_env2d('examples/Munk/MunkB_ray.env')
+    >>> # env can now be passed to create_env2d() or used for computations
+    """
+    import os
+    import re
+    
+    # Add .env extension if not present
+    if not fname.endswith('.env'):
+        fname = fname + '.env'
+    
+    if not os.path.exists(fname):
+        raise FileNotFoundError(f"Environment file not found: {fname}")
+    
+    # Initialize environment with default values from create_env2d
+    env = {
+        'name': 'arlpy',
+        'type': '2D',
+        'frequency': 25000,
+        'soundspeed': 1500,
+        'soundspeed_interp': spline,
+        'bottom_soundspeed': 1600,
+        'bottom_density': 1600,
+        'bottom_absorption': 0.1,
+        'bottom_roughness': 0,
+        'surface': None,
+        'surface_interp': linear,
+        'tx_depth': 5,
+        'tx_directionality': None,
+        'rx_depth': 10,
+        'rx_range': 1000,
+        'depth': 25,
+        'depth_interp': linear,
+        'min_angle': -80,
+        'max_angle': 80,
+        'nbeams': 0
+    }
+    
+    def _parse_quoted_string(line):
+        """Extract string from within quotes"""
+        match = re.search(r"'([^']*)'", line)
+        return match.group(1) if match else line.strip()
+    
+    def _parse_line(line):
+        """Parse a line, removing comments and whitespace"""
+        # Remove comments (everything after !)
+        if '!' in line:
+            line = line[:line.index('!')].strip()
+        return line.strip()
+    
+    def _parse_vector(f, dtype=float):
+        """Parse a vector that starts with count then values, ending with '/'"""
+        line = f.readline().strip()
+        if not line:
+            raise ValueError("Unexpected end of file while reading vector")
+        
+        # First line is the count
+        count = int(_parse_line(line))
+        
+        # Second line has the values
+        values_line = f.readline().strip()
+        values_line = _parse_line(values_line)
+        
+        # Split by '/' and take only the first part (before the '/')
+        if '/' in values_line:
+            values_line = values_line.split('/')[0].strip()
+        
+        parts = values_line.split()
+        values = [dtype(p) for p in parts]
+        
+        # Handle compressed notation: if we have exactly 2 values and count > 2, it's start and end
+        if len(values) == 2 and count > 2:
+            start, end = values
+            # Generate linearly spaced values
+            return _np.linspace(start, end, count)
+        else:
+            return _np.array(values)
+    
+    def _read_ssp_points(f):
+        """Read sound speed profile points until we find the bottom boundary line"""
+        ssp_points = []
+        
+        while True:
+            line = f.readline().strip()
+            if not line:
+                break
+            
+            # Check if this is a bottom boundary line (starts with quote)
+            if line.startswith("'"):
+                # This is the bottom boundary line, put it back
+                f.seek(f.tell() - len(line.encode()) - 1)
+                break
+            
+            # Parse SSP point
+            line = _parse_line(line)
+            if line.endswith('/'):
+                line = line[:-1].strip()
+            
+            parts = line.split()
+            if len(parts) >= 2:
+                try:
+                    depth = float(parts[0])
+                    speed = float(parts[1])
+                    ssp_points.append([depth, speed])
+                except ValueError:
+                    # This might be the end of SSP or a different format
+                    # Put the line back and break
+                    f.seek(f.tell() - len(line.encode()) - 1)
+                    break
+        
+        return _np.array(ssp_points) if ssp_points else None
+    
+    with open(fname, 'r') as f:
+        # Line 1: Title
+        title_line = f.readline().strip()
+        env['name'] = _parse_quoted_string(title_line)
+        
+        # Line 2: Frequency
+        freq_line = f.readline().strip()
+        env['frequency'] = float(_parse_line(freq_line))
+        
+        # Line 3: NMedia (should be 1 for BELLHOP)
+        nmedia_line = f.readline().strip()
+        nmedia = int(_parse_line(nmedia_line))
+        if nmedia != 1:
+            raise ValueError(f"BELLHOP only supports 1 medium, found {nmedia}")
+        
+        # Line 4: Top boundary options
+        topopt_line = f.readline().strip()
+        topopt = _parse_quoted_string(topopt_line)
+        
+        # Parse SSP interpolation type from first character
+        if topopt[0] == 'S':
+            env['soundspeed_interp'] = spline
+        elif topopt[0] == 'C':
+            env['soundspeed_interp'] = linear
+        elif topopt[0] == 'Q':
+            env['soundspeed_interp'] = 'quadrilateral'  # 2D SSP from file
+        else:
+            env['soundspeed_interp'] = linear  # default
+        
+        # Check for surface altimetry (indicated by * in topopt)
+        if '*' in topopt:
+            # Surface altimetry file exists - would need to read .ati file
+            # For now, just note that surface is present
+            env['surface'] = _np.array([[0, 0], [1000, 0]])  # placeholder
+        
+        # Check if top boundary has halfspace parameters (indicated by 'A' option)
+        if 'A' in topopt:
+            # Read halfspace parameters line
+            halfspace_line = f.readline().strip()
+            # This line contains: depth, alphaR, betaR, rho, alphaI, betaI
+            # We skip this for now as it's not part of the standard env structure
+        
+        # Line 5 or 6: SSP depth specification (format: npts sigma_z max_depth)
+        ssp_spec_line = f.readline().strip()
+        ssp_parts = _parse_line(ssp_spec_line).split()
+        if len(ssp_parts) >= 3:
+            max_depth = float(ssp_parts[2])
+            env['depth'] = max_depth
+        
+        # Read SSP points
+        ssp_points = _read_ssp_points(f)
+        if ssp_points is not None and len(ssp_points) > 0:
+            if len(ssp_points) == 1:
+                # Single sound speed value
+                env['soundspeed'] = ssp_points[0, 1]
+            else:
+                # Multiple points - depth, sound speed pairs
+                env['soundspeed'] = ssp_points
+        
+        # Bottom boundary options
+        bottom_line = f.readline().strip()
+        bottom_parts = _parse_line(bottom_line).split()
+        if len(bottom_parts) >= 2:
+            bottom_opt = _parse_quoted_string(bottom_parts[0])
+            env['bottom_roughness'] = float(bottom_parts[1])
+            
+            # Check for bathymetry file (indicated by * in bottom option)
+            if '*' in bottom_opt:
+                # Bathymetry file exists - would need to read .bty file
+                # For now, note that depth is range-dependent
+                pass
+        
+        # Bottom properties (depth, sound_speed, density, absorption)
+        bottom_props_line = f.readline().strip()
+        bottom_props_line = _parse_line(bottom_props_line)
+        if bottom_props_line.endswith('/'):
+            bottom_props_line = bottom_props_line[:-1].strip()
+        
+        bottom_props = bottom_props_line.split()
+        if len(bottom_props) >= 5:
+            env['bottom_soundspeed'] = float(bottom_props[1])
+            # Skip shear speed (bottom_props[2])
+            env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
+            env['bottom_absorption'] = float(bottom_props[4])
+        
+        # Source depths
+        tx_depths = _parse_vector(f)
+        if len(tx_depths) == 1:
+            env['tx_depth'] = tx_depths[0]
+        else:
+            env['tx_depth'] = tx_depths
+        
+        # Receiver depths  
+        rx_depths = _parse_vector(f)
+        if len(rx_depths) == 1:
+            env['rx_depth'] = rx_depths[0]
+        else:
+            env['rx_depth'] = rx_depths
+        
+        # Receiver ranges (in km, need to convert to m)
+        rx_ranges = _parse_vector(f)
+        env['rx_range'] = rx_ranges * 1000  # convert km to m
+        
+        # Task/run type (e.g., 'R', 'C', etc.)
+        task_line = f.readline().strip()
+        task_code = _parse_quoted_string(task_line)
+        
+        # Check for source directionality (indicated by * in task code)
+        if '*' in task_code:
+            # Source directionality file exists - would need to read .sbp file
+            # For now, just note that directionality is present
+            env['tx_directionality'] = _np.array([[0, 0]])  # placeholder
+        
+        # Number of beams
+        nbeams_line = f.readline().strip()
+        env['nbeams'] = int(_parse_line(nbeams_line))
+        
+        # Beam angles (min_angle, max_angle)
+        angles_line = f.readline().strip()
+        angles_line = _parse_line(angles_line)
+        if angles_line.endswith('/'):
+            angles_line = angles_line[:-1].strip()
+        
+        angle_parts = angles_line.split()
+        if len(angle_parts) >= 2:
+            env['min_angle'] = float(angle_parts[0])
+            env['max_angle'] = float(angle_parts[1])
+        
+        # Ray tracing limits (step, max_depth, max_range) - last line
+        limits_line = f.readline().strip()
+        # We don't store these in the env structure as they're computational parameters
+    
+    return env
+
 def check_env2d(env):
     """Check the validity of a 2D underwater environment definition.
 
