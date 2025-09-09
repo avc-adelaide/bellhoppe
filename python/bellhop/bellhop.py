@@ -644,7 +644,11 @@ def check_env2d(env):
         else:
             max_depth = env['depth']
         if isinstance(env['soundspeed'], _pd.DataFrame):
-            assert env['soundspeed'].shape[0] > 3, 'soundspeed profile must have at least 4 points'
+            # For DataFrames, apply the same minimum point requirements as numpy arrays
+            if env['soundspeed_interp'] == 'spline':
+                assert env['soundspeed'].shape[0] > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
+            else:
+                assert env['soundspeed'].shape[0] > 1, 'soundspeed profile must have at least 2 points'
             assert env['soundspeed'].index[0] <= 0, 'First depth in soundspeed array must be 0 m'
             assert env['soundspeed'].index[-1] >= max_depth, 'Last depth in soundspeed array must be beyond water depth: '+str(max_depth)+' m'
             assert _np.all(_np.diff(env['soundspeed'].index) > 0), 'Soundspeed array must be strictly monotonic in depth'

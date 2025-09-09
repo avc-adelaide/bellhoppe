@@ -132,9 +132,16 @@ def test_integration_with_env():
     env["depth"] = bty
 
     # Verify the data is stored correctly
-    assert isinstance(env["soundspeed"], np.ndarray)
+    # For multi-profile SSP files, read_ssp returns pandas DataFrame, for single-profile, numpy array
+    if hasattr(ssp, 'columns'):  # pandas DataFrame (multi-profile)
+        # Environment should store the DataFrame as-is for range-dependent modeling
+        assert hasattr(env["soundspeed"], 'columns'), "Multi-profile SSP should remain as DataFrame in environment"
+        assert env["soundspeed"].shape == ssp.shape
+    else:  # numpy array (single-profile)
+        assert isinstance(env["soundspeed"], np.ndarray)
+        assert env["soundspeed"].shape == ssp.shape
+    
     assert isinstance(env["depth"], np.ndarray)
-    assert env["soundspeed"].shape == ssp.shape
     assert env["depth"].shape == bty.shape
 
 def test_file_extensions():
@@ -150,7 +157,13 @@ def test_file_extensions():
     ssp = bh.read_ssp(ssp_file)
     bty = bh.read_bty(bty_file)
 
-    assert isinstance(ssp, np.ndarray)
+    # Check data types - read_ssp can return DataFrame (multi-profile) or numpy array (single-profile)
+    if hasattr(ssp, 'columns'):  # pandas DataFrame (multi-profile)
+        assert hasattr(ssp, 'shape'), "SSP DataFrame should have shape attribute"
+        assert len(ssp.columns) > 0, "SSP DataFrame should have range columns"
+    else:  # numpy array (single-profile)
+        assert isinstance(ssp, np.ndarray)
+    
     assert isinstance(bty, np.ndarray)
 
 def test_file_not_found():
