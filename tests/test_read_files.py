@@ -1,6 +1,7 @@
 import pytest
 import bellhop as bh
 import numpy as np
+import pandas as pd
 import os
 
 def test_read_ssp_multi_range():
@@ -12,19 +13,29 @@ def test_read_ssp_multi_range():
 
     ssp = bh.read_ssp(ssp_file)
 
-    # Multi-range file should return the profile closest to range 0 in Nx2 format
-    assert isinstance(ssp, np.ndarray), "Should return numpy array"
-    assert ssp.ndim == 2, "Should be 2D array for multi-range SSP"
-    assert ssp.shape[1] == 2, "Should have 2 columns: [depth, soundspeed]"
+    # Multi-range file should return a pandas DataFrame for range-dependent modeling
+    assert isinstance(ssp, pd.DataFrame), "Should return pandas DataFrame for multi-range SSP"
     assert ssp.shape[0] == 2, "Should have 2 depth points as per file"
+    assert ssp.shape[1] == 30, "Should have 30 range profiles as per file"
 
     # Check that depths are sequential starting from 0
     expected_depths = np.array([0., 1.])
-    np.testing.assert_array_equal(ssp[:, 0], expected_depths)
+    np.testing.assert_array_equal(ssp.index.values, expected_depths)
+
+    # Ranges should be in meters (converted from km in file)
+    # Check that we have reasonable range values
+    assert np.min(ssp.columns) >= -60000, "Minimum range should be reasonable"
+    assert np.max(ssp.columns) <= 15000, "Maximum range should be reasonable"
+    assert 0.0 in ssp.columns, "Should include range 0.0 m"
 
     # All sound speed values should be reasonable (around 1500-1600 m/s)
-    assert np.all(ssp[:, 1] >= 1400), "Sound speeds should be >= 1400 m/s"
-    assert np.all(ssp[:, 1] <= 1700), "Sound speeds should be <= 1700 m/s"
+    assert np.all(ssp.values >= 1400), "Sound speeds should be >= 1400 m/s"
+    assert np.all(ssp.values <= 1700), "Sound speeds should be <= 1700 m/s"
+
+    # Should work with create_env2d for range-dependent modeling
+    env = bh.create_env2d()
+    env['soundspeed'] = ssp
+    assert isinstance(env['soundspeed'], pd.DataFrame), "Should be compatible with create_env2d"
 
 def test_read_ssp_single_range():
     """Test reading .ssp file with single range"""

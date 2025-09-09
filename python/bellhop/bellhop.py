@@ -443,19 +443,39 @@ def read_ssp(fname):
     - Line 3+: Sound speed values, one line per depth point across all ranges
 
     :param fname: path to .ssp file (with or without .ssp extension)
-    :returns: numpy array with sound speed data compatible with create_env2d()
+    :returns: for single-profile files: numpy array with [depth, soundspeed] pairs;
+              for multi-profile files: pandas DataFrame with range-dependent sound speed data
 
-    For single-profile files (one range), returns a 2D array with [depth, soundspeed] pairs.
-    For multi-profile files, returns the profile closest to range 0 as [depth, soundspeed] pairs
-    for compatibility with create_env2d() and compute_arrivals().
+    **Return format:**
+
+    - **Single-profile files (1 range)**: Returns a 2D numpy array with [depth, soundspeed] pairs,
+      compatible with create_env2d() soundspeed parameter.
+
+    - **Multi-profile files (>1 ranges)**: Returns a pandas DataFrame where:
+      
+      - **Columns**: Range coordinates (in meters, converted from km in file)
+      - **Index**: Depth indices (0, 1, 2, ... for each depth level in the file)
+      - **Values**: Sound speeds (m/s)
+      
+      This DataFrame can be directly assigned to create_env2d() soundspeed parameter
+      for range-dependent acoustic modeling.
+
+    **Note on depths**: For multi-profile files, depth indices are used (0, 1, 2, ...)
+    since the actual depth coordinates come from the associated BELLHOP .env file.
+    Users can modify the DataFrame index if actual depth values are known.
 
     **Examples:**
 
     >>> import bellhop as bh
-    >>> ssp = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")
+    >>> # Single-profile file
+    >>> ssp1 = bh.read_ssp("single_profile.ssp")  # Returns numpy array
     >>> env = bh.create_env2d()
-    >>> env["soundspeed"] = ssp
-    >>> arrivals = bh.calculate_arrivals(env)
+    >>> env["soundspeed"] = ssp1
+    >>> 
+    >>> # Multi-profile file  
+    >>> ssp2 = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")  # Returns DataFrame
+    >>> env = bh.create_env2d()
+    >>> env["soundspeed"] = ssp2  # Range-dependent sound speed
 
     **File format example:**
 
@@ -500,31 +520,24 @@ def read_ssp(fname):
         if ssp_array.size == 0:
             raise ValueError(f"No sound speed data found in file")
 
-        # For compatibility with existing bellhop env structure:
-        # - Single profile: return as [depth, soundspeed] pairs
-        # - Multiple profiles: return the raw matrix for advanced handling
-
         if nprofiles == 1:
-            # Single profile - return as [depth, soundspeed] pairs
+            # Single profile - return as [depth, soundspeed] pairs for backward compatibility
             # Create depth values - linearly spaced from 0 to number of depth points
             ndepths = ssp_array.shape[0]
             depths = _np.linspace(0, ndepths-1, ndepths, dtype=float)
             return _np.column_stack([depths, ssp_array.flatten()])
         else:
-            # Multiple ranges - extract profile closest to range 0 for compatibility
-            # with create_env2d() and compute_arrivals()
+            # Multiple ranges - return as pandas DataFrame for range-dependent modeling
+            # Convert ranges from km to meters (as expected by create_env2d)
+            ranges_m = ranges * 1000
             
-            # Find the range closest to 0
-            zero_idx = _np.argmin(_np.abs(ranges))
-            
-            # Extract the profile at that range
-            profile_data = ssp_array[:, zero_idx]
-            
-            # Create depth values - linearly spaced from 0 to number of depth points  
+            # Create depth indices (actual depths would come from associated .env file)
             ndepths = ssp_array.shape[0]
-            depths = _np.linspace(0, ndepths-1, ndepths, dtype=float)
+            depths = _np.arange(ndepths, dtype=float)
             
-            return _np.column_stack([depths, profile_data])
+            # Create DataFrame with ranges as columns and depths as index
+            # ssp_array is [ndepths, nprofiles] which is the correct orientation
+            return _pd.DataFrame(ssp_array, index=depths, columns=ranges_m)
 
 def read_bty(fname):
     """Read a bathymetry (.bty) file used by BELLHOP.
