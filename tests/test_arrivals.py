@@ -6,7 +6,7 @@ def test_simple():
     env = bh.create_env2d()
     # print(env)
 
-    assert(env["bottom_absorption"]  == 0.1)
+    assert(env["bottom_attenuation"]  == 0.1)
     assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)
@@ -96,7 +96,7 @@ def test_variable_soundspeed():
     env = bh.create_env2d(soundspeed=ssp, depth=30)
 
     # Test default environment parameters (keeping others same as test_simple)
-    assert(env["bottom_absorption"]  == 0.1)
+    assert(env["bottom_attenuation"]  == 0.1)
     assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)
@@ -172,8 +172,7 @@ def test_bathy():
     env = bh.create_env2d(depth=bathy)
     # print(env)
 
-    assert(env["bottom_absorption"]  == 0.1)
-    assert(env["bottom_density"] == 1600)
+bottom_attenuation    assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)
     assert(env["depth_interp"] == "linear")

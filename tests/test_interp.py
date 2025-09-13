@@ -23,7 +23,7 @@ def test_interp_linear():
     env = bh.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="linear")
 
     # Test default environment parameters (keeping others same as test_simple)
-    assert(env["bottom_absorption"]  == 0.1)
+    assert(env["bottom_attenuation"]  == 0.1)
     assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)
