@@ -44,6 +44,41 @@ coherent = 'coherent'
 incoherent = 'incoherent'
 semicoherent = 'semicoherent'
 
+
+interp_map = {
+    "S": spline,
+    "C": linear,
+    "Q": "quadrilateral",
+    "P": "pchip",
+    "H": "hexahedral",
+}
+topbound_map = {
+    "V": "vacuum",
+    "A": "acousto-elastic",
+    "R": "rigid",
+    "F": "from-file",
+}
+attunits_map = {
+    "N": "nepers per meter",
+    "F": "frequency dependent",
+    "M": "dB per meter",
+    "m": "frequency scaled dB per meter",
+    "W": "dB per wavelength",
+    "Q": "quality factor",
+    "L": "loss parameter",
+}
+volatt_map = {
+    "": 'none',
+    "T": 'thorp',
+    "F": 'francois-garrison',
+    "B": 'biological',
+}
+interp_rev = {v: k for k, v in interp_map.items()}
+topbound_rev = {v: k for k, v in topbound_map.items()}
+attunits_rev = {v: k for k, v in attunits_map.items()}
+volatt_rev = {v: k for k, v in volatt_map.items()}
+
+
 # models (in order of preference)
 _models = []
 
@@ -142,6 +177,9 @@ def read_env2d(fname):
     - bottom_roughness: bottom roughness RMS in meters
     - surface: surface altimetry profile (None if flat surface)
     - surface_interp: surface interpolation method ('linear', 'curvilinear')
+    - top_boundary_condition: ('vacuum', 'acousto-elastic', 'rigid', 'from-file')
+    - volume_attenuation: ('none', 'thorp', 'francois-garrison', 'biological')
+    - attenuation_units: ('nepers per meter', 'frequency dependent', 'dB per meter', 'frequency scaled dB per meter', 'dB per wavelength', 'quality factor', 'loss parameter')
     - tx_depth: transmitter depth(s) in meters
     - tx_directionality: transmitter beam pattern (None if omnidirectional)
     - rx_depth: receiver depth(s) in meters
@@ -319,27 +357,44 @@ def read_env2d(fname):
         topopt = _parse_quoted_string(topopt_line)
 
         # Parse SSP interpolation type from first character
-        if topopt[0] == 'S':
-            env['soundspeed_interp'] = spline
-        elif topopt[0] == 'C':
-            env['soundspeed_interp'] = linear
-        elif topopt[0] == 'Q':
-            env['soundspeed_interp'] = 'quadrilateral'  # 2D SSP from file
+        def _invalid(opt):
+            raise ValueError(f"Interpolation option {opt!r} not available")
+        opt = topopt[0]
+        env["soundspeed_interp"] = interp_map.get(opt) or _invalid(opt)
+
+        # Top boundary condition
+        def _invalid(opt):
+            raise ValueError(f"Top boundary condition option {opt!r} not available")
+        opt = topopt[1]
+        env["top_boundary_condition"] = topbound_map.get(opt) or _invalid(opt)
+
+        # Attenuation units
+        def _invalid(opt):
+            raise ValueError(f"Attenuation units option {opt!r} not available")
+        opt = topopt[2]
+        env["attenuation_units"] = attunits_map.get(opt) or _invalid(opt)
+
+        # Volume attenuation
+        def _invalid(opt):
+            raise ValueError(f"Volume attenuation option {opt!r} not available")
+        env["volume_attenuation"] = 'none'
+        if len(topopt) > 3:
+            opt = topopt[3]
         else:
-            env['soundspeed_interp'] = linear  # default
+            opt = ""
+        env["volume_attenuation"] = volatt_map.get(opt) or _invalid(opt)
+
+        if 'A' in topopt:
+            # Read halfspace parameters line
+            halfspace_line = f.readline().strip()
+            # This line contains: depth, alphaR, betaR, rho, alphaI, betaI
+            # We skip this for now as it's not part of the standard env structure
 
         # Check for surface altimetry (indicated by * in topopt)
         if '*' in topopt:
             # Surface altimetry file exists - would need to read .ati file
             # For now, just note that surface is present
             env['surface'] = _np.array([[0, 0], [1000, 0]])  # placeholder
-
-        # Check if top boundary has halfspace parameters (indicated by 'A' option)
-        if 'A' in topopt:
-            # Read halfspace parameters line
-            halfspace_line = f.readline().strip()
-            # This line contains: depth, alphaR, betaR, rho, alphaI, betaI
-            # We skip this for now as it's not part of the standard env structure
 
         # Line 5 or 6: SSP depth specification (format: npts sigma_z max_depth)
         ssp_spec_line = f.readline().strip()
@@ -452,11 +507,11 @@ def read_ssp(fname):
       compatible with create_env2d() soundspeed parameter.
 
     - **Multi-profile files (>1 ranges)**: Returns a pandas DataFrame where:
-      
+
       - **Columns**: Range coordinates (in meters, converted from km in file)
       - **Index**: Depth indices (0, 1, 2, ... for each depth level in the file)
       - **Values**: Sound speeds (m/s)
-      
+
       This DataFrame can be directly assigned to create_env2d() soundspeed parameter
       for range-dependent acoustic modeling.
 
@@ -471,8 +526,8 @@ def read_ssp(fname):
     >>> ssp1 = bh.read_ssp("single_profile.ssp")  # Returns numpy array
     >>> env = bh.create_env2d()
     >>> env["soundspeed"] = ssp1
-    >>> 
-    >>> # Multi-profile file  
+    >>>
+    >>> # Multi-profile file
     >>> ssp2 = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")  # Returns DataFrame
     >>> env = bh.create_env2d()
     >>> env["soundspeed"] = ssp2  # Range-dependent sound speed
@@ -530,11 +585,11 @@ def read_ssp(fname):
             # Multiple ranges - return as pandas DataFrame for range-dependent modeling
             # Convert ranges from km to meters (as expected by create_env2d)
             ranges_m = ranges * 1000
-            
+
             # Create depth indices (actual depths would come from associated .env file)
             ndepths = ssp_array.shape[0]
             depths = _np.arange(ndepths, dtype=float)
-            
+
             # Create DataFrame with ranges as columns and depths as index
             # ssp_array is [ndepths, nprofiles] which is the correct orientation
             return _pd.DataFrame(ssp_array, index=depths, columns=ranges_m)
@@ -807,7 +862,7 @@ def plot_ssp(env, **kwargs):
     else:
         _plt.plot(svp[:,1], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
 
-def compute_arrivals(env, model=None, debug=False, fname_base=None, local_env=False):
+def compute_arrivals(env, model=None, debug=False, fname_base=None):
     """Compute arrivals between each transmitter and receiver.
 
     :param env: environment definition
@@ -825,7 +880,7 @@ def compute_arrivals(env, model=None, debug=False, fname_base=None, local_env=Fa
     (model_name, model) = _select_model(env, arrivals, model)
     if debug:
         print('[DEBUG] Model: '+model_name)
-    return model.run(env, arrivals, debug, fname_base, local_env)
+    return model.run(env, arrivals, debug, fname_base)
 
 def compute_eigenrays(env, tx_depth_ndx=0, rx_depth_ndx=0, rx_range_ndx=0, model=None, debug=False, fname_base=None):
     """Compute eigenrays between a given transmitter and receiver.
@@ -1336,7 +1391,7 @@ class _Bellhop:
         self._unlink(fname_base+'.log')
         return rv
 
-    def run(self, env, task, debug=False, fname_base=None, local_env=False):
+    def run(self, env, task, debug=False, fname_base=None):
         taskmap = {
             arrivals:     ['A', self._load_arrivals],
             eigenrays:    ['E', self._load_rays],
@@ -1349,11 +1404,7 @@ class _Bellhop:
         if fname_base is not None:
             fname_flag = True
 
-        if local_env:
-            if debug:
-                print('[DEBUG] Bellhop using local env file: '+fname_base+'.env')
-        else:
-            fname_base = self._create_env_file(env, taskmap[task][0], fname_base)
+        fname_base = self._create_env_file(env, taskmap[task][0], fname_base)
 
         results = None
         if self._bellhop(fname_base):
@@ -1384,9 +1435,12 @@ class _Bellhop:
 
     def _bellhop(self,*args):
         try:
-            result = _proc.run(f'bellhop.exe {" ".join(list(args))}',
+            runcmd = f'bellhop.exe {" ".join(list(args))}'
+            print(f"RUNNING {runcmd}")
+            result = _proc.run(runcmd,
                         stderr=_proc.STDOUT, stdout=_proc.PIPE,
                         shell=True)
+            print(f"RETURN CODE: {result.returncode}")
             if result.returncode == 127:
                 return False
         except OSError:
@@ -1427,15 +1481,18 @@ class _Bellhop:
         self._print(fh, "1")
         svp = env['soundspeed']
         svp_depth = 0.0
-        svp_interp = 'S' if env['soundspeed_interp'] == spline else 'C'
+        svp_interp = interp_rev[env['soundspeed_interp']]
+        svp_topbound = topbound_rev[env['top_boundary_condition']]
+        svp_attunits = attunits_rev[env['attenuation_units']]
+        svp_volatt = volatt_rev[env['volume_attenuation']]
         if isinstance(svp, _pd.DataFrame):
             svp_depth = svp.index[-1]
             if len(svp.columns) > 1:
-                svp_interp = 'Q'
+                assert svp_interp == 'Q', "SVP DataFrame with multiple columns implies quadrilateral interpolation."
             else:
                 svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
         if env['surface'] is None:
-            self._print(fh, "'%cVWT'" % svp_interp)
+            self._print(fh, f"'{svp_interp}{svp_topbound}{svp_attunits}{svp_volatt}'")
         else:
             self._print(fh, "'%cVWT*'" % svp_interp)
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
@@ -1487,6 +1544,7 @@ class _Bellhop:
                 f.write("%0.6f %0.6f\n" % (dir[j,0], dir[j,1]))
 
     def _create_ssp_file(self, filename, svp):
+        print(f"Creating SSP file: {filename}")
         with open(filename, 'wt') as f:
             f.write(str(svp.shape[1])+"\n")
             for j in range(svp.shape[1]):
