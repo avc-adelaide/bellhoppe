@@ -25,5 +25,5 @@ def test_MunkB_geo_rot_A():
     bh.check_env2d(env)
     bh.print_env(env)
 
-    arr = bh.compute_arrivals(env,debug=True)
-    # assert arr is not None, "No arrival results generated."
+    tl = bh.compute_transmission_loss(env,debug=True)
+    #assert tl is not None, "No results generated."

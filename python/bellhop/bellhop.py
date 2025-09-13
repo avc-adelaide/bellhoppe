@@ -52,12 +52,14 @@ interp_map = {
     "P": "pchip",
     "H": "hexahedral",
     "N": "nlinear",
+    " ": 'default',
 }
 topbound_map = {
     "V": "vacuum",
     "A": "acousto-elastic",
     "R": "rigid",
     "F": "from-file",
+    " ": 'default',
 }
 attunits_map = {
     "N": "nepers per meter",
@@ -67,17 +69,41 @@ attunits_map = {
     "W": "dB per wavelength",
     "Q": "quality factor",
     "L": "loss parameter",
+    " ": 'default',
 }
 volatt_map = {
     "": 'none',
     "T": 'thorp',
     "F": 'francois-garrison',
     "B": 'biological',
+    " ": 'default',
 }
+source_map = {
+    "R": 'point',
+    "X": 'line',
+    " ": 'default',
+}
+grid_map = {
+    "R": 'rectilinear',
+    "I": 'irregular',
+    " ": 'default',
+}
+beam_map = {
+    "G": 'hat-cartesian',
+    "^": 'hat-cartesian',
+    "g": 'hat-ray',
+    "B": 'gaussian-cartesian',
+    "b": 'gaussian-ray',
+    " ": 'default',
+}
+
 interp_rev = {v: k for k, v in interp_map.items()}
 topbound_rev = {v: k for k, v in topbound_map.items()}
 attunits_rev = {v: k for k, v in attunits_map.items()}
 volatt_rev = {v: k for k, v in volatt_map.items()}
+source_rev = {v: k for k, v in source_map.items()}
+grid_rev = {v: k for k, v in grid_map.items()}
+beam_rev = {v: k for k, v in beam_map.items()}
 
 
 # models (in order of preference)
@@ -153,6 +179,9 @@ def create_env2d(**kv):
         'step_size': None,
         'box_depth': None,
         'box_range': None,
+        'tx_type': 'default',
+        'beam_type': 'default',
+        'grid': 'default',
     }
     for k, v in kv.items():
         if k not in env.keys():
@@ -199,6 +228,9 @@ def read_env2d(fname):
     - step_size: (maximum) step size to trace rays in meters (0 for automatic)
     - box_depth: box extent to trace rays in meters (auto-calculated based on max depth data if not specified)
     - box_range: box extent to trace rays in meters (auto-calculated based on max receiver range if not specified)
+    - tx_type: point (default) or line
+    - beam_type: todo
+    - grid: rectilinear or irregular
 
 
     **Supported ENV file formats:**
@@ -278,6 +310,9 @@ def read_env2d(fname):
         'step_size': None,
         'box_depth': None,
         'box_range': None,
+        'beam_type': 'default',
+        'tx_type': 'default',
+        'grid': 'default',
     }
 
     def _parse_quoted_string(line):
@@ -477,6 +512,14 @@ def read_env2d(fname):
         # Task/run type (e.g., 'R', 'C', etc.)
         task_line = f.readline().strip()
         task_code = _parse_quoted_string(task_line)
+        print(f"Task code string: {task_code!r}")
+        env['task'] = task_code[0]
+        if len(task_code) > 1:
+            env['beam_type'] = beam_map.get(task_code[1])
+        if len(task_code) > 3:
+            env['tx_type'] = source_map.get(task_code[3])
+        if len(task_code) > 4:
+            env['grid'] = grid_map.get(task_code[4])
 
         # Check for source directionality (indicated by * in task code)
         if '*' in task_code:
@@ -957,13 +1000,14 @@ def compute_rays(env, tx_depth_ndx=0, model=None, debug=False, fname_base=None):
         print('[DEBUG] Model: '+model_name)
     return model.run(env, rays, debug, fname_base)
 
-def compute_transmission_loss(env, tx_depth_ndx=0, mode=coherent, model=None, debug=False, fname_base=None):
+def compute_transmission_loss(env, tx_depth_ndx=0, mode=coherent, model=None, tx_type="default", debug=False, fname_base=None):
     """Compute transmission loss from a given transmitter to all receviers.
 
     :param env: environment definition
     :param tx_depth_ndx: transmitter depth index
     :param mode: coherent, incoherent or semicoherent
     :param model: propagation model to use (None to auto-select)
+    :param tx_type: point or line
     :param debug: generate debug information for propagation model
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
     :returns: complex transmission loss at each receiver depth and range
@@ -976,6 +1020,13 @@ def compute_transmission_loss(env, tx_depth_ndx=0, mode=coherent, model=None, de
     env = check_env2d(env)
     if mode not in [coherent, incoherent, semicoherent]:
         raise ValueError('Unknown transmission loss mode: '+mode)
+    if tx_type not in source_rev:
+        raise ValueError(f'Unknown source type: {tx_type!r}')
+    if env['tx_type'] == 'default':
+        env['tx_type'] = tx_type
+    else:
+        if not(tx_type == 'default') and not(env['tx_type'] == tx_type):
+            raise ValueError('ENV file defines source type "'+env['tx_type']+'" inconsistent with Python argument tx_type="'+tx_type+'"')
     if _np.size(env['tx_depth']) > 1:
         env = env.copy()
         env['tx_depth'] = env['tx_depth'][tx_depth_ndx]
@@ -1540,11 +1591,16 @@ class _Bellhop:
         self._print_array(fh, env['tx_depth'])
         self._print_array(fh, env['rx_depth'])
         self._print_array(fh, env['rx_range']/1000)
-        if env['tx_directionality'] is None:
-            self._print(fh, "'"+taskcode+"'")
-        else:
-            self._print(fh, "'"+taskcode+" *'")
+
+        beamtype = beam_rev[env['beam_type']]
+        beampattern = " "
+        txtype = source_rev[env['tx_type']]
+        gridtype = grid_rev[env['grid']]
+        if env['tx_directionality'] is not None:
+            beampattern = "*"
             self._create_sbp_file(fname_base+'.sbp', env['tx_directionality'])
+        runtype_str = taskcode + beamtype + beampattern + txtype + gridtype
+        self._print(fh, f"'{runtype_str.rstrip()}'")
         self._print(fh, "%d" % (env['nbeams']))
         self._print(fh, "%0.6f %0.6f /   ! ALPHA1,2 (degrees)" % (env['min_angle'], env['max_angle']))
         step_size = env["step_size"] or 0
