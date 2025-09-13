@@ -51,6 +51,7 @@ interp_map = {
     "Q": "quadrilateral",
     "P": "pchip",
     "H": "hexahedral",
+    "N": "nlinear",
 }
 topbound_map = {
     "V": "vacuum",
@@ -145,7 +146,13 @@ def create_env2d(**kv):
         'depth_interp': linear,         # curvilinear/linear
         'min_angle': -80,               # deg
         'max_angle': 80,                # deg
-        'nbeams': 0                     # number of beams (0 = auto)
+        'nbeams': 0,                    # number of beams (0 = auto)
+        'top_boundary_condition': 'vacuum',
+        'volume_attenuation': 'none',
+        'attenuation_units': 'frequency dependent',
+        'step_size': None,
+        'box_depth': None,
+        'box_range': None,
     }
     for k, v in kv.items():
         if k not in env.keys():
@@ -264,7 +271,13 @@ def read_env2d(fname):
         'depth_interp': linear,
         'min_angle': -80,
         'max_angle': 80,
-        'nbeams': 0
+        'nbeams': 0,
+        'top_boundary_condition': 'vacuum',
+        'volume_attenuation': 'none',
+        'attenuation_units': 'frequency dependent',
+        'step_size': None,
+        'box_depth': None,
+        'box_range': None,
     }
 
     def _parse_quoted_string(line):
@@ -726,7 +739,7 @@ def check_env2d(env):
             assert env['soundspeed'][0,0] <= 0, 'First depth in soundspeed array must be 0 m'
             assert env['soundspeed'][-1,0] >= max_depth, 'Last depth in soundspeed array must be beyond water depth: '+str(max_depth)+' m'
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
-            assert env['soundspeed_interp'] == spline or env['soundspeed_interp'] == linear or env['soundspeed_interp'] == 'quadrilateral', 'Invalid interpolation type: '+str(env['soundspeed_interp'])
+            assert env['soundspeed_interp'] in interp_rev, 'Invalid interpolation type: '+str(env['soundspeed_interp'])
             if not(max_depth in env['soundspeed'][:,0]):
                 indlarger = _np.argwhere(env['soundspeed'][:,0]>max_depth)[0][0]
                 if env['soundspeed_interp'] == spline:
