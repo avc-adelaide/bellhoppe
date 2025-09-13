@@ -159,8 +159,10 @@ def create_env2d(**kv):
         'soundspeed': 1500,             # m/s
         'soundspeed_interp': spline,    # spline/linear
         'bottom_soundspeed': 1600,      # m/s
+        'bottom_soundspeed_shear': 0,   # m/s
         'bottom_density': 1600,         # kg/m^3
-        'bottom_absorption': 0.1,       # dB/wavelength
+        'bottom_attenuation': 0.0,       # dB/wavelength??
+        'bottom_attenuation_shear': 0.0, # dB/wavelength??
         'bottom_roughness': 0,          # m (rms)
         'surface': None,                # surface profile
         'surface_interp': linear,       # curvilinear/linear
@@ -208,8 +210,10 @@ def read_env2d(fname):
     - soundspeed: sound speed profile (scalar for constant, array for depth-dependent)
     - soundspeed_interp: interpolation method ('linear', 'spline', 'quadrilateral')
     - bottom_soundspeed: bottom sediment sound speed in m/s
+    - bottom_soundspeed_shear: bottom sediment sound speed in m/s
     - bottom_density: bottom sediment density in kg/m³
-    - bottom_absorption: bottom sediment absorption in dB/wavelength
+    - bottom_attenuation: bottom sediment absorption in dB/wavelength
+    - bottom_attenuation_shear: bottom sediment absorption in dB/wavelength
     - bottom_roughness: bottom roughness RMS in meters
     - surface: surface altimetry profile (None if flat surface)
     - surface_interp: surface interpolation method ('linear', 'curvilinear')
@@ -290,8 +294,10 @@ def read_env2d(fname):
         'soundspeed': 1500,
         'soundspeed_interp': spline,
         'bottom_soundspeed': 1600,
+        'bottom_soundspeed_shear': 0,
         'bottom_density': 1600,
-        'bottom_absorption': 0.1,
+        'bottom_attenuation': 0.1,
+        'bottom_attenuation_shear': 0,
         'bottom_roughness': 0,
         'surface': None,
         'surface_interp': linear,
@@ -485,11 +491,30 @@ def read_env2d(fname):
             bottom_props_line = bottom_props_line[:-1].strip()
 
         bottom_props = bottom_props_line.split()
-        if len(bottom_props) >= 5:
+        # fortran sources say: "z, alphaR, betaR, rhoR, alphaI, betaI"
+        # docs say:
+        #       Syntax:
+        #
+        #       ZB  CPB  CSB  RHOB  APB  ASB
+        #
+        #       Description:
+        #
+        #       ZB:   Depth (m).
+        #       CPB:  Bottom P-wave speed (m/s).
+        #       CSB:  Bottom S-wave speed (m/s).
+        #       RHOB: Bottom density (g/cm3).
+        #       APB:  Bottom P-wave attenuation. (units as given by TOPOPT(3:3) )
+        #       ASB:  Bottom S-wave attenuation. (  "   "    "    "   "   "     )
+        if len(bottom_props) > 1:
             env['bottom_soundspeed'] = float(bottom_props[1])
-            # Skip shear speed (bottom_props[2])
+        if len(bottom_props) > 2:
+            env['bottom_soundspeed_shear'] = float(bottom_props[2])
+        if len(bottom_props) > 3:
             env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
-            env['bottom_absorption'] = float(bottom_props[4])
+        if len(bottom_props) > 4:
+            env['bottom_attenuation'] = float(bottom_props[4])
+        if len(bottom_props) > 5:
+            env['bottom_attenuation_shear'] = float(bottom_props[5])
 
         # Source depths
         tx_depths = _parse_vector(f)
@@ -1586,7 +1611,7 @@ class _Bellhop:
         else:
             self._print(fh, "'A*' %0.6f" % (env['bottom_roughness']))
             self._create_bty_ati_file(fname_base+'.bty', depth, env['depth_interp'])
-        self._print(fh, "%0.6f %0.6f 0.0 %0.6f %0.6f /" % (max_depth, env['bottom_soundspeed'], env['bottom_density']/1000, env['bottom_absorption']))
+        self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (max_depth, env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_attenuation'], env['bottom_attenuation_shear']))
         self._print_array(fh, env['tx_depth'])
         self._print_array(fh, env['rx_depth'])
         self._print_array(fh, env['rx_range']/1000)
@@ -1623,7 +1648,6 @@ class _Bellhop:
                 f.write("%0.6f %0.6f\n" % (dir[j,0], dir[j,1]))
 
     def _create_ssp_file(self, filename, svp):
-        print(f"Creating SSP file: {filename}")
         with open(filename, 'wt') as f:
             f.write(str(svp.shape[1])+"\n")
             for j in range(svp.shape[1]):
