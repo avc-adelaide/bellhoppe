@@ -512,7 +512,6 @@ def read_env2d(fname):
         # Task/run type (e.g., 'R', 'C', etc.)
         task_line = f.readline().strip()
         task_code = _parse_quoted_string(task_line)
-        print(f"Task code string: {task_code!r}")
         env['task'] = task_code[0]
         if len(task_code) > 1:
             env['beam_type'] = beam_map.get(task_code[1])
@@ -1508,11 +1507,11 @@ class _Bellhop:
     def _bellhop(self,*args):
         try:
             runcmd = f'bellhop.exe {" ".join(list(args))}'
-            print(f"RUNNING {runcmd}")
+            #print(f"RUNNING {runcmd}")
             result = _proc.run(runcmd,
                         stderr=_proc.STDOUT, stdout=_proc.PIPE,
                         shell=True)
-            print(f"RETURN CODE: {result.returncode}")
+            #print(f"RETURN CODE: {result.returncode}")
             if result.returncode == 127:
                 return False
         except OSError:
