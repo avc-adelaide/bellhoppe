@@ -189,6 +189,10 @@ def read_env2d(fname):
     - min_angle: minimum beam angle in degrees
     - max_angle: maximum beam angle in degrees
     - nbeams: number of beams (0 for automatic)
+    - step_size: (maximum) step size to trace rays in meters (0 for automatic)
+    - box_depth: box extent to trace rays in meters (auto-calculated based on max depth data if not specified)
+    - box_range: box extent to trace rays in meters (auto-calculated based on max receiver range if not specified)
+
 
     **Supported ENV file formats:**
 
@@ -484,7 +488,11 @@ def read_env2d(fname):
 
         # Ray tracing limits (step, max_depth, max_range) - last line
         limits_line = f.readline().strip()
-        # We don't store these in the env structure as they're computational parameters
+        limits_line = _parse_line(limits_line)
+        limits_parts = limits_line.split()
+        env['step_size'] = float(limits_parts[0])
+        env['box_depth'] = float(limits_parts[1])
+        env['box_range'] = 1000*float(limits_parts[2])
 
     return env
 
@@ -1525,8 +1533,11 @@ class _Bellhop:
             self._print(fh, "'"+taskcode+" *'")
             self._create_sbp_file(fname_base+'.sbp', env['tx_directionality'])
         self._print(fh, "%d" % (env['nbeams']))
-        self._print(fh, "%0.6f %0.6f /" % (env['min_angle'], env['max_angle']))
-        self._print(fh, "0.0 %0.6f %0.6f" % (1.01*max_depth, 1.01*_np.max(env['rx_range'])/1000))
+        self._print(fh, "%0.6f %0.6f /   ! ALPHA1,2 (degrees)" % (env['min_angle'], env['max_angle']))
+        step_size = env["step_size"] or 0
+        box_depth = env["box_depth"] or 1.01*max_depth
+        box_range = env["box_range"] or 1.01*_np.max(env['rx_range'])
+        self._print(fh, f"{step_size} {box_depth} {box_range/1000} ! STEP (m), ZBOX (m), RBOX (km)")
         _os.close(fh)
         return fname_base
 
