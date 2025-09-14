@@ -334,7 +334,16 @@ coverage-gcovr:
 coverage-full: clean coverage-build coverage-install test coverage-report coverage-html
 	@echo "Full coverage analysis complete."
 
+#######################################
 
-push: test
+gitokay:
+	@if [ -z "$$(git status --porcelain)" ]; then \
+	    echo "    clean repo, continuing..."; \
+	else \
+		echo "    uncommitted changes!"; \
+		exit 1; \
+	fi
+
+push: gitokay test
 	@echo "Testing and pushing"
 	git pull && git push
