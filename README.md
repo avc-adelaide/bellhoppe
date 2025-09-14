@@ -15,12 +15,12 @@
 
 ## Documentation
 
-**[BELLHOP Documentation](https://aumag.github.io/bellhop/)** — Main documentation landing page with:
+**[BELLHOP Documentation](https://avc-adelaide.github.io/bellhop/)** — Main documentation landing page with:
 - Collated user guides and technical reference documentation
 - Source code browsing with syntax highlighting
 - Automatically generated module and subroutine references
 - Interactive call graphs showing code relationships
-- **[Code coverage for the new test suite](https://aumag.github.io/bellhop/media/coverage-index.html)**
+- **[Code coverage for the new test suite](https://avc-adelaide.github.io/bellhop/media/coverage-index.html)**
 
 
 ## Installation
