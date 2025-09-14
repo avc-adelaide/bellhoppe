@@ -52,7 +52,7 @@ def test_read_env2d_round_trip():
         soundspeed=1520.0,
         bottom_soundspeed=1700.0,
         bottom_density=1800.0,
-        bottom_attenuation=0.2,
+        bottom_absorption=0.2,
         tx_depth=5.0,
         rx_depth=np.array([2.0, 10.0, 25.0]),
         rx_range=np.array([100.0, 500.0, 1000.0]),

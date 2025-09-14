@@ -161,8 +161,8 @@ def create_env2d(**kv):
         'bottom_soundspeed': 1600,      # m/s
         'bottom_soundspeed_shear': 0,   # m/s
         'bottom_density': 1600,         # kg/m^3
-        'bottom_attenuation': 0.0,       # dB/wavelength??
-        'bottom_attenuation_shear': 0.0, # dB/wavelength??
+        'bottom_absorption': 0.0,       # dB/wavelength??
+        'bottom_absorption_shear': 0.0, # dB/wavelength??
         'bottom_roughness': 0,          # m (rms)
         'surface': None,                # surface profile
         'surface_interp': linear,       # curvilinear/linear
@@ -212,8 +212,8 @@ def read_env2d(fname):
     - bottom_soundspeed: bottom sediment sound speed in m/s
     - bottom_soundspeed_shear: bottom sediment sound speed in m/s
     - bottom_density: bottom sediment density in kg/m³
-    - bottom_attenuation: bottom sediment absorption in dB/wavelength
-    - bottom_attenuation_shear: bottom sediment absorption in dB/wavelength
+    - bottom_absorption: bottom sediment absorption in dB/wavelength
+    - bottom_absorption_shear: bottom sediment absorption in dB/wavelength
     - bottom_roughness: bottom roughness RMS in meters
     - surface: surface altimetry profile (None if flat surface)
     - surface_interp: surface interpolation method ('linear', 'curvilinear')
@@ -296,8 +296,8 @@ def read_env2d(fname):
         'bottom_soundspeed': 1600,
         'bottom_soundspeed_shear': 0,
         'bottom_density': 1600,
-        'bottom_attenuation': 0.1,
-        'bottom_attenuation_shear': 0,
+        'bottom_absorption': 0.1,
+        'bottom_absorption_shear': 0,
         'bottom_roughness': 0,
         'surface': None,
         'surface_interp': linear,
@@ -512,9 +512,9 @@ def read_env2d(fname):
         if len(bottom_props) > 3:
             env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
         if len(bottom_props) > 4:
-            env['bottom_attenuation'] = float(bottom_props[4])
+            env['bottom_absorption'] = float(bottom_props[4])
         if len(bottom_props) > 5:
-            env['bottom_attenuation_shear'] = float(bottom_props[5])
+            env['bottom_absorption_shear'] = float(bottom_props[5])
 
         # Source depths
         tx_depths = _parse_vector(f)
@@ -1611,7 +1611,7 @@ class _Bellhop:
         else:
             self._print(fh, "'A*' %0.6f" % (env['bottom_roughness']))
             self._create_bty_ati_file(fname_base+'.bty', depth, env['depth_interp'])
-        self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (max_depth, env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_attenuation'], env['bottom_attenuation_shear']))
+        self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (max_depth, env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption'], env['bottom_absorption_shear']))
         self._print_array(fh, env['tx_depth'])
         self._print_array(fh, env['rx_depth'])
         self._print_array(fh, env['rx_range']/1000)
