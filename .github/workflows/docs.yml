@@ -39,13 +39,13 @@ jobs:
         gfortran --version
         gcov --version
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '3.12'
 
-    - name: Install Hatch
-      run: pipx install hatch
+    - name: Install python packages
+      run: pipx install hatch pytest
 
     - name: Build and install with coverage instrumentation
       run: |
@@ -58,11 +58,11 @@ jobs:
     - name: Generate coverage reports
       run: |
         make coverage-report
-        
+
     - name: Generate HTML coverage reports for FORD integration
       run: |
         make coverage-html
-        
+
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
       with:
