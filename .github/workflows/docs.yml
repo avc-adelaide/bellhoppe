@@ -53,8 +53,7 @@ jobs:
 
     - name: Run tests to generate coverage data
       run: |
-        export PATH="$PWD/bin:$PATH"
-        hatch run test
+        make coverage-test
 
     - name: Generate coverage reports
       run: |
