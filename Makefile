@@ -184,7 +184,7 @@ GCOV := $(shell command -v gcov-15 2>/dev/null || command -v gcov)
 export CC=gcc
 export CFLAGS=-g
 #export FFLAGS+= -I../misc -I../tslib -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
-export FFLAGS+= -I../misc #-I../tslib
+# No longer need -I../misc since all sources are in fortran/ directory
 
 export LAPACK_LIBS = -llapack
 
@@ -194,15 +194,14 @@ export LAPACK_LIBS = -llapack
 .PHONY: all install clean test docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full
 
 all:
-	(cd misc;	make -k all)
-	(cd Bellhop;	make -k all)
+	(cd fortran;	make -k all)
 	@echo " "
 	@echo "*************************"
 	@echo "***** BELLHOP built *****"
 	@echo "*************************"
 
 install: all
-	(cd Bellhop;	make -k install)
+	(cd fortran;	make -k install)
 	@echo " "
 	@echo "***************************************"
 	@echo "***** BELLHOP installed in ./bin/ *****"
@@ -224,8 +223,7 @@ clean: coverage-clean
 	find . -name '*.shd.mat'  -exec rm -r {} +
 	find . -name '*.prt'  -exec rm -r {} +
 	find . -name '*.gcno' -exec rm {} +
-	(cd misc;	make -k -i clean)
-	(cd Bellhop;	make -k -i clean)
+	(cd fortran;	make -k -i clean)
 
 
 ###### HATCH ######
@@ -249,12 +247,12 @@ coverage-clean:
 
 coverage-build: clean
 	@echo "Building BELLHOP with coverage instrumentation..."
-	$(MAKE) FC=gfortran FFLAGS="$(FFLAGS_BASE) $(FFLAGS_ARCH) $(FFLAGS_COVERAGE) -I../misc" all
+	$(MAKE) FC=gfortran FFLAGS="$(FFLAGS_BASE) $(FFLAGS_ARCH) $(FFLAGS_COVERAGE)" all
 
 coverage-install: coverage-build
 	@echo "Installing BELLHOP with coverage instrumentation..."
 	mkdir -p ./bin
-	for f in Bellhop/*.exe ; do \
+	for f in fortran/*.exe ; do \
 		echo "----- Installing $$f"; cp -p $$f ./bin/; \
 	done
 
@@ -275,7 +273,7 @@ coverage-report:
 		exit 1; \
 	fi
 	@echo "Generating GCOV reports for main source files..."
-	cd Bellhop && \
+	cd fortran && \
 	for gcda_file in *.gcda; do \
 		if [ -f "$$gcda_file" ]; then \
 			base=$$(basename $$gcda_file .gcda); \
@@ -287,22 +285,9 @@ coverage-report:
 			fi; \
 		fi; \
 	done
-	cd misc && \
-	for gcda_file in *.gcda; do \
-		if [ -f "$$gcda_file" ]; then \
-			base=$$(basename $$gcda_file .gcda); \
-			if [ -f "$$base.gcno" ]; then \
-				echo "Processing $$base..."; \
-				$(GCOV) -b -c "$$gcda_file"; \
-			else \
-				echo "Warning: No .gcno file found for $$base"; \
-			fi; \
-		fi; \
-	done
-	@echo "Coverage reports generated. .gcov files created in Bellhop/ and misc/ directories."
+	@echo "Coverage reports generated. .gcov files created in fortran/ directory."
 	@echo "Summary of coverage for main executables:"
-	@cd Bellhop && ls -la *.gcov 2>/dev/null | head -5 || echo "No .gcov files found in Bellhop/"
-	@cd misc && ls -la *.gcov 2>/dev/null | head -5 || echo "No .gcov files found in misc/"
+	@cd fortran && ls -la *.gcov 2>/dev/null | head -10 || echo "No .gcov files found in fortran/"
 
 coverage-html: coverage-report
 	@echo "Generating HTML coverage reports for FORD integration..."
@@ -321,15 +306,15 @@ coverage-gcovr:
 	mkdir -p docs/coverage
 	gcovr --verbose --html --html-details \
 		--gcov-executable gcov-15 \
-		--gcov-object-directory ./Bellhop \
+		--gcov-object-directory ./fortran \
 		--output docs/coverage/index.html \
-		--root ./Bellhop \
+		--root ./fortran \
 		--exclude-directories examples \
 		--exclude-directories tests \
 		--html-medium-threshold 50 \
 		--html-high-threshold 80 \
 		--html-tab-size 4 \
-		./Bellhop/
+		./fortran/
 
 coverage-full: clean coverage-build coverage-install test coverage-report coverage-html
 	@echo "Full coverage analysis complete."
