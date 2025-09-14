@@ -219,7 +219,6 @@ clean: coverage-clean
 	find . -name '*.eps'  -exec rm -r {} +
 	find . -name '*.mod'  -exec rm -r {} +
 	find . -name '*.grn'  -exec rm -r {} +
-	find . -name '*.shd'  -exec rm -r {} +
 	find . -name '*.shd.mat'  -exec rm -r {} +
 	find . -name '*.prt'  -exec rm -r {} +
 	find . -name '*.gcno' -exec rm {} +
