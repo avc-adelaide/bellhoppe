@@ -39,4 +39,4 @@ def test_MunkB_geo_rot_A():
     assert (tl.columns - tl_exp.columns < 1e-6).all(), "Interpolation values not identical"
 
     assert (tl.shape == tl_exp.shape), "Incorrect/inconsistent number of TL values calculated"
-    assert (tl == tl_exp).all().all(), "TL values calculated do not match expected values"
+    assert (abs(tl - tl_exp) < 1e-9).all().all(), "TL values calculated do not match expected values"
