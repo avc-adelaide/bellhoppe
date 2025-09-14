@@ -21,7 +21,7 @@ PROGRAM BELLHOP
   ! along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   ! First version (1983) originally developed with Homer Bucker, Naval Ocean Systems Center
-  
+
   USE ReadEnvironmentBell
   USE BeamPattern
   USE bdryMod
@@ -33,7 +33,7 @@ PROGRAM BELLHOP
   USE FatalError
 
   IMPLICIT NONE
-  
+
   LOGICAL, PARAMETER   :: Inline = .FALSE.
   INTEGER              :: jj
   CHARACTER ( LEN=2  ) :: AttenUnit
@@ -48,7 +48,7 @@ PROGRAM BELLHOP
   ! Open the print file
   OPEN( UNIT = PRTFile, FILE = TRIM( FileRoot ) // '.prt', STATUS = 'UNKNOWN', IOSTAT = iostat )
 
-  ! Read in or otherwise initialize inline all the variables used by BELLHOP 
+  ! Read in or otherwise initialize inline all the variables used by BELLHOP
 
   IF ( Inline ) THEN
      ! NPts, Sigma not used by BELLHOP
@@ -158,7 +158,7 @@ SUBROUTINE BellhopCore
   USE ArrMod
   USE AttenMod
 
-  INTEGER, PARAMETER   :: ArrivalsStorage = 20000000, MinNArr = 10
+  INTEGER, PARAMETER   :: ArrivalsStorage = 200000000, MinNArr = 10
   INTEGER              :: IBPvec( 1 ), ibp, is, iBeamWindow2, Irz1, Irec, NalphaOpt, iSeg
   REAL                 :: Tstart, Tstop
   REAL        (KIND=8) :: Amp0, DalphaOpt, xs( 2 ), tdummy( 2 ), RadMax, s, &
@@ -190,11 +190,11 @@ SUBROUTINE BellhopCore
              betaPowerLaw, ft )   ! shear         wave speed
      END DO
   END IF
-   
+
   IF ( btyType( 2 : 2 ) == 'L' ) THEN
      DO iSeg = 1, NbtyPts
         Bot( iSeg )%HS%cp = CRCI( 1D20, Bot( iSeg )%HS%alphaR, Bot( iSeg )%HS%alphaI, freq, freq, 'W ', &
-             betaPowerLaw, ft )   ! compressional wave speed 
+             betaPowerLaw, ft )   ! compressional wave speed
         Bot( iSeg )%HS%cs = CRCI( 1D20, Bot( iSeg )%HS%betaR,  Bot( iSeg )%HS%betaI,  freq, freq, 'W ', &
              betaPowerLaw, ft )   ! shear         wave speed
      END DO
@@ -252,7 +252,7 @@ SUBROUTINE BellhopCore
      ! This initialization is here in addition to TraceRay2D because of EvaluateSSP.
      iSegz = 1
      iSegr = 1
-     
+
      tdummy = [ 1.0, 0.0 ]
      CALL EvaluateSSP( xs, tdummy, c, cimag, gradc, crr, crz, czz, rho, freq, 'TAB' )
      RadMax = 5 * c / freq  ! 5 wavelength max radius
@@ -342,11 +342,11 @@ SUBROUTINE BellhopCore
      END SELECT
 
   END DO SourceDepth
-  
+
   ! Display run time
   CALL CPU_TIME( Tstop )
   WRITE( PRTFile, "( /, ' CPU Time = ', G15.3, 's' )" ) Tstop - Tstart
-  
+
   ! close all files
   SELECT CASE ( Beam%RunType( 1 : 1 ) )
   CASE ( 'C', 'S', 'I' )      ! TL calculation
@@ -358,7 +358,7 @@ SUBROUTINE BellhopCore
   END SELECT
 
   CLOSE( PRTFile )
-  
+
 END SUBROUTINE BellhopCore
 
 ! **********************************************************************!
@@ -375,7 +375,7 @@ COMPLEX (KIND=8 ) FUNCTION PickEpsilon( BeamType, omega, c, gradc, alpha, Dalpha
   REAL      (KIND=8) :: cz
   COMPLEX   (KIND=8) :: epsilonOpt
   CHARACTER (LEN=40) :: TAG
-  
+
   ! LP: BUG: Multiple codepaths do not set epsilonOpt, leads to UB
 
   SELECT CASE ( BeamType( 1 : 1 ) )
@@ -454,7 +454,7 @@ SUBROUTINE TraceRay2D( xs, alpha, Amp0 )
   LOGICAL           :: topRefl, botRefl
 
   ! Initial conditions
-  
+
   ! LP: This initialization was missing (only done once globally). In some cases
   ! (a source on a boundary), in conjunction with other subtle issues, the
   ! missing initialization caused the initial state of one ray to be dependent
@@ -693,7 +693,7 @@ SUBROUTINE Reflect2D( is, HS, BotTop, tBdry, nBdry, kappa, RefC, Npts )
   CASE ( 'Z' )
      RN = 0.0
   END SELECT
-  
+
   ray2D( is1 )%c   = c
   ray2D( is1 )%tau = ray2D( is )%tau
   ray2D( is1 )%p   = ray2D( is )%p + ray2D( is )%q * RN
@@ -742,7 +742,7 @@ SUBROUTINE Reflect2D( is, HS, BotTop, tBdry, nBdry, kappa, RefC, Npts )
      ENDIF
 
      Refl =  - ( rho * f - i * kz * g ) / ( rho * f + i * kz * g )   ! complex reflection coef.
-     
+
      IF ( ABS( Refl ) < 1.0E-5 ) THEN   ! kill a ray that has lost its energy in reflection
         ray2D( is1 )%Amp   = 0.0
         ray2D( is1 )%Phase = ray2D( is )%Phase
@@ -785,12 +785,12 @@ SUBROUTINE Reflect2D( is, HS, BotTop, tBdry, nBdry, kappa, RefC, Npts )
            ddelta  = -a / ( ck*sb*d ) - a*cco / ssi / (ck*sb*d) + a*cco / (ck*b*sb*d) &
                      -a*co / si / (ck*sb*d*d) * (2* HS%rho * HS%rho *si*co-2*co*si)
            rddelta = -real( ddelta )
-           sddelta = rddelta / abs( rddelta )        
+           sddelta = rddelta / abs( rddelta )
 
            ! next 3 lines have an update by Diana McCammon to allow a sloping bottom
            ! I think the formulas are good, but this won't be reliable because it doesn't have the logic
            ! that tracks crossing into new segments after the ray displacement.
-           
+
            theta_bot = datan( tBdry( 2 ) / tBdry( 1 ))  ! bottom angle
            ray2D( is1 )%x( 1 ) = ray2D( is1 )%x( 1 ) + real( delta ) * dcos( theta_bot )       ! range displacement
            ray2D( is1 )%x( 2 ) = ray2D( is1 )%x( 2 ) + real( delta ) * dsin( theta_bot )       ! depth displacement
