@@ -334,3 +334,7 @@ coverage-gcovr:
 coverage-full: clean coverage-build coverage-install test coverage-report coverage-html
 	@echo "Full coverage analysis complete."
 
+
+push: test
+	@echo "Testing and pushing"
+	git pull && git push
