@@ -90,6 +90,10 @@ PYTHONPATH = "{root}/python:{env:PYTHONPATH:}"
 install-dev = "pip install -e ."
 test = [
     "install-dev",
+    "pytest"
+]
+testv = [
+    "install-dev",
     "pytest --capture=tee-sys"
 ]
 debug = [

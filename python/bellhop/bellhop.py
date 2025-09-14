@@ -162,8 +162,8 @@ def create_env2d(**kv):
         'bottom_soundspeed': 1600,      # m/s
         'bottom_soundspeed_shear': 0,   # m/s
         'bottom_density': 1600,         # kg/m^3
-        'bottom_absorption': 0.1,       # dB/wavelength??
-        'bottom_absorption_shear': 0.0, # dB/wavelength??
+        'bottom_absorption': None,       # dB/wavelength??
+        'bottom_absorption_shear': None, # dB/wavelength??
         'bottom_roughness': 0,          # m (rms)
         'surface': None,                # surface profile
         'surface_interp': linear,       # curvilinear/linear
@@ -305,8 +305,8 @@ def read_env2d(fname):
         'bottom_soundspeed': 1600,
         'bottom_soundspeed_shear': 0,
         'bottom_density': 1600,
-        'bottom_absorption': 0.0,
-        'bottom_absorption_shear': 0,
+        'bottom_absorption': None,
+        'bottom_absorption_shear': None,
         'bottom_roughness': 0,
         'surface': None,
         'surface_interp': linear,
@@ -321,7 +321,7 @@ def read_env2d(fname):
         'depth_interp': linear,
         'depth_npts': 0,
         'depth_sigmaz': 0,
-        'depth_max': 0,
+        'depth_max': None,
         'min_angle': -80,
         'max_angle': 80,
         'nbeams': 0,
@@ -1609,7 +1609,7 @@ class _Bellhop:
             self._print(fh, "'%cVWT*'" % svp_interp)
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
         # max depth should be the depth of the acoustic domain, which can be deeper than the max depth bathymetry
-        max_depth = env["depth_max"] if env["depth_max"] > 0 else env['depth'] if _np.size(env['depth']) == 1 else max(_np.max(env['depth'][:,1]), svp_depth)
+        max_depth = env["depth_max"] if env["depth_max"] else env['depth'] if _np.size(env['depth']) == 1 else max(_np.max(env['depth'][:,1]), svp_depth)
         self._print(fh, f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}")
         if _np.size(svp) == 1:
             self._print(fh, "0.0 %0.6f /" % (svp))
@@ -1634,7 +1634,12 @@ class _Bellhop:
         else:
             self._print(fh, "'A*' %0.6f" % (env['bottom_roughness']))
             self._create_bty_ati_file(fname_base+'.bty', depth, env['depth_interp'])
-        self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (max_depth, env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption'], env['bottom_absorption_shear']))
+        if env['bottom_absorption'] is None:
+            self._print(fh, "%0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000))
+        elif env['bottom_absorption_shear'] is None:
+            self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption']))
+        else:
+            self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption'], env['bottom_absorption_shear']))
         self._print_array(fh, env['tx_depth'], env['tx_ndepth'])
         self._print_array(fh, env['rx_depth'], env['rx_ndepth'])
         self._print_array(fh, env['rx_range']/1000, env['rx_nrange'])

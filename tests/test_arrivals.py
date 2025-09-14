@@ -6,7 +6,7 @@ def test_simple():
     env = bh.create_env2d()
     # print(env)
 
-    assert(env["bottom_absorption"]  == 0.1)
+    assert(env["bottom_absorption"]  == None)
     assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)
@@ -27,15 +27,14 @@ def test_simple():
     assert(env["type"] == "2D")
 
     arrivals = bh.compute_arrivals(env)
-    # print(arrivals)
+    arrival_times = arrivals["time_of_arrival"]
 
-    assert(len(arrivals) == 35) # 35 rays arrived at the receiver
-    t_arr = [
+    t_arr_exp = [
         0.721796,
         0.716791,
         0.709687,
         0.709687,
-        0.705226,
+        0.705227,
         0.698960,
         0.695070,
         0.689678,
@@ -43,10 +42,10 @@ def test_simple():
         0.681901,
         0.679223,
         0.675681,
-        0.673638,
-        0.671061,
+        0.673639,
+        0.671060,
         0.669668,
-        0.668073,
+        0.668074,
         0.667341,
         0.666742,
         0.666675,
@@ -61,13 +60,19 @@ def test_simple():
         0.684828,
         0.688000,
         0.693213,
-        0.696986,
+        0.696985,
         0.703081,
+        0.707429,
         0.707429,
         0.714368,
         0.719267,
     ]
-    a_test = arrivals["time_of_arrival"] - t_arr < 1e-6
+
+    if not len(t_arr_exp) == len(arrival_times):
+        print(arrival_times)
+        assert False, "Different number of arrivals!"
+
+    a_test = arrivals["time_of_arrival"] - t_arr_exp < 1e-6
     assert( a_test.all() )
 
 
@@ -96,7 +101,7 @@ def test_variable_soundspeed():
     env = bh.create_env2d(soundspeed=ssp, depth=30)
 
     # Test default environment parameters (keeping others same as test_simple)
-    assert(env["bottom_absorption"]  == 0.1)
+    assert(env["bottom_absorption"]  == None)
     assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)
@@ -119,15 +124,9 @@ def test_variable_soundspeed():
 
     # Compute arrivals
     arrivals = bh.compute_arrivals(env)
-    # print(arrivals)
-
-    # Test number of rays - determined by running the test
-    assert(len(arrivals) == 26)
-
     arrival_times = arrivals["time_of_arrival"]
-    # print(arrival_times)
 
-    a_times = [
+    t_arr_exp = [
         0.696913,
         0.692460,
         0.684141,
@@ -156,7 +155,11 @@ def test_variable_soundspeed():
         0.694689,
     ]
 
-    a_test = arrivals["time_of_arrival"] - a_times < 1e-6
+    if not len(t_arr_exp) == len(arrival_times):
+        print(arrival_times)
+        assert False, "Different number of arrivals!"
+
+    a_test = arrivals["time_of_arrival"] - t_arr_exp < 1e-6
     assert( a_test.all() )
 
 
@@ -171,7 +174,7 @@ def test_bathy():
 
     env = bh.create_env2d(depth=bathy)
     # print(env)
-    assert(env["bottom_absorption"] == 0.1)
+    assert(env["bottom_absorption"] == None)
     assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)
@@ -192,39 +195,40 @@ def test_bathy():
 
     arrivals = bh.compute_arrivals(env)
     arrival_times = arrivals["time_of_arrival"]
-    #print(arrivals)
-    #print(arrival_times)
-
-    # Test number of rays - determined by running the test
-    assert(len(arrivals) == 25)
 
     t_arr_exp = [
-		0.712365,
-		0.708236,
-		0.704244,
-		0.700392,
-		0.696682,
-		0.681542,
-		0.679183,
-		0.676985,
-		0.674948,
-		0.673075,
-		0.667389,
-		0.666980,
-		0.666742,
-		0.666675,
-		0.666780,
-		0.671037,
-		0.672614,
-		0.674357,
-		0.676264,
-		0.678334,
-		0.692169,
-		0.695612,
-		0.699202,
-		0.702935,
-		0.706809,
+        0.712365,
+        0.708236,
+        0.704244,
+        0.700392,
+        0.696682,
+        0.681542,
+        0.679183,
+        0.676985,
+        0.674948,
+        0.673075,
+        0.667389,
+        0.666980,
+        0.666742,
+        0.666675,
+        0.666780,
+        0.671037,
+        0.672614,
+        0.674357,
+        0.676264,
+        0.678334,
+        0.692169,
+        0.695612,
+        0.699202,
+        0.699202,
+        0.702935,
+        0.706809,
     ]
+
+    if not len(t_arr_exp) == len(arrival_times):
+        print(arrival_times)
+        assert False, "Different number of arrivals!"
+
     a_test = arrival_times - t_arr_exp < 1e-6
     assert( a_test.all() )
 

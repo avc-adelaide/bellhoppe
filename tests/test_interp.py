@@ -23,7 +23,7 @@ def test_interp_linear():
     env = bh.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="linear")
 
     # Test default environment parameters (keeping others same as test_simple)
-    assert(env["bottom_absorption"]  == 0.1)
+    assert(env["bottom_absorption"]  == None)
     assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)
@@ -42,26 +42,20 @@ def test_interp_linear():
     assert(env["tx_directionality"] == None)
     assert(env["type"] == "2D")
 
-    # Compute arrivals
-    arrivals = bh.compute_arrivals(env)
-    # print(arrivals)
+    # Test environment consistency
+    assert(env["depth"] == ssp[-1][0])  # Depth should match SSP bottom depth
 
     # Test sound speed profile interpolation is working
     assert(len(env["soundspeed"]) == len(ssp))
 
-    # Test environment consistency
-    assert(env["depth"] == ssp[-1][0])  # Depth should match SSP bottom depth
-
-    # Test number of rays - determined by running the test
-    assert(len(arrivals) == 24)  # At least some rays should arrive
-
+    # Compute arrivals
+    arrivals = bh.compute_arrivals(env)
     arrival_times = arrivals["time_of_arrival"]
-    # print(arrival_times)
-
-    a_times = [
+    t_arr_exp = [
         0.696581,
         0.692154,
         0.683810,
+        0.680058,
         0.680058,
         0.673070,
         0.670030,
@@ -75,7 +69,7 @@ def test_interp_linear():
         0.655967,
         0.657310,
         0.657310,
-        0.661181,
+        0.661182,
         0.663332,
         0.668653,
         0.671564,
@@ -85,11 +79,10 @@ def test_interp_linear():
         0.694371,
     ]
 
-    # Basic sanity checks on arrival times
-    assert(len(arrival_times) == 24)  # Should have some arrivals
+    if not len(t_arr_exp) == len(arrival_times):
+        print(arrival_times)
+        assert False, "Different number of arrivals!"
 
-    a_test = arrival_times - a_times < 1e-6
-    if not(a_test.all()):
-    	print("EXPECTED:")
-    	print(arrival_times)
+    a_test = arrival_times - t_arr_exp < 1e-6
     assert( a_test.all() )
+

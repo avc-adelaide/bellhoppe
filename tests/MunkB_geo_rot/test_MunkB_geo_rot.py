@@ -37,9 +37,9 @@ def test_MunkB_geo_rot_A():
 
     tl_exp = bh.bellhop._Bellhop._load_shd(None,"tests/MunkB_geo_rot/MunkB_geo_rot") # implicit ".shd" suffix
 
-    assert (tl.index == tl_exp.index).all(), "TL dataframe indexes not identical"
-    assert (tl.columns - tl_exp.columns < 1e-6).all(), "Interpolation values not identical"
     assert (tl.shape == tl_exp.shape), "Incorrect/inconsistent number of TL values calculated"
+    assert (tl.index == tl_exp.index).all(), "TL dataframe indexes not identical"
+    assert (abs(tl.columns - tl_exp.columns) < 1e-6).all(), "TL dataframe columns not identical"
 
     pdt.assert_frame_equal(
         tl, tl_exp,
