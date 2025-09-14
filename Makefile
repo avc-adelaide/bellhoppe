@@ -131,7 +131,7 @@ else
 endif
 
 # Coverage flags (for GCOV code coverage analysis)
-FFLAGS_COVERAGE = -fprofile-arcs -ftest-coverage
+FFLAGS_COVERAGE = -fprofile-arcs -ftest-coverage -fcheck=all
 
 # Combine
 FFLAGS = $(FFLAGS_BASE) $(FFLAGS_OPTIM) $(FFLAGS_ARCH)
@@ -257,11 +257,8 @@ coverage-install: coverage-build
 
 
 coverage-test: coverage-install
-	@echo "Running basic coverage test..."
-	export PATH="$(shell pwd)/bin:$$PATH" && \
-	cd examples/Munk && \
-	bellhop.exe MunkB_ray && \
-	bellhop.exe MunkB_Coh
+	@echo "Running coverage test..."
+	export COVERAGE_RUN="true" && pytest --capture=tee-sys
 
 coverage-report:
 	@echo "Generating coverage report from existing data..."
@@ -315,7 +312,7 @@ coverage-gcovr:
 		--html-tab-size 4 \
 		./fortran/
 
-coverage-full: clean coverage-build coverage-install test coverage-report coverage-html
+coverage-full: clean coverage-build coverage-install coverage-test coverage-report coverage-html
 	@echo "Full coverage analysis complete."
 
 #######################################
