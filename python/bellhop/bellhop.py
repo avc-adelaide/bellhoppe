@@ -156,6 +156,7 @@ def create_env2d(**kv):
         'name': 'arlpy',
         'type': '2D',                   # 2D/3D
         'frequency': 25000,             # Hz
+        'ssp_env': None,                #
         'soundspeed': 1500,             # m/s
         'soundspeed_interp': spline,    # spline/linear
         'bottom_soundspeed': 1600,      # m/s
@@ -172,6 +173,9 @@ def create_env2d(**kv):
         'rx_range': 1000,               # m
         'depth': 25,                    # m
         'depth_interp': linear,         # curvilinear/linear
+        'depth_npts': 0,                #
+        'depth_sigmaz': 0,              #
+        'depth_max': 0,                 # m
         'min_angle': -80,               # deg
         'max_angle': 80,                # deg
         'nbeams': 0,                    # number of beams (0 = auto)
@@ -291,12 +295,13 @@ def read_env2d(fname):
         'name': 'arlpy',
         'type': '2D',
         'frequency': 25000,
+        'ssp_env': None,
         'soundspeed': 1500,
         'soundspeed_interp': spline,
         'bottom_soundspeed': 1600,
         'bottom_soundspeed_shear': 0,
         'bottom_density': 1600,
-        'bottom_absorption': 0.1,
+        'bottom_absorption': 0.0,
         'bottom_absorption_shear': 0,
         'bottom_roughness': 0,
         'surface': None,
@@ -307,6 +312,9 @@ def read_env2d(fname):
         'rx_range': 1000,
         'depth': 25,
         'depth_interp': linear,
+        'depth_npts': 0,
+        'depth_sigmaz': 0,
+        'depth_max': 0,
         'min_angle': -80,
         'max_angle': 80,
         'nbeams': 0,
@@ -457,9 +465,12 @@ def read_env2d(fname):
         # Line 5 or 6: SSP depth specification (format: npts sigma_z max_depth)
         ssp_spec_line = f.readline().strip()
         ssp_parts = _parse_line(ssp_spec_line).split()
-        if len(ssp_parts) >= 3:
-            max_depth = float(ssp_parts[2])
-            env['depth'] = max_depth
+        env['depth_npts'] = int(ssp_parts[0])
+        if len(ssp_parts) > 1:
+            env['depth_sigmaz'] = float(ssp_parts[1])
+        if len(ssp_parts) > 2:
+            env['depth_max'] = float(ssp_parts[2])
+            env['depth'] = float(ssp_parts[2])
 
         # Read SSP points
         ssp_points = _read_ssp_points(f)
@@ -470,6 +481,7 @@ def read_env2d(fname):
             else:
                 # Multiple points - depth, sound speed pairs
                 env['soundspeed'] = ssp_points
+        env['ssp_env'] = ssp_points
 
         # Bottom boundary options
         bottom_line = f.readline().strip()
@@ -1593,14 +1605,21 @@ class _Bellhop:
             self._print(fh, "'%cVWT*'" % svp_interp)
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
         # max depth should be the depth of the acoustic domain, which can be deeper than the max depth bathymetry
-        max_depth = env['depth'] if _np.size(env['depth']) == 1 else max(_np.max(env['depth'][:,1]), svp_depth)
-        self._print(fh, "1 0.0 %0.6f" % (max_depth))
+        max_depth = env["depth_max"] if env["depth_max"] > 0 else env['depth'] if _np.size(env['depth']) == 1 else max(_np.max(env['depth'][:,1]), svp_depth)
+        self._print(fh, f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}")
         if _np.size(svp) == 1:
             self._print(fh, "0.0 %0.6f /" % (svp))
             self._print(fh, "%0.6f %0.6f /" % (max_depth, svp))
         elif svp_interp == 'Q':
-            for j in range(svp.shape[0]):
-                self._print(fh, "%0.6f %0.6f /" % (svp.index[j], svp.iloc[j,0]))
+            sspenv = env['ssp_env']
+            # if the SSP data was provided in the ENV file, use that:
+            if sspenv is not None:
+                for j in range(sspenv.shape[0]):
+                    self._print(fh, "%0.6f %0.6f /" % (sspenv[j,0], sspenv[j,1]))
+            # otherwise use the SSP data specified in the dataframe:
+            else:
+                for j in range(svp.shape[0]):
+                    self._print(fh, "%0.6f %0.6f /" % (svp.index[j], svp.iloc[j,0]))
             self._create_ssp_file(fname_base+'.ssp', svp)
         else:
             for j in range(svp.shape[0]):
@@ -1627,7 +1646,7 @@ class _Bellhop:
         self._print(fh, f"'{runtype_str.rstrip()}'")
         self._print(fh, "%d" % (env['nbeams']))
         self._print(fh, "%0.6f %0.6f /   ! ALPHA1,2 (degrees)" % (env['min_angle'], env['max_angle']))
-        step_size = env["step_size"] or 0
+        step_size = env["step_size"] or 0.0
         box_depth = env["box_depth"] or 1.01*max_depth
         box_range = env["box_range"] or 1.01*_np.max(env['rx_range'])
         self._print(fh, f"{step_size} {box_depth} {box_range/1000} ! STEP (m), ZBOX (m), RBOX (km)")
