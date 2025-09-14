@@ -38,5 +38,10 @@ def test_MunkB_geo_rot_A():
     assert (tl.index == tl_exp.index).all(), "TL dataframe indexes not identical"
     assert (tl.columns - tl_exp.columns < 1e-6).all(), "Interpolation values not identical"
 
+    print("ACTUAL VALUES")
+    print(list(tl))
+    print("EXPECTED VALUES")
+    print(list(tl_exp))
+
     assert (tl.shape == tl_exp.shape), "Incorrect/inconsistent number of TL values calculated"
     assert (abs(tl - tl_exp) < 1e-9).all().all(), "TL values calculated do not match expected values"
