@@ -45,13 +45,11 @@ jobs:
         python-version: '3.12'
 
     - name: Install python packages
-      run: pipx install hatch pytest
+      run: pip install hatch
 
     - name: Run tests with coverage instrumentation
       run: |
-        export PATH="$PWD/bin:$PATH"
-        hatch shell
-        make coverage-full
+        hatch run cov
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
@@ -74,7 +72,7 @@ jobs:
         python-version: '3.12'
 
     - name: Install FORD
-      run: pip install FORD
+      run: pip install hatch FORD
 
     - name: Install gfortran and graphviz
       run: sudo apt-get update && sudo apt-get install -y gfortran graphviz gcc
@@ -88,7 +86,7 @@ jobs:
     - name: Generate documentation
       run: |
         ls -lR docs
-        ford -g -d "Bellhop" -d "misc" ford.md
+        hatch run doc
 
     - name: Setup Pages
       uses: actions/configure-pages@v5

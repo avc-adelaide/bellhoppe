@@ -100,7 +100,11 @@ debug = [
     "install-dev",
     "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import bellhop; print(\"bellhop:\", bellhop.__file__)'"
 ]
-doc  = "ford -g -d Bellhop -d misc ford.md"
+doc  = "ford -g -d fortran ford.md"
+cov  = [
+    "install-dev",
+    "make coverage-full"
+]
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true

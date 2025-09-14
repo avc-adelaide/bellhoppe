@@ -237,6 +237,10 @@ docs:
 	@echo "Documentation generated in ./doc/ directory"
 	@echo "Open ./doc/index.html in a web browser to view"
 
+cov:
+	@echo "Generating coverage reports..."
+	hatch run cov
+
 ###### COVERAGE ######
 
 coverage-clean:
