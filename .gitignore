@@ -80,3 +80,5 @@ docs/*.coverage.html
 
 docs/coverage
 
+*_output.*
+
