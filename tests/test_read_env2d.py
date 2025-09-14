@@ -116,10 +116,29 @@ def test_read_env2d_vector_parsing():
     env = bh.read_env2d(env_file)
 
     # Check that compressed vector notation works (should have generated linearly spaced values)
-    assert len(env['rx_depth']) == 51  # From "51" and "0.0 5000.0 /"
+    assert len(env['rx_depth']) == 2  # From "51" and "0.0 5000.0 /"
+    assert env['rx_ndepth'] == 51  # From "51" and "0.0 5000.0 /"
     assert env['rx_depth'][0] == 0.0
     assert env['rx_depth'][-1] == 5000.0
 
-    assert len(env['rx_range']) == 1001  # From "1001" and "0.0 100.0 /"
+    assert len(env['rx_range']) == 2  # From "1001" and "0.0 100.0 /"
+    assert env['rx_nrange'] == 1001  # From "1001" and "0.0 100.0 /"
+    assert env['rx_range'][0] == 0.0
+    assert env['rx_range'][-1] == 100000.0  # Converted from km to m
+
+
+def test_read_env2d_vector_parsing():
+    """Test various vector formats are parsed correctly."""
+    env_file = 'examples/Munk/MunkB_ray.env'
+    env = bh.read_env2d(env_file)
+
+    # Check that compressed vector notation works (should have generated linearly spaced values)
+    assert len(env['rx_depth']) == 2  # From "51" and "0.0 5000.0 /"
+    assert env['rx_ndepth'] == 51  # From "51" and "0.0 5000.0 /"
+    assert env['rx_depth'][0] == 0.0
+    assert env['rx_depth'][-1] == 5000.0
+
+    assert len(env['rx_range']) == 2  # From "1001" and "0.0 100.0 /"
+    assert env['rx_nrange'] == 1001  # From "1001" and "0.0 100.0 /"
     assert env['rx_range'][0] == 0.0
     assert env['rx_range'][-1] == 100000.0  # Converted from km to m

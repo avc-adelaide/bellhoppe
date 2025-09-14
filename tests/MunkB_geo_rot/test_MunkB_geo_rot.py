@@ -30,7 +30,13 @@ def test_MunkB_geo_rot_A():
     bh.check_env2d(env)
     # bh.print_env(env)
 
-    tl = bh.compute_transmission_loss(env,debug=True)
+    tl = bh.compute_transmission_loss(env,fname_base="tests/MunkB_geo_rot/MunkB_output",debug=True)
     assert tl is not None, "No results generated"
 
-    #print(tl)
+    tl_exp = bh.bellhop._Bellhop._load_shd(None,"tests/MunkB_geo_rot/MunkB_geo_rot") # implicit ".shd" suffix
+
+    assert (tl.index == tl_exp.index).all(), "TL dataframe indexes not identical"
+    assert (tl.columns - tl_exp.columns < 1e-6).all(), "Interpolation values not identical"
+
+    assert (tl.shape == tl_exp.shape), "Incorrect/inconsistent number of TL values calculated"
+    assert (tl == tl_exp).all().all(), "TL values calculated do not match expected values"

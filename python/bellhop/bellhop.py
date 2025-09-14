@@ -168,9 +168,12 @@ def create_env2d(**kv):
         'surface': None,                # surface profile
         'surface_interp': linear,       # curvilinear/linear
         'tx_depth': 5,                  # m
+        'tx_ndepth': None,              #
         'tx_directionality': None,      # [(deg, dB)...]
         'rx_depth': 10,                 # m
+        'rx_ndepth': None,              #
         'rx_range': 1000,               # m
+        'rx_nrange': None,              #
         'depth': 25,                    # m
         'depth_interp': linear,         # curvilinear/linear
         'depth_npts': 0,                #
@@ -311,6 +314,9 @@ def read_env2d(fname):
         'tx_directionality': None,
         'rx_depth': 10,
         'rx_range': 1000,
+        'tx_ndepth': None,
+        'rx_ndepth': None,
+        'rx_nrange': None,
         'depth': 25,
         'depth_interp': linear,
         'depth_npts': 0,
@@ -349,7 +355,7 @@ def read_env2d(fname):
             raise ValueError("Unexpected end of file while reading vector")
 
         # First line is the count
-        count = int(_parse_line(line))
+        linecount = int(_parse_line(line))
 
         # Second line has the values
         values_line = f.readline().strip()
@@ -362,13 +368,8 @@ def read_env2d(fname):
         parts = values_line.split()
         values = [dtype(p) for p in parts]
 
-        # Handle compressed notation: if we have exactly 2 values and count > 2, it's start and end
-        if len(values) == 2 and count > 2:
-            start, end = values
-            # Generate linearly spaced values
-            return _np.linspace(start, end, count)
-        else:
-            return _np.array(values)
+        # Note that we do not try to interpolate here, since Bellhop has its own routines
+        return _np.array(values), linecount
 
     def _read_ssp_points(f):
         """Read sound speed profile points until we find the bottom boundary line"""
@@ -530,21 +531,21 @@ def read_env2d(fname):
             env['bottom_absorption_shear'] = float(bottom_props[5])
 
         # Source depths
-        tx_depths = _parse_vector(f)
+        tx_depths, env['tx_ndepth'] = _parse_vector(f)
         if len(tx_depths) == 1:
             env['tx_depth'] = tx_depths[0]
         else:
             env['tx_depth'] = tx_depths
 
         # Receiver depths
-        rx_depths = _parse_vector(f)
+        rx_depths, env['rx_ndepth'] = _parse_vector(f)
         if len(rx_depths) == 1:
             env['rx_depth'] = rx_depths[0]
         else:
             env['rx_depth'] = rx_depths
 
         # Receiver ranges (in km, need to convert to m)
-        rx_ranges = _parse_vector(f)
+        rx_ranges, env['rx_nrange'] = _parse_vector(f)
         env['rx_range'] = rx_ranges * 1000  # convert km to m
 
         # Task/run type (e.g., 'R', 'C', etc.)
@@ -1565,12 +1566,14 @@ class _Bellhop:
     def _print(self, fh, s, newline=True):
         _os.write(fh, (s+'\n' if newline else s).encode())
 
-    def _print_array(self, fh, a):
-        if _np.size(a) == 1:
+    def _print_array(self, fh, a, nn=None):
+        if nn is None:
+            nn = _np.size(a)
+        if nn == 1:
             self._print(fh, "1")
             self._print(fh, "%0.6f /" % (a))
         else:
-            self._print(fh, str(_np.size(a)))
+            self._print(fh, str(nn))
             for j in a:
                 self._print(fh, "%0.6f " % (j), newline=False)
             self._print(fh, "/")
@@ -1632,9 +1635,9 @@ class _Bellhop:
             self._print(fh, "'A*' %0.6f" % (env['bottom_roughness']))
             self._create_bty_ati_file(fname_base+'.bty', depth, env['depth_interp'])
         self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (max_depth, env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption'], env['bottom_absorption_shear']))
-        self._print_array(fh, env['tx_depth'])
-        self._print_array(fh, env['rx_depth'])
-        self._print_array(fh, env['rx_range']/1000)
+        self._print_array(fh, env['tx_depth'], env['tx_ndepth'])
+        self._print_array(fh, env['rx_depth'], env['rx_ndepth'])
+        self._print_array(fh, env['rx_range']/1000, env['rx_nrange'])
 
         beamtype = beam_rev[env['beam_type']]
         beampattern = " "

@@ -345,5 +345,7 @@ gitokay:
 	fi
 
 push: gitokay test
-	@echo "Testing and pushing"
+	@echo "============================"
+	@echo "Testing okay, now pushing..."
+	@echo "============================"
 	git pull && git push
