@@ -4,7 +4,7 @@
 
 * The Bellhop component of the Acoustics Toolbox has been extracted UCal San Diego to support the [multithreaded C++/CUDA version: `bellhopcuda`](https://github.com/A-New-BellHope/bellhopcuda). The UCal team also [maintain a fork of the Fortran sources](https://github.com/A-New-BellHope/bellhop) with numerical properties and robustness improved and bugs fixed; some of these changes have been back-ported into the Acoustics Toolbox directly but the codebases are no longer identical
 
-* A Python wrapper for Bellhop was provided within the [`arlpy` package](https://github.com/org-arl/arlpy) by Mandar Chitre at the Acoustic Research Laboratory, National University of Singapore.
+* A Python wrapper for Bellhop was previously provided within the [`arlpy` package](https://github.com/org-arl/arlpy) by Mandar Chitre at the Acoustic Research Laboratory, National University of Singapore.
 
 * This repository, from Adelaide University, Australia, is a subsequent fork and consolidation of these works, with the intention of providing a clean and well-documented repository to provide easier access to the code. The main features of the AU work are:
     * Consolidation of code files and build processes with a single set of clean sources
@@ -148,6 +148,9 @@ This requires a complete rebuild of the binary to enable the coverage instrument
 The resulting coverage report is saved to `docs/coverage-index.html`.
 
 
+## Running
+
+Now that you've got this far, head over the to the **[BELLHOP Documentation](https://avc-adelaide.github.io/bellhop/)** to find out more about what the code can do.
 
 
 ## Impressum
