@@ -47,21 +47,11 @@ jobs:
     - name: Install python packages
       run: pipx install hatch pytest
 
-    - name: Build and install with coverage instrumentation
+    - name: Run tests with coverage instrumentation
       run: |
-        make coverage-build && make coverage-install
-
-    - name: Run tests to generate coverage data
-      run: |
-        make coverage-test
-
-    - name: Generate coverage reports
-      run: |
-        make coverage-report
-
-    - name: Generate HTML coverage reports for FORD integration
-      run: |
-        make coverage-html
+        export PATH="$PWD/bin:$PATH"
+        hatch shell
+        make coverage-full
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
