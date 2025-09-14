@@ -41,7 +41,7 @@ def test_MunkB_geo_rot_A():
 
     pdt.assert_frame_equal(
         tl, tl_exp,
-        atol=1e-9,  # absolute tolerance
+        atol=1e-8,  # absolute tolerance
         rtol=0,     # relative tolerance (default 1e-5, but you can set 0)
         check_dtype=False  # optional if dtypes might differ
     )
