@@ -12,8 +12,7 @@ summary = '''
 '''
 
 src_dir = [
-    "Bellhop",
-    "misc",
+    "fortran",
 ]
 exclude_dir = [
     "bin",
