@@ -13,10 +13,12 @@ def test_MunkB_geo_rot_A():
     ssp = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")
     bty = bh.read_bty("tests/MunkB_geo_rot/MunkB_geo_rot.bty")
 
+    assert ssp.shape[1] == 30, "Should be N=30 SSP data points"
+    assert bty.shape[0] == 30, "Should be N=30 BTY data points"
+
     env["soundspeed"] = ssp
     env["depth"] = bty
 
-    assert ssp.shape[1] == 30, "Should be N=30 SSP data points"
     assert env['soundspeed_interp'] == 'quadrilateral', "SSPOPT = 'QVF' => Q == quadrilateral"
     assert env['top_boundary_condition'] == 'vacuum', "SSPOPT = 'QVF' => V == vacuum"
     assert env['attenuation_units'] == 'frequency dependent',  "SSPOPT = 'QVF' => F == frequency dependent"
@@ -43,5 +45,4 @@ def test_MunkB_geo_rot_A():
         tl, tl_exp,
         atol=1e-8,  # absolute tolerance
         rtol=0,     # relative tolerance (default 1e-5, but you can set 0)
-        check_dtype=False  # optional if dtypes might differ
     )
