@@ -162,7 +162,7 @@ def create_env2d(**kv):
         'bottom_soundspeed': 1600,      # m/s
         'bottom_soundspeed_shear': 0,   # m/s
         'bottom_density': 1600,         # kg/m^3
-        'bottom_absorption': 0.0,       # dB/wavelength??
+        'bottom_absorption': 0.1,       # dB/wavelength??
         'bottom_absorption_shear': 0.0, # dB/wavelength??
         'bottom_roughness': 0,          # m (rms)
         'surface': None,                # surface profile
@@ -175,7 +175,7 @@ def create_env2d(**kv):
         'depth_interp': linear,         # curvilinear/linear
         'depth_npts': 0,                #
         'depth_sigmaz': 0,              #
-        'depth_max': 0,                 # m
+        'depth_max': None,              # m
         'min_angle': -80,               # deg
         'max_angle': 80,                # deg
         'nbeams': 0,                    # number of beams (0 = auto)
@@ -193,6 +193,7 @@ def create_env2d(**kv):
         if k not in env.keys():
             raise KeyError('Unknown key: '+k)
         env[k] = _np.asarray(v, dtype=_np.float64) if not isinstance(v, _pd.DataFrame) and _np.size(v) > 1 else v
+    env['depth_max'] = env['depth_max'] or _np.max(env['depth'])
     env = check_env2d(env)
     return env
 

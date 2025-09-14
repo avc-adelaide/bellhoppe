@@ -171,8 +171,8 @@ def test_bathy():
 
     env = bh.create_env2d(depth=bathy)
     # print(env)
-
-bottom_absorption    assert(env["bottom_density"] == 1600)
+    assert(env["bottom_absorption"] == 0.1)
+    assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)
     assert(env["depth_interp"] == "linear")
