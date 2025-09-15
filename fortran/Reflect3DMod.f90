@@ -18,7 +18,7 @@ CONTAINS
     TYPE( HSInfo ),    INTENT( IN    ) :: HS                          ! halfspace parameters
     CHARACTER (LEN=3), INTENT( IN    ) :: BotTop                      ! bottom or top flag
     REAL    (KIND=8),  INTENT( INOUT ) :: nBdry( 3 )                  ! normal to the boundary (changes if cone reflection)
-    REAL    (KIND=8)   INTENT( IN    ) :: z_xx, z_xy, z_yy, kappa_xx, kappa_xy, kappa_yy
+    REAL    (KIND=8),  INTENT( IN    ) :: z_xx, z_xy, z_yy, kappa_xx, kappa_xy, kappa_yy
     TYPE(ReflectionCoef), INTENT( IN ) :: RefC( NPts )                ! reflection coefficient
     INTEGER,           INTENT( IN    ) :: Npts                        ! Number of points in the reflection coefficient
     INTEGER          :: is1
