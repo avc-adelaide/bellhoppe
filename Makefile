@@ -115,23 +115,28 @@ export FC=gfortran
 UNAME_M := $(shell uname -m)
 
 # Base flags (common to all)
-FFLAGS_BASE = -g -Waliasing -Wampersand -Wsurprising -Wintrinsics-std -Wno-tabs -Wintrinsic-shadow -Wline-truncation -std=gnu -frecursive
+FFLAGS_BASE = -g -Waliasing -Wampersand -Wsurprising -Wintrinsics-std \
+                 -Wno-tabs -Wintrinsic-shadow -Wline-truncation \
+                 -std=gnu -frecursive
+
+# Optimisation flags (common, but not used for coverage)
 FFLAGS_OPTIM = -O2 -ffast-math -funroll-all-loops -fomit-frame-pointer
+
+# Coverage flags (for GCOV code coverage analysis)
+FFLAGS_COVERAGE = -fprofile-arcs -ftest-coverage -fcheck=all
 
 # Arch-specific flags
 ifeq ($(UNAME_M),x86_64) # Windows/Intel/Linux Intel
     FFLAGS_ARCH = -march=native -mtune=native
 else ifeq ($(UNAME_M),arm64) # Apple Silicon
     FFLAGS_ARCH = -mcpu=apple-m2
-else ifeq ($(UNAME_M),aarch64) # Linux ARM (e.g., Raspberry Pi, ARM server)
+else ifeq ($(UNAME_M),aarch64) # Linux ARM
     FFLAGS_ARCH = -march=armv8.5-a
 else
     $(warning Unknown architecture $(UNAME_M), using generic flags)
     FFLAGS_ARCH =
 endif
 
-# Coverage flags (for GCOV code coverage analysis)
-FFLAGS_COVERAGE = -fprofile-arcs -ftest-coverage -fcheck=all
 
 # Combine
 FFLAGS = $(FFLAGS_BASE) $(FFLAGS_OPTIM) $(FFLAGS_ARCH)
