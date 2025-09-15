@@ -44,7 +44,7 @@ CONTAINS
     !  The vector PolyCoef(1,*) holds the ordinate values at the nodes
     !  The vector PolyCoef(2,*) holds the ordinate derivatives at the nodes
 
-    IF ( N .EQ. 2 ) THEN
+    IF ( N == 2 ) THEN
 
     ! handle special case of two data points seperately (linear interpolation)
 

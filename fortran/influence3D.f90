@@ -169,7 +169,7 @@ CONTAINS
     ! Compute nearest rcvr before normal
     ! LP: Silly / partly dead code, see README.
     rA  = NORM2( ray3D( 1 )%x( 1 : 2 ) - xs_3D( 1 : 2 ) )         ! range of ray point
-    irT = MINLOC( Pos%Rr( 1 : Pos%NRr ), MASK = Pos%Rr( 1 : Pos%NRr ) .GT. rA )        ! index of receiver
+    irT = MINLOC( Pos%Rr( 1 : Pos%NRr ), MASK = Pos%Rr( 1 : Pos%NRr ) > rA )        ! index of receiver
     ir  = irT( 1 )
 
     Stepping: DO is = 2, Beam%Nsteps
@@ -570,7 +570,7 @@ CONTAINS
     ! Compute nearest rcvr before normal
     ! LP: Same issues as hat cart.
     rA  = NORM2( ray3D( 1 )%x( 1 : 2 ) - xs_3D( 1 : 2 ) )         ! range of ray point
-    irT = MINLOC( Pos%Rr( 1 : Pos%NRr ), MASK = Pos%Rr( 1 : Pos%NRr ) .GT. rA )   ! index of receiver
+    irT = MINLOC( Pos%Rr( 1 : Pos%NRr ), MASK = Pos%Rr( 1 : Pos%NRr ) > rA )   ! index of receiver
     ir  = irT( 1 )
 
     Stepping: DO is = 2, Beam%Nsteps

@@ -77,7 +77,7 @@ SUBROUTINE CSPLINE (TAU, C, N, IBCBEG, IBCEND, NDIM)
   !   * BEGINNING BOUNDARY CONDITION SECTION *
 
   IF (IBCBEG==0)  THEN                           ! IBCBEG = 0
-     IF (N.GT.2)  THEN                            !     N > 2
+     IF (N>2)  THEN                            !     N > 2
         C(4,1) = C(3,3)
         C(3,1) = C(3,2) + C(3,3)
         C(2,1) = ((C(3,2) + 2.0*C(3,1))*C(4,2)*C(3,3) + &
@@ -130,7 +130,7 @@ SUBROUTINE CSPLINE (TAU, C, N, IBCBEG, IBCEND, NDIM)
         G = -1.0 / C(4,N-1)
      END IF
 
-     IF ( IBCBEG.GT.0 .OR. N.GT.2)  THEN
+     IF ( IBCBEG>0 .OR. N>2)  THEN
         C(4,N) = G*C(3,N-1) + C(4,N)
         C(2,N) = (G*C(2,N-1) + C(2,N)) / C(4,N)
      END IF

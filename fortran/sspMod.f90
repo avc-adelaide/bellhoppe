@@ -573,7 +573,7 @@ END SUBROUTINE EvaluateSSP2D
                'You must have at least two points in x, y, z directions in your 3D SSP field'  )
        END IF
 
-       IF ( SSP%Nz .GE. MaxSSP ) THEN
+       IF ( SSP%Nz >= MaxSSP ) THEN
           ! LP: SSP%Nz / SSP%Seg%z will get assigned to SSP%NPts / SSP%z.
           CALL ERROUT( 'sspMod: Hexahedral', &
                'Number of SSP points in Z exceeds limit' )
@@ -839,7 +839,7 @@ END SUBROUTINE Analytic3D
 
        ! verify that the depths are monotone increasing
        IF ( iz > 1 ) THEN
-          IF ( SSP%z( iz ) .LE. SSP%z( iz - 1 ) ) THEN
+          IF ( SSP%z( iz ) <= SSP%z( iz - 1 ) ) THEN
               WRITE( PRTFile, * ) 'Bad depth in SSP: ', SSP%z( iz )
               CALL ERROUT( 'ReadSSP', 'The depths in the SSP must be monotone increasing' )
           END IF
