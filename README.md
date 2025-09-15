@@ -97,9 +97,9 @@ you will likely wish to run Bellhop locally for your own purposes. You can do th
 
 Alternatively, to use `venv` directly in a local environment:
 
-    $(brew --prefix python@3.12)/bin/python3.12 -m venv ~/.venv
-    ln -fs "$(pwd)/bin/bellhop.exe" ~/.venv/bin/bellhop.exe
-    ln -fs "$(pwd)/bin/bellhop3d.exe" ~/.venv/bin/bellhop3d.exe
+    $(brew --prefix python@3.12)/bin/python3.12 -m venv .venv
+    ln -fs "$(pwd)/bin/bellhop.exe" .venv/bin/bellhop.exe
+    ln -fs "$(pwd)/bin/bellhop3d.exe" .venv/bin/bellhop3d.exe
 
     source .venv/bin/activate
     <custom scripts running Bellhop>
