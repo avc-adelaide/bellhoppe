@@ -17,7 +17,7 @@ MODULE FatalError
     CHARACTER (LEN=*), INTENT( IN ) :: ErrMsg
         !! The error message itself
 
-    INTEGER   Last
+    INTEGER   :: Last
 
     WRITE( PRTFile, * )
     WRITE( PRTFile, * ) '*** FATAL ERROR ***'

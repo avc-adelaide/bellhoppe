@@ -350,7 +350,7 @@ CONTAINS
     ! remain in the same segment.
 
     INTEGER, PARAMETER :: PRTFile = 6
-    INTEGER IsegTopT( 1 )
+    INTEGER :: IsegTopT( 1 )
     REAL (KIND=8), INTENT( IN ) :: r, t
 
     IF ( t > 0.0 ) THEN
@@ -381,7 +381,7 @@ CONTAINS
     ! remain in the same segment.
 
     INTEGER, PARAMETER :: PRTFile = 6
-    INTEGER IsegBotT( 1 )
+    INTEGER :: IsegBotT( 1 )
     REAL (KIND=8), INTENT( IN ) :: r, t
 
     IF ( t > 0.0 ) THEN

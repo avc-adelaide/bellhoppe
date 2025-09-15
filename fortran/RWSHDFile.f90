@@ -9,7 +9,7 @@ MODULE RWSHDFile
 
   IMPLICIT NONE
   INTEGER, PARAMETER, PRIVATE :: SHDFile = 25
-  INTEGER LRecl
+  INTEGER :: LRecl
 
   ! variables taken from SourceReceiverPositions:
   ! freqVec vector of frequencies
