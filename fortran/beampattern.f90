@@ -5,6 +5,8 @@ MODULE beampattern
 
   USE FatalError
   USE monotonicMod
+
+  IMPLICIT NONE
   SAVE
   INTEGER, PARAMETER         :: SBPFile = 50
   INTEGER                    :: NSBPPts          ! Number of source beam-pattern points

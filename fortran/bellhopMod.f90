@@ -4,6 +4,8 @@ MODULE bellhopMod
   !! Main BELLHOP module containing global variables, data structures, and types for acoustic ray tracing
 
   USE MathConstants
+
+  IMPLICIT NONE
   INTEGER, PARAMETER :: ENVFile = 5, PRTFile = 6, RAYFile = 21, SHDFile = 25, ARRFile = 36, SSPFile = 40, MaxN = 100000
   LOGICAL, PARAMETER :: STEP_DEBUGGING = .FALSE.
 

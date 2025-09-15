@@ -6,6 +6,8 @@ MODULE RefCoef
 
   USE FatalError
   USE monotonicMod
+
+  IMPLICIT NONE
   SAVE
   INTEGER, PARAMETER            :: BRCFile = 31, TRCFile = 32, IRCFile = 12
   INTEGER                       :: NBotPts, NTopPts
