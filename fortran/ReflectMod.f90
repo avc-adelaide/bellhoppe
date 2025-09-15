@@ -164,12 +164,12 @@ CONTAINS
              ELSE
                 delta = 0.0
              END IF
-             
+
              pdelta  = real( delta ) / ( ray2D( is )%c / co)
              ddelta  = -a / ( ck*sb*d ) - a*cco / ssi / (ck*sb*d) + a*cco / (ck*b*sb*d) &
                   -a*co / si / (ck*sb*d*d) * (2* HS%rho * HS%rho *si*co-2*co*si)
              rddelta = -real( ddelta )
-             sddelta = rddelta / abs( rddelta )        
+             sddelta = rddelta / abs( rddelta )
 
              print *, 'beam displacing ...'
              ray2D( is1 )%x( 1 ) = ray2D( is1 )%x( 1 ) + real( delta )   ! displacement

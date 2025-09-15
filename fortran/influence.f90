@@ -73,7 +73,7 @@ CONTAINS
        zR = Pos%Rz( iz )
 
        Images: DO image = 1, Beam%Nimage
-         
+
           ! LP: Previous code did rnV = -rnV for image 2 and 3. When Nimage = 2,
           ! this means rnV changes sign every step, which can't possibly be
           ! correct. This was fixed by mbp in InfluenceCervenyCart.
@@ -138,11 +138,11 @@ CONTAINS
                    CASE ( 'V' )   ! vertical component
                       P_n    = -i * omega * gamma * n * contri
                       P_s    = -i * omega / c         * contri
-                      contri = c * DOT_PRODUCT( [ P_n, P_s ], ray2D( iS )%t ) 
+                      contri = c * DOT_PRODUCT( [ P_n, P_s ], ray2D( iS )%t )
                    CASE ( 'H' )   ! horizontal component
                       P_n    = -i * omega * gamma * n * contri
                       P_s    = -i * omega / c         * contri
-                      contri = c * ( -P_n * ray2D( iS )%t( 2 ) + P_s * ray2D( iS )%t( 1 ) ) 
+                      contri = c * ( -P_n * ray2D( iS )%t( 2 ) + P_s * ray2D( iS )%t( 1 ) )
                    END SELECT
 
                    KMAH = KMAHV( iS - 1 )
@@ -320,7 +320,7 @@ CONTAINS
     REAL    (KIND=8) :: KMAHphase( Beam%Nsteps )
 
     ! need to add logic related to NRz_per_range
-    
+
     ! LP: See discussion of this change in the readme.
     qOld = ray2D( 1 )%q( 1 )
     phase = 0
@@ -396,10 +396,10 @@ CONTAINS
 
              IF ( n < L ) THEN   ! in beamwindow?
                 delay    = ray2D( iS - 1 )%tau + W * dtau( iS - 1 )   ! interpolated delay
-                const    = ray2D( iS )%Amp / SQRT( ABS( q ) ) 
+                const    = ray2D( iS )%Amp / SQRT( ABS( q ) )
                 W        = ( L - n ) / L   ! hat function: 1 on center, 0 on edge
                 Amp      = const * W
-                
+
                 phase = KMAHphase( iS - 1 )
                 qOld = ray2D( is - 1 )%q( 1 )
                 CALL FinalPhase( .FALSE. )
@@ -474,7 +474,7 @@ CONTAINS
        RcvrRanges: DO
           ! is Rr( ir ) contained in [ rA, rB )? Then compute beam influence
           IF ( Pos%Rr( ir ) >= MIN( rA, rB ) .AND. Pos%Rr( ir ) < MAX( rA, rB ) ) THEN
-             
+
              x_rcvr( 1, 1 : NRz_per_range ) = Pos%Rr( ir )
              IF ( Beam%RunType( 5 : 5 ) == 'I' ) THEN
                 x_rcvr( 2, 1 ) = Pos%Rz( ir )                  ! irregular   grid
@@ -552,7 +552,7 @@ CONTAINS
     ELSE
        Ratio1 = 1 / SQRT( 2. * pi )                             ! line  source
     END IF
-    
+
     Stepping: DO iS = 2, Beam%Nsteps
 
        rB    = ray2D( iS     )%x( 1 )
@@ -594,7 +594,7 @@ CONTAINS
        ! compute beam influence for this segment of the ray
        RcvrRanges: DO
           ! WRITE( PRTFile, * ) 'iS', iS-2, 'ir', ir-1
-          
+
           ! is Rr( ir ) contained in [ rA, rB )? Then compute beam influence
           IF ( Pos%Rr( ir ) >= MIN( rA, rB ) .AND. Pos%Rr( ir ) < MAX( rA, rB ) ) THEN
              ! WRITE( PRTFile, * ) '  rA', rA, 'rB', rB
@@ -649,13 +649,13 @@ CONTAINS
   END SUBROUTINE InfluenceGeoGaussianCart
 
   ! **********************************************************************!
-  
+
   SUBROUTINE ApplyContribution( U )
   !! Applies beam contribution to pressure field
- 
+
     COMPLEX, INTENT( INOUT ) :: U
     COMPLEX ( KIND=4 ) :: dfield
-    
+
     SELECT CASE( Beam%RunType( 1 : 1 ) )
     CASE ( 'E' )                ! eigenrays
        IF ( Title( 1 :  9 ) == 'BELLHOP- ' ) THEN   ! BELLHOP run
@@ -679,7 +679,7 @@ CONTAINS
     END SELECT
 
   END SUBROUTINE ApplyContribution
-                 
+
   ! **********************************************************************!
 
   SUBROUTINE InfluenceSGB( U, alpha, Dalpha, RadiusMax )
@@ -702,9 +702,9 @@ CONTAINS
     ir     = 1
 
     Stepping: DO iS = 2, Beam%Nsteps
-      
+
        RcvrDeclAngle = RadDeg * ATAN2( ray2D( iS )%t( 2 ), ray2D( iS )%t( 1 ) )
-       
+
        rB = ray2D( iS )%x( 1 )
 
        ! phase shifts at caustics
@@ -732,7 +732,7 @@ CONTAINS
           SINT  = ( iS - 1 ) * Beam%deltas + W * Beam%deltas
 
           CALL IncPhaseIfCaustic( .FALSE. )
-          
+
           ! WRITE( PRTFile, * ) 'is ir', is-2, ir-1
 
           RcvrDepths: DO iz = 1, NRz_per_range
@@ -742,7 +742,7 @@ CONTAINS
              Adeltaz    = ABS( deltaz )
              IF ( Adeltaz < RadiusMax .OR. Beam%RunType( 1 : 1 ) == 'C' &
                    .OR. Beam%RunType( 1 : 1 ) == 'I' .OR. Beam%RunType( 1 : 1 ) == 'S' ) THEN
-                ! LP: Changed to use ApplyContribution in order to support 
+                ! LP: Changed to use ApplyContribution in order to support
                 ! incoherent, semi-coherent, and arrivals.
                 SrcDeclAngle = RadDeg * alpha   ! take-off angle in degrees
                 CPA    = ABS( deltaz * ( rB - rA ) ) / SQRT( ( rB - rA )**2 + ( ray2D( iS )%x( 2 ) - ray2D( iS - 1 )%x( 2 ) )**2  )
@@ -755,7 +755,7 @@ CONTAINS
                 Amp    = const * W
                 phaseInt = ray2D( iS )%Phase + phase
                 CALL ApplyContribution( U( iz, ir ) )
-                
+
              END IF
           END DO RcvrDepths
 
@@ -865,15 +865,15 @@ CONTAINS
     !hermit = hermit / ( 0.5 * ( x1 + x2 ) )
 
   END FUNCTION Hermite
-  
+
   ! **********************************************************************!
-  
+
   SUBROUTINE FinalPhase( isGaussian )
     LOGICAL, INTENT( IN ) :: isGaussian
     INTEGER :: phaseStepNum
-    
+
     !! phase shifts at caustics
-    
+
     ! this should be precomputed [LP: While IncPhaseIfCaustic can be
     ! precomputed, FinalPhase cannot, as it is dependent on the interpolated `q`
     ! value which is not known until the main run.]
@@ -886,42 +886,42 @@ CONTAINS
     ELSE
        phaseStepNum = iS - 1
     END IF
-    
+
     phaseInt = ray2D( phaseStepNum )%Phase + phase
     IF ( IsAtCaustic( .TRUE. ) ) &
        phaseInt = phase + pi / 2.
-    
+
   END SUBROUTINE FinalPhase
-  
+
   ! **********************************************************************!
-  
+
   SUBROUTINE IncPhaseIfCaustic( qleq0 )
-      
+
     !! phase shifts at caustics
-    
+
     LOGICAL, INTENT( IN ) :: qleq0
-    
+
     IF ( IsAtCaustic( qleq0 ) ) &
        phase = phase + pi / 2.
-  
+
   END SUBROUTINE IncPhaseIfCaustic
-  
+
   ! **********************************************************************!
-  
+
   LOGICAL FUNCTION IsAtCaustic( qleq0 )
-      
+
     ! LP: There are two versions of the phase shift condition used in the
     ! BELLHOP code, with the equalities in opposite positions. qleq0 false is
     ! only used in SGB.
-    
+
     LOGICAL, INTENT( IN ) :: qleq0
-    
+
     IF ( qleq0 ) THEN
        IsAtCaustic = q <= 0.0d0 .AND. qOld >  0.0d0 .OR. q >= 0.0d0 .AND. qOld <  0.0d0
     ELSE
        IsAtCaustic = q <  0.0d0 .AND. qOld >= 0.0d0 .OR. q >  0.0d0 .AND. qOld <= 0.0d0
     END IF
-     
+
   END FUNCTION IsAtCaustic
 
 END MODULE Influence

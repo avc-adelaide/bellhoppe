@@ -19,7 +19,7 @@ CONTAINS
     !!    Reports status messages to the print/log file connected to `PRTFile``.
 
     IMPLICIT NONE
-    
+
     ! Arguments
     CHARACTER (LEN=80), INTENT( IN ) :: FileRoot
         !! Source beampattern filename *without* `.sbp` extension

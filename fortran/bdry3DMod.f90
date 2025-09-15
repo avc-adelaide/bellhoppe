@@ -140,14 +140,14 @@ CONTAINS
        IF ( ANY( ISNAN( Top( :, : )%x( 3 ) ) ) ) THEN
           WRITE( PRTFile, * ) 'Warning in BELLHOP3D - ReadATI3D : The altimetry file contains a NaN'
        END IF
- 
-       DO ix = 1, NatiPts( 1 ) 
+
+       DO ix = 1, NatiPts( 1 )
           DO iy = 1, NatiPts( 2 )
              Top( ix, iy )%x( 1 ) = TopGlobalx( ix )
              Top( ix, iy )%x( 2 ) = TopGlobaly( iy )
           END DO
        END DO
-       
+
        DEALLOCATE( TopGlobalx )
        DEALLOCATE( TopGlobaly )
 
@@ -195,7 +195,7 @@ CONTAINS
     CHARACTER (LEN=80), INTENT( IN ) :: FileRoot
     REAL (KIND=8), ALLOCATABLE :: Temp( : )
     REAL (KIND=8), ALLOCATABLE :: BotGlobalx( : ), BotGlobaly( : )
- 
+
     SELECT CASE ( BotBTY )
     CASE ( '~', '*' )
        WRITE( PRTFile, * ) '__________________________________________________________________________'
@@ -207,7 +207,7 @@ CONTAINS
          WRITE( PRTFile, * ) 'BTYFile = ', TRIM( FileRoot ) // '.bty'
          CALL ERROUT( 'ReadBTY3D', 'Unable to open bathymetry file' )
        END IF
- 
+
        READ( BTYFile, * ) btyType
 
        SELECT CASE ( btyType )
@@ -280,14 +280,14 @@ CONTAINS
        IF ( ANY( ISNAN( Bot( :, : )%x( 3 ) ) ) ) THEN
           WRITE( PRTFile, * ) 'Warning in BELLHOP3D - ReadBTY3D : The bathymetry file contains a NaN'
        END IF
- 
-       DO ix = 1, NbtyPts( 1 ) 
+
+       DO ix = 1, NbtyPts( 1 )
           DO iy = 1, NbtyPts( 2 )
              Bot( ix, iy )%x( 1 ) = BotGlobalx( ix )
              Bot( ix, iy )%x( 2 ) = BotGlobaly( iy )
           END DO
        END DO
-       
+
        DEALLOCATE( BotGlobalx )
        DEALLOCATE( BotGlobaly )
 
@@ -339,13 +339,13 @@ CONTAINS
     INTEGER :: nx, ny
     REAL (KIND=8) :: Top_tri_n( 2 )   ! triangle normals
     REAL (KIND=8) :: over_diag_amount
-    
+
     nx = NatiPts( 1 )
     ny = NatiPts( 2 )
-    
+
     IsegTopx = MIN( MAX( IsegTopx, 1 ), nx - 1 )
     IsegTopy = MIN( MAX( IsegTopy, 1 ), ny - 1 )
-    
+
     IF ( t( 1 ) >= 0.0 ) THEN
        DO WHILE ( IsegTopx >= 1 .AND. Top( IsegTopx, 1 )%x( 1 ) > x( 1 ) )
           IsegTopx = IsegTopx - 1
@@ -376,25 +376,25 @@ CONTAINS
          IsegTopy = IsegTopy - 1
       END DO
     END IF
-    
+
     IF ( IsegTopx ==  0 .AND. Top(  1,  1 )%x( 1 ) == x( 1 ) ) IsegTopx = 1
     IF ( IsegTopx == nx .AND. Top( nx,  1 )%x( 1 ) == x( 1 ) ) IsegTopx = nx - 1
     IF ( IsegTopy ==  0 .AND. Top(  1,  1 )%x( 2 ) == x( 2 ) ) IsegTopy = 1
     IF ( IsegTopy == ny .AND. Top(  1, ny )%x( 2 ) == x( 2 ) ) IsegTopy = ny - 1
-    
+
     IF ( IsegTopx <= 0 .OR. IsegTopx >= nx .OR. IsegTopy <= 0 .OR. IsegTopy >= ny ) THEN
        WRITE( PRTFile, * ) 'Warning: GetTopSeg3D: Top altimetry undefined above the ray, x', x
        IsegTopx = MIN( MAX( IsegTopx, 1 ), nx - 1 )
        IsegTopy = MIN( MAX( IsegTopy, 1 ), ny - 1 )
     END IF
-    
-    
+
+
     xTopSeg  = [ Top( IsegTopx, 1 )%x( 1 ), Top( IsegTopx + 1, 1 )%x( 1 ) ]   ! segment limits in range
     yTopSeg  = [ Top( 1, IsegTopy )%x( 2 ), Top( 1, IsegTopy + 1 )%x( 2 ) ]   ! segment limits in range
-    
+
     Topx = Top( IsegTopx, IsegTopy )%x
     Topxmid = ( Topx + Top( IsegTopx + 1, IsegTopy + 1 )%x ) * 0.5D0
-    
+
     ! WRITE( PRTFile, * ) 'IsegTop', IsegTopx, IsegTopy
     ! WRITE( PRTFile, * ) 'Topx x', Topx, x
 
@@ -435,20 +435,20 @@ CONTAINS
     ! Get the Bottom segment info (index and range interval) for XY position, x
     ! sets Botx and Botn
     ! LP: See comment in GetTopSeg3D.
-    
+
     INTEGER, PARAMETER :: PRTFile = 6
     REAL (KIND=8), INTENT( IN ) :: x( 3 ), t( 3 )
     LOGICAL,       INTENT( IN ) :: isInit
     INTEGER :: nx, ny
     REAL (KIND=8) :: Bot_tri_n( 2 )   ! triangle normals
     REAL (KIND=8) :: over_diag_amount
-    
+
     nx = NbtyPts( 1 )
     ny = NbtyPts( 2 )
-    
+
     IsegBotx = MIN( MAX( IsegBotx, 1 ), nx - 1 )
     IsegBoty = MIN( MAX( IsegBoty, 1 ), ny - 1 )
-    
+
     IF ( t( 1 ) >= 0.0 ) THEN
        DO WHILE ( IsegBotx >= 1 .AND. Bot( IsegBotx, 1 )%x( 1 ) > x( 1 ) )
           IsegBotx = IsegBotx - 1
@@ -479,26 +479,26 @@ CONTAINS
          IsegBoty = IsegBoty - 1
       END DO
     END IF
-    
+
     IF ( IsegBotx ==  0 .AND. Bot(  1,  1 )%x( 1 ) == x( 1 ) ) IsegBotx = 1
     IF ( IsegBotx == nx .AND. Bot( nx,  1 )%x( 1 ) == x( 1 ) ) IsegBotx = nx - 1
     IF ( IsegBoty ==  0 .AND. Bot(  1,  1 )%x( 2 ) == x( 2 ) ) IsegBoty = 1
     IF ( IsegBoty == ny .AND. Bot(  1, ny )%x( 2 ) == x( 2 ) ) IsegBoty = ny - 1
-    
+
     IF ( IsegBotx <= 0 .OR. IsegBotx >= nx .OR. IsegBoty <= 0 .OR. IsegBoty >= ny ) THEN
        WRITE( PRTFile, * ) 'Warning: GetBotSeg3D: Bottom bathymetry undefined below the ray, x', x
        IsegBotx = MIN( MAX( IsegBotx, 1 ), nx - 1 )
        IsegBoty = MIN( MAX( IsegBoty, 1 ), ny - 1 )
     END IF
-    
+
     ! WRITE( PRTFile, * ) 'IsegBot', IsegBotx, IsegBoty
-    
+
     xBotSeg  = [ Bot( IsegBotx, 1 )%x( 1 ), Bot( IsegBotx + 1, 1 )%x( 1 ) ]   ! segment limits in range
     yBotSeg  = [ Bot( 1, IsegBoty )%x( 2 ), Bot( 1, IsegBoty + 1 )%x( 2 ) ]   ! segment limits in range
-    
+
     Botx = Bot( IsegBotx, IsegBoty )%x
     Botxmid = ( Botx + Bot( IsegBotx + 1, IsegBoty + 1 )%x ) * 0.5D0
-    
+
     ! identify the normal based on the active triangle of a pair
     ! normal of triangle side pointing up and to the left
     Bot_tri_n = [ -( yBotSeg( 2 ) - yBotSeg( 1 ) ), xBotSeg( 2 ) - xBotSeg( 1 ) ]
@@ -588,9 +588,9 @@ CONTAINS
           n2( 2 ) = U( 3 ) * V( 1 ) - U( 1 ) * V( 3 )
           n2( 3 ) = U( 1 ) * V( 2 ) - U( 2 ) * V( 1 )
           IF ( BotTop == 'Top' ) n2 = -n2
-          
+
           Bdry( ix, iy )%n2 = n2 / NORM2( n2 )   ! scale to make it a unit normal
-       
+
        END DO
     END DO
 
@@ -637,7 +637,7 @@ CONTAINS
           END IF
 
           Bdry( ix, iy )%Noden_unscaled = n
-          Bdry( ix, iy )%Noden = n / NORM2( n )          
+          Bdry( ix, iy )%Noden = n / NORM2( n )
        END DO
     END DO
 
@@ -717,4 +717,4 @@ CONTAINS
 
 END MODULE bdry3Dmod
 
- 
+

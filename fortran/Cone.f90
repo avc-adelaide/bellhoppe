@@ -11,7 +11,7 @@ CONTAINS
 
   SUBROUTINE ConeFormulas2D( z_xx, z_xy, z_yy, nBdry, xs, tradial, xray, BotTop )
   !! analytic formula for the conical seamount
-    
+
     REAL (KIND=8),     INTENT( IN  ) :: xs( 3 ), tradial( 2 ), xray( 2 )
     CHARACTER (LEN=3), INTENT( IN  ) :: BotTop                  ! Flag indicating bottom or top reflection
     REAL (KIND=8),     INTENT( OUT ) :: z_xx, z_xy, z_yy, nBdry( 2 )

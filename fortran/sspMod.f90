@@ -69,7 +69,7 @@ CONTAINS
     !! Evaluates sound speed profile at given location
 
     ! Call the particular profil routine indicated by the SSP%Type and perform Task
-    !   Task = 'TAB'  then tabulate cp, cs, rhoT 
+    !   Task = 'TAB'  then tabulate cp, cs, rhoT
     !   Task = 'INI' then initialize
 
     REAL      (KIND=8), INTENT( IN  ) :: freq
@@ -109,12 +109,12 @@ CONTAINS
     END SELECT
 
   END SUBROUTINE EvaluateSSP
-  
+
 ! **********************************************************************!
 
 SUBROUTINE EvaluateSSP2D( x2D, t2D, c, cimag, gradc, crr, crz, czz, rho, xs, tradial, freq )
   !! Converts cartesian gradients to polar
-  
+
   ! Called from BELLHOP3D to get a 2D slice out of the 3D SSP
 
   REAL (KIND=8), INTENT( IN  ) :: x2D( 2 ), t2D( 2 ), xs( 3 ), tradial( 2 ), freq
@@ -141,7 +141,7 @@ END SUBROUTINE EvaluateSSP2D
   SUBROUTINE EvaluateSSP3D( x, t, c, cimag, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho, freq, Task )
 
     ! Call the particular profil routine indicated by the SSP%Type and perform Task
-    !   Task = 'TAB'  then tabulate cp, cs, rhoT 
+    !   Task = 'TAB'  then tabulate cp, cs, rhoT
     !   Task = 'INI' then initialize
 
     REAL      (KIND=8), INTENT( IN  ) :: freq
@@ -195,11 +195,11 @@ END SUBROUTINE EvaluateSSP2D
     REAL     (KIND=8), INTENT( IN  ) :: t( 2 )   ! ray tangent; for edge cases of updating segments
     CHARACTER (LEN=3), INTENT( IN  ) :: Task
     REAL     (KIND=8), INTENT( OUT ) :: c, cimag, gradc( 2 ), crr, crz, czz, rho ! sound speed and its derivatives
-    
+
     IF ( Task == 'INI' ) THEN   ! read in SSP data
        Depth     = x( 2 )
        CALL ReadSSP( Depth, freq )
-              
+
        SSP%n2(  1 : SSP%NPts ) = 1.0 / SSP%c( 1 : SSP%NPts ) ** 2
 
        ! compute gradient, n2z
@@ -236,12 +236,12 @@ END SUBROUTINE EvaluateSSP2D
     REAL     (KIND=8), INTENT( IN  ) :: t( 2 )   ! ray tangent; for edge cases of updating segments
     CHARACTER (LEN=3), INTENT( IN  ) :: Task
     REAL     (KIND=8), INTENT( OUT ) :: c, cimag, gradc( 2 ), crr, crz, czz, rho ! sound speed and its derivatives
-    
+
     IF ( Task == 'INI' ) THEN   ! read in SSP data
        Depth     = x( 2 )
        CALL ReadSSP( Depth, freq )
     ELSE                        ! return SSP info
-      
+
        CALL UpdateDepthSegmentT( x, t )
 
        c     = REAL(  SSP%c( iSegz ) + ( x( 2 ) - SSP%z( iSegz ) ) * SSP%cz( iSegz ) )
@@ -286,7 +286,7 @@ END SUBROUTINE EvaluateSSP2D
        CALL PCHIP( SSP%z, SSP%c, SSP%NPts, SSP%cCoef, SSP%CSWork )
 
     ELSE                        ! return SSP info
-      
+
        CALL UpdateDepthSegmentT( x, t )
 
        xt = x( 2 ) - SSP%z( iSegz )
@@ -326,7 +326,7 @@ END SUBROUTINE EvaluateSSP2D
     INTEGER                          :: iBCBeg, iBCEnd
     REAL     (KIND=8)                :: hSpline
     COMPLEX  (KIND=8)                :: c_cmplx, cz_cmplx, czz_cmplx
-    
+
     IF ( Task == 'INI' ) THEN
 
        ! *** Task 'INIT' for initialization ***
@@ -335,7 +335,7 @@ END SUBROUTINE EvaluateSSP2D
        CALL ReadSSP( Depth, freq )
 
        SSP%cSpline( 1, 1 : SSP%NPts ) = SSP%c( 1 : SSP%NPts )
-       
+
        ! Compute spline coefs
        iBCBeg = 0
        iBCEnd = 0
@@ -343,7 +343,7 @@ END SUBROUTINE EvaluateSSP2D
     ELSE
 
        ! *** Section to return SSP info ***
-       
+
        CALL UpdateDepthSegmentT( x, t )
 
        hSpline = x( 2 ) - SSP%z( iSegz )
@@ -383,7 +383,7 @@ END SUBROUTINE EvaluateSSP2D
     REAL      (KIND=8), INTENT( OUT ) :: c, cimag, gradc( 2 ), crr, crz, czz, rho ! sound speed and its derivatives
     INTEGER                           :: AllocateStatus, iSegT, iz2
     REAL      (KIND=8)                :: c1, c2, cz1, cz2, cr, cz, s1, s2, delta_r, delta_z
-    
+
     IF ( Task == 'INI' ) THEN
 
        !  *** read in SSP data ***
@@ -410,7 +410,7 @@ END SUBROUTINE EvaluateSSP2D
        WRITE( PRTFile, * )
        WRITE( PRTFile, * ) 'Profile ranges (km):'
        WRITE( PRTFile, FMT="( F10.2 )"  ) SSP%Seg%r( 1 : SSP%Nr )
-       
+
        IF ( .NOT. monotonic( SSP%Seg%r, SSP%Nr ) ) THEN
           CALL ERROUT( 'sspMod: Quad', 'The ranges in the SSP must be monotone increasing' )
        END IF
@@ -443,7 +443,7 @@ END SUBROUTINE EvaluateSSP2D
     ELSE
 
        ! *** Section to return SSP info ***
-       
+
        CALL UpdateDepthSegmentT( x, t )
 
        ! Check that x is inside the box where the sound speed is defined
@@ -461,7 +461,7 @@ END SUBROUTINE EvaluateSSP2D
 
        s2      = x( 2 ) - SSP%z( iSegz )
        delta_z = SSP%z( iSegz + 1 ) - SSP%z( iSegz )
-       
+
        c1 = SSP%cMat( iSegz, iSegr     ) + s2 * cz1
        c2 = SSP%cMat( iSegz, iSegr + 1 ) + s2 * cz2
 
@@ -497,7 +497,7 @@ END SUBROUTINE EvaluateSSP2D
 
   SUBROUTINE Hexahedral( x, t, c, cimag, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho, freq, Task )
     !! Trilinear hexahedral interpolation of SSP data
- 
+
     ! assumes a rectilinear case (not the most general hexahedral)
 
     INTEGER,            PARAMETER     :: SSPFile = 40
@@ -572,7 +572,7 @@ END SUBROUTINE EvaluateSSP2D
           CALL ERROUT( 'sspMod: Hexahedral', &
                'You must have at least two points in x, y, z directions in your 3D SSP field'  )
        END IF
-       
+
        IF ( SSP%Nz .GE. MaxSSP ) THEN
           ! LP: SSP%Nz / SSP%Seg%z will get assigned to SSP%NPts / SSP%z.
           CALL ERROUT( 'sspMod: Hexahedral', &
@@ -630,7 +630,7 @@ END SUBROUTINE EvaluateSSP2D
        CALL Update3DXSegmentT( x, t )
        CALL Update3DYSegmentT( x, t )
        CALL Update3DZSegmentT( x, t )
-       
+
        ! cz at the corners of the current rectangle
        cz11 = SSP%czMat3( iSegx,     iSegy    , iSegz )
        cz12 = SSP%czMat3( iSegx + 1, iSegy    , iSegz )
@@ -643,7 +643,7 @@ END SUBROUTINE EvaluateSSP2D
        c21 = SSP%cMat3( iSegx + 1, iSegy    , iSegz ) + s3 * cz12
        c12 = SSP%cMat3( iSegx,     iSegy + 1, iSegz ) + s3 * cz21
        c22 = SSP%cMat3( iSegx + 1, iSegy + 1, iSegz ) + s3 * cz22
-       
+
        ! s1 = proportional distance of x( 1 ) in x
        s1 = ( x( 1 ) - SSP%Seg%x( iSegx ) ) / ( SSP%Seg%x( iSegx + 1 ) - SSP%Seg%x( iSegx ) )
        s1 = MIN( s1, 1.0D0 )   ! force piecewise constant extrapolation for points outside the box
@@ -747,7 +747,7 @@ END SUBROUTINE EvaluateSSP2D
 
     iSegz = 1
     rho   = 1.0
-    
+
     D = 3000.0
     z = x( 2 )
 
@@ -758,7 +758,7 @@ END SUBROUTINE EvaluateSSP2D
     c   =         A * COSH( B * ( Z - D ) )
     cz  =     B * A * SINH( B * ( Z - D ) )
     czz = B * B * A * COSH( B * ( Z - D ) )
-      
+
     cimag = 0.
 
     cr = 0.0
@@ -776,7 +776,7 @@ SUBROUTINE Analytic3D( x, t, c, cimag, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho 
   REAL (KIND=8) :: x( 3 ), c, cimag, gradc( 3 ), cxx, cyy, czz, cxy, cxz, cyz, c0, W, Wz, epsilon, epsilon_y
   REAL (KIND=8), INTENT( IN  ) :: t( 3 )   ! ray tangent; for edge cases of updating segments
   REAL (KIND=8) :: rho
-  
+
   iSegz = 1
   c0    = 1500.0
   rho   = 1.0
@@ -823,10 +823,10 @@ END SUBROUTINE Analytic3D
 
     WRITE( PRTFile, * )
     WRITE( PRTFile, * ) 'Sound speed profile:'
-    
+
     WRITE( PRTFile, "( '      z         alphaR      betaR     rho        alphaI     betaI'    )" )
     WRITE( PRTFile, "( '     (m)         (m/s)      (m/s)   (g/cm^3)      (m/s)     (m/s)', / )" )
-       
+
     SSP%NPts = 1
 
     DO iz = 1, MaxSSP
@@ -862,20 +862,20 @@ END SUBROUTINE Analytic3D
 
        SSP%NPts = SSP%NPts + 1
     END DO
- 
+
     ! Fall through means too many points in the profile
     WRITE( PRTFile, * ) 'Max. #SSP points: ', MaxSSP
     CALL ERROUT( 'ReadSSP', 'Number of SSP points exceeds limit' )
 
   END SUBROUTINE ReadSSP
-  
+
   SUBROUTINE UpdateDepthSegmentT( x, t )
      REAL (KIND=8), INTENT(IN) :: x( 2 ), t( 2 )
-     
+
      ! LP: Handles edge cases based on which direction the ray is going. If the
      ! ray takes a small step in the direction of t, it will remain in the same
      ! segment as it is now.
-     
+
      IF ( t( 2 ) >= 0.0 ) THEN
         ! SSP%z( iSegz ) <= x( 2 ) < SSP%z( iSegz + 1 )
         DO WHILE ( x( 2 ) < SSP%z( iSegz ) .AND. iSegz > 1 )
@@ -893,14 +893,14 @@ END SUBROUTINE Analytic3D
            iSegz = iSegz - 1
         END DO
      ENDIF
-     
+
   END SUBROUTINE
 
   SUBROUTINE UpdateRangeSegmentT( x, t )
      REAL (KIND=8), INTENT(IN) :: x( 2 ), t( 2 )
-     
+
      ! LP: See UpdateDepthSegmentT
-     
+
      IF ( t( 1 ) >= 0.0 ) THEN
         ! SSP%Seg%r( iSegr ) <= x( 1 ) < SSP%Seg%r( iSegr + 1 )
         DO WHILE ( x( 1 ) < SSP%Seg%r( iSegr ) .AND. iSegr > 1 )
@@ -918,14 +918,14 @@ END SUBROUTINE Analytic3D
            iSegr = iSegr - 1
         END DO
      ENDIF
-     
+
   END SUBROUTINE
-  
+
   SUBROUTINE Update3DXSegmentT( x, t )
      REAL (KIND=8), INTENT(IN) :: x( 3 ), t( 3 )
-     
+
      ! LP: See UpdateDepthSegmentT
-     
+
      IF ( t( 1 ) >= 0.0 ) THEN
         ! SSP%Seg%x( iSegx ) <= x( 1 ) < SSP%Seg%x( iSegx + 1 )
         DO WHILE ( x( 1 ) < SSP%Seg%x( iSegx ) .AND. iSegx > 1 )
@@ -943,14 +943,14 @@ END SUBROUTINE Analytic3D
            iSegx = iSegx - 1
         END DO
      ENDIF
-     
+
   END SUBROUTINE
-  
+
   SUBROUTINE Update3DYSegmentT( x, t )
      REAL (KIND=8), INTENT(IN) :: x( 3 ), t( 3 )
-     
+
      ! LP: See UpdateDepthSegmentT
-     
+
      IF ( t( 2 ) >= 0.0 ) THEN
         ! SSP%Seg%y( iSegy ) <= x( 2 ) < SSP%Seg%y( iSegy + 1 )
         DO WHILE ( x( 2 ) < SSP%Seg%y( iSegy ) .AND. iSegy > 1 )
@@ -968,14 +968,14 @@ END SUBROUTINE Analytic3D
            iSegy = iSegy - 1
         END DO
      ENDIF
-     
+
   END SUBROUTINE
-  
+
   SUBROUTINE Update3DZSegmentT( x, t )
      REAL (KIND=8), INTENT(IN) :: x( 3 ), t( 3 )
-     
+
      ! LP: See UpdateDepthSegmentT
-     
+
      IF ( t( 3 ) >= 0.0 ) THEN
         ! SSP%Seg%z( iSegz ) <= x( 3 ) < SSP%Seg%z( iSegz + 1 )
         DO WHILE ( x( 3 ) < SSP%Seg%z( iSegz ) .AND. iSegz > 1 )
@@ -993,8 +993,8 @@ END SUBROUTINE Analytic3D
            iSegz = iSegz - 1
         END DO
      ENDIF
-     
+
   END SUBROUTINE
 
 END MODULE sspmod
- 
+

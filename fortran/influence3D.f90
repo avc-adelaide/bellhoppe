@@ -108,7 +108,7 @@ CONTAINS
                 IF ( irB <= irA ) II = 1   ! going backwards in range
 
                 Ranges: DO ir = irA + 1 - II, irB + II, SIGN( 1, irB - irA )
-                   s = ( Pos%Rr( ir ) - rA ) / ( rB - rA )   
+                   s = ( Pos%Rr( ir ) - rA ) / ( rB - rA )
 
                    ! linear interpolation of q's
                    q_tilde = ray3D( is - 1 )%q_tilde + s * dq_tilde
@@ -195,7 +195,7 @@ CONTAINS
 
           IF ( rlen > 1.0D3 * SPACING( ray3D( is )%x( 1 ) ) ) THEN  ! Make sure this is not a duplicate point
               ! WRITE( PRTFile, * ) 'is rA rB', is-2, rA, rB
-              
+
              rayt = rayt / rlen                                     ! unit tangent to ray
              CALL RayNormal_unit( rayt, ray3D( is )%phi, e1, e2 )   ! Get ray normals e1 and e2
 
@@ -264,7 +264,7 @@ CONTAINS
 
                       zmin = MIN( ray3D( is - 1 )%x( 3 ), ray3D( is )%x( 3 ) ) - L_z  ! min depth of ray segment
                       zmax = MAX( ray3D( is - 1 )%x( 3 ), ray3D( is )%x( 3 ) ) + L_z  ! max depth of ray segment
-                      
+
                       ! WRITE( PRTFile, * ) 'step ir itheta', is-2, ir-1, itheta-1
 
                       ReceiverDepths: DO iz = 1, Pos%Nrz
@@ -309,7 +309,7 @@ CONTAINS
                          const = ray3D( is )%Amp / SQRT( ABS( DetQint ) )
                          W     = ( 1 - a ) * ( 1 - b )   ! hat function: 1 on center, 0 on edge
                          Amp   = const * W
-                         
+
                          ! WRITE( PRTFile, * ) iz-1
 
                          CALL ApplyContribution( alpha, beta, P( itheta, iz, ir ) )
@@ -391,7 +391,7 @@ CONTAINS
        Radials: DO itheta = 1, Pos%Ntheta
           ! *** Compute coordinates of intercept: nA, mA, rA ***
           is = 1
-          
+
           ! LP: These values are immediately overwritten inside the loop. This
           ! looks like an initialization of these values, and they're saved from
           ! B to A at the end of the loop, but the computation of deltaA, mA,
@@ -420,7 +420,7 @@ CONTAINS
                 IF ( INFL_DEBUGGING .AND. itheta-1 == INFL_DEBUGGING_ITHETA &
                    .AND. iz-1 == INFL_DEBUGGING_IZ ) THEN
                    WRITE( PRTFile, * ) 'Skipping b/c deltaA deltaB', deltaA, deltaB
-                END IF  
+                END IF
                 CYCLE Stepping   ! ray normal || radial of rcvr line
              END IF
 
@@ -442,12 +442,12 @@ CONTAINS
 
                    irA = RToIR( rA )
                    irB = RToIR( rB )
-                   
+
                    IF ( INFL_DEBUGGING .AND. itheta-1 == INFL_DEBUGGING_ITHETA &
                       .AND. iz-1 == INFL_DEBUGGING_IZ ) THEN
                       WRITE( PRTFile, * ) 'rA rB irA irB', rA, rB, irA, irB
                    END IF
-                   
+
                    ! detect and skip duplicate points (happens at boundary reflection)
                    IF ( irA /= irB .AND. NORM2( ray3D( is )%x - ray3D( is - 1 )%x ) > 1.0D3 * SPACING( ray3D( is )%x( 1 ) ) ) THEN
 
@@ -461,7 +461,7 @@ CONTAINS
 
                       Ranges: DO ir = irA + 1 - II, irB + II, SIGN( 1, irB - irA )
 
-                         s = ( Pos%Rr( ir ) - rA ) / ( rB - rA )   
+                         s = ( Pos%Rr( ir ) - rA ) / ( rB - rA )
 
                          ! linear interpolation of q's
                          q_tilde = ray3D( is - 1 )%q_tilde + s * dq_tilde
@@ -477,7 +477,7 @@ CONTAINS
                          b = ABS( (  q_tilde( 1 ) * m - q_tilde( 2 ) * n ) / DetQint )
 
                          !IF ( a + b > BeamWindow ) CYCLE Ranges   ! receiver is outside the beam .OR. L1 == 0 .OR. L2 == 0
-                         
+
                          ! Beam shape function (Gaussian)
                          ! The factor involving L1, L2 compensates for the change in intensity when widening the beam
                          !W   = EXP( -.5 * ( ( n / L1_stent ) ** 2 + ( m / L2_stent ) ** 2 ) ) * L1 / L1_stent * L2 / L2_stent
@@ -653,7 +653,7 @@ CONTAINS
 
                       zmin = MIN( ray3D( is - 1 )%x( 3 ), ray3D( is )%x( 3 ) ) - L_z  ! min depth of ray segment
                       zmax = MAX( ray3D( is - 1 )%x( 3 ), ray3D( is )%x( 3 ) ) + L_z  ! max depth of ray segment
-                      
+
                       ! WRITE( PRTFile, * ) 'step ir itheta', is-2, ir-1, itheta-1
 
                       ReceiverDepths: DO iz = 1, Pos%Nrz
@@ -673,7 +673,7 @@ CONTAINS
 
                          L1 = NORM2( q_tilde )  ! beamwidth is length of the vector
                          L2 = NORM2( q_hat   )  ! beamwidth
-                         
+
                          IF ( L1 == 0 .OR. L2 == 0 ) THEN
                             ! IF ( ir-1 == 7 .AND. itheta-1 == 59 ) THEN
                             !    WRITE( PRTFile, * ) 'Skipping z b/c L1/L2', iz
@@ -839,5 +839,5 @@ CONTAINS
     IF ( RunType( 1 : 1 ) /= 'C' ) P = SQRT( REAL( P ) ) ! For incoherent run, convert intensity to pressure
 
   END SUBROUTINE ScalePressure3D
-  
+
 END MODULE Influence3D

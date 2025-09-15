@@ -45,7 +45,7 @@ PROGRAM BELLHOP3D
   !    Trilinear interpolation (hex) ignores cxy values.
   !    If the water depth for the lower half space is much larger than that for the SSP
   !    in the water column, it will use a step that is too large and exit the ray box.
- 
+
   !    Cerveny beams (rarely used):
   !       influenceC calls SSP; need to select EvaluateSSP2D or EvaluateSSP3D for that to work in BELLHOP3D
   !       efficiency changes for Cerveny beams as well (and in BELLHOP)
@@ -87,7 +87,7 @@ PROGRAM BELLHOP3D
 
   ! Read in control data
 
-  CALL ReadEnvironment(    FileRoot, ThreeD )  
+  CALL ReadEnvironment(    FileRoot, ThreeD )
   CALL ReadATI3D( FileRoot, Bdry%Top%HS%Opt( 5 : 5 ), Bdry%Top%HS%Depth, PRTFile )    ! AlTImetry
   CALL ReadBTY3D( FileRoot, Bdry%Bot%HS%Opt( 2 : 2 ), Bdry%Bot%HS%Depth, PRTFile )    ! BaThYmetry
 
@@ -104,7 +104,7 @@ PROGRAM BELLHOP3D
 
 SUBROUTINE BellhopCore
   !! Core subroutine to run Bellhop algorithm
-  
+
   USE angleMod
   USE SourceReceiverPositions
   USE ArrMod
@@ -199,7 +199,7 @@ SUBROUTINE BellhopCore
            P = 0.0 !  Zero out field matrix
            U = 0.0
            NArr3D = 0 ! LP: Zero out 3D arrival matrix
-           
+
            ! IF ( r( 1 ) == 0.0 ) r( 1 ) = 1.0
            xs_3D = [ Pos%sx( isx ), Pos%sy( isy ), Pos%sz( isz ) ]
            WRITE( PRTFile, * )
@@ -212,7 +212,7 @@ SUBROUTINE BellhopCore
                  x_rcvrMat( 1 : 2, itheta, ir ) = xs_3D( 1 : 2 ) + Pos%Rr( ir ) * t_rcvr( :, itheta )  ! x-y coordinate of the receiver
               END DO
            END DO
-  
+
            ! *** Compute 'optimal' beam constant ***
 
            tdummy = [ 0.0, 0.0, 1.0 ]
@@ -223,7 +223,7 @@ SUBROUTINE BellhopCore
 
            ! *** Trace successive beams ***
 
-           AzimuthalAngle: DO ibeta = 1, Angles%Nbeta ! this is also the receiver bearing angle for a 2D run 
+           AzimuthalAngle: DO ibeta = 1, Angles%Nbeta ! this is also the receiver bearing angle for a 2D run
               SrcAzimAngle = RadDeg * Angles%beta( ibeta )           ! take-off azimuthal   angle in degrees
               !if ( ibeta /= 134 ) cycle AzimuthalAngle
               IF ( Angles%iSingle_beta == 0 .OR. ibeta == Angles%iSingle_beta ) THEN    ! Single beam run?
@@ -431,7 +431,7 @@ SUBROUTINE PickEpsilon( BeamType, omega, c, Dalpha, Dbeta, rLoop, EpsMultiplier,
   REAL      (KIND=8) :: HalfWidth( 2 ) = [ 0.0, 0.0 ]
   COMPLEX   (KIND=8) :: epsilonOpt( 2 )
   CHARACTER (LEN=80) :: TAG
-  
+
   ! LP: BUG: Multiple codepaths do not set epsilonOpt, leads to UB
 
   SELECT CASE ( BeamType( 1 : 1 ) )
@@ -525,7 +525,7 @@ SUBROUTINE TraceRay2D( alpha, beta, Amp0 )
   ray2D( 1 )%Phase     = 0.0
   ray2D( 1 )%NumTopBnc = 0
   ray2D( 1 )%NumBotBnc = 0
-  
+
   IsegTopx = 1
   IsegTopy = 1
   IsegBotx = 1
@@ -552,7 +552,7 @@ SUBROUTINE TraceRay2D( alpha, beta, Amp0 )
      ! convert polar coordinate of ray to x-y coordinate
      x = RayToOceanX( ray2D( is1 )%x, xs_3D, tradial )
      t_o = RayToOceanT( ray2D( is1 )%t, tradial )
-     
+
      CALL GetTopSeg3D( x, t_o, .FALSE. )    ! identify the top    segment above the source
      CALL GetBotSeg3D( x, t_o, .FALSE. )    ! identify the bottom segment below the source
 
@@ -566,7 +566,7 @@ SUBROUTINE TraceRay2D( alpha, beta, Amp0 )
      ! to detect only a crossing from inside to outside
      ! DistBeg is the distance at step is,   which is saved
      ! DistEnd is the distance at step is+1, which needs to be calculated
-  
+
      CALL Distances3D( x, Topx, Botx, Topn, Botn, DistEndTop, DistEndBot )
 
      IF ( topRefl ) THEN
@@ -708,7 +708,7 @@ SUBROUTINE Step2D( ray0, ray2, tradial, topRefl, botRefl )
                         c2, cimag2, crr2, crz2, czz2, urayt0( 2 ), urayt1( 2 ), urayt2( 2 ), &
                         h, halfh, hw0, hw1, ray2n( 2 ), RM, RN, gradcjump( 2 ), cnjump, csjump, w0, w1, &
                         rayx3D( 3 ), rayt3D( 3 ), x2_o( 3 ), x2_o_out( 3 )
-                        
+
   IF ( STEP_DEBUGGING ) THEN
      WRITE( PRTFile, * )
      WRITE( PRTFile, * ) 'ray0 x t', ray0%x, ray0%t
@@ -779,7 +779,7 @@ SUBROUTINE Step2D( ray0, ray2, tradial, topRefl, botRefl )
      WRITE( PRTFile, * ) '           ==> ', x2_o_out
   END IF
   !write( *, * ) 'final coord ', x2_o, ray2%x, w0, w1
-  
+
   hw0 = h * w0
   hw1 = h * w1
   ray2%t   = ray0%t   - hw0 * gradc0 / csq0      - hw1 * gradc1 / csq1
@@ -834,7 +834,7 @@ END FUNCTION
 
 FUNCTION OceanToRayX( x, xs, tradial, t, snapDim )
 !! Transform ocean coordinates to ray coordinates
-  
+
   ! LP: Going back and forth through the coordinate transform won't
   ! always keep the precise value, so we may have to finesse the floats.
   ! Valid values of snapDim:
@@ -843,14 +843,14 @@ FUNCTION OceanToRayX( x, xs, tradial, t, snapDim )
   !  0: Snap to X
   !  1: Snap to Y
   !  2: Snap to Z
-  
+
   REAL ( KIND=8 ) :: OceanToRayX( 2 )
   REAL ( KIND=8 ), INTENT( IN ) :: x( 3 ), xs( 3 ), tradial( 2 ), t( 2 )
   INTEGER, INTENT( IN ) :: snapDim
   REAL ( KIND=8 ) :: ret( 2 ), x_back( 3 ), wantdir( 2 ), errdir( 2 )
   LOGICAL :: correctdir( 2 )
   INTEGER :: i
-  
+
   ! Depth always transfers perfectly--not changed.
   ret( 2 ) = x( 3 )
   ! For range, use larger dimension--this avoids divide-by-zero or divide
@@ -956,10 +956,10 @@ SUBROUTINE TraceRay3D( alpha, beta, epsilon, Amp0 )
   yTopSeg = [ +big, -big ]
   xBotSeg = [ +big, -big ]
   yBotSeg = [ +big, -big ]
-    
+
   CALL GetTopSeg3D( xs_3D, ray3D( 1 )%t, .TRUE. )   ! identify the top    segment above the source
   CALL GetBotSeg3D( xs_3D, ray3D( 1 )%t, .TRUE. )   ! identify the bottom segment below the source
-  
+
   ! Trace the beam (note that Reflect alters the step index is)
   is = 0
 
@@ -976,7 +976,7 @@ SUBROUTINE TraceRay3D( alpha, beta, epsilon, Amp0 )
      is1 = is + 1
 
      CALL Step3D( ray3D( is ), ray3D( is1 ), topRefl, botRefl )
-     
+
      CALL GetTopSeg3D( ray3D( is1 )%x, ray3D( is1 )%t, .FALSE. )   ! identify the top    segment above the source
      CALL GetBotSeg3D( ray3D( is1 )%x, ray3D( is1 )%t, .FALSE. )   ! identify the bottom segment below the source
 
@@ -990,7 +990,7 @@ SUBROUTINE TraceRay3D( alpha, beta, epsilon, Amp0 )
      ! to detect only a crossing from inside to outside
      ! DistBeg is the distance at step is, which is saved
      ! DistEnd is the distance at step is+1, which needs to be calculated
-  
+
      CALL Distances3D( ray3D( is1 )%x, Topx, Botx, Topn, Botn, DistEndTop, DistEndBot )
 
      IF ( topRefl ) THEN
@@ -1111,14 +1111,14 @@ SUBROUTINE Distances3D( rayx, Topx, Botx, Topn, Botn, DistTop, DistBot )
   REAL (KIND=8), INTENT( IN  ) :: rayx( 3 )             ! ray coordinate
   REAL (KIND=8), INTENT( IN  ) :: Topx( 3 ), Botx( 3 )  ! top, bottom boundary coordinate for node
   REAL (KIND=8), INTENT( IN  ) :: Topn( 3 ), Botn( 3 )  ! top, bottom boundary normal
-  REAL (KIND=8), INTENT( OUT ) :: DistTop, DistBot      ! distance from the ray to top, bottom boundaries 
+  REAL (KIND=8), INTENT( OUT ) :: DistTop, DistBot      ! distance from the ray to top, bottom boundaries
   REAL (KIND=8)                :: dTop( 3 ), dBot( 3 )
 
   dTop    = rayx - Topx  ! vector pointing from top    to ray
   dBot    = rayx - Botx  ! vector pointing from bottom to ray
   DistTop = -DOT_PRODUCT( Topn, dTop )
   DistBot = -DOT_PRODUCT( Botn, dBot )
-  
+
 !!$  write( *, * )
 !!$  write( *, * ) 'Distances3D', DistBot
 !!$  write( *, * ) 'rayx', rayx

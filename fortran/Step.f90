@@ -5,9 +5,9 @@ MODULE Step
   USE bellhopMod
   USE sspMod
   IMPLICIT NONE
-  
+
   REAL (KIND=8), PARAMETER, PRIVATE :: INFINITESIMAL_STEP_SIZE = 1.0d-6
-  
+
 CONTAINS
 
   SUBROUTINE Step2D( ray0, ray2, topRefl, botRefl, Topx, Topn, Botx, Botn )
@@ -26,16 +26,16 @@ CONTAINS
          c0, cimag0, crr0, crz0, czz0, csq0, cnn0_csq0, &
          c1, cimag1, crr1, crz1, czz1, csq1, cnn1_csq1, &
          c2, cimag2, crr2, crz2, czz2, urayt0( 2 ), urayt1( 2 ), &
-         h, halfh, ray2n( 2 ), RM, RN, gradcjump( 2 ), cnjump, csjump, w0, w1, rho 
+         h, halfh, ray2n( 2 ), RM, RN, gradcjump( 2 ), cnjump, csjump, w0, w1, rho
     REAL (KIND=8 ) :: urayt2( 2 ), unitdt( 2 ), unitdp( 2 ), unitdq( 2 )
     COMPLEX (KIND=8 ) :: unitdtau
-    
+
     IF ( STEP_DEBUGGING ) THEN
        WRITE( PRTFile, * )
        WRITE( PRTFile, * ) 'ray0 x t p q tau amp', ray0%x, ray0%t, ray0%p, ray0%q, ray0%tau, ray0%Amp
        WRITE( PRTFile, * ) 'iSegr iSegz', iSegr, iSegz
     END IF
-    
+
     ! IF ( ray0%x( 1 ) > 10.0 ) THEN
     !    STOP 'Enough'
     ! END IF
@@ -64,7 +64,7 @@ CONTAINS
     ray1%t = ray0%t - halfh * gradc0 / csq0
     ray1%p = ray0%p - halfh * cnn0_csq0 * ray0%q
     ray1%q = ray0%q + halfh * c0        * ray0%p
-    
+
     ! WRITE( PRTFile, * ) 'ray1 x t p q', ray1%x, ray1%t, ray1%p, ray1%q
 
     ! *** Phase 2
@@ -146,7 +146,7 @@ CONTAINS
     INTEGER,       INTENT( IN    ) :: iSegz0, iSegr0                             ! SSP layer the ray is in
     REAL (KIND=8), INTENT( IN    ) :: x0( 2 ), urayt( 2 )                        ! ray coordinate and tangent
     REAL (KIND=8), INTENT( IN    ) :: Topx( 2 ), Topn( 2 ), Botx( 2 ), Botn( 2 ) ! Top, bottom coordinate and normal
-    REAL (KIND=8), INTENT( INOUT ) :: h                                          ! reduced step size 
+    REAL (KIND=8), INTENT( INOUT ) :: h                                          ! reduced step size
     REAL (KIND=8)                  :: hInt, hBoxr, hBoxz, hTop, hBot, hSeg       ! step sizes
     REAL (KIND=8)                  :: x( 2 ), d( 2 ), d0( 2 ), rSeg( 2 )
 
@@ -165,13 +165,13 @@ CONTAINS
           hInt = ( SSP%z( iSegz0 + 1 ) - x0( 2 ) ) / urayt( 2 )
        END IF
     END IF
-    
+
     ! ray mask using a box centered at ( 0, 0 )
     hBoxr    = huge( hBoxr )
     IF ( ABS( x( 1 ) ) > Beam%Box%r ) THEN
        hBoxr = ( Beam%Box%r - ABS( x0( 1 ) ) ) / ABS( urayt( 1 ) )
     END IF
-    
+
     hBoxz    = huge( hBoxz )
     IF ( ABS( x( 2 ) ) > Beam%Box%z ) THEN
        hBoxz = ( Beam%Box%z - ABS( x0( 2 ) ) ) / ABS( urayt( 2 ) )
@@ -212,7 +212,7 @@ CONTAINS
           hSeg = -( x0( 1 ) - rSeg( 2 ) ) / urayt( 1 )
        END IF
     END IF
-    
+
     h = MIN( h, hInt, hBoxr, hBoxz, hTop, hBot, hSeg )      ! take limit set by shortest distance to a crossing
     IF ( h < INFINITESIMAL_STEP_SIZE * Beam%deltas ) THEN   ! is it taking an infinitesimal step?
        h = INFINITESIMAL_STEP_SIZE * Beam%deltas            ! make sure we make some motion
@@ -225,9 +225,9 @@ CONTAINS
     END IF
 
   END SUBROUTINE ReduceStep2D
-  
+
   ! **********************************************************************!
-  
+
   SUBROUTINE StepToBdry2D( x0, x2, urayt, h, topRefl, botRefl, &
        iSegz0, iSegr0, Topx, Topn, Botx, Botn )
     USE BdryMod
@@ -237,11 +237,11 @@ CONTAINS
     REAL (KIND=8), INTENT( IN    ) :: Topx( 2 ), Topn( 2 ), Botx( 2 ), Botn( 2 ) ! Top, bottom coordinate and normal
     LOGICAL,       INTENT( OUT   ) :: topRefl, botRefl
     REAL (KIND=8)                  :: d( 2 ), d0( 2 ), rSeg( 2 )
-    
+
     ! Original step due to maximum step size
     h = Beam%deltas
     x2 = x0 + h * urayt
-    
+
     ! interface crossing in depth
     IF ( ABS( urayt( 2 ) ) > EPSILON( h ) ) THEN
        IF      ( SSP%z( iSegz0     ) > x2( 2 ) ) THEN
@@ -260,7 +260,7 @@ CONTAINS
           END IF
        END IF
     END IF
-    
+
     ! ray mask using a box centered at ( 0, 0 )
     IF ( ABS( x2( 1 ) ) > Beam%Box%r ) THEN
        h = ( Beam%Box%r - ABS( x0( 1 ) ) ) / ABS( urayt( 1 ) )
@@ -379,7 +379,7 @@ CONTAINS
           WRITE( PRTFile, * ) 'StepToBdry2D normal h to', h, x2
        END IF
     END IF
-    
+
   END SUBROUTINE StepToBdry2D
 
 END MODULE Step

@@ -125,8 +125,8 @@ CONTAINS
 
     IF ( .NOT. monotonic( Top%x( 1 ), NAtiPts ) ) THEN
        CALL ERROUT( 'BELLHOP:ReadATI', 'Altimetry ranges are not monotonically increasing' )
-    END IF 
- 
+    END IF
+
   END SUBROUTINE ReadATI
 
   ! **********************************************************************!
@@ -150,9 +150,9 @@ CONTAINS
           WRITE( PRTFile, * ) 'BTYFile = ', TRIM( FileRoot ) // '.bty'
           CALL ERROUT( 'ReadBTY', 'Unable to open bathymetry file' )
        END IF
- 
+
        READ( BTYFile, * ) btyType
- 
+
        BathyType: SELECT CASE ( btyType( 1 : 1 ) )
        CASE ( 'C' )
           WRITE( PRTFile, * ) 'Curvilinear Interpolation'
@@ -208,7 +208,7 @@ CONTAINS
           IF ( Bot( ii )%x( 2 ) > DepthB ) THEN
              CALL ERROUT( 'BELLHOP:ReadBTY', 'Bathymetry drops below lowest point in the sound speed profile' )
           END IF
- 
+
        END DO btypt
 
        CLOSE( BTYFile )
@@ -226,7 +226,7 @@ CONTAINS
 
     IF ( .NOT. monotonic( Bot%x( 1 ), NBtyPts ) ) THEN
        CALL ERROUT( 'BELLHOP:ReadBTY', 'Bathymetry ranges are not monotonically increasing' )
-    END IF 
+    END IF
 
   END SUBROUTINE ReadBTY
 
@@ -332,7 +332,7 @@ CONTAINS
 
           Bdry( ii )%kappa = Bdry( ii )%Dss   !over-ride kappa !!!!!
        END DO
-       
+
        DEALLOCATE( phi ) ! LP: was missing deallocation
     ELSE
        Bdry%kappa = 0
@@ -383,7 +383,7 @@ CONTAINS
     INTEGER, PARAMETER :: PRTFile = 6
     INTEGER IsegBotT( 1 )
     REAL (KIND=8), INTENT( IN ) :: r, t
-    
+
     IF ( t > 0.0 ) THEN
        IsegBotT = MAXLOC( Bot( : )%x( 1 ), Bot( : )%x( 1 ) <= r )
     ELSE
@@ -391,7 +391,7 @@ CONTAINS
     ENDIF
 
     IF ( IsegBotT( 1 ) > 0 .AND. IsegBotT( 1 ) < NbtyPts ) THEN  ! IsegBot MUST LIE IN [ 1, NbtyPts-1 ]
-       IsegBot = IsegBotT( 1 )   
+       IsegBot = IsegBotT( 1 )
        rBotSeg = [ Bot( IsegBot )%x( 1 ), Bot( IsegBot + 1 )%x( 1 ) ]   ! segment limits in range
     ELSE
        WRITE( PRTFile, * ) 'r = ', r

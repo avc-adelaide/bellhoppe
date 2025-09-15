@@ -6,9 +6,9 @@ MODULE Step3DMod
   USE Bdry3DMod
   USE sspMod
   IMPLICIT NONE
-  
+
   REAL (KIND=8), PARAMETER, PRIVATE :: INFINITESIMAL_STEP_SIZE = 1.0d-6
-  
+
 CONTAINS
 
   SUBROUTINE Step3D( ray0, ray2, topRefl, botRefl )
@@ -37,7 +37,7 @@ CONTAINS
     REAL  (KIND=8 ) :: e1( 3 ), e2( 3 )                              ! ray normals for ray-centered coordinates
     REAL  (KIND=8 ) :: p_tilde_in(  2 ), p_hat_in(  2 ), q_tilde_in(  2 ), q_hat_in(  2 ), &
          p_tilde_out( 2 ), p_hat_out( 2 ), RotMat( 2, 2 )
-         
+
     IF ( STEP_DEBUGGING ) THEN
        WRITE( PRTFile, * )
        WRITE( PRTFile, * ) 'ray0 x t', ray0%x, ray0%t
@@ -45,13 +45,13 @@ CONTAINS
        WRITE( PRTFile, * ) '        ', ray0%p_hat,   ray0%q_hat
        WRITE( PRTFile, * ) 'iSegx iSegy iSegz Top_td_side Bot_td_side', iSegx, iSegy, iSegz, Top_td_side, Bot_td_side
     END IF
-    
+
     ! The numerical integrator used here is a version of the polygon (a.k.a. midpoint, leapfrog, or Box method), and similar
     ! to the Heun (second order Runge-Kutta method).
     ! However, it's modified to allow for a dynamic step change, while preserving the second-order accuracy).
 
     ! *** Phase 1 (an Euler step)
-    
+
     !write( *, * ) '______________________________________________________________'
     !write( *, * ) 'in segment ', ISegBoty
     !write( *, * ) 'current coord ', ray0%x
@@ -101,7 +101,7 @@ CONTAINS
     CALL StepToBdry3D( ray0%x, ray2%x, urayt2, iSegx0, iSegy0, iSegz0, h, &
        topRefl, botRefl, snapDim )
     !write( *, * ) 'final coord ', ray2%x, w0, w1
-    
+
     ! Update other variables with this new h
     ! LP: Fixed: ray2%phi now depends on hw0 & hw1 like the other parameters,
     ! originally only depended on h and ray1 vars
@@ -143,17 +143,17 @@ CONTAINS
        CALL CurvatureCorrection
 
     END IF
-    
+
     ! WRITE( PRTFile, * ) 'ray2 p q', ray2%p_tilde, ray2%q_tilde
     ! WRITE( PRTFile, * ) '        ', ray2%p_hat,   ray2%q_hat
-    
+
   CONTAINS
     SUBROUTINE CurvatureCorrection
 
       ! correct p-q due to jumps in the gradient of the sound speed
 
       USE cross_products
-      
+
       Th    = DOT_PRODUCT( ray2%t, nBdry )   ! component of ray tangent, normal to boundary
       tBdry = ray2%t - Th * nBdry            ! tangent, along the boundary, in the reflection plane
       tBdry = tBdry / NORM2( tBdry )         ! unit boundary tangent
@@ -169,7 +169,7 @@ CONTAINS
       cn1jump = DOT_PRODUCT( gradcjump, rayn1 )
       cn2jump = DOT_PRODUCT( gradcjump, rayn2 )
       csjump  = DOT_PRODUCT( gradcjump, rayt  )
-      
+
       ! WRITE( PRTFile, * ) 'cn1 cn2 cs jumps', cn1jump, cn2jump, csjump
 
       RM = Tg / Th   ! this is tan( alpha ) where alpha is the angle of incidence
@@ -195,7 +195,7 @@ CONTAINS
 
       ! here's the actual curvature change
 
-      p_tilde_out = p_tilde_in - q_tilde_in * R1 - q_hat_in * R2  
+      p_tilde_out = p_tilde_in - q_tilde_in * R1 - q_hat_in * R2
       p_hat_out   = p_hat_in   - q_tilde_in * R2
 
       ! rotate p back to e1, e2 system, q does not change
@@ -229,49 +229,49 @@ CONTAINS
       RETURN
     END SUBROUTINE Get_c_partials
   END SUBROUTINE Step3D
-  
+
   SUBROUTINE ComputeDeltaPQ( ray, c, gradc, cnn, cmn, cmm, d_phi, d_p_tilde, d_p_hat, d_q_tilde, d_q_hat )
     TYPE(    ray3DPt ), INTENT( IN )  :: ray
     REAL(    KIND=8  ), INTENT( IN )  :: c, gradc( 3 ), cnn, cmn, cmm
     COMPLEX( KIND=8  ), INTENT( OUT ) :: d_phi
     REAL(    KIND=8  ), INTENT( OUT ) :: d_p_tilde( 2 ), d_p_hat( 2 ), d_q_tilde( 2 ), d_q_hat( 2 )
     REAL(    KIND=8  )                :: c_mat( 2, 2 ), csq
-    
+
     d_phi = ( 1.0 / c ) * ray%t( 3 ) * &
          ( ray%t( 2 ) * gradc( 1 ) - ray%t( 1 ) * gradc( 2 ) ) / &
          ( ray%t( 1 ) ** 2 + ray%t( 2 ) ** 2 )
-    
+
     csq = c ** 2
     c_mat( 1, : ) = -[ cnn, cmn ] / csq
     c_mat( 2, : ) = -[ cmn, cmm ] / csq
-    
+
     d_p_tilde = MATMUL( c_mat, ray%q_tilde )
     d_p_hat   = MATMUL( c_mat, ray%q_hat )
 
-    d_q_tilde =         c    * ray%p_tilde 
-    d_q_hat   =         c    * ray%p_hat 
-    
+    d_q_tilde =         c    * ray%p_tilde
+    d_q_hat   =         c    * ray%p_hat
+
     ! d_f    = ( c0 * ray0%DetP - cnn0 / csq0 * ray0%DetQ )
     ! d_g    = ( c0 * ray0%DetP - cmm0 / csq0 * ray0%DetQ )
     ! d_h    = (                - cmn0 / csq0 * ray0%DetQ )
     ! d_DetP = 1.0D0 / csq0 * ( -cmm0 * ray0%f - cnn0 * ray0%g + 2.0 * cmn0 * ray0%h )
     ! d_DetQ = c0 * ( ray0%f + ray0%g )
-    
+
   END SUBROUTINE ComputeDeltaPQ
-  
+
   SUBROUTINE UpdateRayPQ ( ray1, ray0, h, d_phi, d_p_tilde, d_p_hat, d_q_tilde, d_q_hat )
     TYPE(    ray3DPt ), INTENT( INOUT ) :: ray1
     TYPE(    ray3DPt ), INTENT( IN ) :: ray0
     REAL(    KIND=8  ), INTENT( IN ) :: h
     COMPLEX( KIND=8  ), INTENT( IN ) :: d_phi
     REAL(    KIND=8  ), INTENT( IN ) :: d_p_tilde( 2 ), d_p_hat( 2 ), d_q_tilde( 2 ), d_q_hat( 2 )
-    
+
     ray1%phi = ray0%phi + h * d_phi
     ray1%p_tilde = ray0%p_tilde + h * d_p_tilde
-    ray1%q_tilde = ray0%q_tilde + h * d_q_tilde 
+    ray1%q_tilde = ray0%q_tilde + h * d_q_tilde
     ray1%p_hat   = ray0%p_hat   + h * d_p_hat
-    ray1%q_hat   = ray0%q_hat   + h * d_q_hat 
-    
+    ray1%q_hat   = ray0%q_hat   + h * d_q_hat
+
     ! LP: no longer missing the hw0 / hw1 blend
     ! ray1%f    = ray0%f    + h * d_f
     ! ray1%g    = ray0%g    + h * d_g
@@ -320,7 +320,7 @@ CONTAINS
              WRITE( PRTFile, * ) 'Deeper bound SSP Z < z; hInt', SSP%z( iSegz0 + 1 ), x( 3 ), hInt
        END IF
     END IF
-    
+
     ! ray mask using a box centered at ( xs_3D( 1 ), xs_3D( 2 ), 0 )
     hBoxx    = huge( hBoxx )
     IF ( ABS( x( 1 ) - xs_3D( 1 ) ) > Beam%Box%x ) THEN
@@ -328,14 +328,14 @@ CONTAINS
        IF ( STEP_DEBUGGING ) &
           WRITE( PRTFile, * ) 'Beam box crossing X, hBoxx', Beam%Box%x, hBoxx
     END IF
-    
+
     hBoxy    = huge( hBoxy )
     IF ( ABS( x( 2 ) - xs_3D( 2 ) ) > Beam%Box%y ) THEN
        hBoxy = ( Beam%Box%y - ABS( ( x0( 2 ) - xs_3D( 2 ) ) ) ) / ABS( urayt( 2 ) )
        IF ( STEP_DEBUGGING ) &
           WRITE( PRTFile, * ) 'Beam box crossing Y, hBoxy', Beam%Box%y, hBoxy
     END IF
-    
+
     hBoxz    = huge( hBoxz )
     IF ( ABS( x( 3 )              ) > Beam%Box%z ) THEN
        hBoxz = ( Beam%Box%z - ABS(   x0( 3 )                ) ) / ABS( urayt( 3 ) )
@@ -357,7 +357,7 @@ CONTAINS
     ! bottom crossing
     hBot = huge( hBot )
     d    = x - Botx       ! vector from bottom to ray
-    ! LP: Changed from EPSILON( h1 ) (should have been h3!) to 0 in conjunction 
+    ! LP: Changed from EPSILON( h1 ) (should have been h3!) to 0 in conjunction
     ! with StepToBdry3D change here.
     IF ( DOT_PRODUCT( Botn, d ) >= 0.0D0 ) THEN
        d0   = x0 - Botx   ! vector from bottom node to ray origin
@@ -370,7 +370,7 @@ CONTAINS
     hxSeg = huge( hxSeg )
     xSeg( 1 ) = MAX( xTopSeg( 1 ), xBotSeg( 1 ) )
     xSeg( 2 ) = MIN( xTopSeg( 2 ), xBotSeg( 2 ) )
-    
+
     IF ( SSP%Type == 'H' ) THEN   ! ocean segment
        xSeg( 1 ) = MAX( xSeg( 1 ), SSP%Seg%x( iSegx0     ) )
        xSeg( 2 ) = MIN( xSeg( 2 ), SSP%Seg%x( iSegx0 + 1 ) )
@@ -466,7 +466,7 @@ CONTAINS
           END IF
        END IF
     END IF
-    
+
     h = MIN( h, hInt, hBoxx, hBoxy, hBoxz, hTop, hBot, hxSeg, hySeg, hTopDiag, hBotDiag )  ! take limit set by shortest distance to a crossing
     IF ( h < -1d-4 ) THEN
        WRITE( PRTFile, * ) 'ReduceStep3D: negative h'
@@ -479,7 +479,7 @@ CONTAINS
        iSmallStepCtr = 0                   ! didn't do a small step so reset the counter
     END IF
   END SUBROUTINE ReduceStep3D
-  
+
   ! **********************************************************************!
 
   SUBROUTINE StepToBdry3D( x0, x2, urayt, iSegx0, iSegy0, iSegz0, h, &
@@ -593,7 +593,7 @@ CONTAINS
     ! top/bottom segment crossing in x
     xSeg( 1 ) = MAX( xTopSeg( 1 ), xBotSeg( 1 ) ) ! LP: lower range bound (not an x value)
     xSeg( 2 ) = MIN( xTopSeg( 2 ), xBotSeg( 2 ) ) ! LP: upper range bound (not a y value)
-    
+
     IF ( SSP%Type == 'H' ) THEN   ! ocean segment
        xSeg( 1 ) = MAX( xSeg( 1 ), SSP%Seg%x( iSegx0     ) )
        xSeg( 2 ) = MIN( xSeg( 2 ), SSP%Seg%x( iSegx0 + 1 ) )

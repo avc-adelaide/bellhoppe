@@ -22,7 +22,7 @@ CONTAINS
     INTEGER,           INTENT( INOUT ) :: is                          ! index of the ray step
     INTEGER          :: is1
     REAL    (KIND=8) :: rayt( 3 ), rayn1( 3 ), rayn2( 3 )             ! unit ray tangent and normals
-    REAL    (KIND=8) :: rayt_tilde( 3 ), rayn1_tilde( 3 ), rayn2_tilde( 3 ), cn1jump, cn2jump, csjump 
+    REAL    (KIND=8) :: rayt_tilde( 3 ), rayn1_tilde( 3 ), rayn2_tilde( 3 ), cn1jump, cn2jump, csjump
     REAL    (KIND=8) :: c, cimag, gradc( 3 ), cxx, cyy, czz, cxy, cxz, cyz, rho   ! derivatives of sound speed in cartesian coordinates
     REAL    (KIND=8) :: RM, R1, R2, R3, Tg, Th                        ! curvature corrections on reflection
     COMPLEX (KIND=8) :: gamma1, gamma2, gamma1Sq, gamma2Sq, GK, Refl
@@ -66,7 +66,7 @@ CONTAINS
 
     CALL CalcTangent_Normals( ray3D( is  )%t, nBdry, rayt,       rayn1,       rayn2       ) ! incident
     CALL CalcTangent_Normals( ray3D( is1 )%t, nBdry, rayt_tilde, rayn1_tilde, rayn2_tilde ) ! reflected
-    
+
     ! WRITE( PRTFile, * ) 'point0', rayt, rayn1, rayn2
     ! WRITE( PRTFile, * ) 'point1', rayt_tilde, rayn1_tilde, rayn2_tilde
 
@@ -166,13 +166,13 @@ CONTAINS
       CALL RayNormal( ray%t, ray%phi, ray%c, e1, e2 )  ! Compute ray normals e1 and e2
 
       IF ( R1 == 0.0D0 .AND. R2 == 0.0D0 .AND. R3 == 0.0D0 ) THEN
-         
+
          ! LP: There is no curvature change, but rotating p forward and back
          ! can change it slightly due to floating-point imprecision, leading to
          ! long-term divergence.
          rayOut%p_tilde = ray%p_tilde
          rayOut%p_hat   = ray%p_hat
-         
+
       ELSE
 
          ! rotate p-q from e1, e2 system, onto rayn1, rayn2 system
@@ -280,7 +280,7 @@ CONTAINS
          z_xy = ( z_rr * x * y / Radius ** 2 - z_r * x * y / Radius ** 3 ) / RLen
          z_yy = ( z_rr * y * y / Radius ** 2 + z_r * x * x / Radius ** 3 ) / RLen
 
-         ! write( *, * ) 'x=', x, 'y=', y, 'z_x', z_x, 'z_y', z_y, 'z_r', z_r, 'zrr', z_rr, 'Radius', Radius, 'RLen', RLen 
+         ! write( *, * ) 'x=', x, 'y=', y, 'z_x', z_x, 'z_y', z_y, 'z_r', z_r, 'zrr', z_rr, 'Radius', Radius, 'RLen', RLen
       END IF
     END SUBROUTINE ParabotFormulas
   END SUBROUTINE Reflect3D

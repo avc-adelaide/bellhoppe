@@ -57,7 +57,7 @@ CONTAINS
 
     omega = 2.0 * pi * freq
 
-    !  Convert to Nepers/m 
+    !  Convert to Nepers/m
     alphaT = 0.0
     SELECT CASE ( AttenUnit( 1 : 1 ) )
     CASE ( 'N' )
@@ -113,7 +113,7 @@ CONTAINS
        END DO
     END SELECT
 
-    ! Convert Nepers/m to equivalent imaginary sound speed 
+    ! Convert Nepers/m to equivalent imaginary sound speed
     alphaT = alphaT * c * c / omega
     CRCI   = CMPLX( c, alphaT, KIND=8 )
 

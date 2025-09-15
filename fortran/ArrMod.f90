@@ -35,7 +35,7 @@ CONTAINS
     LOGICAL              :: NewRay
     INTEGER              :: iArr( 1 ), Nt
     REAL                 :: AmpTot, w1, w2
-    
+
     Nt     = NArr( id, ir )    ! # of arrivals
     NewRay = .TRUE.
 
@@ -166,7 +166,7 @@ CONTAINS
           END IF
 
           WRITE( ARRFile ) NArr( id, ir )
-          
+
           DO iArr = 1, NArr( id, ir )
              ! integers written out as reals below for fast reading in Matlab
              WRITE( ARRFile ) &
@@ -190,7 +190,7 @@ CONTAINS
   SUBROUTINE AddArr3D( omega, itheta, id, ir, Amp, Phase, delay, SrcDeclAngle, &
        SrcAzimAngle, RcvrDeclAngle, RcvrAzimAngle, NumTopBnc, NumBotBnc )
 !! Adds the amplitude and delay for an ARRival into a matrix of same.
-    
+
     ! Extra logic included to keep only the strongest arrivals.
 
     INTEGER,              INTENT( IN ) :: itheta, id, ir
@@ -315,7 +315,7 @@ CONTAINS
     INTEGER, INTENT( IN ) :: Ntheta, Nrd, Nr
     REAL,    INTENT( IN ) :: r( Nr )
     INTEGER               :: itheta, ir, id, iArr
-    
+
     WRITE( ARRFile ) MAXVAL( NArr3D( 1 : Ntheta,  1 : Nrd, 1 : Nr ) )
 
     DO itheta = 1, Ntheta

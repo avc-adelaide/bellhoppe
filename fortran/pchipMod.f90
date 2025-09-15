@@ -232,7 +232,7 @@ CONTAINS
        ! adjust derivative value to enforce monotonicity
        fprime_right_end = 3.0D0 * del2;
     END IF
-    
+
   END FUNCTION fprime_right_end
 
 END MODULE pchipmod

@@ -4,7 +4,7 @@ MODULE monotonicMod
   !! Provides interface to test whether an input vector is strictly monotonically increasing
 
   IMPLICIT NONE
-  
+
   INTERFACE monotonic
      MODULE PROCEDURE monotonic_sngl, monotonic_dble
   END INTERFACE monotonic
@@ -20,7 +20,7 @@ CONTAINS
 
     monotonic_sngl = .TRUE.
     IF ( N == 1 ) RETURN
-    IF ( ANY( x( 2 : N ) <= x( 1 : N - 1 ) ) ) monotonic_sngl = .FALSE.   
+    IF ( ANY( x( 2 : N ) <= x( 1 : N - 1 ) ) ) monotonic_sngl = .FALSE.
 
   END FUNCTION monotonic_sngl
 
@@ -33,7 +33,7 @@ CONTAINS
 
     monotonic_dble = .TRUE.
     IF ( N == 1 ) RETURN
-    IF ( ANY( x( 2 : N ) <= x( 1 : N - 1 ) ) ) monotonic_dble = .FALSE.   
+    IF ( ANY( x( 2 : N ) <= x( 1 : N - 1 ) ) ) monotonic_dble = .FALSE.
 
   END FUNCTION monotonic_dble
 
