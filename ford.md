@@ -1,7 +1,7 @@
 
 ## Overview
 
-BELLHOP is a beam/ray tracing model for predicting acoustic pressure fields in ocean environments. The model accounts for:
+BELLHOP is a beam/ray tracing model by Michael B. Porter (Heat, Light, and Sound Research, Inc.) for predicting acoustic pressure fields in ocean environments. The model accounts for:
 
 - Sound speed profiles (SSPs) varying with depth and range
 - Ocean boundaries (surface and seafloor) with complex reflection properties
