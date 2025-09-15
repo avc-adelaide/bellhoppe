@@ -319,13 +319,13 @@ CONTAINS
                 END IF
                 ! bump receiver index, ir, towards rB
                 IF ( Pos%Rr( ir ) < rB ) THEN
-                   IF ( ir >= Pos%NRr ) EXIT   ! jump out of the search and go to next step on ray
-                   irTT = ir + 1               ! bump right
-                   IF ( Pos%Rr( irTT ) >= rB ) EXIT
+                   IF ( ir >= Pos%NRr ) EXIT Ranges   ! jump out of the search and go to next step on ray
+                   irTT = ir + 1                      ! bump right
+                   IF ( Pos%Rr( irTT ) >= rB ) EXIT Ranges
                 ELSE
-                   IF ( ir <= 1  ) EXIT        ! jump out of the search and go to next step on ray
-                   irTT = ir - 1               ! bump left
-                   IF ( Pos%Rr( irTT ) <= rB ) EXIT
+                   IF ( ir <= 1  ) EXIT Ranges        ! jump out of the search and go to next step on ray
+                   irTT = ir - 1                      ! bump left
+                   IF ( Pos%Rr( irTT ) <= rB ) EXIT Ranges
                 END IF
                 ir = irTT
              END DO Ranges
@@ -449,7 +449,8 @@ CONTAINS
                    END IF
 
                    ! detect and skip duplicate points (happens at boundary reflection)
-                   IF ( irA /= irB .AND. NORM2( ray3D( is )%x - ray3D( is - 1 )%x ) > 1.0D3 * SPACING( ray3D( is )%x( 1 ) ) ) THEN
+                   IF ( irA /= irB .AND. NORM2( ray3D( is )%x - ray3D( is - 1 )%x ) &
+                      & > 1.0D3 * SPACING( ray3D( is )%x( 1 ) ) ) THEN
 
                       ! *** Compute contributions to bracketed receivers ***
                       dq_tilde = ray3D( is )%q_tilde - ray3D( is - 1 )%q_tilde
@@ -624,7 +625,8 @@ CONTAINS
                    Radials: DO itheta = 1, Pos%Ntheta   ! Loop over radials of receiver line
 
                       x_rcvr( 1 : 2 ) = x_rcvrMat( 1 : 2, itheta, ir )
-                      m_prime = ABS( DOT_PRODUCT( x_rcvr( 1 : 2 ) - x_ray( 1 : 2 ), n_ray_theta( 1 : 2 ) ) )  ! normal distance from rcvr to ray segment
+                      m_prime = ABS( DOT_PRODUCT( x_rcvr( 1 : 2 ) - x_ray( 1 : 2 ), n_ray_theta( 1 : 2 ) ) )
+                      ! normal distance from rcvr to ray segment
 
 !!!!!!!IF ( m_prime > BeamWindow * L_diag ) CYCLE Radials
 
@@ -742,13 +744,13 @@ CONTAINS
                 END IF
                 ! bump receiver index, ir, towards rB
                 IF ( Pos%Rr( ir ) < rB ) THEN
-                   IF ( ir >= Pos%NRr ) EXIT   ! jump out of the search and go to next step on ray
-                   irTT = ir + 1               ! bump right
-                   IF ( Pos%Rr( irTT ) >= rB ) EXIT
+                   IF ( ir >= Pos%NRr ) EXIT Ranges  ! jump out of the search and go to next step on ray
+                   irTT = ir + 1                     ! bump right
+                   IF ( Pos%Rr( irTT ) >= rB ) EXIT Ranges
                 ELSE
-                   IF ( ir <= 1  ) EXIT        ! jump out of the search and go to next step on ray
-                   irTT = ir - 1               ! bump left
-                   IF ( Pos%Rr( irTT ) <= rB ) EXIT
+                   IF ( ir <= 1  ) EXIT Ranges       ! jump out of the search and go to next step on ray
+                   irTT = ir - 1                     ! bump left
+                   IF ( Pos%Rr( irTT ) <= rB ) EXIT Ranges
                 END IF
                 ir = irTT
              END DO Ranges

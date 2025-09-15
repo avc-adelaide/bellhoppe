@@ -49,7 +49,8 @@ CONTAINS
     READ( SHDFile, REC = 2  ) PlotType
     READ( SHDFile, REC = 3  ) Nfreq, Pos%Ntheta, Pos%NSx, Pos%NSy, Pos%NSz, Pos%NRz, Pos%NRr, atten
 
-    ALLOCATE( freqVec( Nfreq ), Pos%Sz( Pos%NSz ), Pos%Rz( Pos%NRz ), Pos%Rr( Pos%NRr ), Pos%theta( Pos%Ntheta ), Stat = IAllocStat)
+    ALLOCATE( freqVec( Nfreq ), Pos%Sz( Pos%NSz ), Pos%Rz( Pos%NRz ), Pos%Rr( Pos%NRr ), &
+            & Pos%theta( Pos%Ntheta ), Stat = IAllocStat )
     IF ( IAllocStat /= 0 ) CALL ERROUT( 'ReadHeader', 'Too many source/receiver combinations' )
 
     READ( SHDFile, REC = 4  ) freqVec

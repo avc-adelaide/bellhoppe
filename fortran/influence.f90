@@ -109,7 +109,8 @@ CONTAINS
              ir2 = RToIR( rB )
 
              ! detect and skip duplicate points (happens at boundary reflection)
-             IF ( ir1 >= ir2 .OR. ABS( ray2D( iS )%x( 1 ) - ray2D( iS - 1 )%x( 1 ) ) < 1.0D3 * SPACING( ray2D( iS )%x( 1 ) ) ) THEN
+             IF ( ir1 >= ir2 .OR. &
+                & ABS( ray2D( iS )%x( 1 ) - ray2D( iS - 1 )%x( 1 ) ) < 1.0D3 * SPACING( ray2D( iS )%x( 1 ) ) ) THEN
                 rA  = rB
                 nA  = nB
                 ir1 = ir2
@@ -224,7 +225,9 @@ CONTAINS
        Tz  = rayt(  2 )
 
        gammaV( iS ) = 0.0
-       IF ( qVB( iS ) /= 0.0 ) gammaV( iS ) = 0.5 * ( pVB( iS ) / qVB( iS ) * Tr**2 + 2.0 * cN / csq * Tz * Tr - cS / csq * Tz**2 )
+       IF ( qVB( iS ) /= 0.0 ) THEN
+          gammaV( iS ) = 0.5 * ( pVB( iS ) / qVB( iS ) * Tr**2 + 2.0 * cN / csq * Tz * Tr - cS / csq * Tz**2 )
+       END IF
 
        IF ( iS == 1 ) THEN
           KMAHV( 1 ) = 1
@@ -504,13 +507,13 @@ CONTAINS
 
           ! bump receiver index, ir, towards rB
           IF ( Pos%Rr( ir ) < rB ) THEN
-             IF ( ir >= Pos%NRr        ) EXIT  ! go to next step on ray
-             irTT = ir + 1                     ! bump right
-             IF ( Pos%Rr( irTT ) >= rB ) EXIT
+             IF ( ir >= Pos%NRr        ) EXIT RcvrRanges  ! go to next step on ray
+             irTT = ir + 1                                ! bump right
+             IF ( Pos%Rr( irTT ) >= rB ) EXIT RcvrRanges
           ELSE
-             IF ( ir <= 1              ) EXIT  ! go to next step on ray
-             irTT = ir - 1                     ! bump left
-             IF ( Pos%Rr( irTT ) <= rB ) EXIT
+             IF ( ir <= 1              ) EXIT RcvrRanges  ! go to next step on ray
+             irTT = ir - 1                                ! bump left
+             IF ( Pos%Rr( irTT ) <= rB ) EXIT RcvrRanges
           END IF
           ir = irTT
        END DO RcvrRanges
@@ -631,13 +634,13 @@ CONTAINS
 
           ! receiver not bracketed; bump receiver index, ir, towards rB
           IF ( rB > Pos%Rr( ir ) ) THEN
-             IF ( ir >= Pos%NRr        ) EXIT   ! go to next step on ray
-             irTT = ir + 1                      ! bump right
-             IF ( Pos%Rr( irTT ) >= rB ) EXIT   ! go to next step on ray
+             IF ( ir >= Pos%NRr        ) EXIT RcvrRanges  ! go to next step on ray
+             irTT = ir + 1                                ! bump right
+             IF ( Pos%Rr( irTT ) >= rB ) EXIT RcvrRanges  ! go to next step on ray
           ELSE
-             IF ( ir <= 1              ) EXIT   ! go to next step on ray
-             irTT = ir - 1                      ! bump left
-             IF ( Pos%Rr( irTT ) <= rB ) EXIT   ! go to next step on ray
+             IF ( ir <= 1              ) EXIT RcvrRanges  ! go to next step on ray
+             irTT = ir - 1                                ! bump left
+             IF ( Pos%Rr( irTT ) <= rB ) EXIT RcvrRanges  ! go to next step on ray
           END IF
           ir = irTT
 
@@ -664,7 +667,8 @@ CONTAINS
           CALL WriteRay3D( DegRad * SrcDeclAngle, DegRad * SrcAzimAngle, is )   ! produces no output if NR=1
        END IF
     CASE ( 'A', 'a' )           ! arrivals
-       CALL AddArr( omega, iz, ir, Amp, phaseInt, delay, SrcDeclAngle, RcvrDeclAngle, ray2D( iS )%NumTopBnc, ray2D( iS )%NumBotBnc )
+       CALL AddArr( omega, iz, ir, Amp, phaseInt, delay, SrcDeclAngle, &
+                  & RcvrDeclAngle, ray2D( iS )%NumTopBnc, ray2D( iS )%NumBotBnc )
     CASE ( 'C' )                ! coherent TL
        dfield = CMPLX( Amp * EXP( -i * ( omega * delay - phaseInt ) ) )
        ! WRITE( PRTFile, * ) 'ApplyContribution dfield', dfield
@@ -745,7 +749,8 @@ CONTAINS
                 ! LP: Changed to use ApplyContribution in order to support
                 ! incoherent, semi-coherent, and arrivals.
                 SrcDeclAngle = RadDeg * alpha   ! take-off angle in degrees
-                CPA    = ABS( deltaz * ( rB - rA ) ) / SQRT( ( rB - rA )**2 + ( ray2D( iS )%x( 2 ) - ray2D( iS - 1 )%x( 2 ) )**2  )
+                CPA    = ABS( deltaz * ( rB - rA ) ) / SQRT( ( rB - rA )**2 + &
+                            & ( ray2D( iS )%x( 2 ) - ray2D( iS - 1 )%x( 2 ) )**2  )
                 DS     = SQRT( deltaz **2 - CPA **2 )
                 SX1    = SINT + DS
                 thet   = ATAN( CPA / SX1 )

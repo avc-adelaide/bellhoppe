@@ -248,6 +248,10 @@ cov:
 	@echo "Generating coverage reports..."
 	hatch run cov
 
+lint:
+	@echo "Running fortitude linter..."
+	hatch run lint
+
 ###### COVERAGE ######
 
 coverage-clean:

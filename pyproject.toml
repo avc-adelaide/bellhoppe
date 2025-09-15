@@ -105,6 +105,7 @@ cov  = [
     "install-dev",
     "make coverage-full"
 ]
+lint = "fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003"
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true
