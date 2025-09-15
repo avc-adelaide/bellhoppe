@@ -773,9 +773,10 @@ END SUBROUTINE EvaluateSSP2D
 
 SUBROUTINE Analytic3D( x, t, c, cimag, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho )
 
-  REAL (KIND=8) :: x( 3 ), c, cimag, gradc( 3 ), cxx, cyy, czz, cxy, cxz, cyz, c0, W, Wz, epsilon, epsilon_y
+  REAL (KIND=8), INTENT( IN  ) :: x( 3 )
   REAL (KIND=8), INTENT( IN  ) :: t( 3 )   ! ray tangent; for edge cases of updating segments
-  REAL (KIND=8) :: rho
+  REAL (KIND=8), INTENT( IN  ) :: c, cimag, gradc( 3 ), cxx, cyy, czz, cxy, cxz, cyz, rho
+  REAL (KIND=8) :: c0, W, Wz, epsilon, epsilon_y
 
   iSegz = 1
   c0    = 1500.0

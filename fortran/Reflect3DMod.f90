@@ -14,12 +14,13 @@ CONTAINS
     USE RefCoef
     USE sspMod
 
-    INTEGER,           INTENT( IN    ) :: Npts                        ! Number of points in the reflection coefficient
-    REAL    (KIND= 8), INTENT( INOUT ) :: nBdry( 3 )                  ! normal to the boundary (changes if cone reflection)
-    CHARACTER (LEN=3), INTENT( IN    ) :: BotTop                      ! bottom or top flag
-    TYPE( HSInfo ),    INTENT( IN    ) :: HS                          ! halfspace parameters
-    TYPE(ReflectionCoef), INTENT( IN ) :: RefC( NPts )                ! reflection coefficient
     INTEGER,           INTENT( INOUT ) :: is                          ! index of the ray step
+    TYPE( HSInfo ),    INTENT( IN    ) :: HS                          ! halfspace parameters
+    CHARACTER (LEN=3), INTENT( IN    ) :: BotTop                      ! bottom or top flag
+    REAL    (KIND=8),  INTENT( INOUT ) :: nBdry( 3 )                  ! normal to the boundary (changes if cone reflection)
+    REAL    (KIND=8)   INTENT( IN    ) :: z_xx, z_xy, z_yy, kappa_xx, kappa_xy, kappa_yy
+    TYPE(ReflectionCoef), INTENT( IN ) :: RefC( NPts )                ! reflection coefficient
+    INTEGER,           INTENT( IN    ) :: Npts                        ! Number of points in the reflection coefficient
     INTEGER          :: is1
     REAL    (KIND=8) :: rayt( 3 ), rayn1( 3 ), rayn2( 3 )             ! unit ray tangent and normals
     REAL    (KIND=8) :: rayt_tilde( 3 ), rayn1_tilde( 3 ), rayn2_tilde( 3 ), cn1jump, cn2jump, csjump
@@ -30,7 +31,7 @@ CONTAINS
     REAL    (KIND=8) :: tBdry( 3 )                                    ! tangent to the boundary
     REAL    (KIND=8) :: e1( 3 ), e2( 3 )                              ! ray normals for ray-centered coordinates
     REAL    (KIND=8) :: p_tilde_in(  2 ), p_hat_in(  2 ), q_tilde_in(  2 ), q_hat_in(  2 ), p_tilde_out( 2 ), p_hat_out( 2 )
-    REAL    (KIND=8) :: z_xx, z_xy, z_yy, kappa_xx, kappa_xy, kappa_yy, t_rot( 2 ), n_rot( 2 )
+    REAL    (KIND=8) :: t_rot( 2 ), n_rot( 2 )
     REAL    (KIND=8) :: RotMat( 2, 2 ), kappaMat( 2, 2 ), DMat( 2, 2 ), DMatTemp( 2, 2 )
 
     is  = is + 1

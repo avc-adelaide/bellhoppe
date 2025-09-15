@@ -14,13 +14,15 @@ CONTAINS
     USE sspMod
     USE Cone   ! if using analytic formulas for the cone (conical seamount)
 
+    INTEGER,              INTENT( INOUT ) :: is
+    TYPE( HSInfo ),       INTENT( IN ) :: HS                              ! half-space properties
+    CHARACTER (LEN=3),    INTENT( IN ) :: BotTop                          ! Flag indicating bottom or top reflection
+    REAL     (KIND=8),    INTENT( IN ) :: nBdry3d( 3 )                    ! Normal to the boundary
+    REAL     (KIND=8),    INTENT( IN ) :: z_xx, z_xy, z_yy
+    REAL     (KIND=8),    INTENT( IN ) :: kappa_xx, kappa_xy, kappa_yy
+    TYPE(ReflectionCoef), INTENT( IN ) :: RefC( NPts )                    ! reflection coefficient
     INTEGER,              INTENT( IN ) :: Npts
     REAL     (KIND=8),    INTENT( IN ) :: tradial( 2 )
-    REAL     (KIND=8),    INTENT( IN ) :: nBdry3d( 3 )                    ! Normal to the boundary
-    CHARACTER (LEN=3),    INTENT( IN ) :: BotTop                          ! Flag indicating bottom or top reflection
-    TYPE( HSInfo ),       INTENT( IN ) :: HS                              ! half-space properties
-    TYPE(ReflectionCoef), INTENT( IN ) :: RefC( NPts )                    ! reflection coefficient
-    INTEGER,              INTENT( INOUT ) :: is
     INTEGER           :: is1
     REAL     (KIND=8) :: c, cimag, gradc( 2 ), crr, crz, czz, rho         ! derivatives of sound speed
     REAL     (KIND=8) :: RM, RN, Tg, Th, rayt( 2 ), rayn( 2 ), rayt_tilde( 2 ), rayn_tilde( 2 ), cnjump, csjump  ! for curvature change
@@ -29,9 +31,7 @@ CONTAINS
     REAL     (KIND=8) :: kappa                                            ! Boundary curvature
     REAL     (KIND=8) :: tBdry( 2 ), nBdry( 2 )                           ! tangent, normal to boundary
     TYPE(ReflectionCoef) :: RInt
-    REAL     (KIND=8) :: z_xx, z_xy, z_yy, &
-         t_rot( 2 ), n_rot( 2 ), RotMat( 2, 2 ), kappaMat( 2, 2 ), DMat( 2, 2 )   ! for cone reflection
-    REAL     (KIND=8) :: kappa_xx, kappa_xy, kappa_yy
+    REAL     (KIND=8) :: t_rot( 2 ), n_rot( 2 ), RotMat( 2, 2 ), kappaMat( 2, 2 ), DMat( 2, 2 )   ! for cone reflection
 
     is  = is + 1
     is1 = is + 1
