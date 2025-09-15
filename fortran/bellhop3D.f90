@@ -821,7 +821,7 @@ FUNCTION RayToOceanX( x, xs, tradial )
   RayToOceanX = [ xs( 1 ) + x( 1 ) * tradial( 1 ), &
                   xs( 2 ) + x( 1 ) * tradial( 2 ), &
                   x( 2 ) ]
-END FUNCTION
+END FUNCTION RayToOceanX
 
 FUNCTION RayToOceanT( t, tradial )
 !! Transform ray tangent to ocean tangent coordinates
@@ -830,7 +830,7 @@ FUNCTION RayToOceanT( t, tradial )
   RayToOceanT = [ t( 1 ) * tradial( 1 ), &
                   t( 1 ) * tradial( 2 ), &
                   t( 2 ) ]
-END FUNCTION
+END FUNCTION RayToOceanT
 
 FUNCTION OceanToRayX( x, xs, tradial, t, snapDim )
 !! Transform ocean coordinates to ray coordinates
@@ -896,7 +896,7 @@ FUNCTION OceanToRayX( x, xs, tradial, t, snapDim )
   END DO
   WRITE( PRTFile, * ) 'Warning in OceanToRayX: Failed to transform 3D -> 2D -> 3D consistently'
   OceanToRayX = ret
-END FUNCTION
+END FUNCTION OceanToRayX
 
 ! **********************************************************************!
 

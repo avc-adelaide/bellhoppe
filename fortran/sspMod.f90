@@ -55,7 +55,7 @@ MODULE sspmod
 
   TYPE BdryPt
      TYPE( HSInfo )   :: HS
-  END TYPE
+  END TYPE BdryPt
 
   TYPE BdryType
      TYPE( BdryPt )   :: Top, Bot
@@ -894,7 +894,7 @@ END SUBROUTINE Analytic3D
         END DO
      ENDIF
 
-  END SUBROUTINE
+  END SUBROUTINE UpdateDepthSegmentT
 
   SUBROUTINE UpdateRangeSegmentT( x, t )
      REAL (KIND=8), INTENT(IN) :: x( 2 ), t( 2 )
@@ -919,7 +919,7 @@ END SUBROUTINE Analytic3D
         END DO
      ENDIF
 
-  END SUBROUTINE
+  END SUBROUTINE UpdateRangeSegmentT
 
   SUBROUTINE Update3DXSegmentT( x, t )
      REAL (KIND=8), INTENT(IN) :: x( 3 ), t( 3 )
@@ -944,7 +944,7 @@ END SUBROUTINE Analytic3D
         END DO
      ENDIF
 
-  END SUBROUTINE
+  END SUBROUTINE Update3DXSegmentT
 
   SUBROUTINE Update3DYSegmentT( x, t )
      REAL (KIND=8), INTENT(IN) :: x( 3 ), t( 3 )
@@ -969,7 +969,7 @@ END SUBROUTINE Analytic3D
         END DO
      ENDIF
 
-  END SUBROUTINE
+  END SUBROUTINE Update3DYSegmentT
 
   SUBROUTINE Update3DZSegmentT( x, t )
      REAL (KIND=8), INTENT(IN) :: x( 3 ), t( 3 )
@@ -994,7 +994,7 @@ END SUBROUTINE Analytic3D
         END DO
      ENDIF
 
-  END SUBROUTINE
+  END SUBROUTINE Update3DZSegmentT
 
 END MODULE sspmod
 

@@ -16,7 +16,7 @@ MODULE RefCoef
 
   TYPE ReflectionCoef
       REAL(KIND=8) :: theta, R, phi
-  END TYPE
+  END TYPE ReflectionCoef
 
   TYPE(ReflectionCoef), ALLOCATABLE :: RBot( : ), RTop( : )
 

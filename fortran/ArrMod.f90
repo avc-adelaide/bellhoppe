@@ -17,7 +17,7 @@ MODULE ArrMod
      INTEGER :: NTopBnc, NBotBnc
      REAL    :: SrcDeclAngle, SrcAzimAngle, RcvrDeclAngle, RcvrAzimAngle, A, Phase
      COMPLEX :: delay
-  END TYPE
+  END TYPE Arrival
 
   TYPE(Arrival), ALLOCATABLE :: Arr( :, :, : ), Arr3D( :, :, :, : )
 

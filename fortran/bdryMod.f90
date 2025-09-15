@@ -26,7 +26,7 @@ MODULE bdrymod
      REAL     (KIND=8) :: rho, Depth                    ! density, depth
      CHARACTER (LEN=1) :: BC                            ! Boundary condition type
      CHARACTER (LEN=6) :: Opt
-  END TYPE
+  END TYPE HSInfo2
 
   TYPE BdryPt
      REAL    (KIND=8) :: x( 2 ), t( 2 ), n( 2 )         ! coordinate, tangent, and outward normal for a segment
@@ -34,7 +34,7 @@ MODULE bdrymod
      REAL    (KIND=8) :: Len, Kappa                     ! length and curvature of a segment
      REAL    (KIND=8) :: Dx, Dxx, Dss                   ! first, second derivatives wrt depth; s is along tangent
      TYPE( HSInfo2 )  :: HS
-  END TYPE
+  END TYPE BdryPt
 
   TYPE(BdryPt), ALLOCATABLE :: Top( : ), Bot( : )
 
