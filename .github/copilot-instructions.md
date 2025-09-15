@@ -22,7 +22,11 @@ Core build requires only:
 Python interfaces require:
 - Python 3.12
 - `hatch` package manager (`pipx install hatch`)
-- Dependencies: `matplotlib`, `arlpy`, `pytest` (may fail due to network timeouts in restricted environments)
+- Dependencies: `matplotlib`, `gcovr`, `numpy`, `scipy`, `pandas`, `bokeh` (may fail due to network timeouts in restricted environments)
+
+Optional tools:
+- `gcov-15` or `gcov` for coverage analysis
+- `ford` for documentation generation
 
 MATLAB interfaces require:
 - MATLAB with paths configured per README.md instructions
@@ -37,6 +41,7 @@ MATLAB interfaces require:
 **Python Tests:**
 - `export PATH="$PWD/bin:$PATH"`
 - `hatch run test` -- runs Python test suite. Takes ~30 seconds when network access available. NEVER CANCEL. Set timeout to 180+ seconds minimum.
+- Alternative if hatch not available: `python3 -m pytest tests/ -v`
 - **NOTE**: Python tests may fail due to network timeouts downloading dependencies (arlpy, matplotlib). This is expected in restricted environments.
 
 ### Manual Validation Scenarios
@@ -69,10 +74,11 @@ ALWAYS test acoustic simulation functionality after making changes:
 ## Timing Expectations and Critical Warnings
 
 **NEVER CANCEL builds or tests**. Set explicit timeouts:
-- `make` build: ~19 seconds actual, **set 60+ second timeout minimum**
-- `make install`: ~0.5 seconds actual, **set 60+ second timeout minimum**  
+- `make` build: ~15 seconds actual, **set 60+ second timeout minimum**
+- `make install`: ~1 second actual, **set 60+ second timeout minimum**  
 - `hatch run test`: ~30 seconds when working, up to 5+ minutes with network issues, **set 180+ second timeout minimum**
 - Individual acoustic simulations: typically <1 second, **set 30+ second timeout**
+- Coverage builds: ~30-60 seconds, **set 120+ second timeout minimum**
 
 **NETWORK DEPENDENCY ISSUES:**
 - Python package installation may fail with network timeouts
@@ -82,18 +88,19 @@ ALWAYS test acoustic simulation functionality after making changes:
 ## Repository Structure and Navigation
 
 ### Key Directories
-- `Bellhop/` -- Main Fortran source files (bellhop.f90, bellhop3D.f90, 43 .f90 files total)
-- `misc/` -- Utility modules and mathematical libraries (25+ .f90 files)  
+- `fortran/` -- All Fortran source files (bellhop.f90, bellhop3D.f90, 32 .f90 files total)
 - `bin/` -- Installed executables (created by `make install`)
-- `examples/` -- 267 example input files across 20+ test scenarios
+- `examples/` -- 267+ example input files across 23+ test scenarios
 - `Matlab/` -- MATLAB interfaces and plotting functions
-- `tests/` -- Python test suite (2 test files)
+- `python/` -- Python package source code and interfaces
+- `tests/` -- Python test suite (7+ test files)
 - `docs/` -- Documentation including user guides and change logs
 
 ### Important Files  
-- `Makefile` (215 lines) -- Main build system
+- `Makefile` (348 lines) -- Main build system with coverage and testing support
 - `README.md` -- Installation and usage instructions
-- `pyproject.toml` -- Python package configuration
+- `pyproject.toml` -- Python package configuration with hatch build system
+- `fpm.toml` -- FORD documentation generation configuration
 - `.github/workflows/check.yml` -- CI/CD pipeline
 - `docs/CHANGES.md` -- Detailed change log from UC San Diego team
 - `examples/Makefile` -- Example test suite
@@ -102,7 +109,7 @@ ALWAYS test acoustic simulation functionality after making changes:
 Navigate to these for testing and validation:
 - `examples/Munk/` -- Classic Munk sound speed profile tests
 - `examples/free/` -- Free space acoustic propagation
-- `examples/Bellhop3DTests/` -- 3D acoustic simulation examples
+- `examples/Bellhop3DTests/free/` -- 3D acoustic simulation examples
 - `examples/halfspace/` -- Simple environment tests
 
 ## Common Validation Tasks
@@ -113,6 +120,22 @@ Always run these validation steps:
 2. Test basic 2D: `cd examples/Munk && bellhop.exe MunkB_ray`  
 3. Test 3D functionality: `cd examples/Bellhop3DTests/free && bellhop3d.exe freeBhat`
 4. Run Python tests if network available: `hatch run test`
+
+### Coverage Testing
+The build system supports code coverage analysis:
+- `make coverage-full` -- Complete coverage build, test, and report generation
+- `make coverage-test` -- Run tests with coverage instrumentation
+- `make coverage-report` -- Generate GCOV reports
+- `make coverage-html` -- Generate HTML coverage reports for FORD integration
+
+### Documentation Generation
+- `hatch run doc` -- Generate FORD documentation in `doc/` directory
+- `make docs` -- Alternative documentation generation command
+
+### Code Quality and Linting
+- `hatch run lint` -- Run fortitude Fortran linter on source code
+- Linter checks code style, formatting, and potential issues
+- Configuration in pyproject.toml limits line length to 129 characters
 
 ### File Output Verification
 Successful runs create:
@@ -129,12 +152,13 @@ Successful runs create:
 
 ## Build System Details
 
-The build uses traditional Makefiles:
-- Root `Makefile` coordinates `misc/` and `Bellhop/` subdirectories
-- `misc/` builds `libmisc.a` library with mathematical utilities
-- `Bellhop/` builds main executables linking against `libmisc.a`
+The build uses a modernized Makefile system:
+- Root `Makefile` contains all build logic in a single file
+- All Fortran sources are unified in the `fortran/` directory
 - Compiler flags are optimized for performance (`-O2`, `-ffast-math`)
 - Architecture-specific optimizations automatically selected
+- Support for coverage builds with GCOV integration
+- Hatch package manager integration for Python components
 
 ## Network-Independent Operation
 
@@ -145,6 +169,6 @@ Core BELLHOP functionality works without network access:
 - Basic functionality testing
 
 Network required only for:
-- Python package installation (`arlpy`, `matplotlib`)
+- Python package installation (`matplotlib`, `gcovr`, `numpy`, `scipy`, `pandas`, `bokeh`)
 - Full Python test suite execution
-- Documentation builds (if using network-dependent tools)
+- Documentation builds with FORD (if using network-dependent tools)
