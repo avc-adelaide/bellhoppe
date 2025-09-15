@@ -73,7 +73,7 @@ CONTAINS
     REAL,      INTENT( IN ) :: freq0, atten      ! Nominal frequency, stabilizing attenuation (for wavenumber integration only)
     CHARACTER, INTENT( IN ) :: FileName*( * )    ! Name of the file (could be a shade file or a Green's function file)
     CHARACTER, INTENT( IN ) :: Title*( * )       ! Arbitrary title
-    CHARACTER, INTENT( IN ) :: PlotType*( 10 )   ! If 'TL', writes only first and last Sx and Sy
+    CHARACTER(LEN=10), INTENT(IN) :: PlotType   ! If 'TL', writes only first and last Sx and Sy
 
     ! receiver bearing angles
     IF ( .NOT. ALLOCATED( Pos%theta ) ) THEN

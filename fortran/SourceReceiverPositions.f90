@@ -54,7 +54,7 @@ CONTAINS
     ! If the broadband option is not selected, then the input freq (a scalar) is stored in the frequency vector
 
     REAL (KIND=8), INTENT( IN ) :: freq0             ! Nominal or carrier frequency
-    CHARACTER,     INTENT( IN ) :: BroadbandOption*( 1 )
+    CHARACTER(LEN=1), INTENT(IN) :: BroadbandOption
     INTEGER                     :: ifreq
 
     ! Broadband run?

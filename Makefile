@@ -232,6 +232,8 @@ clean: coverage-clean
 
 ###### HATCH ######
 
+cleantest: clean all install test
+
 test:
 	@echo "Running Python test suite..."
 	hatch run test
