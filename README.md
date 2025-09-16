@@ -82,7 +82,8 @@ It should automatically set up the correct compiler flags, in which case run:
     make install
 
 This will install binaries `bellhop(3d).exe` into the `./bin` directory, which should be
-added via your standard shell configuration. The Makefile message outputs an example of how
+added to your path via your standard shell configuration.
+The Makefile message outputs an example of how
 to do this for a ZSH or BASH setup.
 
 
