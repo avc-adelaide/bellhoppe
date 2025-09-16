@@ -25,15 +25,18 @@ bellhop.exe inputfile
 bellhop3d.exe inputfile
 ```
 
-Input files use `.env` extension and specify:
+Input files have an `.env` extension and specify:
 - Ocean environment (sound speed, boundaries, bathymetry)
 - Source characteristics (frequency, depth, beam pattern)
 - Receiver array geometry
 - Run parameters (ray angles, output options)
 
-Rather than using the traditional text file inputs, a modern Python interface is provided by the [`arlpy` module `uwapm`](https://arlpy.readthedocs.io/en/latest/uwapm.html).
+Additional text files can be provided to define tables of sound speed profile (.ssp), bathometry (.bty), and so on.
 
-The automated test suite for this repository is written using the `arlpy` interface.
+A modern Python interface is provided in this package by an extension of the [`arlpy` module `uwapm`](https://arlpy.readthedocs.io/en/latest/uwapm.html).
+This allows reading and writing of bellhop-native input and output files, with a modern Python interface for specifying parameters and executing calculation tasks.
+
+The automated test suite for this repository is written using this Python `bellhop` module.
 
 
 ## Documentation
