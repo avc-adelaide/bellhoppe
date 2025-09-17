@@ -238,6 +238,8 @@ test:
 	@echo "Running Python test suite..."
 	hatch run test
 
+doc: docs
+
 docs:
 	@echo "Generating Fortran/FORD documentation..."
 	hatch run docf
