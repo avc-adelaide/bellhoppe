@@ -17,6 +17,7 @@
 
 # Documentation build directory
 doc/
+docs-python/_build/
 *.dylib
 *.dll
 

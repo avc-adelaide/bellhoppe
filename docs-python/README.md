@@ -1,39 +1,15 @@
 # Python API Documentation
 
-This directory contains the Sphinx-based documentation for the BELLHOP Python API.
+Simple configuration for generating Python API documentation with Sphinx.
 
-## Building the Documentation
-
-To build the Python API documentation:
+## Build 
 
 ```bash
-make python-docs
+# Install sphinx if needed
+pip install sphinx
+
+# Generate documentation
+sphinx-build docs-python docs-python/_build/html
 ```
 
-This will generate HTML documentation in `docs-python/_build/html/index.html`.
-
-## Requirements
-
-- Python 3.12+
-- Sphinx
-- Python dependencies: numpy, scipy, matplotlib, pandas, bokeh
-
-## Contents
-
-- `conf.py` - Sphinx configuration
-- `index.rst` - Main documentation page
-- `_build/html/` - Generated HTML documentation (created during build)
-
-## Features
-
-The documentation automatically extracts:
-
-- Function docstrings from `python/bellhop/bellhop.py` (47 functions)
-- Plotting utilities from `python/bellhop/plot.py`
-- Module-level documentation
-- Full API reference with source code links
-- Search functionality
-
-## Integration
-
-This documentation is designed to complement the existing FORD-generated Fortran documentation and can be integrated into GitHub Pages workflows.
+The generated documentation will be in `docs-python/_build/html/index.html`.
