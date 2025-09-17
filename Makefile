@@ -196,7 +196,7 @@ export LAPACK_LIBS = -llapack
 
 ####### TARGETS #######
 
-.PHONY: all install clean test docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full
+.PHONY: all install clean test docs python-docs docs-all coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full
 
 all:
 	(cd fortran;	make -k all)
@@ -219,6 +219,7 @@ install: all
 clean: coverage-clean
 	-rm -f bin/*.exe
 	-rm -rf doc
+	-rm -rf docs-python/_build
 	find . -name '*.dSYM' -exec rm -r {} +
 	find . -name '*.png'  -exec rm -r {} +
 	find . -name '*.eps'  -exec rm -r {} +
@@ -243,6 +244,18 @@ docs:
 	hatch run doc
 	@echo "Documentation generated in ./doc/ directory"
 	@echo "Open ./doc/index.html in a web browser to view"
+
+python-docs:
+	@echo "Generating Python API documentation..."
+	@echo "Using direct sphinx-build to avoid network dependencies..."
+	cd docs-python && sphinx-build -b html . _build/html
+	@echo "Python documentation generated in ./docs-python/_build/html/ directory"
+	@echo "Open ./docs-python/_build/html/index.html in a web browser to view"
+
+docs-all: docs python-docs
+	@echo "All documentation generated:"
+	@echo "  - Fortran docs: ./doc/index.html"
+	@echo "  - Python docs: ./docs-python/_build/html/index.html"
 
 cov:
 	@echo "Generating coverage reports..."

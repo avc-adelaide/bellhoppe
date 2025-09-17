@@ -16,6 +16,7 @@ dependencies = [
     "scipy",
     "pandas",
     "bokeh",
+    "sphinx",
 ]
 
 requires-python = ">=3.12, <3.13"
@@ -101,6 +102,11 @@ debug = [
     "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import bellhop; print(\"bellhop:\", bellhop.__file__)'"
 ]
 doc  = "ford -g -d fortran ford.md"
+python-docs = [
+    "sphinx-build -b html docs-python docs-python/_build/html",
+    "echo Python API documentation generated in docs-python/_build/html/",
+    "echo Open docs-python/_build/html/index.html in a web browser to view"
+]
 cov  = [
     "install-dev",
     "make coverage-full"
