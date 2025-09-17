@@ -109,6 +109,55 @@ beam_rev = {v: k for k, v in beam_map.items()}
 # models (in order of preference)
 _models = []
 
+def _get_default_env2d():
+    """Get default environment dictionary for 2D underwater acoustic modeling.
+    
+    This function provides the shared default values used by both create_env2d()
+    and read_env2d() to avoid duplication.
+    
+    :returns: dictionary with default environment parameters
+    """
+    return {
+        'name': 'arlpy',
+        'type': '2D',                   # 2D/3D
+        'frequency': 25000,             # Hz
+        'ssp_env': None,                #
+        'soundspeed': 1500,             # m/s
+        'soundspeed_interp': spline,    # spline/linear
+        'bottom_soundspeed': 1600,      # m/s
+        'bottom_soundspeed_shear': 0,   # m/s
+        'bottom_density': 1600,         # kg/m^3
+        'bottom_absorption': None,       # dB/wavelength??
+        'bottom_absorption_shear': None, # dB/wavelength??
+        'bottom_roughness': 0,          # m (rms)
+        'surface': None,                # surface profile
+        'surface_interp': linear,       # curvilinear/linear
+        'tx_depth': 5,                  # m
+        'tx_ndepth': None,              #
+        'tx_directionality': None,      # [(deg, dB)...]
+        'rx_depth': 10,                 # m
+        'rx_ndepth': None,              #
+        'rx_range': 1000,               # m
+        'rx_nrange': None,              #
+        'depth': 25,                    # m
+        'depth_interp': linear,         # curvilinear/linear
+        'depth_npts': 0,                #
+        'depth_sigmaz': 0,              #
+        'depth_max': None,              # m
+        'min_angle': -80,               # deg
+        'max_angle': 80,                # deg
+        'nbeams': 0,                    # number of beams (0 = auto)
+        'top_boundary_condition': 'vacuum',
+        'volume_attenuation': 'none',
+        'attenuation_units': 'frequency dependent',
+        'step_size': None,
+        'box_depth': None,
+        'box_range': None,
+        'tx_type': 'default',
+        'beam_type': 'default',
+        'grid': 'default',
+    }
+
 def create_env2d(**kv):
     """Create a new 2D underwater environment.
 
@@ -152,46 +201,7 @@ def create_env2d(**kv):
     >>> import arlpy.uwapm as pm
     >>> env = pm.create_env2d(depth=[[0,20], [300,10], [500,18], [1000,15]])
     """
-    env = {
-        'name': 'arlpy',
-        'type': '2D',                   # 2D/3D
-        'frequency': 25000,             # Hz
-        'ssp_env': None,                #
-        'soundspeed': 1500,             # m/s
-        'soundspeed_interp': spline,    # spline/linear
-        'bottom_soundspeed': 1600,      # m/s
-        'bottom_soundspeed_shear': 0,   # m/s
-        'bottom_density': 1600,         # kg/m^3
-        'bottom_absorption': None,       # dB/wavelength??
-        'bottom_absorption_shear': None, # dB/wavelength??
-        'bottom_roughness': 0,          # m (rms)
-        'surface': None,                # surface profile
-        'surface_interp': linear,       # curvilinear/linear
-        'tx_depth': 5,                  # m
-        'tx_ndepth': None,              #
-        'tx_directionality': None,      # [(deg, dB)...]
-        'rx_depth': 10,                 # m
-        'rx_ndepth': None,              #
-        'rx_range': 1000,               # m
-        'rx_nrange': None,              #
-        'depth': 25,                    # m
-        'depth_interp': linear,         # curvilinear/linear
-        'depth_npts': 0,                #
-        'depth_sigmaz': 0,              #
-        'depth_max': None,              # m
-        'min_angle': -80,               # deg
-        'max_angle': 80,                # deg
-        'nbeams': 0,                    # number of beams (0 = auto)
-        'top_boundary_condition': 'vacuum',
-        'volume_attenuation': 'none',
-        'attenuation_units': 'frequency dependent',
-        'step_size': None,
-        'box_depth': None,
-        'box_range': None,
-        'tx_type': 'default',
-        'beam_type': 'default',
-        'grid': 'default',
-    }
+    env = _get_default_env2d()
     for k, v in kv.items():
         if k not in env.keys():
             raise KeyError('Unknown key: '+k)
@@ -294,47 +304,8 @@ def read_env2d(fname):
     if not os.path.exists(fname):
         raise FileNotFoundError(f"Environment file not found: {fname}")
 
-    # Initialize environment with default values from create_env2d
-    env = {
-        'name': 'arlpy',
-        'type': '2D',
-        'frequency': 25000,
-        'ssp_env': None,
-        'soundspeed': 1500,
-        'soundspeed_interp': spline,
-        'bottom_soundspeed': 1600,
-        'bottom_soundspeed_shear': 0,
-        'bottom_density': 1600,
-        'bottom_absorption': None,
-        'bottom_absorption_shear': None,
-        'bottom_roughness': 0,
-        'surface': None,
-        'surface_interp': linear,
-        'tx_depth': 5,
-        'tx_directionality': None,
-        'rx_depth': 10,
-        'rx_range': 1000,
-        'tx_ndepth': None,
-        'rx_ndepth': None,
-        'rx_nrange': None,
-        'depth': 25,
-        'depth_interp': linear,
-        'depth_npts': 0,
-        'depth_sigmaz': 0,
-        'depth_max': None,
-        'min_angle': -80,
-        'max_angle': 80,
-        'nbeams': 0,
-        'top_boundary_condition': 'vacuum',
-        'volume_attenuation': 'none',
-        'attenuation_units': 'frequency dependent',
-        'step_size': None,
-        'box_depth': None,
-        'box_range': None,
-        'beam_type': 'default',
-        'tx_type': 'default',
-        'grid': 'default',
-    }
+    # Initialize environment with default values
+    env = _get_default_env2d()
 
     def _parse_quoted_string(line):
         """Extract string from within quotes"""
