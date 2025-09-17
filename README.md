@@ -129,12 +129,24 @@ the Python test suite located in the `tests/` subfolder:
 
 ## Building documentation locally
 
-Generate documentation locally with:
+### Fortran Documentation
+Generate Fortran documentation locally with:
 ```bash
 hatch run doc
 ```
 This uses FORD to build the HTML documentation in `doc/` with the static pages `docs/` copied
 into the `doc/media` subdirectory, with main page `doc/index.html`.
+
+### Python API Documentation
+Generate Python API documentation with:
+```bash
+# Install sphinx if needed
+pip install sphinx
+
+# Generate documentation
+sphinx-build docs-python docs-python/_build/html
+```
+The generated documentation will be in `docs-python/_build/html/index.html`.
 
 
 ## Code coverage analysis
