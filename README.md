@@ -144,7 +144,7 @@ Generate Python API documentation with:
 pip install sphinx
 
 # Generate documentation
-sphinx-build docs-python docs-python/_build/html
+sphinx-build python/docs python/docs/_build/html
 ```
 The generated documentation will be in `docs-python/_build/html/index.html`.
 

@@ -19,6 +19,8 @@ The core algorithms implement:
 
 See the main [README.md](../README.md) for build instructions.
 
+### Fortran
+
 Basic usage:
 ```
 bellhop.exe inputfile
@@ -33,11 +35,17 @@ Input files have an `.env` extension and specify:
 
 Additional text files can be provided to define tables of sound speed profile (.ssp), bathometry (.bty), and so on.
 
-A modern Python interface is provided in this package by an extension of the [`arlpy` module `uwapm`](https://arlpy.readthedocs.io/en/latest/uwapm.html).
+### Python
+
+A modern [Python interface](media/python/index.html) is provided in this package. Basic usage:
+```
+    TODO
+```
 This allows reading and writing of bellhop-native input and output files, with a modern Python interface for specifying parameters and executing calculation tasks.
 
 The automated test suite for this repository is written using this Python `bellhop` module.
 
+This Python interface is extended from the [`arlpy` module `uwapm`](https://arlpy.readthedocs.io/en/latest/uwapm.html) by Mandar Chitre.
 
 ## Documentation
 
@@ -48,6 +56,7 @@ Acoustics Toolbox project and subsequent development efforts:
 - **[Original Repository Information](media/index.htm)** - General information about the Acoustics Toolbox project structure
 - **[BELLHOP User Guide](media/bellhop.htm)** - Comprehensive guide for 2D acoustic modeling
 - **[BELLHOP3D User Guide](media/bellhop3d.htm)** - Guide for 3D acoustic modeling with azimuthal coupling
+- **[Python documentation](media/python/index.html)** - Interface to Bellhop using high-level Python approaches
 - **[Environmental File Format](media/EnvironmentalFile.htm)** - Detailed specification of input file formats
 
 ### PDF Documentation

@@ -72,7 +72,7 @@ jobs:
         python-version: '3.12'
 
     - name: Install FORD
-      run: pip install hatch FORD
+      run: pip install hatch FORD sphinx
 
     - name: Install gfortran and graphviz
       run: sudo apt-get update && sudo apt-get install -y gfortran graphviz gcc

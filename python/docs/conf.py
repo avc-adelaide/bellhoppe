@@ -4,7 +4,8 @@ import os
 import sys
 
 # Add Python package path
-sys.path.insert(0, os.path.abspath('../python'))
+conf_dir = os.path.dirname(__file__)
+package_dir = os.path.abspath(os.path.join(conf_dir, '../bellhop'))
 
 # -- Project information -----------------------------------------------------
 project = 'BELLHOP Python API'
@@ -21,6 +22,8 @@ extensions = [
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+
+autodoc_mock_imports = ["matplotlib", "gcovr", "numpy", "scipy", "pandas", "bokeh"]
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = 'alabaster'

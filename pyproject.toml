@@ -100,7 +100,8 @@ debug = [
     "install-dev",
     "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import bellhop; print(\"bellhop:\", bellhop.__file__)'"
 ]
-doc  = "ford -g -d fortran ford.md"
+docf  = "ford -g -d fortran ford.md"
+docp = "sphinx-build python/docs doc/media/python"
 cov  = [
     "install-dev",
     "make coverage-full"

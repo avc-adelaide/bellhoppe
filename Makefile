@@ -239,8 +239,10 @@ test:
 	hatch run test
 
 docs:
-	@echo "Generating FORD documentation..."
-	hatch run doc
+	@echo "Generating Fortran/FORD documentation..."
+	hatch run docf
+	@echo "Generating Python/Sphinx documentation..."
+	hatch run docp
 	@echo "Documentation generated in ./doc/ directory"
 	@echo "Open ./doc/index.html in a web browser to view"
 
