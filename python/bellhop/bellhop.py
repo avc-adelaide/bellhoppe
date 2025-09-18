@@ -1778,3 +1778,9 @@ class _Bellhop:
         return _pd.DataFrame(pressure, index=pos_r_depth, columns=pos_r_range)
 
 _models.append(('bellhop', _Bellhop))
+
+__all__ = [
+    name
+    for name in globals()
+    if not name.startswith("_")  # ignore private names
+]
