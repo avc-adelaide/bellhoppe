@@ -1,5 +1,5 @@
 
-name: Continuous Integration Check
+name: Continuous Integration Checks
 
 on:
   push:
@@ -30,4 +30,24 @@ jobs:
           make install
     - name: Test with pytest
       run: |
-          hatch run test
+          make test
+
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12"]
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+          pipx install hatch
+          pip install fortitude ruff
+    - name: Test with lint
+      run: |
+          make lint
