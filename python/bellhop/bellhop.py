@@ -118,7 +118,7 @@ def _get_default_env2d():
     :returns: dictionary with default environment parameters
     """
     return {
-        'name': 'arlpy',
+        'name': 'bellhop/python default',
         'type': '2D',                   # 2D/3D
         'frequency': 25000,             # Hz
         'ssp_env': None,                #
@@ -164,42 +164,42 @@ def create_env2d(**kv):
     A basic environment is created with default values. To see all the parameters
     available and their default values:
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
-    >>> pm.print_env(env)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> bh.print_env(env)
 
     The environment parameters may be changed by passing keyword arguments
     or modified later using a dictionary notation:
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d(depth=40, soundspeed=1540)
-    >>> pm.print_env(env)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(depth=40, soundspeed=1540)
+    >>> bh.print_env(env)
     >>> env['depth'] = 25
     >>> env['bottom_soundspeed'] = 1800
-    >>> pm.print_env(env)
+    >>> bh.print_env(env)
 
     The default environment has a constant sound speed. A depth dependent sound speed
     profile be provided as a Nx2 array of (depth, sound speed):
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d(depth=20, soundspeed=[[0,1540], [5,1535], [10,1535], [20,1530]])
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(depth=20, soundspeed=[[0,1540], [5,1535], [10,1535], [20,1530]])
 
     A range-and-depth dependent sound speed profile can be provided as a Pandas frame:
 
-    >>> import arlpy.uwapm as pm
+    >>> import bellhop as bh
     >>> import pandas as pd
     >>> ssp2 = pd.DataFrame({
               0: [1540, 1530, 1532, 1533],     # profile at 0 m range
             100: [1540, 1535, 1530, 1533],     # profile at 100 m range
             200: [1530, 1520, 1522, 1525] },   # profile at 200 m range
             index=[0, 10, 20, 30])             # depths of the profile entries in m
-    >>> env = pm.create_env2d(depth=20, soundspeed=ssp2)
+    >>> env = bh.create_env2d(depth=20, soundspeed=ssp2)
 
     The default environment has a constant water depth. A range dependent bathymetry
     can be provided as a Nx2 array of (range, water depth):
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d(depth=[[0,20], [300,10], [500,18], [1000,15]])
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(depth=[[0,20], [300,10], [500,18], [1000,15]])
     """
     env = _get_default_env2d()
     for k, v in kv.items():
@@ -746,8 +746,8 @@ def check_env2d(env):
 
     Exceptions are thrown with appropriate error messages if the environment is invalid.
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
     >>> check_env2d(env)
     """
     try:
@@ -819,9 +819,9 @@ def print_env(env):
 
     :param env: environment definition
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d(depth=40, soundspeed=1540)
-    >>> pm.print_env(env)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(depth=40, soundspeed=1540)
+    >>> bh.print_env(env)
     """
     env = check_env2d(env)
     keys = ['name'] + sorted(list(env.keys()-['name']))
@@ -845,15 +845,15 @@ def plot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='ora
     :param rx_color: color of receviers (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
     :param rx_plot: True to plot all receivers, False to not plot any receivers, None to automatically decide
 
-    Other keyword arguments applicable for `arlpy.plot.plot()` are also supported.
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
 
     The surface, bottom, transmitters (marker: '*') and receivers (marker: 'o')
     are plotted in the environment. If `rx_plot` is set to None and there are
     more than 2000 receivers, they are not plotted.
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
-    >>> pm.plot_env(env)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
+    >>> bh.plot_env(env)
     """
     env = check_env2d(env)
     min_x = 0
@@ -907,13 +907,13 @@ def plot_ssp(env, **kwargs):
 
     :param env: environment description
 
-    Other keyword arguments applicable for `arlpy.plot.plot()` are also supported.
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
 
     If the sound speed profile is range-dependent, this function only plots the first profile.
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
-    >>> pm.plot_ssp(env)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    >>> bh.plot_ssp(env)
     """
     env = check_env2d(env)
     svp = env['soundspeed']
@@ -944,10 +944,10 @@ def compute_arrivals(env, model=None, debug=False, fname_base=None):
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
     :returns: arrival times and coefficients for all transmitter-receiver combinations
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
-    >>> arrivals = pm.compute_arrivals(env)
-    >>> pm.plot_arrivals(arrivals)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> arrivals = bh.compute_arrivals(env)
+    >>> bh.plot_arrivals(arrivals)
     """
     env = check_env2d(env)
     (model_name, model) = _select_model(env, arrivals, model)
@@ -967,10 +967,10 @@ def compute_eigenrays(env, tx_depth_ndx=0, rx_depth_ndx=0, rx_range_ndx=0, model
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
     :returns: eigenrays paths
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
-    >>> rays = pm.compute_eigenrays(env)
-    >>> pm.plot_rays(rays, width=1000)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> rays = bh.compute_eigenrays(env)
+    >>> bh.plot_rays(rays, width=1000)
     """
     env = check_env2d(env)
     env = env.copy()
@@ -995,10 +995,10 @@ def compute_rays(env, tx_depth_ndx=0, model=None, debug=False, fname_base=None):
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
     :returns: ray paths
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
-    >>> rays = pm.compute_rays(env)
-    >>> pm.plot_rays(rays, width=1000)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> rays = bh.compute_rays(env)
+    >>> bh.plot_rays(rays, width=1000)
     """
     env = check_env2d(env)
     if _np.size(env['tx_depth']) > 1:
@@ -1021,10 +1021,10 @@ def compute_transmission_loss(env, tx_depth_ndx=0, mode=coherent, model=None, tx
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
     :returns: complex transmission loss at each receiver depth and range
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
-    >>> tloss = pm.compute_transmission_loss(env, mode=pm.incoherent)
-    >>> pm.plot_transmission_loss(tloss, width=1000)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> tloss = bh.compute_transmission_loss(env, mode=bh.incoherent)
+    >>> bh.plot_transmission_loss(tloss, width=1000)
     """
     env = check_env2d(env)
     if mode not in [coherent, incoherent, semicoherent]:
@@ -1055,10 +1055,10 @@ def arrivals_to_impulse_response(arrivals, fs, abs_time=False):
     If `abs_time` is set to True, the impulse response is placed such that
     the zero time corresponds to the time of transmission of signal.
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
-    >>> arrivals = pm.compute_arrivals(env)
-    >>> ir = pm.arrivals_to_impulse_response(arrivals, fs=192000)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> arrivals = bh.compute_arrivals(env)
+    >>> ir = bh.arrivals_to_impulse_response(arrivals, fs=192000)
     """
     t0 = 0 if abs_time else min(arrivals.time_of_arrival)
     irlen = int(_np.ceil((max(arrivals.time_of_arrival)-t0)*fs))+1
@@ -1075,12 +1075,12 @@ def plot_arrivals(arrivals, dB=False, color='blue', **kwargs):
     :param dB: True to plot in dB, False for linear scale
     :param color: line color (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
 
-    Other keyword arguments applicable for `arlpy.plot.plot()` are also supported.
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
-    >>> arrivals = pm.compute_arrivals(env)
-    >>> pm.plot_arrivals(arrivals)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> arrivals = bh.compute_arrivals(env)
+    >>> bh.plot_arrivals(arrivals)
     """
     t0 = min(arrivals.time_of_arrival)
     t1 = max(arrivals.time_of_arrival)
@@ -1108,14 +1108,14 @@ def plot_rays(rays, env=None, invert_colors=False, **kwargs):
     :param invert_colors: False to use black for high intensity rays, True to use white
 
     If environment definition is provided, it is overlayed over this plot using default
-    parameters for `arlpy.uwapm.plot_env()`.
+    parameters for `bellhop.plot_env()`.
 
-    Other keyword arguments applicable for `arlpy.plot.plot()` are also supported.
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
-    >>> rays = pm.compute_eigenrays(env)
-    >>> pm.plot_rays(rays, width=1000)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> rays = bh.compute_eigenrays(env)
+    >>> bh.plot_rays(rays, width=1000)
     """
     rays = rays.sort_values('bottom_bounces', ascending=False)
     max_amp = _np.max(_np.abs(rays.bottom_bounces)) if len(rays.bottom_bounces) > 0 else 0
@@ -1147,20 +1147,20 @@ def plot_transmission_loss(tloss, env=None, **kwargs):
     :param env: environment definition
 
     If environment definition is provided, it is overlayed over this plot using default
-    parameters for `arlpy.uwapm.plot_env()`.
+    parameters for `bellhop.plot_env()`.
 
-    Other keyword arguments applicable for `arlpy.plot.image()` are also supported.
+    Other keyword arguments applicable for `bellhop.plot.image()` are also supported.
 
-    >>> import arlpy.uwapm as pm
+    >>> import bellhop as bh
     >>> import numpy as np
-    >>> env = pm.create_env2d(
+    >>> env = bh.create_env2d(
             rx_depth=np.arange(0, 25),
             rx_range=np.arange(0, 1000),
             min_angle=-45,
             max_angle=45
         )
-    >>> tloss = pm.compute_transmission_loss(env)
-    >>> pm.plot_transmission_loss(tloss, width=1000)
+    >>> tloss = bh.compute_transmission_loss(env)
+    >>> bh.plot_transmission_loss(tloss, width=1000)
     """
     xr = (min(tloss.columns), max(tloss.columns))
     yr = (-max(tloss.index), -min(tloss.index))
@@ -1185,15 +1185,15 @@ def pyplot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='o
     :param rx_color: color of receviers (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
     :param rx_plot: True to plot all receivers, False to not plot any receivers, None to automatically decide
 
-    Other keyword arguments applicable for `arlpy.plot.plot()` are also supported.
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
 
     The surface, bottom, transmitters (marker: '*') and receivers (marker: 'o')
     are plotted in the environment. If `rx_plot` is set to None and there are
     more than 2000 receivers, they are not plotted.
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
-    >>> pm.plot_env(env)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
+    >>> bh.plot_env(env)
     """
     env = check_env2d(env)
     if _np.array(env['rx_range']).size > 1:
@@ -1259,13 +1259,13 @@ def pyplot_ssp(env, **kwargs):
 
     :param env: environment description
 
-    Other keyword arguments applicable for `arlpy.plot.plot()` are also supported.
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
 
     If the sound speed profile is range-dependent, this function only plots the first profile.
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
-    >>> pm.plot_ssp(env)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    >>> bh.plot_ssp(env)
     """
     env = check_env2d(env)
     svp = env['soundspeed']
@@ -1300,12 +1300,12 @@ def pyplot_arrivals(arrivals, dB=False, color='blue', **kwargs):
     :param dB: True to plot in dB, False for linear scale
     :param color: line color (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
 
-    Other keyword arguments applicable for `arlpy.plot.plot()` are also supported.
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
-    >>> arrivals = pm.compute_arrivals(env)
-    >>> pm.plot_arrivals(arrivals)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> arrivals = bh.compute_arrivals(env)
+    >>> bh.plot_arrivals(arrivals)
     """
     t0 = min(arrivals.time_of_arrival)
     t1 = max(arrivals.time_of_arrival)
@@ -1335,14 +1335,14 @@ def pyplot_rays(rays, env=None, invert_colors=False, **kwargs):
     :param invert_colors: False to use black for high intensity rays, True to use white
 
     If environment definition is provided, it is overlayed over this plot using default
-    parameters for `arlpy.uwapm.plot_env()`.
+    parameters for `bellhop.plot_env()`.
 
-    Other keyword arguments applicable for `arlpy.plot.plot()` are also supported.
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
 
-    >>> import arlpy.uwapm as pm
-    >>> env = pm.create_env2d()
-    >>> rays = pm.compute_eigenrays(env)
-    >>> pm.plot_rays(rays, width=1000)
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> rays = bh.compute_eigenrays(env)
+    >>> bh.plot_rays(rays, width=1000)
     """
     rays = rays.sort_values('bottom_bounces', ascending=False)
     max_amp = _np.max(_np.abs(rays.bottom_bounces)) if len(rays.bottom_bounces) > 0 else 0
@@ -1378,20 +1378,20 @@ def pyplot_transmission_loss(tloss, env=None, **kwargs):
     :param env: environment definition
 
     If environment definition is provided, it is overlayed over this plot using default
-    parameters for `arlpy.uwapm.plot_env()`.
+    parameters for `bellhop.plot_env()`.
 
-    Other keyword arguments applicable for `arlpy.plot.image()` are also supported.
+    Other keyword arguments applicable for `bellhop.plot.image()` are also supported.
 
-    >>> import arlpy.uwapm as pm
+    >>> import bellhop as bh
     >>> import numpy as np
-    >>> env = pm.create_env2d(
+    >>> env = bh.create_env2d(
             rx_depth=np.arange(0, 25),
             rx_range=np.arange(0, 1000),
             min_angle=-45,
             max_angle=45
         )
-    >>> tloss = pm.compute_transmission_loss(env)
-    >>> pm.plot_transmission_loss(tloss, width=1000)
+    >>> tloss = bh.compute_transmission_loss(env)
+    >>> bh.plot_transmission_loss(tloss, width=1000)
     """
     xr = (min(tloss.columns), max(tloss.columns))
     yr = (-max(tloss.index), -min(tloss.index))
@@ -1424,11 +1424,11 @@ def models(env=None, task=None):
     :param task: arrivals/eigenrays/rays/coherent/incoherent/semicoherent
     :returns: list of models that can be used
 
-    >>> import arlpy.uwapm as pm
-    >>> pm.models()
+    >>> import bellhop as bh
+    >>> bh.models()
     ['bellhop']
-    >>> env = pm.create_env2d()
-    >>> pm.models(env, task=coherent)
+    >>> env = bh.create_env2d()
+    >>> bh.models(env, task=coherent)
     ['bellhop']
     """
     if env is not None:
