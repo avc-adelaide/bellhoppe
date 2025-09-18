@@ -36,7 +36,7 @@ CONTAINS
     INTEGER,          INTENT( IN  )   :: N
     REAL    (KIND=8), INTENT( IN  )   :: x(:)
     COMPLEX (KIND=8), INTENT( IN  )   :: y(:)
-    COMPLEX (KIND=8), INTENT( INOUT ) :: PolyCoef( 4, * ), csWork( 4, * )
+    COMPLEX (KIND=8), INTENT( INOUT ) :: PolyCoef( 4, N ), csWork( 4, N )
 
     INTEGER           :: ix, iBCBeg, iBCEnd
     REAL     (KIND=8) :: h1, h2
