@@ -11,7 +11,6 @@ license = {file = "LICENSE"}
 
 dependencies = [
     "matplotlib",
-    "gcovr",
     "numpy",
     "scipy",
     "pandas",
@@ -77,6 +76,8 @@ sources = [".", "python"]
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "gcovr",
+    "ruff"
 ]
 
 [tool.hatch.envs.default]
@@ -96,17 +97,21 @@ testv = [
     "install-dev",
     "pytest --capture=tee-sys"
 ]
-debug = [
-    "install-dev",
-    "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import bellhop; print(\"bellhop:\", bellhop.__file__)'"
-]
-docf  = "ford -g -d fortran ford.md"
-docp = "sphinx-build python/docs doc/media/python"
 cov  = [
     "install-dev",
     "make coverage-full"
 ]
-lint = "fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003"
+debug = [
+    "install-dev",
+    "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import bellhop; print(\"bellhop:\", bellhop.__file__)'"
+]
+docf = "ford -g -d fortran ford.md"
+docp = "sphinx-build python/docs doc/media/python"
+lintf = "fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003"
+lintp  = [
+    "install-dev",
+    "ruff check python/"
+]
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true
