@@ -1,0 +1,23 @@
+
+name: Continuous Integration Checks
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: pip install hatch fortitude-lint ruff
+    - name: Ruff
+      run: hatch run lintp
+    - name: Fortitude
+      run: hatch run lintf
+
