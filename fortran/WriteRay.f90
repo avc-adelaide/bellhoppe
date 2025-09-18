@@ -10,15 +10,17 @@ MODULE WriteRay
 
   USE BellhopMod
   USE sspMod
+
   IMPLICIT NONE
+  PUBLIC
+
   INTEGER, PRIVATE :: MaxNRayPoints = 500000   ! this is the maximum length of the ray vector that is written out
   INTEGER, PRIVATE :: is, N2, iSkip
 
 CONTAINS
 
   SUBROUTINE WriteRay2D( alpha0, Nsteps1 )
-
-    ! The 2D version is for ray traces in (r,z) coordinates
+    !! The 2D version is for ray traces in (r,z) coordinates
 
     INTEGER,       INTENT( IN ) :: Nsteps1
     REAL (KIND=8), INTENT( IN ) :: alpha0   ! take-off angle of this ray
@@ -59,8 +61,7 @@ CONTAINS
   ! **********************************************************************!
 
   SUBROUTINE WriteRay3D( alpha0, beta0, Nsteps1 )
-
-    ! The 3D version is for ray traces in (x,y,z) coordinates
+    !! The 3D version is for ray traces in (x,y,z) coordinates
 
     INTEGER,       INTENT( IN ) :: Nsteps1
     REAL (KIND=8), INTENT( IN ) :: alpha0, beta0   ! take-off angle of this ray

@@ -2,7 +2,9 @@
 
 MODULE splinec
   !! Cubic spline interpolation functions and procedures
+
   IMPLICIT NONE
+  PUBLIC
 
 CONTAINS
 

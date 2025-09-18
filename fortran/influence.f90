@@ -13,6 +13,8 @@ MODULE Influence
   USE WriteRay
 
   IMPLICIT NONE
+  PUBLIC
+
   INTEGER,          PRIVATE :: iz, ir, iS
   REAL    (KIND=8), PRIVATE :: Ratio1 = 1.0D0   ! scale factor for a line source
   REAL    (KIND=8), PRIVATE :: W, s, n, Amp, phase, const, phaseInt, q0, q, qold, RcvrDeclAngle, rA, rB

@@ -8,6 +8,8 @@ MODULE SortMod
   ! vector shifting up to produce a new vector of length I.
 
   IMPLICIT NONE
+  PUBLIC
+
   INTEGER, PRIVATE :: ILeft, IMiddle, IRight, I
 
   INTERFACE Sort

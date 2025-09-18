@@ -7,7 +7,9 @@ MODULE beampattern
   USE monotonicMod
 
   IMPLICIT NONE
+  PUBLIC
   SAVE
+
   INTEGER, PARAMETER         :: SBPFile = 50
   INTEGER                    :: NSBPPts          ! Number of source beam-pattern points
   REAL (KIND=8), ALLOCATABLE :: SrcBmPat( :, : )

@@ -5,6 +5,8 @@ MODULE Reflect3DMod
   USE bellhopMod
 
   IMPLICIT NONE
+  PUBLIC
+
 CONTAINS
 
   SUBROUTINE Reflect3D( is, HS, BotTop, nBdry, z_xx, z_xy, z_yy, kappa_xx, kappa_xy, kappa_yy, RefC, Npts )

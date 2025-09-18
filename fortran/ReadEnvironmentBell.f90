@@ -3,8 +3,6 @@
 MODULE ReadEnvironmentBell
   !! Provides environment file reading and initialization
 
-  ! mbp 12/2018, based on much older subroutine
-
   USE BellhopMod
   USE MathConstants
   USE sspmod
@@ -12,6 +10,7 @@ MODULE ReadEnvironmentBell
   USE FatalError
 
   IMPLICIT NONE
+  PUBLIC
 
 CONTAINS
 

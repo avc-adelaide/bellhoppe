@@ -18,7 +18,9 @@ MODULE bdry3Dmod
   USE FatalError
 
   IMPLICIT NONE
+  PUBLIC
   SAVE
+
   INTEGER, PARAMETER :: ATIFile = 40, BTYFile = 41, Number_to_Echo = 21
   INTEGER            :: IsegTopx, IsegTopy, IsegBotx, IsegBoty, &
        NATIPts( 2 ), NBTYPts( 2 )

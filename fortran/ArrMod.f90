@@ -6,8 +6,10 @@ MODULE ArrMod
   USE MathConstants
   USE BellhopMod
 
-  ! Variables for arrival information
   IMPLICIT NONE
+  PUBLIC
+
+  ! Variables for arrival information
   REAL,      PARAMETER :: PhaseTol = 0.05  ! arrivals with essentially the same phase are grouped into one
   INTEGER               :: MaxNArr
   INTEGER, ALLOCATABLE  :: NArr( :, : ), NArr3D( :, :, : )

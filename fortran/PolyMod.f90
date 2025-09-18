@@ -6,6 +6,8 @@ MODULE PolyMod
   ! mbp 7/2015 incorporating subroutines from decades past
 
   IMPLICIT NONE
+  PUBLIC
+
   INTEGER, PRIVATE :: i, j
 
   INTERFACE Poly

@@ -4,6 +4,7 @@ MODULE monotonicMod
   !! Provides interface to test whether an input vector is strictly monotonically increasing
 
   IMPLICIT NONE
+  PUBLIC
 
   INTERFACE monotonic
      MODULE PROCEDURE monotonic_sngl, monotonic_dble

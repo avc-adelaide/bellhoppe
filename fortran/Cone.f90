@@ -5,7 +5,9 @@ MODULE Cone
 
   USE bellhopMod
   USE MathConstants
+
   IMPLICIT NONE
+  PUBLIC
 
 CONTAINS
 

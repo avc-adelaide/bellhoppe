@@ -1,14 +1,15 @@
 !! Provides data and functions for working with reflection coefficients
 
 MODULE RefCoef
-
   !! Provides reflection coefficient data
 
   USE FatalError
   USE monotonicMod
 
   IMPLICIT NONE
+  PUBLIC
   SAVE
+
   INTEGER, PARAMETER            :: BRCFile = 31, TRCFile = 32, IRCFile = 12
   INTEGER                       :: NBotPts, NTopPts
   INTEGER                       :: NkTab

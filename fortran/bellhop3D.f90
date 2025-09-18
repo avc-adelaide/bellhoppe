@@ -74,6 +74,7 @@ PROGRAM BELLHOP3D
   USE FatalError
 
   IMPLICIT NONE
+
   CHARACTER ( LEN=80 ) :: FileRoot
 
   ThreeD = .TRUE.

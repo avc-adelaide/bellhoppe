@@ -1,13 +1,13 @@
-!! Routines for reading and writing shade file format
+!! Routines for reading and writing shade file (SHDFile)
 MODULE RWSHDFile
   !! Shade file I/O operations including binary format handling for acoustic field data
-
-  ! routines to read or write the SHDFile
 
   USE SourceReceiverPositions
   USE FatalError
 
   IMPLICIT NONE
+  PUBLIC
+
   INTEGER, PARAMETER, PRIVATE :: SHDFile = 25
   INTEGER :: LRecl
 

@@ -8,7 +8,10 @@ MODULE AttenMod
   ! Includes a formula for volume attenuation
 
   USE FatalError
+
   IMPLICIT NONE
+  PUBLIC
+
   INTEGER, PRIVATE, PARAMETER      :: PRTFile = 6
   INTEGER, PARAMETER               :: MaxBioLayers = 200
   INTEGER                          :: iBio, NBioLayers

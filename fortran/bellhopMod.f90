@@ -6,6 +6,8 @@ MODULE bellhopMod
   USE MathConstants
 
   IMPLICIT NONE
+  PUBLIC
+
   INTEGER, PARAMETER :: ENVFile = 5, PRTFile = 6, RAYFile = 21, SHDFile = 25, ARRFile = 36, SSPFile = 40, MaxN = 100000
   LOGICAL, PARAMETER :: STEP_DEBUGGING = .FALSE.
 

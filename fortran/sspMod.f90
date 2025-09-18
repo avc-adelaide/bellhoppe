@@ -14,9 +14,11 @@ MODULE sspmod
   USE FatalError
   USE monotonicMod
   USE splinec
-  IMPLICIT NONE
 
+  IMPLICIT NONE
+  PUBLIC
   SAVE
+
   INTEGER, PARAMETER, PRIVATE :: ENVFile = 5, PRTFile = 6
   INTEGER, PARAMETER     :: MaxSSP = 100001
   INTEGER                :: iSegr = 1, iSegx = 1, iSegy = 1, iSegz = 1

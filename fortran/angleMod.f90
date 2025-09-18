@@ -10,6 +10,7 @@ MODULE anglemod
   USE FatalError
 
   IMPLICIT NONE
+  PUBLIC
   SAVE
 
   INTEGER          :: ialpha, ibeta

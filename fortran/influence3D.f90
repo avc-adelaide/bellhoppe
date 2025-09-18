@@ -15,6 +15,8 @@ MODULE Influence3D
   USE cross_products
 
   IMPLICIT NONE
+  PUBLIC
+
   INTEGER,       PRIVATE :: itheta, iz, ir, is
   REAL (KIND=8), PRIVATE :: W, s, m, n, Amp, phase, const, phaseInt, Ratio1, &
        L1, L2, rayt( 3 ), &

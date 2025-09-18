@@ -4,7 +4,9 @@ MODULE pchipmod
   !! Subroutines and functions related to the calculation of the Piecewise Cubic Hermite Interpolating Polynomial (PCHIP)
 
   USE splinec
+
   IMPLICIT NONE
+  PUBLIC
   SAVE
 
   REAL (KIND=8), PRIVATE                 :: h

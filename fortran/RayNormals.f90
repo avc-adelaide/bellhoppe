@@ -1,10 +1,12 @@
 !! Ray normal calculations for acoustic beam tracing
 
 MODULE RayNormals
-!! Provides ray normal vector calculations
+  !! Provides ray normal vector calculations
 
-   IMPLICIT NONE
-   REAL (KIND=8)                :: RL                 ! length of part of the tangent vector
+  IMPLICIT NONE
+  PUBLIC
+
+  REAL (KIND=8)                :: RL                 ! length of part of the tangent vector
 
 CONTAINS
 

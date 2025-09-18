@@ -9,6 +9,8 @@ MODULE SourceReceiverPositions
   USE FatalError
 
   IMPLICIT NONE
+  PUBLIC
+
   INTEGER, PARAMETER          :: Number_to_Echo = 10
   INTEGER, PRIVATE            :: IAllocStat     ! used to capture status after allocation
   INTEGER, PRIVATE, PARAMETER :: ENVFile = 5, PRTFile = 6   ! unit 5 is usually (not always) the ENVFile

@@ -4,9 +4,11 @@ MODULE FatalError
 !! Provides `ERROUT` error message
 
   IMPLICIT NONE
+  PUBLIC
+
   INTEGER, PRIVATE :: PRTFile = 6
 
-  CONTAINS
+CONTAINS
 
   SUBROUTINE ERROUT( WHERE, ErrMsg )
   !! Outputs error message and terminates program

@@ -4,6 +4,7 @@ MODULE cross_products
 !! Provides a 3D cross product function for both single and double reals
 
   IMPLICIT NONE
+  PUBLIC
 
   INTERFACE cross_product
      MODULE PROCEDURE cross_product_sngl, cross_product_dble
