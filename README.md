@@ -24,6 +24,10 @@
 - **[Code coverage for the new test suite](https://avc-adelaide.github.io/bellhop/media/coverage-index.html)**
 
 
+[![Test Suite](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml)
+[![Code Lint](https://github.com/avc-adelaide/bellhop/actions/workflows/lint.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/lint.yml)
+
+
 ## Installation
 
 ### Mac
