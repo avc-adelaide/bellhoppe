@@ -105,7 +105,7 @@ debug = [
     "install-dev",
     "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import bellhop; print(\"bellhop:\", bellhop.__file__)'"
 ]
-docf = "ford -g -d fortran ford.md"
+docf = "ford --graph --src_dir fortran ford.md"
 docp = "sphinx-build python/docs doc/media/python"
 lintf = "fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003"
 lintp  = "ruff check python/"
