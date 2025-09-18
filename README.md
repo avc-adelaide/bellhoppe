@@ -123,35 +123,57 @@ If you wish to use the Matlab interfaces, the following commands should be added
 
 
 
-## Testing
+## Testing and linting
 
 If the build and installation steps were successful, you should now be able to run
 the Python test suite located in the `tests/` subfolder:
 
-    hatch run test
+    hatch test
+
+Or:
+ 
+    make test
+
+The code can be statically tested with the respective Python and Fortran linters with:
+
+    pip install ruff
+    hatch run lintp
+    
+    pip install fortitude-lint
+    hatch run lintf
+
+These steps can be run together with:
+ 
+    make lint
 
 
 ## Building documentation locally
 
 ### Fortran Documentation
+
 Generate Fortran documentation locally with:
 ```bash
-hatch run doc
+pip install FORD # if needed
+hatch run docf
 ```
 This uses FORD to build the HTML documentation in `doc/` with the static pages `docs/` copied
 into the `doc/media` subdirectory, with main page `doc/index.html`.
 
 ### Python API Documentation
+
 Generate Python API documentation with:
 ```bash
-# Install sphinx if needed
-pip install sphinx
-
-# Generate documentation
-sphinx-build python/docs python/docs/_build/html
+pip install sphinx # if needed
+hatch run docp
 ```
-The generated documentation will be in `docs-python/_build/html/index.html`.
+The generated documentation will be in the `doc/media/python/` subdirectory.
 
+### Make interface
+
+These two steps are combined together with:
+```bash
+make doc
+```
 
 ## Code coverage analysis
 
