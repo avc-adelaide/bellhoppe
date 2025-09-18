@@ -20,7 +20,8 @@ CONTAINS
     ! c * t would be the unit tangent
 
     USE BdryMod
-    TYPE( ray2DPt )    :: ray0, ray1, ray2
+    TYPE( ray2DPt ), INTENT( INOUT ) :: ray0, ray2
+    TYPE( ray2DPt ) :: ray1
     REAL (KIND=8 ), INTENT( IN ) :: Topx( 2 ), Topn( 2 ), Botx( 2 ), Botn( 2 )
     LOGICAL, INTENT( OUT ) :: topRefl, botRefl
     INTEGER            :: iSegz0, iSegr0

@@ -248,7 +248,7 @@ CONTAINS
     INTEGER                          :: NPts = 0
     REAL      (KIND=8), ALLOCATABLE  :: phi( : )
     REAL      (KIND=8)               :: sss
-    TYPE(BdryPt)                     :: Bdry( : )
+    TYPE(BdryPt), INTENT( INOUT )    :: Bdry( : )
     CHARACTER (LEN=3),  INTENT( IN ) :: BotTop           ! Flag indicating bottom or top reflection
     CHARACTER (LEN=2)                :: CurvilinearFlag = '-'
 

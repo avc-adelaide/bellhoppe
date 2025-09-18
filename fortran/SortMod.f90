@@ -22,7 +22,8 @@ CONTAINS
     !! Subroutine to perform an insertion sort on a vector (single)
 
     INTEGER, INTENT( IN ) :: N
-    REAL    :: x( * ), xTemp
+    REAL, INTENT( INOUT ) :: x( * )
+    REAL    :: xTemp
 
     IF ( N == 1 ) RETURN
 
@@ -62,8 +63,9 @@ CONTAINS
   SUBROUTINE Sort_dble( x, N )
     !! Subroutine to perform an insertion sort on a vector (double)
 
-    INTEGER, INTENT( IN ) :: N
-    REAL (KIND=8) :: x( * ), xTemp
+    INTEGER, INTENT( IN )          :: N
+    REAL (KIND=8), INTENT( INOUT ) :: x( * )
+    REAL (KIND=8)                  :: xTemp
 
     IF ( N == 1 ) RETURN
 
@@ -105,8 +107,9 @@ CONTAINS
 
     ! Based on order of decreasing real part
 
-    INTEGER, INTENT( IN ) :: N
-    COMPLEX (KIND=8)      :: x( N ), xTemp
+    INTEGER, INTENT( IN )             :: N
+    COMPLEX (KIND=8), INTENT( INOUT ) :: x( N )
+    COMPLEX (KIND=8)                  :: xTemp
 
     IF ( N == 1 ) RETURN
 

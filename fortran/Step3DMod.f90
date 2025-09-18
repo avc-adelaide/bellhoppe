@@ -23,7 +23,9 @@ CONTAINS
     USE RayNormals
 
     ! rays
-    TYPE( ray3DPt ) :: ray0, ray1, ray2
+    TYPE( ray3DPt ), INTENT( INOUT ) :: ray0, ray2
+    TYPE( ray3DPt ) :: ray1
+
     LOGICAL, INTENT( OUT ) :: topRefl, botRefl
     INTEGER         :: iSegx0, iSegy0, iSegz0, snapDim
     REAL  (KIND=8 ) :: gradc0( 3 ), gradc1( 3 ), gradc2( 3 ), &

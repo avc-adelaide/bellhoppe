@@ -701,7 +701,9 @@ SUBROUTINE Step2D( ray0, ray2, tradial, topRefl, botRefl )
 
   REAL (KIND=8), INTENT( IN ) :: tradial( 2 )   ! coordinate of source and ray bearing angle
   LOGICAL, INTENT( OUT ) :: topRefl, botRefl
-  TYPE( ray2DPt )    :: ray0, ray1, ray2
+  TYPE( ray2DPt )    :: ray1
+  TYPE( ray2DPt ), INTENT( IN )    :: ray0
+  TYPE( ray2DPt ), INTENT( INOUT ) :: ray2
   INTEGER            :: iSegx0, iSegy0, iSegz0, snapDim
   REAL     (KIND=8 ) :: gradc0( 2 ), gradc1( 2 ), gradc2( 2 ), rho, &
                         c0, cimag0, crr0, crz0, czz0, csq0, cnn0_csq0, &

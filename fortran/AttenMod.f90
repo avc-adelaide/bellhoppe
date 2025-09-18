@@ -150,7 +150,8 @@ CONTAINS
     !     Returns
     !        alpha = volume attenuation in dB/km
 
-    REAL (KIND=8) :: f, Franc_Garr
+    REAL (KIND=8), INTENT( IN ) :: f
+    REAL (KIND=8) :: Franc_Garr
     REAL (KIND=8) :: c, A1, A2, A3, P1, P2, P3, f1, f2
     ! LP: Bug (at least technically): Single-precision and double-precision
     ! literals are all mixed together here, both including values which are

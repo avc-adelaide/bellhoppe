@@ -546,7 +546,7 @@ CONTAINS
     REAL      (KIND=8)               :: p1( 3 ), p2( 3 ), p3( 3 ), p4( 3 ), U( 3 ), V( 3 )
     REAL      (KIND=8)               :: n1( 3 ), n2( 3 )      ! normal vectors to the pair of triangles
     REAL      (KIND=8)               :: tvec( 3 ), Len
-    TYPE(BdryPt)                     :: Bdry( :, : )
+    TYPE(BdryPt), INTENT( INOUT )    :: Bdry( :, : )
     CHARACTER (LEN=3),  INTENT( IN ) :: BotTop           ! Flag indicating bottom or top reflection
     CHARACTER (LEN=2)                :: CurvilinearFlag = '-'
     REAL      (KIND=8)               :: mx, my, n( 3 )

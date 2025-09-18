@@ -149,7 +149,8 @@ CONTAINS
 
       USE RayNormals
 
-      TYPE( ray3DPt )    :: ray, rayOut
+      TYPE( ray3DPt ), INTENT( IN  ) :: ray
+      TYPE( ray3DPt ), INTENT( OUT ) :: rayOut
 
       ! Note that Tg, Th need to be multiplied by c to normalize tangent; hence, c^2 below
       ! added the SIGN in R2 to make ati and bty have a symmetric effect on the beam
