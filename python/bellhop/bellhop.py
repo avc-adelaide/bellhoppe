@@ -10,13 +10,9 @@
 
 """Underwater acoustic propagation modeling toolbox.
 
-This toolbox currently uses the Bellhop acoustic propagation model. For this model
+This toolbox uses the Bellhop acoustic propagation model. For this model
 to work, the `acoustic toolbox <https://oalib-acoustics.org/>`_
 must be installed on your computer and `bellhop.exe` should be in your PATH.
-
-.. sidebar:: Sample Jupyter notebook
-
-    For usage examples of this toolbox, see `Bellhop notebook <_static/bellhop.html>`_.
 """
 
 import os as _os
