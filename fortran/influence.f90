@@ -181,7 +181,8 @@ CONTAINS
     COMPLEX,          INTENT( INOUT ) :: U( NRz_per_range, Pos%NRr )  ! complex pressure field
     COMPLEX (KIND=8), INTENT( IN    ) :: eps                          ! LP: EPSILON is an intrinsic
     INTEGER          :: KMAHV( MaxN ), KMAH, irA, irB, Image
-    REAL    (KIND=8) :: x( 2 ), rayt( 2 ), rayn( 2 ), Tr, Tz, zr, Polarity = 1, &
+    REAL    (KIND=8), SAVE :: Polarity = 1
+    REAL    (KIND=8) :: x( 2 ), rayt( 2 ), rayn( 2 ), Tr, Tz, zr, &
          c, cimag, cs, cn, csq, gradc( 2 ), crr, crz, czz, rho, deltaz
     COMPLEX (KIND=8) :: pVB( MaxN ), qVB( MaxN ), q, epsV( MaxN ), contri, gammaV( MaxN ), gamma, const
     COMPLEX (KIND=8) :: tau

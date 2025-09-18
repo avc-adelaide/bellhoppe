@@ -22,7 +22,7 @@ CONTAINS
     !! Subroutine to perform an insertion sort on a vector (single)
 
     INTEGER, INTENT( IN ) :: N
-    REAL, INTENT( INOUT ) :: x( * )
+    REAL, INTENT( INOUT ) :: x(:)
     REAL    :: xTemp
 
     IF ( N == 1 ) RETURN
@@ -64,7 +64,7 @@ CONTAINS
     !! Subroutine to perform an insertion sort on a vector (double)
 
     INTEGER, INTENT( IN )          :: N
-    REAL (KIND=8), INTENT( INOUT ) :: x( * )
+    REAL (KIND=8), INTENT( INOUT ) :: x(:)
     REAL (KIND=8)                  :: xTemp
 
     IF ( N == 1 ) RETURN

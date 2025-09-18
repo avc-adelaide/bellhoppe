@@ -34,8 +34,8 @@ CONTAINS
     ! csWork is a temporary work space for the cubic spline
 
     INTEGER,          INTENT( IN  )   :: N
-    REAL    (KIND=8), INTENT( IN  )   :: x( * )
-    COMPLEX (KIND=8), INTENT( IN  )   :: y( * )
+    REAL    (KIND=8), INTENT( IN  )   :: x(:)
+    COMPLEX (KIND=8), INTENT( IN  )   :: y(:)
     COMPLEX (KIND=8), INTENT( INOUT ) :: PolyCoef( 4, * ), csWork( 4, * )
 
     INTEGER           :: ix, iBCBeg, iBCEnd
@@ -117,8 +117,8 @@ CONTAINS
   SUBROUTINE h_del( x, y, ix, h1, h2, del1, del2 )
 
     INTEGER,          INTENT( IN  ) :: ix   ! index of the center point
-    REAL    (KIND=8), INTENT( IN  ) :: x( * )
-    COMPLEX (KIND=8), INTENT( IN  ) :: y( * )
+    REAL    (KIND=8), INTENT( IN  ) :: x(:)
+    COMPLEX (KIND=8), INTENT( IN  ) :: y(:)
     REAL    (KIND=8), INTENT( OUT ) :: h1, h2
     COMPLEX (KIND=8), INTENT( OUT ) :: del1, del2
 

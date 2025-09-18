@@ -542,13 +542,13 @@ CONTAINS
     ! The boundary is also extended with a constant depth to infinity to cover cases where the ray
     ! exits the domain defined by the user
 
-    INTEGER                          :: NPts( 2 ) = [ 0, 0 ]
+    INTEGER, SAVE                    :: NPts( 2 ) = [ 0, 0 ]
     REAL      (KIND=8)               :: p1( 3 ), p2( 3 ), p3( 3 ), p4( 3 ), U( 3 ), V( 3 )
     REAL      (KIND=8)               :: n1( 3 ), n2( 3 )      ! normal vectors to the pair of triangles
     REAL      (KIND=8)               :: tvec( 3 ), Len
     TYPE(BdryPt), INTENT( INOUT )    :: Bdry( :, : )
     CHARACTER (LEN=3),  INTENT( IN ) :: BotTop           ! Flag indicating bottom or top reflection
-    CHARACTER (LEN=2)                :: CurvilinearFlag = '-'
+    CHARACTER (LEN=2), SAVE          :: CurvilinearFlag = '-'
     REAL      (KIND=8)               :: mx, my, n( 3 )
 
     SELECT CASE ( BotTop )

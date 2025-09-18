@@ -429,7 +429,7 @@ SUBROUTINE PickEpsilon( BeamType, omega, c, Dalpha, Dbeta, rLoop, EpsMultiplier,
   COMPLEX   (KIND=8), INTENT( OUT ) :: epsilon( 2 )         ! beam initial conditions
   CHARACTER (LEN= 2), INTENT( IN  ) :: BeamType
   LOGICAL, SAVE      :: INIFlag = .TRUE.
-  REAL      (KIND=8) :: HalfWidth( 2 ) = [ 0.0, 0.0 ]
+  REAL      (KIND=8), SAVE :: HalfWidth( 2 ) = [ 0.0, 0.0 ]
   COMPLEX   (KIND=8) :: epsilonOpt( 2 )
   CHARACTER (LEN=80) :: TAG
 

@@ -245,12 +245,12 @@ CONTAINS
     ! The boundary is also extended with a constant depth to infinity to cover cases where the ray
     ! exits the domain defined by the user
 
-    INTEGER                          :: NPts = 0
+    INTEGER, SAVE                    :: NPts = 0
     REAL      (KIND=8), ALLOCATABLE  :: phi( : )
     REAL      (KIND=8)               :: sss
     TYPE(BdryPt), INTENT( INOUT )    :: Bdry( : )
     CHARACTER (LEN=3),  INTENT( IN ) :: BotTop           ! Flag indicating bottom or top reflection
-    CHARACTER (LEN=2)                :: CurvilinearFlag = '-'
+    CHARACTER (LEN=2), SAVE          :: CurvilinearFlag = '-'
 
     SELECT CASE ( BotTop )
     CASE ( 'Bot' )
