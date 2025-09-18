@@ -18,7 +18,6 @@ MODULE beampattern
 CONTAINS
 
   SUBROUTINE ReadPat( FileRoot, PRTFile )
-    !! ReadPat:
     !!    Reads a source beam pattern file (`.sbp`) based on `FileRoot``.
     !!    Reports status messages to the print/log file connected to `PRTFile``.
 

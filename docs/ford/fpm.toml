@@ -11,17 +11,9 @@ summary = '''
   the Acoustics Toolbox and provides both 2D and 3D acoustic modeling capabilities.
 '''
 
-src_dir = [
-    "fortran",
-]
-exclude_dir = [
-    "bin",
-    "examples",
-    "tests",
-    "Matlab",
-]
-media_dir = "docs"
-output_dir = "doc" # default
+src_dir = ["../../fortran"]
+media_dir = "../static"
+output_dir = "../_build"
 
 preprocessor = "gfortran -E"
 project_github = "https://github.com/AUMAG/bellhop"

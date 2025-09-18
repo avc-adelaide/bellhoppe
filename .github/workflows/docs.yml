@@ -48,15 +48,14 @@ jobs:
       run: pip install hatch
 
     - name: Run tests with coverage instrumentation
-      run: |
-        hatch run cov
+      run: hatch run cov
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
       with:
         name: coverage-reports
         path: |
-          docs/*.html
+          _coverage/*.html
         retention-days: 3
 
   build:
@@ -81,7 +80,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: coverage-reports
-        path: './docs/'
+        path: './docs/_build/static'
 
     - name: Generate documentation
       run: |
@@ -94,7 +93,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: './doc'
+        path: './docs/_build'
 
   # Deployment job
   deploy:

@@ -312,19 +312,18 @@ coverage-html: coverage-report
 		echo "No .gcov files found. Run 'make coverage-report' first."; \
 		exit 1; \
 	fi
-	@echo "Creating HTML reports in docs/ directory for FORD media integration..."
-	python3 python/generate_coverage_html.py docs/
-	@echo "HTML coverage reports generated and integrated with FORD documentation."
-	@echo "Reports will be accessible through FORD as media files at /media/"
+	@echo "Creating HTML reports in _coverage/ directory..."
+	python3 python/generate_coverage_html.py _coverage
+	@echo "HTML coverage reports generated."
 
 # although this is much lighter, I don't like the output -- maybe it needs more finetuning
 coverage-gcovr:
 	@echo "Generating HTML coverage reports with gcovr..."
-	mkdir -p docs/coverage
+	mkdir -p _coverage
 	gcovr --verbose --html --html-details \
 		--gcov-executable gcov-15 \
 		--gcov-object-directory ./fortran \
-		--output docs/coverage/index.html \
+		--output _coverage/index.html \
 		--root ./fortran \
 		--exclude-directories examples \
 		--exclude-directories tests \
