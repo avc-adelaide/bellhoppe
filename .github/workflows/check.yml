@@ -47,7 +47,7 @@ jobs:
     - name: Install dependencies
       run: |
           pipx install hatch
-          pip install fortitude ruff
+          pip install fortitude-lint ruff
     - name: Test with lint
       run: |
           make lint

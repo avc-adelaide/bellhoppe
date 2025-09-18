@@ -108,10 +108,7 @@ debug = [
 docf = "ford -g -d fortran ford.md"
 docp = "sphinx-build python/docs doc/media/python"
 lintf = "fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003"
-lintp  = [
-    "install-dev",
-    "ruff check python/"
-]
+lintp  = "ruff check python/"
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true
