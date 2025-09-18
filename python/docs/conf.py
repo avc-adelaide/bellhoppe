@@ -1,7 +1,6 @@
 # Configuration file for the Sphinx documentation builder.
 
 import os
-import sys
 
 # Add Python package path
 conf_dir = os.path.dirname(__file__)

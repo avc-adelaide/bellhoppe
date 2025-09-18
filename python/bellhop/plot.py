@@ -12,12 +12,10 @@
 
 import numpy as _np
 import os as _os
-import sys as _sys
 import warnings as _warnings
 from tempfile import mkstemp as _mkstemp
 import bokeh.plotting as _bplt
 import bokeh.models as _bmodels
-import bokeh.palettes as _bpal
 import bokeh.resources as _bres
 import bokeh.io as _bio
 import scipy.signal as _sig
@@ -39,11 +37,16 @@ _static_images = False
 _colors = light_palette
 
 try:
-    assert 'ZMQInteractiveShell' in get_ipython().__class__.__name__   # check if we are using IPython and Jupyter
-    _bplt.output_notebook(resources=_bres.INLINE, hide_banner=True)
-    _notebook = True
-except:
-    pass                            # not in Jupyter, skip notebook initialization
+    from IPython import get_ipython
+except ImportError:
+    get_ipython = None
+
+_notebook = False
+if get_ipython is not None:
+    shell = get_ipython().__class__.__name__
+    if "ZMQInteractiveShell" in shell:  # IPython Jupyter shell
+        _bplt.output_notebook(resources=_bres.INLINE, hide_banner=True)
+        _notebook = True
 
 def _new_figure(title, width, height, xlabel, ylabel, xlim, ylim, xtype, ytype, interactive):
     global _color
@@ -728,7 +731,7 @@ def iqplot(data, marker='.', color=None, labels=None, filled=False, size=None, t
             size = 5
         scatter(data.real, data.imag, marker=marker, filled=filled, color=color, size=size, hold=hold)
     else:
-        if labels == True:
+        if labels:
             labels = range(len(data))
         if color is None:
             color = 'black'

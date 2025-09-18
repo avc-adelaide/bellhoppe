@@ -76,7 +76,7 @@ def test_read_bty():
     if not os.path.exists(bty_file):
         pytest.skip(f"Test file not found: {bty_file}")
 
-    bty = bh.read_bty(bty_file)
+    bty,interp_bty = bh.read_bty(bty_file)
 
     # Should return [range, depth] pairs
     assert isinstance(bty, np.ndarray), "Should return numpy array"
@@ -98,7 +98,7 @@ def test_read_bty_complex():
     if not os.path.exists(bty_file):
         pytest.skip(f"Test file not found: {bty_file}")
 
-    bty = bh.read_bty(bty_file)
+    bty,interp_bty = bh.read_bty(bty_file)
 
     # Should return [range, depth] pairs
     assert isinstance(bty, np.ndarray), "Should return numpy array"
@@ -122,7 +122,7 @@ def test_integration_with_env():
 
     # Read files
     ssp = bh.read_ssp(ssp_file)
-    bty = bh.read_bty(bty_file)
+    bty,interp_bty = bh.read_bty(bty_file)
 
     # Create environment
     env = bh.create_env2d()
@@ -140,7 +140,7 @@ def test_integration_with_env():
     else:  # numpy array (single-profile)
         assert isinstance(env["soundspeed"], np.ndarray)
         assert env["soundspeed"].shape == ssp.shape
-    
+
     assert isinstance(env["depth"], np.ndarray)
     assert env["depth"].shape == bty.shape
 
@@ -155,7 +155,7 @@ def test_file_extensions():
 
     # Should work without extensions
     ssp = bh.read_ssp(ssp_file)
-    bty = bh.read_bty(bty_file)
+    bty,interp_bty = bh.read_bty(bty_file)
 
     # Check data types - read_ssp can return DataFrame (multi-profile) or numpy array (single-profile)
     if hasattr(ssp, 'columns'):  # pandas DataFrame (multi-profile)
@@ -163,7 +163,7 @@ def test_file_extensions():
         assert len(ssp.columns) > 0, "SSP DataFrame should have range columns"
     else:  # numpy array (single-profile)
         assert isinstance(ssp, np.ndarray)
-    
+
     assert isinstance(bty, np.ndarray)
 
 def test_file_not_found():

@@ -253,10 +253,10 @@ cov:
 	hatch run cov
 
 lint:
-	@echo "Running fortitude Fortran linter..."
-	hatch run lintf
 	@echo "Running ruff Python linter..."
 	hatch run lintp
+	@echo "Running fortitude Fortran linter..."
+	hatch run lintf
 
 ###### COVERAGE ######
 

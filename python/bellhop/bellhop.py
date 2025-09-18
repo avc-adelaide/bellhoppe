@@ -46,6 +46,7 @@ semicoherent = 'semicoherent'
 
 
 interp_map = {
+    "L": spline, # reverse lookup uses the last entry
     "S": spline,
     "C": linear,
     "Q": "quadrilateral",
@@ -111,10 +112,10 @@ _models = []
 
 def _get_default_env2d():
     """Get default environment dictionary for 2D underwater acoustic modeling.
-    
+
     This function provides the shared default values used by both create_env2d()
     and read_env2d() to avoid duplication.
-    
+
     :returns: dictionary with default environment parameters
     """
     return {
@@ -425,7 +426,7 @@ def read_env2d(fname):
 
         if 'A' in topopt:
             # Read halfspace parameters line
-            halfspace_line = f.readline().strip()
+            f.readline().strip()
             # This line contains: depth, alphaR, betaR, rho, alphaI, betaI
             # We skip this for now as it's not part of the standard env structure
 
@@ -646,7 +647,7 @@ def read_ssp(fname):
         ssp_array = _np.array(ssp_data)
 
         if ssp_array.size == 0:
-            raise ValueError(f"No sound speed data found in file")
+            raise ValueError("No sound speed data found in file")
 
         if nprofiles == 1:
             # Single profile - return as [depth, soundspeed] pairs for backward compatibility
@@ -684,9 +685,10 @@ def read_bty(fname):
     **Examples:**
 
     >>> import bellhop as bh
-    >>> bty = bh.read_bty("tests/MunkB_geo_rot/MunkB_geo_rot.bty")
+    >>> bty,bty_interp = bh.read_bty("tests/MunkB_geo_rot/MunkB_geo_rot.bty")
     >>> env = bh.create_env2d()
     >>> env["depth"] = bty
+    >>> env["depth_interp"] = bty_interp
     >>> arrivals = bh.calculate_arrivals(env)
 
     **File format example:**
@@ -737,7 +739,7 @@ def read_bty(fname):
         depths_array = _np.array(depths)
 
         # Return as [range, depth] pairs
-        return _np.column_stack([ranges_m, depths_array])
+        return _np.column_stack([ranges_m, depths_array]), interp_map[interp_type]
 
 def check_env2d(env):
     """Check the validity of a 2D underwater environment definition.
@@ -792,7 +794,7 @@ def check_env2d(env):
             assert env['soundspeed'][-1,0] >= max_depth, 'Last depth in soundspeed array must be beyond water depth: '+str(max_depth)+' m'
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
             assert env['soundspeed_interp'] in interp_rev, 'Invalid interpolation type: '+str(env['soundspeed_interp'])
-            if not(max_depth in env['soundspeed'][:,0]):
+            if max_depth not in env['soundspeed'][:,0]:
                 indlarger = _np.argwhere(env['soundspeed'][:,0]>max_depth)[0][0]
                 if env['soundspeed_interp'] == spline:
                     tck = _interp.splrep(env['soundspeed'][:,0], env['soundspeed'][:,1], s=0)
@@ -926,7 +928,6 @@ def plot_ssp(env, **kwargs):
             max_y = env['depth']
         _plt.plot([svp, svp], [0, -max_y], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
     elif env['soundspeed_interp'] == spline:
-        s = svp
         ynew = _np.linspace(_np.min(svp[:,0]), _np.max(svp[:,0]), 100)
         tck = _interp.splrep(svp[:,0], svp[:,1], s=0)
         xnew = _interp.splev(ynew, tck, der=0)
@@ -1219,7 +1220,6 @@ def pyplot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='o
         max_y = env['depth']
     mgn_x = 0.01 * (max_x - min_x)
     mgn_y = 0.1 * (max_y - min_y)
-    oh = _plt.hold()
     if env['surface'] is None:
         _pyplt.plot([min_x, max_x], [0, 0], color=surface_color, **kwargs)
         _pyplt.xlabel(xlabel)
@@ -1280,7 +1280,6 @@ def pyplot_ssp(env, **kwargs):
         _pyplt.xlabel('Soundspeed (m/s)')
         _pyplt.ylabel('Depth (m)')
     elif env['soundspeed_interp'] == spline:
-        s = svp
         ynew = _np.linspace(_np.min(svp[:, 0]), _np.max(svp[:, 0]), 100)
         tck = _interp.splrep(svp[:, 0], svp[:, 1], s=0)
         xnew = _interp.splev(ynew, tck, der=0)
@@ -1356,7 +1355,6 @@ def pyplot_rays(rays, env=None, invert_colors=False, **kwargs):
     if max(r) - min(r) > 10000:
         divisor = 1000
         xlabel = 'Range (km)'
-    oh = _plt.hold()
     for _, row in rays.iterrows():
         c = _np.abs(row.bottom_bounces) / max_amp
         if invert_colors:
@@ -1399,7 +1397,6 @@ def pyplot_transmission_loss(tloss, env=None, **kwargs):
     if xr[1] - xr[0] > 10000:
         xr = (min(tloss.columns) / 1000, max(tloss.columns) / 1000)
         xlabel = 'Range (km)'
-    oh = _plt.hold()
     trans_loss = 20 * _np.log10(_fi.epsilon + _np.abs(_np.flipud(_np.array(tloss))))
     x_mesh, ymesh = _np.meshgrid(_np.linspace(xr[0], xr[1], trans_loss.shape[1]),
                                  _np.linspace(yr[0], yr[1], trans_loss.shape[0]))
@@ -1528,10 +1525,10 @@ class _Bellhop:
             return False
         return True
 
-    def _unlink(self, f):
+    def _unlink(self, f: str) -> None:
         try:
             _os.unlink(f)
-        except:
+        except FileNotFoundError:
             pass
 
     def _print(self, fh, s, newline=True):
@@ -1667,7 +1664,7 @@ class _Bellhop:
                 p[j] = dtype(p[j])
         return tuple(p)
 
-    def _check_error(self, fname_base):
+    def _check_error(self, fname_base: str):
         err = None
         try:
             with open(fname_base+'.prt', 'rt') as f:
@@ -1676,7 +1673,7 @@ class _Bellhop:
                         err += '[BELLHOP] ' + s
                     elif '*** FATAL ERROR ***' in s:
                         err = '\n[BELLHOP] ' + s
-        except:
+        except FileNotFoundError:
             pass
         return err
 
@@ -1759,7 +1756,7 @@ class _Bellhop:
     def _load_shd(self, fname_base):
         with open(fname_base+'.shd', 'rb') as f:
             recl, = _unpack('i', f.read(4))
-            title = str(f.read(80))
+            # _title = str(f.read(80))
             f.seek(4*recl, 0)
             ptype = f.read(10).decode('utf8').strip()
             assert ptype == 'rectilin', 'Invalid file format (expecting ptype == "rectilin")'

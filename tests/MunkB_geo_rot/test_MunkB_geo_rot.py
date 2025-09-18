@@ -12,7 +12,7 @@ skip_if_coverage = pytest.mark.skipif(
 
 env = bh.read_env2d("tests/MunkB_geo_rot/MunkB_geo_rot.env")
 ssp = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")
-bty = bh.read_bty("tests/MunkB_geo_rot/MunkB_geo_rot.bty")
+bty,interp_bty = bh.read_bty("tests/MunkB_geo_rot/MunkB_geo_rot.bty")
 
 env["soundspeed"] = ssp
 env["depth"] = bty
