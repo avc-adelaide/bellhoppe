@@ -9,6 +9,16 @@ on:
   workflow_dispatch:
 
 jobs:
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: pip install hatch fortitude-lint ruff
+    - name: Test with lint
+      run: make lint
+
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -24,30 +34,6 @@ jobs:
     - name: Install Hatch
       run: pipx install hatch
     - name: make
-      run: make
-    - name: make install
-      run: |
-          make install
+      run: make && make install
     - name: Test with pytest
-      run: |
-          make test
-
-  lint:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.12"]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-          pipx install hatch
-          pip install fortitude-lint ruff
-    - name: Test with lint
-      run: |
-          make lint
+      run: make test
