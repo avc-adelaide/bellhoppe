@@ -11,8 +11,47 @@
 """Underwater acoustic propagation modeling toolbox.
 
 This toolbox uses the Bellhop acoustic propagation model. For this model
-to work, the `acoustic toolbox <https://oalib-acoustics.org/>`_
-must be installed on your computer and `bellhop.exe` should be in your PATH.
+to work, the conplete bellhop-hub package must be built and installed
+and `bellhop.exe` should be in your PATH.
+
+The environment dictionary used in this code contains a large
+number of parameters, documented here to keep the code later more concise:
+
+ENV parameters
+---------------
+
+:name: environment title/name
+:type: '2D' (fixed for 2D environments)
+:frequency: acoustic frequency in Hz
+:soundspeed: sound speed profile (scalar for constant, array for depth-dependent)
+:soundspeed_interp: interpolation method ('linear', 'spline', 'quadrilateral')
+:bottom_soundspeed: bottom sediment sound speed in m/s
+:bottom_soundspeed_shear: bottom sediment sound speed in m/s
+:bottom_density: bottom sediment density in kg/m³
+:bottom_absorption: bottom sediment absorption in dB/wavelength
+:bottom_absorption_shear: bottom sediment absorption in dB/wavelength
+:bottom_roughness: bottom roughness RMS in meters
+:surface: surface altimetry profile (None if flat surface)
+:surface_interp: surface interpolation method ('linear', 'curvilinear')
+:top_boundary_condition: ('vacuum', 'acousto-elastic', 'rigid', 'from-file')
+:volume_attenuation: ('none', 'thorp', 'francois-garrison', 'biological')
+:attenuation_units: ('nepers per meter', 'frequency dependent', 'dB per meter', 'frequency scaled dB per meter', 'dB per wavelength', 'quality factor', 'loss parameter')
+:tx_depth: transmitter depth(s) in meters
+:tx_directionality: transmitter beam pattern (None if omnidirectional)
+:rx_depth: receiver depth(s) in meters
+:rx_range: receiver range(s) in meters
+:depth: maximum water depth in meters
+:depth_interp: bathymetry interpolation method ('linear', 'curvilinear')
+:min_angle: minimum beam angle in degrees
+:max_angle: maximum beam angle in degrees
+:nbeams: number of beams (0 for automatic)
+:step_size: (maximum) step size to trace rays in meters (0 for automatic)
+:box_depth: box extent to trace rays in meters (auto-calculated based on max depth data if not specified)
+:box_range: box extent to trace rays in meters (auto-calculated based on max receiver range if not specified)
+:tx_type: point (default) or line
+:beam_type: todo
+:grid: rectilinear or irregular
+
 """
 
 import os as _os
@@ -158,15 +197,24 @@ def _get_default_env2d():
 def create_env2d(**kv):
     """Create a new 2D underwater environment.
 
-    A basic environment is created with default values. To see all the parameters
-    available and their default values:
+    Parameters
+    ----------
+    **kv : dict
+        Keyword arguments for environment configuration.
+
+    Returns
+    -------
+    Environment
+        A new 2D underwater environment object.
+
+    To see all the parameters available and their default values:
 
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> bh.print_env(env)
 
     The environment parameters may be changed by passing keyword arguments
-    or modified later using a dictionary notation:
+    or modified later using dictionary notation:
 
     >>> import bellhop as bh
     >>> env = bh.create_env2d(depth=40, soundspeed=1540)
@@ -175,11 +223,12 @@ def create_env2d(**kv):
     >>> env['bottom_soundspeed'] = 1800
     >>> bh.print_env(env)
 
-    The default environment has a constant sound speed. A depth dependent sound speed
-    profile be provided as a Nx2 array of (depth, sound speed):
+    The default environment has a constant sound speed.
+    A depth dependent sound speed profile be provided as a Nx2 array of (depth, sound speed):
 
     >>> import bellhop as bh
-    >>> env = bh.create_env2d(depth=20, soundspeed=[[0,1540], [5,1535], [10,1535], [20,1530]])
+    >>> env = bh.create_env2d(depth=20,
+    >>>.        soundspeed=[[0,1540], [5,1535], [10,1535], [20,1530]])
 
     A range-and-depth dependent sound speed profile can be provided as a Pandas frame:
 
@@ -216,41 +265,6 @@ def read_env2d(fname):
 
     :param fname: path to .env file (with or without .env extension)
     :returns: environment dictionary compatible with create_env2d()
-
-    The returned environment dictionary contains the following keys:
-
-    - name: environment title/name
-    - type: '2D' (fixed for 2D environments)
-    - frequency: acoustic frequency in Hz
-    - soundspeed: sound speed profile (scalar for constant, array for depth-dependent)
-    - soundspeed_interp: interpolation method ('linear', 'spline', 'quadrilateral')
-    - bottom_soundspeed: bottom sediment sound speed in m/s
-    - bottom_soundspeed_shear: bottom sediment sound speed in m/s
-    - bottom_density: bottom sediment density in kg/m³
-    - bottom_absorption: bottom sediment absorption in dB/wavelength
-    - bottom_absorption_shear: bottom sediment absorption in dB/wavelength
-    - bottom_roughness: bottom roughness RMS in meters
-    - surface: surface altimetry profile (None if flat surface)
-    - surface_interp: surface interpolation method ('linear', 'curvilinear')
-    - top_boundary_condition: ('vacuum', 'acousto-elastic', 'rigid', 'from-file')
-    - volume_attenuation: ('none', 'thorp', 'francois-garrison', 'biological')
-    - attenuation_units: ('nepers per meter', 'frequency dependent', 'dB per meter', 'frequency scaled dB per meter', 'dB per wavelength', 'quality factor', 'loss parameter')
-    - tx_depth: transmitter depth(s) in meters
-    - tx_directionality: transmitter beam pattern (None if omnidirectional)
-    - rx_depth: receiver depth(s) in meters
-    - rx_range: receiver range(s) in meters
-    - depth: maximum water depth in meters
-    - depth_interp: bathymetry interpolation method ('linear', 'curvilinear')
-    - min_angle: minimum beam angle in degrees
-    - max_angle: maximum beam angle in degrees
-    - nbeams: number of beams (0 for automatic)
-    - step_size: (maximum) step size to trace rays in meters (0 for automatic)
-    - box_depth: box extent to trace rays in meters (auto-calculated based on max depth data if not specified)
-    - box_range: box extent to trace rays in meters (auto-calculated based on max receiver range if not specified)
-    - tx_type: point (default) or line
-    - beam_type: todo
-    - grid: rectilinear or irregular
-
 
     **Supported ENV file formats:**
 
