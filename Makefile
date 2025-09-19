@@ -236,27 +236,27 @@ cleantest: clean all install test
 
 test:
 	@echo "Running Python test suite..."
-	hatch run test
+	hatch env run test
 
 doc: docs
 
 docs:
 	@echo "Generating Fortran/FORD documentation..."
-	hatch run docf
+	hatch env run docf
 	@echo "Generating Python/Sphinx documentation..."
-	hatch run docp
+	hatch env run docp
 	@echo "Documentation generated in ./doc/ directory"
 	@echo "Open ./doc/index.html in a web browser to view"
 
 cov:
 	@echo "Generating coverage reports..."
-	hatch run cov
+	hatch env run cov
 
 lint:
 	@echo "Running ruff Python linter..."
-	hatch run lintp
+	hatch env run lintp
 	@echo "Running fortitude Fortran linter..."
-	hatch run lintf
+	hatch env run lintf
 
 ###### COVERAGE ######
 
