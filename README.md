@@ -1,5 +1,18 @@
 # The BELLHOP underwater acoustics ray tracing tool
 
+## Documentation
+
+- [Main Bellhop documentation](https://avc-adelaide.github.io/bellhop/)
+- [Python API documentation](https://avc-adelaide.github.io/bellhop/media/python/)
+- [Fortran code coverage for the new test suite](https://avc-adelaide.github.io/bellhop/media/coverage-index.html)
+- [Github repository link](https://github.com/avc-adelaide/bellhop) (what you are reading now)
+
+[![Test Suite](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml)
+[![Code Lint](https://github.com/avc-adelaide/bellhop/actions/workflows/lint.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/lint.yml)
+
+
+## Background
+
 * Bellhop is an underwater acoustics simulator, part of the [Acoustics Toolbox](http://oalib.hlsresearch.com/AcousticsToolbox/) by Michael B. Porter and colleagues.
 
 * The Bellhop component of the Acoustics Toolbox has been extracted UCal San Diego to support the [multithreaded C++/CUDA version: `bellhopcuda`](https://github.com/A-New-BellHope/bellhopcuda). The UCal team also [maintain a fork of the Fortran sources](https://github.com/A-New-BellHope/bellhop) with numerical properties and robustness improved and bugs fixed; some of these changes have been back-ported into the Acoustics Toolbox directly but the codebases are no longer identical
@@ -12,21 +25,6 @@
     * Updated Fortran source code with automated documentation using FORD and lint checking using fortitude
     * Addition of explicit regression and unit test files using pytest
     * Continuous integration through Github for all documentation, linting, test suite, and code coverage
-
-
-## Documentation
-
-**[BELLHOP Documentation](https://avc-adelaide.github.io/bellhop/)** — Main documentation landing page with:
-- Collated user guides and technical reference documentation
-- **[Python API documentation](https://avc-adelaide.github.io/bellhop/media/python/)**
-- Source code browsing with syntax highlighting
-- Automatically generated module and subroutine references
-- Interactive call graphs showing code relationships
-- **[Code coverage for the new test suite](https://avc-adelaide.github.io/bellhop/media/coverage-index.html)**
-
-
-[![Test Suite](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml)
-[![Code Lint](https://github.com/avc-adelaide/bellhop/actions/workflows/lint.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/lint.yml)
 
 
 ## Installation
@@ -132,19 +130,19 @@ the Python test suite located in the `tests/` subfolder:
     hatch test
 
 Or:
- 
+
     make test
 
 The code can be statically tested with the respective Python and Fortran linters with:
 
     pip install ruff
     hatch run lintp
-    
+
     pip install fortitude-lint
     hatch run lintf
 
 These steps can be run together with:
- 
+
     make lint
 
 
@@ -176,6 +174,7 @@ These two steps are combined together with:
 make doc
 ```
 
+
 ## Code coverage analysis
 
 BELLHOP includes integrated support for code coverage analysis using GCOV.
@@ -196,10 +195,9 @@ Now that you've got this far, head over the to the **[BELLHOP Documentation](htt
 
 ## Impressum
 
-Copyright (C) 2025 Adelaide University, Australia \
-Copyright (C) 2021-2023 The Regents of the University of California \
-Marine Physical Lab at Scripps Oceanography, c/o Jules Jaffe, jjaffe@ucsd.edu \
-Copyright (C) 1983-2022 Michael B. Porter
+Copyright (C) 2025      Adelaide University, Australia \
+Copyright (C) 2021-2025 The Regents of the University of California Marine Physical Lab at Scripps Oceanography, c/o Jules Jaffe, jjaffe@ucsd.edu \
+Copyright (C) 1983-2024 Michael B. Porter
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
