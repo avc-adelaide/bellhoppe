@@ -1547,17 +1547,17 @@ class _Bellhop:
     def _print(self, fh, s, newline=True):
         _os.write(fh, (s+'\n' if newline else s).encode())
 
-    def _print_array(self, fh, a, nn=None):
+    def _print_array(self, fh, a, label="", nn=None):
         if nn is None:
             nn = _np.size(a)
         if nn == 1:
             self._print(fh, "1")
-            self._print(fh, "%0.6f /" % (a))
+            self._print(fh, f"{a} /  ! {label} (single value)")
         else:
-            self._print(fh, str(nn))
+            self._print(fh, f"{nn}")
             for j in a:
-                self._print(fh, "%0.6f " % (j), newline=False)
-            self._print(fh, "/")
+                self._print(fh, f"{j} ", newline=False)
+            self._print(fh, f"/   ! {label} ({nn} values)")
 
     def _create_env_file(self, env, taskcode, fname_base=None):
 
@@ -1570,8 +1570,9 @@ class _Bellhop:
             fname_base = fname[:-4]
 
         self._print(fh, "'"+env['name']+"'")
-        self._print(fh, "%0.6f" % (env['frequency']))
-        self._print(fh, "1")
+        self._print(fh, f"{env['frequency']}    ! FREQ (Hz)")
+        self._print(fh, "1    ! NMedia=1 always for Bellhop")
+
         svp = env['soundspeed']
         svp_depth = 0.0
         svp_interp = interp_rev[env['soundspeed_interp']]
@@ -1585,45 +1586,53 @@ class _Bellhop:
             else:
                 svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
         if env['surface'] is None:
-            self._print(fh, f"'{svp_interp}{svp_topbound}{svp_attunits}{svp_volatt}'")
+            comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
+            self._print(fh, f"'{svp_interp}{svp_topbound}{svp_attunits}{svp_volatt}'    ! {comment}")
         else:
-            self._print(fh, "'%cVWT*'" % svp_interp)
+            comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
+            self._print(fh, f"'{svp_interp}VWT*'    ! {comment}")
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
+
         # max depth should be the depth of the acoustic domain, which can be deeper than the max depth bathymetry
+        comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
         max_depth = env["depth_max"] if env["depth_max"] else env['depth'] if _np.size(env['depth']) == 1 else max(_np.max(env['depth'][:,1]), svp_depth)
-        self._print(fh, f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}")
+        self._print(fh, f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}    ! {comment}")
+
         if _np.size(svp) == 1:
-            self._print(fh, "0.0 %0.6f /" % (svp))
-            self._print(fh, "%0.6f %0.6f /" % (max_depth, svp))
+            self._print(fh, f"0.0 {svp} /    ! '0.0' SSP_Const")
+            self._print(fh, f"{max_depth} {svp} /    ! MAXDEPTH SSP_Const")
         elif svp_interp == 'Q':
             sspenv = env['ssp_env']
             # if the SSP data was provided in the ENV file, use that:
             if sspenv is not None:
                 for j in range(sspenv.shape[0]):
-                    self._print(fh, "%0.6f %0.6f /" % (sspenv[j,0], sspenv[j,1]))
+                    self._print(fh, f"{sspenv[j,0]} {sspenv[j,1]} /  ! ssp_{j}")
             # otherwise use the SSP data specified in the dataframe:
             else:
                 for j in range(svp.shape[0]):
-                    self._print(fh, "%0.6f %0.6f /" % (svp.index[j], svp.iloc[j,0]))
+                    self._print(fh, f"{svp.index[j]} {svp.iloc[j,0]} /  ! ssp_{j}")
             self._create_ssp_file(fname_base+'.ssp', svp)
         else:
             for j in range(svp.shape[0]):
-                self._print(fh, "%0.6f %0.6f /" % (svp[j,0], svp[j,1]))
+                self._print(fh, f"{svp[j,0]} {svp[j,1]} /  ! ssp_{j}")
+
         depth = env['depth']
-        if _np.size(depth) == 1:
-            self._print(fh, "'A' %0.6f" % (env['bottom_roughness']))
-        else:
-            self._print(fh, "'A*' %0.6f" % (env['bottom_roughness']))
+        dp_flag = "" if _np.size(depth) == 1 else "*"
+        # TODO: there are more options to include here
+        self._print(fh, f"'A{dp_flag}' {env['bottom_roughness']}    ! BOT_Boundary_cond. / BOT_Roughness")
+
+        comment = "DEPTH_Max  BOT_SoundSpeed  BOT_SoundSpeed_Shear BOT_Density [ BOT_Absorp [ BOT_Absorp_Shear ] ]"
+        if _np.size(depth) > 1:
             self._create_bty_ati_file(fname_base+'.bty', depth, env['depth_interp'])
         if env['bottom_absorption'] is None:
-            self._print(fh, "%0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000))
+            self._print(fh, f"{env['depth_max']} {env['bottom_soundspeed']} {env['bottom_soundspeed_shear']} {env['bottom_density']/1000} /  ! {comment}")
         elif env['bottom_absorption_shear'] is None:
             self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption']))
         else:
             self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption'], env['bottom_absorption_shear']))
-        self._print_array(fh, env['tx_depth'], env['tx_ndepth'])
-        self._print_array(fh, env['rx_depth'], env['rx_ndepth'])
-        self._print_array(fh, env['rx_range']/1000, env['rx_nrange'])
+        self._print_array(fh, env['tx_depth'], nn=env['tx_ndepth'], label="TX_DEPTH")
+        self._print_array(fh, env['rx_depth'], nn=env['rx_ndepth'], label="RX_DEPTH")
+        self._print_array(fh, env['rx_range']/1000, nn=env['rx_nrange'], label="RX_RANGE")
 
         beamtype = beam_rev[env['beam_type']]
         beampattern = " "
@@ -1633,8 +1642,8 @@ class _Bellhop:
             beampattern = "*"
             self._create_sbp_file(fname_base+'.sbp', env['tx_directionality'])
         runtype_str = taskcode + beamtype + beampattern + txtype + gridtype
-        self._print(fh, f"'{runtype_str.rstrip()}'")
-        self._print(fh, "%d" % (env['nbeams']))
+        self._print(fh, f"'{runtype_str.rstrip()}'  ! RUN TYPE")
+        self._print(fh, f"{env['nbeams']} ! NBeams")
         self._print(fh, "%0.6f %0.6f /   ! ALPHA1,2 (degrees)" % (env['min_angle'], env['max_angle']))
         step_size = env["step_size"] or 0.0
         box_depth = env["box_depth"] or 1.01*max_depth
