@@ -84,4 +84,4 @@ docs/coverage
 docs/_build/*
 
 *_output.*
-
+test_debug.*
