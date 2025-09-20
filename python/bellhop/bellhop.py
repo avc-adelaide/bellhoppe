@@ -137,6 +137,7 @@ def _get_default_env2d():
         'bottom_beta': None,            #
         'bottom_transition_freq': None, # Hz
         'bottom_boundary_condition': 'acousto-elastic',
+        'bottom_reflection_coefficient': None,
         '_bottom_bathymetry': "flat",   #
         'surface': None,                # surface profile
         'surface_interp': linear,       # curvilinear/linear
@@ -784,6 +785,72 @@ def read_bty(fname):
         # Return as [range, depth] pairs
         return _np.column_stack([ranges_m, depths_array]), interp_map[interp_type]
 
+def read_refl_coeff(fname):
+    """Read a reflection coefficient (.brc) file used by BELLHOP.
+
+    This function reads BELLHOP's .brc files which define the reflection coefficient
+    data. The file format is:
+    - Line 1: Number of points
+    - Line 2+: THETA(j)       RMAG(j)       RPHASE(j)
+
+    Where:
+    - THETA():  Angle (degrees)
+    - RMAG():   Magnitude of reflection coefficient
+    - RPHASE(): Phase of reflection coefficient (degrees)
+
+    :param fname: path to .brc/.trc file (extension required)
+    :returns: numpy array with [theta, rmag, rphase] triplets compatible with create_env2d()
+
+    The returned array can be assigned to env["bottom_reflection_coefficient"] or env["top_reflection_coefficient"] .
+
+    **Example:**
+
+    >>> import bellhop as bh
+    >>> brc = bh.read_refl_coeff("tests/MunkB_geo_rot/MunkB_geo_rot.brc")
+    >>> env = bh.create_env2d()
+    >>> env["bottom_reflection_coefficient"] = brc
+    >>> arrivals = bh.calculate_arrivals(env)
+
+    **File format example:**
+
+    ::
+
+        3
+        0.0   1.00  180.0
+        45.0  0.95  175.0
+        90.0  0.90  170.0
+    """
+    import os
+
+
+    if not os.path.exists(fname):
+        raise FileNotFoundError(f"Reflection coefficient file not found: {fname}")
+
+    with open(fname, 'r') as f:
+
+        # Read number of points
+        npoints = int(f.readline().strip())
+
+        # Read range,depth pairs
+        theta = []
+        rmagn = []
+        rphas = []
+
+        for i in range(npoints):
+            line = f.readline().strip()
+            if line:  # Skip empty lines
+                parts = line.split()
+                if len(parts) == 3:
+                    theta.append(float(parts[0]))
+                    rmagn.append(float(parts[1]))
+                    rphas.append(float(parts[2]))
+
+        if len(theta) != npoints:
+            raise ValueError(f"Expected {npoints} bathymetry points, but found {len(ranges)}")
+
+        # Return as [range, depth] pairs
+        return _np.column_stack([theta, rmagn, rphas])
+
 def check_env2d(env):
     """Check the validity of a 2D underwater environment definition.
 
@@ -851,6 +918,8 @@ def check_env2d(env):
         assert _np.max(env['rx_depth']) <= max_depth, 'rx_depth cannot exceed water depth: '+str(max_depth)+' m'
         assert env['min_angle'] > -180 and env['min_angle'] < 180, 'min_angle must be in range (-180, 180)'
         assert env['max_angle'] > -180 and env['max_angle'] < 180, 'max_angle must be in range (-180, 180)'
+        if env["bottom_reflection_coefficient"] is not None:
+            env["bottom_boundary_condition"] = "from-file"
         if env['tx_directionality'] is not None:
             assert _np.size(env['tx_directionality']) > 1, 'tx_directionality must be an Nx2 array'
             assert env['tx_directionality'].ndim == 2, 'tx_directionality must be an Nx2 array'
@@ -1656,12 +1725,18 @@ class _Bellhop:
         comment = "DEPTH_Max  BOT_SoundSpeed  BOT_SoundSpeed_Shear BOT_Density [ BOT_Absorp [ BOT_Absorp_Shear ] ]"
         if _np.size(depth) > 1:
             self._create_bty_ati_file(fname_base+'.bty', depth, env['depth_interp'])
-        if env['bottom_absorption'] is None:
-            self._print(fh, f"{env['depth_max']} {env['bottom_soundspeed']} {env['bottom_soundspeed_shear']} {env['bottom_density']/1000} /  ! {comment}")
-        elif env['bottom_absorption_shear'] is None:
-            self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption']))
-        else:
-            self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption'], env['bottom_absorption_shear']))
+
+        if env['bottom_boundary_condition'] == "acousto-elastic":
+            if env['bottom_absorption'] is None:
+                self._print(fh, f"{env['depth_max']} {env['bottom_soundspeed']} {env['bottom_soundspeed_shear']} {env['bottom_density']/1000} /  ! {comment}")
+            elif env['bottom_absorption_shear'] is None:
+                self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption']))
+            else:
+                self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption'], env['bottom_absorption_shear']))
+
+        if env['bottom_boundary_condition'] == "from-file":
+            self._create_refl_coeff_file(fname_base+".brc", env['bottom_reflection_coefficient'])
+
         self._print_array(fh, env['tx_depth'], nn=env['tx_ndepth'], label="TX_DEPTH")
         self._print_array(fh, env['rx_depth'], nn=env['rx_ndepth'], label="RX_DEPTH")
         self._print_array(fh, env['rx_range']/1000, nn=env['rx_nrange'], label="RX_RANGE")
@@ -1696,6 +1771,12 @@ class _Bellhop:
             f.write(str(dir.shape[0])+"\n")
             for j in range(dir.shape[0]):
                 f.write("%0.6f %0.6f\n" % (dir[j,0], dir[j,1]))
+
+    def _create_refl_coeff_file(self, filename, rc):
+        with open(filename, 'wt') as f:
+            f.write(str(rc.shape[0])+"\n")
+            for j in range(rc.shape[0]):
+                f.write(f"{rc[j,0]} {rc[j,1]} {rc[j,2]}\n")
 
     def _create_ssp_file(self, filename, svp):
         with open(filename, 'wt') as f:

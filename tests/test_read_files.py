@@ -173,3 +173,6 @@ def test_file_not_found():
 
     with pytest.raises(FileNotFoundError):
         bh.read_bty("nonexistent.bty")
+
+    with pytest.raises(FileNotFoundError):
+        bh.read_refl_coeff("nonexistent.brc")
