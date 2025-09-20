@@ -51,7 +51,7 @@ interp_map = {
     "N": "nlinear",
     " ": 'default',
 }
-topbound_map = {
+boundcond_map = {
     "V": "vacuum",
     "A": "acousto-elastic",
     "R": "rigid",
@@ -75,6 +75,12 @@ volatt_map = {
     "B": 'biological',
     " ": 'default',
 }
+bottom_map = {
+    "_": 'flat',
+    "~": 'from-file',
+    "*": 'from-file',
+    " ": 'default',
+}
 source_map = {
     "R": 'point',
     "X": 'line',
@@ -95,9 +101,10 @@ beam_map = {
 }
 
 interp_rev = {v: k for k, v in interp_map.items()}
-topbound_rev = {v: k for k, v in topbound_map.items()}
+boundcond_rev = {v: k for k, v in boundcond_map.items()}
 attunits_rev = {v: k for k, v in attunits_map.items()}
 volatt_rev = {v: k for k, v in volatt_map.items()}
+bottom_rev = {v: k for k, v in bottom_map.items()}
 source_rev = {v: k for k, v in source_map.items()}
 grid_rev = {v: k for k, v in grid_map.items()}
 beam_rev = {v: k for k, v in beam_map.items()}
@@ -127,6 +134,10 @@ def _get_default_env2d():
         'bottom_absorption': None,       # dB/wavelength??
         'bottom_absorption_shear': None, # dB/wavelength??
         'bottom_roughness': 0,          # m (rms)
+        'bottom_beta': None,            #
+        'bottom_transition_freq': None, # Hz
+        'bottom_boundary_condition': 'acousto-elastic',
+        '_bottom_bathymetry': "flat",   #
         'surface': None,                # surface profile
         'surface_interp': linear,       # curvilinear/linear
         'tx_depth': 5,                  # m
@@ -322,9 +333,14 @@ def read_env2d(fname):
     env = _get_default_env2d()
 
     def _parse_quoted_string(line):
-        """Extract string from within quotes"""
-        match = re.search(r"'([^']*)'", line)
-        return match.group(1) if match else line.strip()
+        """Extract string from within quotes
+
+        Sometimes (why??) the leading quote was being stripped, so we also try to catch
+        this case with the regexp, stripping only a trailing '.
+        """
+        mtch = re.search(r"'([^']*)'", line)
+        mtch2 = re.search(r"([^']*)'$", line)
+        return mtch.group(1) if mtch else mtch2.group(1) if mtch2 else line.strip()
 
     def _parse_line(line):
         """Parse a line, removing comments and whitespace"""
@@ -419,7 +435,7 @@ def read_env2d(fname):
         def _invalid(opt):
             raise ValueError(f"Top boundary condition option {opt!r} not available")
         opt = topopt[1]
-        env["top_boundary_condition"] = topbound_map.get(opt) or _invalid(opt)
+        env["top_boundary_condition"] = boundcond_map.get(opt) or _invalid(opt)
 
         # Attenuation units
         def _invalid(opt):
@@ -471,17 +487,31 @@ def read_env2d(fname):
         env['ssp_env'] = ssp_points
 
         # Bottom boundary options
-        bottom_line = f.readline().strip()
-        bottom_parts = _parse_line(bottom_line).split()
-        if len(bottom_parts) >= 2:
-            bottom_opt = _parse_quoted_string(bottom_parts[0])
-            env['bottom_roughness'] = float(bottom_parts[1])
+        print("  ")
+        print(fname)
 
-            # Check for bathymetry file (indicated by * in bottom option)
-            if '*' in bottom_opt:
-                # Bathymetry file exists - would need to read .bty file
-                # For now, note that depth is range-dependent
-                pass
+        line = f.readline()
+        bottom_line = line.strip()
+        bottom_parts = _parse_line(bottom_line).split()
+        botopt = _parse_quoted_string(bottom_parts[0])
+        def _invalid(opt):
+            raise ValueError(f"Bottom boundary condition option {opt!r} not available")
+        opt = botopt[0]
+        env["bottom_boundary_condition"] = boundcond_map.get(opt) or _invalid(opt)
+
+        if len(botopt) > 1:
+            opt = botopt[1]
+            env["_bottom_bathymetry"] = bottom_map.get(opt) or _invalid(opt)
+            if env["_bottom_bathymetry"] == "from-file":
+                print("TODO: automatically read bty file")
+            else:
+                pass # nothing needs to be done
+
+        if len(bottom_parts) >= 2:
+            env['bottom_roughness'] = float(bottom_parts[1])
+        if len(bottom_parts) >= 3:
+            env['bottom_beta'] = float(bottom_parts[2])
+            env['bottom_transition_freq'] = float(bottom_parts[3])
 
         # Bottom properties (depth, sound_speed, density, absorption)
         bottom_props_line = f.readline().strip()
@@ -784,6 +814,7 @@ def check_env2d(env):
             assert _np.all(_np.diff(env['depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
             assert env['depth_interp'] == curvilinear or env['depth_interp'] == linear, 'Invalid interpolation type: '+str(env['depth_interp'])
             max_depth = _np.max(env['depth'][:,1])
+            env["_bottom_bathymetry"] = "from-file"
         else:
             max_depth = env['depth']
         if isinstance(env['soundspeed'], _pd.DataFrame):
@@ -1576,7 +1607,7 @@ class _Bellhop:
         svp = env['soundspeed']
         svp_depth = 0.0
         svp_interp = interp_rev[env['soundspeed_interp']]
-        svp_topbound = topbound_rev[env['top_boundary_condition']]
+        svp_boundcond = boundcond_rev[env['top_boundary_condition']]
         svp_attunits = attunits_rev[env['attenuation_units']]
         svp_volatt = volatt_rev[env['volume_attenuation']]
         if isinstance(svp, _pd.DataFrame):
@@ -1587,7 +1618,7 @@ class _Bellhop:
                 svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
         if env['surface'] is None:
             comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
-            self._print(fh, f"'{svp_interp}{svp_topbound}{svp_attunits}{svp_volatt}'    ! {comment}")
+            self._print(fh, f"'{svp_interp}{svp_boundcond}{svp_attunits}{svp_volatt}'    ! {comment}")
         else:
             comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
             self._print(fh, f"'{svp_interp}VWT*'    ! {comment}")
@@ -1617,9 +1648,10 @@ class _Bellhop:
                 self._print(fh, f"{svp[j,0]} {svp[j,1]} /  ! ssp_{j}")
 
         depth = env['depth']
-        dp_flag = "" if _np.size(depth) == 1 else "*"
-        # TODO: there are more options to include here
-        self._print(fh, f"'A{dp_flag}' {env['bottom_roughness']}    ! BOT_Boundary_cond. / BOT_Roughness")
+        bot_bc = boundcond_rev[env['bottom_boundary_condition']]
+        dp_flag = bottom_rev[env['_bottom_bathymetry']]
+        comment = "BOT_Boundary_cond / BOT_Roughness"
+        self._print(fh, f"{_quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}    ! {comment}")
 
         comment = "DEPTH_Max  BOT_SoundSpeed  BOT_SoundSpeed_Shear BOT_Density [ BOT_Absorp [ BOT_Absorp_Shear ] ]"
         if _np.size(depth) > 1:
@@ -1798,6 +1830,12 @@ class _Bellhop:
                 temp = _np.array(_unpack('f'*2*nrr, f.read(2*nrr*4)))
                 pressure[ird,:] = temp[::2] + 1j*temp[1::2]
         return _pd.DataFrame(pressure, index=pos_r_depth, columns=pos_r_range)
+
+def _quoted_opt(*args: str) -> str:
+    """Concatenate N input strings, strip whitespace, surround with single quotes
+    """
+    combined = "".join(args).strip()
+    return f"'{combined}'"
 
 _models.append(('bellhop', _Bellhop))
 
