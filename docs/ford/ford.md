@@ -52,37 +52,33 @@ This Python interface is extended from the [`arlpy` module `uwapm`](https://arlp
 The BELLHOP code base includes extensive historic documentation from the original
 Acoustics Toolbox project and subsequent development efforts:
 
-### User Guides and Technical Documentation
-- **[Original Repository Information](media/index.htm)** - General information about the Acoustics Toolbox project structure
-- **[BELLHOP User Guide](media/bellhop.htm)** - Comprehensive guide for 2D acoustic modeling
-- **[BELLHOP3D User Guide](media/bellhop3d.htm)** - Guide for 3D acoustic modeling with azimuthal coupling
+### User guides
 - **[Python documentation](media/python/index.html)** - Interface to Bellhop using high-level Python approaches
-- **[Environmental File Format](media/EnvironmentalFile.htm)** - Detailed specification of input file formats
+- **[BELLHOP User Guide](media/bellhop.htm)** - Original guide for 2D acoustic modeling
+- **[BELLHOP3D User Guide](media/bellhop3d.htm)** - Original guide for 3D acoustic modeling with azimuthal coupling
 
-### PDF Documentation
-- **[BELLHOP3D User Guide (PDF)](media/Bellhop3D%20User%20Guide%202016_7_25.pdf)** - Comprehensive PDF guide for 3D modeling
-- **[Technical Report HLS-2010-1](media/HLS-2010-1.pdf)** - Detailed technical documentation
-
-### Change Logs and Development History
-- **[University of California Changes](media/CHANGES.md)** - Detailed technical changes, bug fixes, and algorithmic improvements made by the UC San Diego team
-- **[Acoustics Toolbox Changes](media/at_changes.md)** - Historical change log from the original Acoustics Toolbox development
-- **[Acoustics Toolbox Index](media/at_index.htm)** - Overview of the complete Acoustics Toolbox suite
-
-### Field Computation and Analysis
-- **[Field Documentation](media/fields.htm)** - General field computation methods
-- **[Field Processing](media/field.htm)** - Field output processing and analysis
-- **[3D Field Methods](media/field3d.htm)** - Three-dimensional field computation approaches
-
-### Additional Technical Resources
+### Text file formats
+- **[Environmental File Format](media/EnvironmentalFile.htm)** - Detailed specification of input environment file
 - **[Reflection Coefficient Files](media/ReflectionCoefficientFile.htm)** - Format for specifying boundary reflection properties
 - **[Range-Dependent Sound Speed Profiles](media/RangeDepSSPFile.htm)** - Sound speed profile specification
 - **[Bathymetry Files](media/ATI_BTY_File.htm)** - Bathymetry data format specification
 
-### Code coverage
+### Original Acoustics Toolbox documentation
+- **[Original Repository Information](media/doc_index.htm)** - General information about the Acoustics Toolbox project structure
+- **[Acoustics Toolbox Index](media/at_index.htm)** - Overview of the complete Acoustics Toolbox suite
+- **[Field Documentation](media/fields.htm)** - General field computation methods
+- **[Field Processing](media/field.htm)** - Field output processing and analysis
+- **[3D Field Methods](media/field3d.htm)** - Three-dimensional field computation approaches
 
-BELLHOP includes code coverage analysis using GCOV to assess test suite effectiveness and identify untested code paths.
+### PDF documentation
+- **[BELLHOP3D User Guide (PDF)](media/Bellhop3D%20User%20Guide%202016_7_25.pdf)** - Comprehensive PDF guide for 3D modeling
+- **[Technical Report HLS-2010-1](media/HLS-2010-1.pdf)** - Detailed technical documentation
 
+### Additional material
 - **[Coverage Index](media/coverage-index.html)** - Interactive dashboard showing coverage statistics for all source files
+- **[University of California Changes](media/CHANGES.md)** - Detailed technical changes, bug fixes, and algorithmic improvements made by the UC San Diego team
+- **[Acoustics Toolbox Changes](media/at_changes.md)** - Historical change log from the original Acoustics Toolbox development
+
 
 
 ## Repository architecture
