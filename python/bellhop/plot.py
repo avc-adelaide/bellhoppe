@@ -785,3 +785,469 @@ def freqz(b, a=1, fs=2.0, worN=None, whole=False, degrees=True, style='solid', t
     phase = _np.angle(h)*units
     fig.line(f, phase, line_color=color(1), line_dash=style, line_width=thickness, legend_label='Phase', y_range_name='phase')
     _hold_enable(hold)
+
+
+##############################################################################
+# BELLHOP-specific plotting functions
+##############################################################################
+
+# These will be populated by the bellhop module when imported
+_check_env2d = None
+_spline = None
+_interp = None
+_pd = None
+_fi = None
+
+def _populate_bellhop_deps(check_env2d, spline, interp, pd, fi):
+    """Populate dependencies from the bellhop module."""
+    global _check_env2d, _spline, _interp, _pd, _fi
+    _check_env2d = check_env2d
+    _spline = spline
+    _interp = interp
+    _pd = pd
+    _fi = fi
+
+
+def plot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='orangered', rx_color='midnightblue', rx_plot=None, **kwargs):
+    """Plots a visual representation of the environment.
+
+    :param env: environment description
+    :param surface_color: color of the surface (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    :param bottom_color: color of the bottom (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    :param tx_color: color of transmitters (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    :param rx_color: color of receviers (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    :param rx_plot: True to plot all receivers, False to not plot any receivers, None to automatically decide
+
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
+
+    The surface, bottom, transmitters (marker: '*') and receivers (marker: 'o')
+    are plotted in the environment. If `rx_plot` is set to None and there are
+    more than 2000 receivers, they are not plotted.
+
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
+    >>> bh.plot_env(env)
+    """
+    env = _check_env2d(env)
+    min_x = 0
+    max_x = _np.max(env['rx_range'])
+    if max_x-min_x > 10000:
+        divisor = 1000
+        min_x /= divisor
+        max_x /= divisor
+        xlabel = 'Range (km)'
+    else:
+        divisor = 1
+        xlabel = 'Range (m)'
+    if env['surface'] is None:
+        min_y = 0
+    else:
+        min_y = _np.min(env['surface'][:,1])
+    if _np.size(env['depth']) > 1:
+        max_y = _np.max(env['depth'][:,1])
+    else:
+        max_y = env['depth']
+    mgn_x = 0.01*(max_x-min_x)
+    mgn_y = 0.1*(max_y-min_y)
+    oh = hold()
+    if env['surface'] is None:
+        plot([min_x, max_x], [0, 0], xlabel=xlabel, ylabel='Depth (m)', xlim=(min_x-mgn_x, max_x+mgn_x), ylim=(-max_y-mgn_y, -min_y+mgn_y), color=surface_color, **kwargs)
+    else:
+        # linear and curvilinear options use the same altimetry, just with different normals
+        s = env['surface']
+        plot(s[:,0]/divisor, -s[:,1], xlabel=xlabel, ylabel='Depth (m)', xlim=(min_x-mgn_x, max_x+mgn_x), ylim=(-max_y-mgn_y, -min_y+mgn_y), color=surface_color, **kwargs)
+    if _np.size(env['depth']) == 1:
+        plot([min_x, max_x], [-env['depth'], -env['depth']], color=bottom_color)
+    else:
+        # linear and curvilinear options use the same bathymetry, just with different normals
+        s = env['depth']
+        plot(s[:,0]/divisor, -s[:,1], color=bottom_color)
+    txd = env['tx_depth']
+    plot([0]*_np.size(txd), -txd, marker='*', style=None, color=tx_color)
+    if rx_plot is None:
+        rx_plot = _np.size(env['rx_depth'])*_np.size(env['rx_range']) < 2000
+    if rx_plot:
+        rxr = env['rx_range']
+        if _np.size(rxr) == 1:
+            rxr = [rxr]
+        for r in _np.array(rxr):
+            rxd = env['rx_depth']
+            plot([r/divisor]*_np.size(rxd), -rxd, marker='o', style=None, color=rx_color)
+    hold(oh)
+
+
+def plot_ssp(env, **kwargs):
+    """Plots the sound speed profile.
+
+    :param env: environment description
+
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
+
+    If the sound speed profile is range-dependent, this function only plots the first profile.
+
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    >>> bh.plot_ssp(env)
+    """
+    env = _check_env2d(env)
+    svp = env['soundspeed']
+    if isinstance(svp, _pd.DataFrame):
+        svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
+    if _np.size(svp) == 1:
+        if _np.size(env['depth']) > 1:
+            max_y = _np.max(env['depth'][:,1])
+        else:
+            max_y = env['depth']
+        plot([svp, svp], [0, -max_y], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
+    elif env['soundspeed_interp'] == _spline:
+        ynew = _np.linspace(_np.min(svp[:,0]), _np.max(svp[:,0]), 100)
+        tck = _interp.splrep(svp[:,0], svp[:,1], s=0)
+        xnew = _interp.splev(ynew, tck, der=0)
+        plot(xnew, -ynew, xlabel='Soundspeed (m/s)', ylabel='Depth (m)', hold=True, **kwargs)
+        plot(svp[:,1], -svp[:,0], marker='.', style=None, **kwargs)
+    else:
+        plot(svp[:,1], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
+
+
+def plot_arrivals(arrivals, dB=False, color='blue', **kwargs):
+    """Plots arrival time vs tx-rx range.
+
+    :param arrivals: arrivals as returned by compute_arrivals()
+    :param dB: True for 20 log10(magnitude), False for magnitude
+    :param color: line color (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
+
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> arrivals = bh.compute_arrivals(env)
+    >>> bh.plot_arrivals(arrivals)
+    """
+    oh = hold()
+    if arrivals is not None and len(arrivals) > 0:
+        max_y = max([max(abs(arrivals.arrival_amplitude)) if len(arrivals) > 0 else 0])
+        if dB:
+            ylabel = 'Amplitude (dB)'
+            min_y = 20*_np.log10(max_y) - 60
+            y = 20*_np.log10(abs(arrivals.arrival_amplitude))
+        else:
+            ylabel = 'Amplitude'
+            min_y = 0
+            y = abs(arrivals.arrival_amplitude)
+        t = arrivals.arrival_time
+        t0 = min(t)
+        t1 = max(t)
+        plot([t0, t1], [0, 0], xlabel='Arrival time (s)', ylabel=ylabel, color=color, **kwargs)
+        for i in range(len(t)):
+            plot([t[i], t[i]], [min_y, y[i]], xlabel='Arrival time (s)', ylabel=ylabel, ylim=[min_y, min_y+70], color=color, **kwargs)
+    hold(oh)
+
+
+def plot_rays(rays, env=None, invert_colors=False, **kwargs):
+    """Plots ray paths.
+
+    :param rays: rays as returned by compute_rays() or compute_eigenrays()
+    :param env: environment (optional, to plot bathymetry)
+    :param invert_colors: invert colormap
+
+    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
+
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> rays = bh.compute_rays(env)
+    >>> bh.plot_rays(rays, env)
+    """
+    if rays is None or len(rays) == 0:
+        return
+    ncolors = min(40, len(rays))
+    max_x = _np.max([_np.max(ray.ray[:,0]) for ray in rays.itertuples()])
+    if max_x > 10000:
+        divisor = 1000
+        xlabel = 'Range (km)'
+    else:
+        divisor = 1
+        xlabel = 'Range (m)'
+    oh = hold()
+    for i, row in enumerate(rays.itertuples()):
+        if invert_colors:
+            c = _colors[(ncolors-1-i*ncolors//len(rays)) % len(_colors)]
+        else:
+            c = _colors[(i*ncolors//len(rays)) % len(_colors)]
+        plot(row.ray[:,0]/divisor, -row.ray[:,1], color=c, xlabel=xlabel, ylabel='Depth (m)', **kwargs)
+    if env is not None:
+        plot_env(env, hold=True)
+    hold(oh)
+
+
+def plot_transmission_loss(tloss, env=None, **kwargs):
+    """Plots transmission loss.
+
+    :param tloss: transmission loss as returned by compute_transmission_loss()
+    :param env: environment (optional, to plot bathymetry)
+
+    Other keyword arguments applicable for `bellhop.plot.image()` are also supported.
+
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> tloss = bh.compute_transmission_loss(env)
+    >>> bh.plot_transmission_loss(tloss, env)
+    """
+    if env is not None:
+        max_x = _np.max(env['rx_range'])
+        if max_x > 10000:
+            divisor = 1000
+            xlabel = 'Range (km)'
+        else:
+            divisor = 1
+            xlabel = 'Range (m)'
+        xr = env['rx_range']/divisor
+        yr = -env['rx_depth']
+    else:
+        xr = None
+        yr = None
+        xlabel = 'Range'
+    oh = hold()
+    image(20*_np.log10(_fi.epsilon+_np.abs(_np.flipud(_np.array(tloss)))), x=xr, y=yr, xlabel=xlabel, ylabel='Depth (m)', xlim=xr, ylim=yr, **kwargs)
+    if env is not None:
+        plot_env(env, hold=True)
+    hold(oh)
+
+
+##############################################################################
+# BELLHOP-specific pyplot functions (using matplotlib directly)
+##############################################################################
+
+# These will be populated by the bellhop module when imported
+_pyplt = None
+_cm = None
+
+def _populate_pyplot_deps(pyplt, cm):
+    """Populate pyplot dependencies from the bellhop module."""
+    global _pyplt, _cm
+    _pyplt = pyplt
+    _cm = cm
+
+
+def pyplot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='orangered', rx_color='midnightblue',
+               rx_plot=None, **kwargs):
+    """Plots a visual representation of the environment with matplotlib.
+
+    :param env: environment description
+    :param surface_color: color of the surface
+    :param bottom_color: color of the bottom
+    :param tx_color: color of transmitters
+    :param rx_color: color of receivers
+    :param rx_plot: True to plot all receivers, False to not plot any receivers, None to automatically decide
+
+    Other keyword arguments applicable for matplotlib are also supported.
+
+    The surface, bottom, transmitters (marker: '*') and receivers (marker: 'o')
+    are plotted in the environment. If `rx_plot` is set to None and there are
+    more than 2000 receivers, they are not plotted.
+
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
+    >>> bh.pyplot_env(env)
+    """
+    env = _check_env2d(env)
+    if _np.array(env['rx_range']).size > 1:
+        min_x = _np.min(env['rx_range'])
+    else:
+        min_x = 0
+    max_x = _np.max(env['rx_range'])
+    if max_x - min_x > 10000:
+        divisor = 1000
+        min_x /= divisor
+        max_x /= divisor
+        xlabel = 'Range (km)'
+    else:
+        divisor = 1
+        xlabel = 'Range (m)'
+    if env['surface'] is None:
+        min_y = 0
+    else:
+        min_y = _np.min(env['surface'][:, 1])
+    if _np.size(env['depth']) > 1:
+        max_y = _np.max(env['depth'][:, 1])
+    else:
+        max_y = env['depth']
+    mgn_x = 0.01 * (max_x - min_x)
+    mgn_y = 0.1 * (max_y - min_y)
+    if env['surface'] is None:
+        _pyplt.plot([min_x, max_x], [0, 0], color=surface_color, **kwargs)
+        _pyplt.xlabel(xlabel)
+        _pyplt.ylabel('Depth (m)')
+        _pyplt.xlim(min_x - mgn_x, max_x + mgn_x)
+        _pyplt.ylim(-max_y - mgn_y, -min_y + mgn_y)
+    else:
+        # linear and curvilinear options use the same altimetry, just with different normals
+        s = env['surface']
+        _pyplt.plot(s[:, 0] / divisor, -s[:, 1], color=surface_color, **kwargs)
+        _pyplt.xlabel(xlabel)
+        _pyplt.ylabel('Depth (m)')
+        _pyplt.xlim(min_x - mgn_x, max_x + mgn_x)
+        _pyplt.ylim(-max_y - mgn_y, -min_y + mgn_y)
+    if _np.size(env['depth']) == 1:
+        _pyplt.plot([min_x, max_x], [-env['depth'], -env['depth']], color=bottom_color)
+    else:
+        # linear and curvilinear options use the same bathymetry, just with different normals
+        s = env['depth']
+        _pyplt.plot(s[:, 0] / divisor, -s[:, 1], color=bottom_color)
+    txd = env['tx_depth']
+    _pyplt.plot([0] * _np.size(txd), -txd, marker='*', linestyle='None', color=tx_color)
+    if rx_plot is None:
+        rx_plot = _np.size(env['rx_depth']) * _np.size(env['rx_range']) < 2000
+    if rx_plot:
+        rxr = env['rx_range']
+        if _np.size(rxr) == 1:
+            rxr = [rxr]
+        for r in _np.array(rxr):
+            rxd = env['rx_depth']
+            _pyplt.plot([r / divisor] * _np.size(rxd), -rxd, marker='o', linestyle='None', color=rx_color)
+
+
+def pyplot_ssp(env, **kwargs):
+    """Plots the sound speed profile using matplotlib.
+
+    :param env: environment description
+
+    Other keyword arguments applicable for matplotlib are also supported.
+
+    If the sound speed profile is range-dependent, this function only plots the first profile.
+
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    >>> bh.pyplot_ssp(env)
+    """
+    env = _check_env2d(env)
+    svp = env['soundspeed']
+    if isinstance(svp, _pd.DataFrame):
+        svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
+    if _np.size(svp) == 1:
+        if _np.size(env['depth']) > 1:
+            max_y = _np.max(env['depth'][:, 1])
+        else:
+            max_y = env['depth']
+        _pyplt.plot([svp, svp], [0, -max_y], **kwargs)
+        _pyplt.xlabel('Soundspeed (m/s)')
+        _pyplt.ylabel('Depth (m)')
+    elif env['soundspeed_interp'] == _spline:
+        ynew = _np.linspace(_np.min(svp[:, 0]), _np.max(svp[:, 0]), 100)
+        tck = _interp.splrep(svp[:, 0], svp[:, 1], s=0)
+        xnew = _interp.splev(ynew, tck, der=0)
+        _pyplt.plot(xnew, -ynew, **kwargs)
+        _pyplt.plot(svp[:, 1], -svp[:, 0], marker='.', linestyle='None')
+        _pyplt.xlabel('Soundspeed (m/s)')
+        _pyplt.ylabel('Depth (m)')
+    else:
+        _pyplt.plot(svp[:, 1], -svp[:, 0], **kwargs)
+        _pyplt.xlabel('Soundspeed (m/s)')
+        _pyplt.ylabel('Depth (m)')
+
+
+def pyplot_arrivals(arrivals, dB=False, color='blue', **kwargs):
+    """Plots arrival time vs tx-rx range using matplotlib.
+
+    :param arrivals: arrivals as returned by compute_arrivals()
+    :param dB: True for 20 log10(magnitude), False for magnitude
+    :param color: line color
+
+    Other keyword arguments applicable for matplotlib are also supported.
+
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> arrivals = bh.compute_arrivals(env)
+    >>> bh.pyplot_arrivals(arrivals)
+    """
+    if arrivals is not None and len(arrivals) > 0:
+        max_y = max([max(abs(arrivals.arrival_amplitude)) if len(arrivals) > 0 else 0])
+        if dB:
+            ylabel = 'Amplitude (dB)'
+            min_y = 20 * _np.log10(max_y) - 60
+            y = 20 * _np.log10(abs(arrivals.arrival_amplitude))
+        else:
+            ylabel = 'Amplitude'
+            min_y = 0
+            y = abs(arrivals.arrival_amplitude)
+        t = arrivals.arrival_time
+        t0 = min(t)
+        t1 = max(t)
+        _pyplt.plot([t0, t1], [0, 0], color=color, **kwargs)
+        for i in range(len(t)):
+            _pyplt.plot([t[i], t[i]], [min_y, y[i]], color=color)
+        _pyplt.xlabel('Arrival time (s)')
+        _pyplt.ylabel(ylabel)
+        _pyplt.ylim(min_y, min_y + 70)
+
+
+def pyplot_rays(rays, env=None, invert_colors=False, **kwargs):
+    """Plots ray paths using matplotlib.
+
+    :param rays: rays as returned by compute_rays() or compute_eigenrays()
+    :param env: environment (optional, to plot bathymetry)
+    :param invert_colors: invert colormap
+
+    Other keyword arguments applicable for matplotlib are also supported.
+
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> rays = bh.compute_rays(env)
+    >>> bh.pyplot_rays(rays, env)
+    """
+    if rays is None or len(rays) == 0:
+        return
+    ncolors = min(40, len(rays))
+    max_x = _np.max([_np.max(ray.ray[:, 0]) for ray in rays.itertuples()])
+    if max_x > 10000:
+        divisor = 1000
+        xlabel = 'Range (km)'
+    else:
+        divisor = 1
+        xlabel = 'Range (m)'
+    cmap = _cm.rainbow if not invert_colors else _cm.rainbow_r
+    for i, row in enumerate(rays.itertuples()):
+        color_val = (i * ncolors // len(rays)) / ncolors
+        _pyplt.plot(row.ray[:, 0] / divisor, -row.ray[:, 1], color=cmap(color_val), **kwargs)
+    _pyplt.xlabel(xlabel)
+    _pyplt.ylabel('Depth (m)')
+    if env is not None:
+        pyplot_env(env)
+
+
+def pyplot_transmission_loss(tloss, env=None, **kwargs):
+    """Plots transmission loss using matplotlib.
+
+    :param tloss: transmission loss as returned by compute_transmission_loss()
+    :param env: environment (optional, to plot bathymetry)
+
+    Other keyword arguments applicable for matplotlib are also supported.
+
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> tloss = bh.compute_transmission_loss(env)
+    >>> bh.pyplot_transmission_loss(tloss, env)
+    """
+    if env is not None:
+        max_x = _np.max(env['rx_range'])
+        if max_x > 10000:
+            divisor = 1000
+            xlabel = 'Range (km)'
+        else:
+            divisor = 1
+            xlabel = 'Range (m)'
+        xr = env['rx_range'] / divisor
+        yr = -env['rx_depth']
+    else:
+        xr = None
+        yr = None
+        xlabel = 'Range'
+    img_data = 20 * _np.log10(_fi.epsilon + _np.abs(_np.flipud(_np.array(tloss))))
+    if xr is not None and yr is not None:
+        extent = [_np.min(xr), _np.max(xr), _np.min(yr), _np.max(yr)]
+        _pyplt.imshow(img_data, extent=extent, aspect='auto', **kwargs)
+    else:
+        _pyplt.imshow(img_data, aspect='auto', **kwargs)
+    _pyplt.xlabel(xlabel)
+    _pyplt.ylabel('Depth (m)')
+    if env is not None:
+        pyplot_env(env)

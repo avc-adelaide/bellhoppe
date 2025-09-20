@@ -12,6 +12,12 @@ Core Functions
 .. automodule:: bellhop.bellhop
    :members:
 
+File Reading Utilities
+----------------------
+
+.. automodule:: bellhop.readers
+   :members:
+
 Plotting Utilities
 ------------------
 
