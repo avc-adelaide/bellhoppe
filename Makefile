@@ -347,7 +347,7 @@ gitokay:
 		exit 1; \
 	fi
 
-push: gitokay test
+push: gitokay lint test
 	@echo "============================"
 	@echo "Testing okay, now pushing..."
 	@echo "============================"

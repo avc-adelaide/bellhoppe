@@ -846,7 +846,7 @@ def read_refl_coeff(fname):
                     rphas.append(float(parts[2]))
 
         if len(theta) != npoints:
-            raise ValueError(f"Expected {npoints} bathymetry points, but found {len(ranges)}")
+            raise ValueError(f"Expected {npoints} bathymetry points, but found {len(theta)}")
 
         # Return as [range, depth] pairs
         return _np.column_stack([theta, rmagn, rphas])
