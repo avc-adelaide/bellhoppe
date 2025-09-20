@@ -232,31 +232,33 @@ clean: coverage-clean
 
 ###### HATCH ######
 
+HATCH := hatch env run # was "hatch run" but Github workflows started failing (??)
+
 cleantest: clean all install test
 
 test:
 	@echo "Running Python test suite..."
-	hatch env run test
+	$(HATCH) test
 
 doc: docs
 
 docs:
 	@echo "Generating Fortran/FORD documentation..."
-	hatch env run docf
+	$(HATCH) docf
 	@echo "Generating Python/Sphinx documentation..."
-	hatch env run docp
+	$(HATCH) docp
 	@echo "Documentation generated in ./doc/ directory"
 	@echo "Open ./doc/index.html in a web browser to view"
 
 cov:
 	@echo "Generating coverage reports..."
-	hatch env run cov
+	$(HATCH) cov
 
 lint:
 	@echo "Running ruff Python linter..."
-	hatch env run lintp
+	$(HATCH) lintp
 	@echo "Running fortitude Fortran linter..."
-	hatch env run lintf
+	$(HATCH) lintf
 
 ###### COVERAGE ######
 

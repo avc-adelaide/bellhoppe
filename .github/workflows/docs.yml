@@ -48,7 +48,7 @@ jobs:
       run: pip install hatch
 
     - name: Run tests with coverage instrumentation
-      run: hatch run cov
+      run: make cov
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
