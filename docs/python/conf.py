@@ -26,7 +26,7 @@ autodoc_mock_imports = ["matplotlib", "gcovr", "numpy", "scipy", "pandas", "boke
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = 'alabaster'
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # -- Extension configuration -------------------------------------------------
 napoleon_google_docstring = True
