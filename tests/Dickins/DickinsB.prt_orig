@@ -1,0 +1,171 @@
+ BELLHOP/BELLHOP3D
+
+ BELLHOP- Dickins seamount; unit density                                         
+ frequency =   230.0     Hz
+
+ Dummy parameter NMedia =            1
+
+     C-linear approximation to SSP
+     Attenuation units: dB/wavelength
+     VACUUM
+
+ Depth =    3000.00 m
+
+ Sound speed profile:
+      z         alphaR      betaR     rho        alphaI     betaI
+     (m)         (m/s)      (m/s)   (g/cm^3)      (m/s)     (m/s)
+
+      0.00      1476.70      0.00     1.00       0.0000    0.0000
+     38.00      1476.70      0.00     1.00       0.0000    0.0000
+     50.00      1472.60      0.00     1.00       0.0000    0.0000
+     70.00      1468.80      0.00     1.00       0.0000    0.0000
+    100.00      1467.20      0.00     1.00       0.0000    0.0000
+    140.00      1471.60      0.00     1.00       0.0000    0.0000
+    160.00      1473.60      0.00     1.00       0.0000    0.0000
+    170.00      1473.60      0.00     1.00       0.0000    0.0000
+    200.00      1472.70      0.00     1.00       0.0000    0.0000
+    215.00      1472.20      0.00     1.00       0.0000    0.0000
+    250.00      1471.60      0.00     1.00       0.0000    0.0000
+    300.00      1471.60      0.00     1.00       0.0000    0.0000
+    370.00      1472.00      0.00     1.00       0.0000    0.0000
+    450.00      1472.70      0.00     1.00       0.0000    0.0000
+    500.00      1473.10      0.00     1.00       0.0000    0.0000
+    700.00      1474.90      0.00     1.00       0.0000    0.0000
+    900.00      1477.00      0.00     1.00       0.0000    0.0000
+   1000.00      1478.10      0.00     1.00       0.0000    0.0000
+   1250.00      1480.70      0.00     1.00       0.0000    0.0000
+   1500.00      1483.80      0.00     1.00       0.0000    0.0000
+   2000.00      1490.50      0.00     1.00       0.0000    0.0000
+   2500.00      1498.30      0.00     1.00       0.0000    0.0000
+   3000.00      1506.50      0.00     1.00       0.0000    0.0000
+
+                                 ( RMS roughness =   0.00     )
+     Bathymetry file selected
+     ACOUSTO-ELASTIC half-space
+   3000.00      1550.00      0.00     1.50       0.5000    0.0000
+
+ __________________________________________________________________________
+
+    Number of Source   z-coordinates, Sz =            1
+    Source   z-coordinates, Sz (m)
+                 18.0000    
+
+
+ __________________________________________________________________________
+
+    Number of Receiver z-coordinates, Rz =          601
+    Receiver z-coordinates, Rz (m)
+                 0.00000       5.00000       10.0000       15.0000    
+   20.0000       25.0000       30.0000       35.0000       40.0000    
+   45.0000    
+          ... 
+   3000.00    
+
+
+ __________________________________________________________________________
+
+    Number of Receiver r-coordinates, Rr =         1001
+    Receiver r-coordinates, Rr (km)
+                 0.00000      0.100000      0.200000      0.300000    
+  0.400000      0.500000      0.600000      0.700000      0.800000    
+  0.900000    
+          ... 
+   100.000    
+
+
+ Coherent TL calculation
+ Geometric gaussian beams in Cartesian coordinates
+ Point source (cylindrical coordinates)
+ Rectilinear receiver grid: Receivers at Rr( : ) x Rz( : )
+ __________________________________________________________________________
+
+    Number of beams in elevation   =         4600
+    Beam take-off angles (degrees)
+  -45.0000      -44.9804      -44.9609      -44.9413      -44.9217    
+  -44.9022      -44.8826      -44.8630      -44.8434      -44.8239    
+          ... 
+   45.0000    
+
+ __________________________________________________________________________
+
+
+ Step length,       deltas =   0.000     m
+
+ Maximum ray depth, Box%z  =   3100.     m
+ Maximum ray range, Box%r  =   101.0    km
+ No beam shift in effect
+
+ __________________________________________________________________________
+
+ Using bottom-bathymetry file
+ Piecewise linear interpolation
+ Number of bathymetry points =            5
+
+ Short format (bathymetry only)
+  Range (km)  Depth (m)
+   0.00      0.300E+04
+   10.0      0.300E+04
+   20.0       500.    
+   30.0      0.300E+04
+   100.      0.300E+04
+
+ Step length,       deltas =   300.0     m (automatically selected)
+
+Tracing beam       1    -45.00
+
+ Geometric Gaussian beams                
+ halfwidth  =    5983.5386232822630     
+ epsilonOpt =                (0.0000000000000000,25869849735.665455)
+ EpsMult    =    1.0000000000000000     
+
+Tracing beam      93    -43.20
+Tracing beam     185    -41.40
+Tracing beam     277    -39.60
+Tracing beam     369    -37.80
+Tracing beam     461    -36.00
+Tracing beam     553    -34.20
+Tracing beam     645    -32.40
+Tracing beam     737    -30.60
+Tracing beam     829    -28.80
+Tracing beam     921    -27.00
+Tracing beam    1013    -25.20
+Tracing beam    1105    -23.40
+Tracing beam    1197    -21.59
+Tracing beam    1289    -19.79
+Tracing beam    1381    -17.99
+Tracing beam    1473    -16.19
+Tracing beam    1565    -14.39
+Tracing beam    1657    -12.59
+Tracing beam    1749    -10.79
+Tracing beam    1841     -8.99
+Tracing beam    1933     -7.19
+Tracing beam    2025     -5.39
+Tracing beam    2117     -3.59
+Tracing beam    2209     -1.79
+Tracing beam    2301      0.01
+Tracing beam    2393      1.81
+Tracing beam    2485      3.61
+Tracing beam    2577      5.41
+Tracing beam    2669      7.21
+Tracing beam    2761      9.01
+Tracing beam    2853     10.81
+Tracing beam    2945     12.61
+Tracing beam    3037     14.41
+Tracing beam    3129     16.21
+Tracing beam    3221     18.01
+Tracing beam    3313     19.81
+Tracing beam    3405     21.61
+Tracing beam    3497     23.41
+Tracing beam    3589     25.22
+Tracing beam    3681     27.02
+Tracing beam    3773     28.82
+Tracing beam    3865     30.62
+Tracing beam    3957     32.42
+Tracing beam    4049     34.22
+Tracing beam    4141     36.02
+Tracing beam    4233     37.82
+Tracing beam    4325     39.62
+Tracing beam    4417     41.42
+Tracing beam    4509     43.22
+
+ CPU Time =        1.75    s

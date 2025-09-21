@@ -42,7 +42,6 @@ semicoherent = 'semicoherent'
 
 
 interp_map = {
-    "L": spline, # reverse lookup uses the last entry
     "S": spline,
     "C": linear,
     "Q": "quadrilateral",
@@ -50,6 +49,10 @@ interp_map = {
     "H": "hexahedral",
     "N": "nlinear",
     " ": 'default',
+}
+bty_interp_map = {
+    "L": linear,
+    "C": curvilinear,
 }
 boundcond_map = {
     "V": "vacuum",
@@ -101,6 +104,7 @@ beam_map = {
 }
 
 interp_rev = {v: k for k, v in interp_map.items()}
+bty_interp_rev = {v: k for k, v in bty_interp_map.items()}
 boundcond_rev = {v: k for k, v in boundcond_map.items()}
 attunits_rev = {v: k for k, v in attunits_map.items()}
 volatt_rev = {v: k for k, v in volatt_map.items()}
@@ -598,8 +602,8 @@ def read_env2d(fname):
 
         # Ray tracing limits (step, max_depth, max_range) - last line
         limits_line = f.readline().strip()
-        limits_line = _parse_line(limits_line)
-        limits_parts = limits_line.split()
+        limits_parse = _parse_line(limits_line)
+        limits_parts = limits_parse.split()
         env['step_size'] = float(limits_parts[0])
         env['box_depth'] = float(limits_parts[1])
         env['box_range'] = 1000*float(limits_parts[2])
@@ -783,7 +787,7 @@ def read_bty(fname):
         depths_array = _np.array(depths)
 
         # Return as [range, depth] pairs
-        return _np.column_stack([ranges_m, depths_array]), interp_map[interp_type]
+        return _np.column_stack([ranges_m, depths_array]), bty_interp_map[interp_type]
 
 def read_refl_coeff(fname):
     """Read a reflection coefficient (.brc) file used by BELLHOP.
