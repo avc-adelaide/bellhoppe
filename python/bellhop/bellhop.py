@@ -28,22 +28,24 @@ import bellhop.plot as _plt
 import matplotlib.pyplot as _pyplt
 import matplotlib.cm as _cm
 import bokeh as _bokeh
+from enum import Enum
+
 
 # constants
-linear = 'linear'
-spline = 'spline'
-curvilinear = 'curvilinear'
-arrivals = 'arrivals'
-eigenrays = 'eigenrays'
-rays = 'rays'
-coherent = 'coherent'
-incoherent = 'incoherent'
-semicoherent = 'semicoherent'
-
+class Strings(str, Enum):
+    linear = "linear"
+    spline = "spline"
+    curvilinear = "curvilinear"
+    arrivals = "arrivals"
+    eigenrays = "eigenrays"
+    rays = "rays"
+    coherent = "coherent"
+    incoherent = "incoherent"
+    semicoherent = "semicoherent"
 
 interp_map = {
-    "S": spline,
-    "C": linear,
+    "S": Strings.spline,
+    "C": Strings.linear,
     "Q": "quadrilateral",
     "P": "pchip",
     "H": "hexahedral",
@@ -51,8 +53,8 @@ interp_map = {
     " ": 'default',
 }
 bty_interp_map = {
-    "L": linear,
-    "C": curvilinear,
+    "L": Strings.linear,
+    "C": Strings.curvilinear,
 }
 boundcond_map = {
     "V": "vacuum",
@@ -131,7 +133,7 @@ def _get_default_env2d():
         'frequency': 25000,             # Hz
         'ssp_env': None,                #
         'soundspeed': 1500,             # m/s
-        'soundspeed_interp': spline,    # spline/linear
+        'soundspeed_interp': Strings.spline,    # spline/linear
         'bottom_soundspeed': 1600,      # m/s
         'bottom_soundspeed_shear': 0,   # m/s
         'bottom_density': 1600,         # kg/m^3
@@ -144,7 +146,7 @@ def _get_default_env2d():
         'bottom_reflection_coefficient': None,
         '_bottom_bathymetry': "flat",   #
         'surface': None,                # surface profile
-        'surface_interp': linear,       # curvilinear/linear
+        'surface_interp': Strings.linear,       # curvilinear/linear
         'tx_depth': 5,                  # m
         'tx_ndepth': None,              #
         'tx_directionality': None,      # [(deg, dB)...]
@@ -153,7 +155,7 @@ def _get_default_env2d():
         'rx_range': 1000,               # m
         'rx_nrange': None,              #
         'depth': 25,                    # m
-        'depth_interp': linear,         # curvilinear/linear
+        'depth_interp': Strings.linear,         # curvilinear/linear
         'depth_npts': 0,                #
         'depth_sigmaz': 0,              #
         'depth_max': None,              # m
@@ -876,14 +878,14 @@ def check_env2d(env):
             assert env['surface'][0,0] <= 0, 'First range in surface array must be 0 m'
             assert env['surface'][-1,0] >= max_range, 'Last range in surface array must be beyond maximum range: '+str(max_range)+' m'
             assert _np.all(_np.diff(env['surface'][:,0]) > 0), 'surface array must be strictly monotonic in range'
-            assert env['surface_interp'] == curvilinear or env['surface_interp'] == linear, 'Invalid interpolation type: '+str(env['surface_interp'])
+            assert env['surface_interp'] == Strings.curvilinear or env['surface_interp'] == Strings.linear, 'Invalid interpolation type: '+str(env['surface_interp'])
         if _np.size(env['depth']) > 1:
             assert env['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array'
             assert env['depth'].shape[1] == 2, 'depth must be a scalar or an Nx2 array'
             assert env['depth'][0,0] <= 0, 'First range in depth array must be 0 m'
             assert env['depth'][-1,0] >= max_range, 'Last range in depth array must be beyond maximum range: '+str(max_range)+' m'
             assert _np.all(_np.diff(env['depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
-            assert env['depth_interp'] == curvilinear or env['depth_interp'] == linear, 'Invalid interpolation type: '+str(env['depth_interp'])
+            assert env['depth_interp'] == Strings.curvilinear or env['depth_interp'] == Strings.linear, 'Invalid interpolation type: '+str(env['depth_interp'])
             max_depth = _np.max(env['depth'][:,1])
             env["_bottom_bathymetry"] = "from-file"
         else:
@@ -911,7 +913,7 @@ def check_env2d(env):
             assert env['soundspeed_interp'] in interp_rev, 'Invalid interpolation type: '+str(env['soundspeed_interp'])
             if max_depth not in env['soundspeed'][:,0]:
                 indlarger = _np.argwhere(env['soundspeed'][:,0]>max_depth)[0][0]
-                if env['soundspeed_interp'] == spline:
+                if env['soundspeed_interp'] == Strings.spline:
                     tck = _interp.splrep(env['soundspeed'][:,0], env['soundspeed'][:,1], s=0)
                     insert_ss_val = _interp.splev(max_depth, tck, der=0)
                 else:
@@ -1044,7 +1046,7 @@ def plot_ssp(env, **kwargs):
         else:
             max_y = env['depth']
         _plt.plot([svp, svp], [0, -max_y], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
-    elif env['soundspeed_interp'] == spline:
+    elif env['soundspeed_interp'] == Strings.spline:
         ynew = _np.linspace(_np.min(svp[:,0]), _np.max(svp[:,0]), 100)
         tck = _interp.splrep(svp[:,0], svp[:,1], s=0)
         xnew = _interp.splev(ynew, tck, der=0)
@@ -1068,10 +1070,10 @@ def compute_arrivals(env, model=None, debug=False, fname_base=None):
     >>> bh.plot_arrivals(arrivals)
     """
     env = check_env2d(env)
-    (model_name, model) = _select_model(env, arrivals, model)
+    (model_name, model) = _select_model(env, Strings.arrivals, model)
     if debug:
         print('[DEBUG] Model: '+model_name)
-    return model.run(env, arrivals, debug, fname_base)
+    return model.run(env, Strings.arrivals, debug, fname_base)
 
 def compute_eigenrays(env, tx_depth_ndx=0, rx_depth_ndx=0, rx_range_ndx=0, model=None, debug=False, fname_base=None):
     """Compute eigenrays between a given transmitter and receiver.
@@ -1098,10 +1100,10 @@ def compute_eigenrays(env, tx_depth_ndx=0, rx_depth_ndx=0, rx_range_ndx=0, model
         env['rx_depth'] = env['rx_depth'][rx_depth_ndx]
     if _np.size(env['rx_range']) > 1:
         env['rx_range'] = env['rx_range'][rx_range_ndx]
-    (model_name, model) = _select_model(env, eigenrays, model)
+    (model_name, model) = _select_model(env, Strings.eigenrays, model)
     if debug:
         print('[DEBUG] Model: '+model_name)
-    return model.run(env, eigenrays, debug, fname_base)
+    return model.run(env, Strings.eigenrays, debug, fname_base)
 
 def compute_rays(env, tx_depth_ndx=0, model=None, debug=False, fname_base=None):
     """Compute rays from a given transmitter.
@@ -1122,12 +1124,12 @@ def compute_rays(env, tx_depth_ndx=0, model=None, debug=False, fname_base=None):
     if _np.size(env['tx_depth']) > 1:
         env = env.copy()
         env['tx_depth'] = env['tx_depth'][tx_depth_ndx]
-    (model_name, model) = _select_model(env, rays, model)
+    (model_name, model) = _select_model(env, Strings.rays, model)
     if debug:
         print('[DEBUG] Model: '+model_name)
-    return model.run(env, rays, debug, fname_base)
+    return model.run(env, Strings.rays, debug, fname_base)
 
-def compute_transmission_loss(env, tx_depth_ndx=0, mode=coherent, model=None, tx_type="default", debug=False, fname_base=None):
+def compute_transmission_loss(env, tx_depth_ndx=0, mode=Strings.coherent, model=None, tx_type="default", debug=False, fname_base=None):
     """Compute transmission loss from a given transmitter to all receviers.
 
     :param env: environment definition
@@ -1145,7 +1147,7 @@ def compute_transmission_loss(env, tx_depth_ndx=0, mode=coherent, model=None, tx
     >>> bh.plot_transmission_loss(tloss, width=1000)
     """
     env = check_env2d(env)
-    if mode not in [coherent, incoherent, semicoherent]:
+    if mode not in [Strings.coherent, Strings.incoherent, Strings.semicoherent]:
         raise ValueError('Unknown transmission loss mode: '+mode)
     if tx_type not in source_rev:
         raise ValueError(f'Unknown source type: {tx_type!r}')
@@ -1396,7 +1398,7 @@ def pyplot_ssp(env, **kwargs):
         _pyplt.plot([svp, svp], [0, -max_y], **kwargs)
         _pyplt.xlabel('Soundspeed (m/s)')
         _pyplt.ylabel('Depth (m)')
-    elif env['soundspeed_interp'] == spline:
+    elif env['soundspeed_interp'] == Strings.spline:
         ynew = _np.linspace(_np.min(svp[:, 0]), _np.max(svp[:, 0]), 100)
         tck = _interp.splrep(svp[:, 0], svp[:, 1], s=0)
         xnew = _interp.splev(ynew, tck, der=0)
@@ -1588,12 +1590,12 @@ class _Bellhop:
 
     def run(self, env, task, debug=False, fname_base=None):
         taskmap = {
-            arrivals:     ['A', self._load_arrivals],
-            eigenrays:    ['E', self._load_rays],
-            rays:         ['R', self._load_rays],
-            coherent:     ['C', self._load_shd],
-            incoherent:   ['I', self._load_shd],
-            semicoherent: ['S', self._load_shd]
+            Strings.arrivals:     ['A', self._load_arrivals],
+            Strings.eigenrays:    ['E', self._load_rays],
+            Strings.rays:         ['R', self._load_rays],
+            Strings.coherent:     ['C', self._load_shd],
+            Strings.incoherent:   ['I', self._load_shd],
+            Strings.semicoherent: ['S', self._load_shd]
         }
         fname_flag=False
         if fname_base is not None:
@@ -1765,7 +1767,7 @@ class _Bellhop:
 
     def _create_bty_ati_file(self, filename, depth, interp):
         with open(filename, 'wt') as f:
-            f.write("'%c'\n" % ('C' if interp == curvilinear else 'L'))
+            f.write("'%c'\n" % ('C' if interp == Strings.curvilinear else 'L'))
             f.write(str(depth.shape[0])+"\n")
             for j in range(depth.shape[0]):
                 f.write("%0.6f %0.6f\n" % (depth[j,0]/1000, depth[j,1]))
@@ -1917,7 +1919,7 @@ class _Bellhop:
         return _pd.DataFrame(pressure, index=pos_r_depth, columns=pos_r_range)
 
 def _quoted_opt(*args: str) -> str:
-    """Concatenate N input strings, strip whitespace, surround with single quotes
+    """Concatenate N input Strings. strip whitespace, surround with single quotes
     """
     combined = "".join(args).strip()
     return f"'{combined}'"
