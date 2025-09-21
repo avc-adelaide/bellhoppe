@@ -91,6 +91,20 @@ def _get_default_env2d():
         'grid': 'default',
     }
 
+def _resolve_entries_env2d(env):
+    """Fills in missing entries or resolves ambiguities in the ENV dictionary.
+
+    This is currently a stub but the intention is that it should be run as a
+    clean-up function whenever changes to the environment data could occur.
+    """
+
+    env['depth_max'] = env['depth_max'] or _np.max(env['depth'])
+
+    if env["bottom_reflection_coefficient"] is not None:
+        env["bottom_boundary_condition"] = _Strings.from_file
+
+    return env
+
 def create_env2d(**kv):
     """Create a new 2D underwater environment.
 
@@ -152,7 +166,7 @@ def create_env2d(**kv):
         if k not in env.keys():
             raise KeyError('Unknown key: '+k)
         env[k] = _np.asarray(v, dtype=_np.float64) if not isinstance(v, _pd.DataFrame) and _np.size(v) > 1 else v
-    env['depth_max'] = env['depth_max'] or _np.max(env['depth'])
+    env = _resolve_entries_env2d(env)
     env = check_env2d(env)
     return env
 
@@ -202,16 +216,8 @@ def read_env2d(fname):
     :box_depth: box extent to trace rays in meters (auto-calculated based on max depth data if not specified)
     :box_range: box extent to trace rays in meters (auto-calculated based on max receiver range if not specified)
     :tx_type: point (default) or line
-    :beam_type: todo
-    :grid: rectilinear or irregular
-
-    **Supported ENV file formats:**
-
-    - Standard BELLHOP format with various boundary conditions
-    - Constant or depth-dependent sound speed profiles
-    - Compressed vector notation (e.g., "0.0 5000.0 /" for linearly spaced values)
-    - Comments (lines with ! are handled correctly)
-    - Different top/bottom boundary options (halfspace, file-based, etc.)
+    :beam_type: ('hat-cartesian', 'hat-ray', 'gaussian-cartesian', 'gaussian-ray')
+    :grid: ('rectilinear', 'irregular')
 
     **Unit conversions performed:**
 
@@ -842,8 +848,6 @@ def check_env2d(env):
         assert _np.max(env['rx_depth']) <= max_depth, 'rx_depth cannot exceed water depth: '+str(max_depth)+' m'
         assert env['min_angle'] > -180 and env['min_angle'] < 180, 'min_angle must be in range (-180, 180)'
         assert env['max_angle'] > -180 and env['max_angle'] < 180, 'max_angle must be in range (-180, 180)'
-        if env["bottom_reflection_coefficient"] is not None:
-            env["bottom_boundary_condition"] = "from-file"
         if env['tx_directionality'] is not None:
             assert _np.size(env['tx_directionality']) > 1, 'tx_directionality must be an Nx2 array'
             assert env['tx_directionality'].ndim == 2, 'tx_directionality must be an Nx2 array'
@@ -1621,6 +1625,7 @@ class _Bellhop:
         comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
         max_depth = env["depth_max"] if env["depth_max"] else env['depth'] if _np.size(env['depth']) == 1 else max(_np.max(env['depth'][:,1]), svp_depth)
         self._print(fh, f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}    ! {comment}")
+        # TODO: shift max_depth into _resolve_entries_env2d
 
         if _np.size(svp) == 1:
             self._print(fh, f"0.0 {svp} /    ! '0.0' SSP_Const")
@@ -1679,6 +1684,7 @@ class _Bellhop:
         step_size = env["step_size"] or 0.0
         box_depth = env["box_depth"] or 1.01*max_depth
         box_range = env["box_range"] or 1.01*_np.max(env['rx_range'])
+        # TODO: shift these OR statements into _resolve_entries_env2d
         self._print(fh, f"{step_size} {box_depth} {box_range/1000} ! STEP (m), ZBOX (m), RBOX (km)")
         _os.close(fh)
         return fname_base
