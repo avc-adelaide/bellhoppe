@@ -32,9 +32,14 @@ import matplotlib.cm as _cm
 import bokeh as _bokeh
 
 from bellhop.constants import _Strings, _Maps
-from bellhop.readers import *
 import bellhop.environment
 import bellhop.plotutils as _plt
+
+# this format to explicitly mark the functions as public:
+from bellhop.readers import read_env2d as read_env2d
+from bellhop.readers import read_ssp as read_ssp
+from bellhop.readers import read_bty as read_bty
+from bellhop.readers import read_refl_coeff as read_refl_coeff
 
 # models (in order of preference)
 _models = []
