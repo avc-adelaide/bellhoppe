@@ -232,6 +232,7 @@ clean: coverage-clean
 	find . -name '*.gcno' -exec rm {} +
 	(cd fortran;	make -k -i clean)
 
+
 ###### HELP ######
 
 help:
@@ -367,7 +368,17 @@ gitokay:
 		exit 1; \
 	fi
 
-push: gitokay lint test
+gitclean:
+	@echo "Would delete the following:"
+	git clean -nx
+	@read -p "Continue? [y/N] " ans; \
+	if [ "$$ans" = "y" ] || [ "$$ans" = "Y" ]; then \
+		git clean -fx; \
+	else \
+		echo "Aborted."; \
+	fi
+
+push: gitokay gitclean lint test
 	@echo "============================"
 	@echo "Testing okay, now pushing..."
 	@echo "============================"
