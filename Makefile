@@ -215,6 +215,9 @@ install: all
 	@echo 'or: (bash — Linux / Windows-MSYS2 default)'
 	@echo '    echo "export PATH=\$$PATH:$(shell pwd)/bin" >> "$$HOME/.bashrc" && source ~/.bashrc'
 	@echo "***************************************"
+	@echo "Python installation is site-specific, you may need something like:"
+	@echo "    pip install -e ."
+	@echo "***************************************"
 
 clean: coverage-clean
 	-rm -f bin/*.exe
@@ -229,6 +232,23 @@ clean: coverage-clean
 	find . -name '*.gcno' -exec rm {} +
 	(cd fortran;	make -k -i clean)
 
+###### HELP ######
+
+help:
+	@echo "  CODE BUILDING"
+	@echo "    [all] - default — build binaries"
+	@echo "    clean - remove all temporary files"
+	@echo "  install - copy built binaries into ./bin"
+	@echo "                                    "
+	@echo "  CODE CHECKING"
+	@echo "     test - run test suite"
+	@echo "cleantest - rebuild entire codebase and run test suite"
+	@echo "     lint - run code linters"
+	@echo "      doc - build online documentation"
+	@echo "      cov - run code coverage build process"
+	@echo "          -                         "
+	@echo "  DEVELOPMENT TOOLS"
+	@echo "     push - push code changes to repository"
 
 ###### HATCH ######
 
