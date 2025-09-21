@@ -792,6 +792,7 @@ def check_env2d(env):
     >>> env = bh.create_env2d()
     >>> check_env2d(env)
     """
+    env = _resolve_entries_env2d(env)
     try:
         assert env['type'] == '2D', 'Not a 2D environment'
         max_range = _np.max(env['rx_range'])
@@ -1655,7 +1656,7 @@ class _Bellhop:
         if _np.size(depth) > 1:
             self._create_bty_ati_file(fname_base+'.bty', depth, env['depth_interp'])
 
-        if env['bottom_boundary_condition'] == "acousto-elastic":
+        if env['bottom_boundary_condition'] == _Strings.acousto_elastic:
             if env['bottom_absorption'] is None:
                 self._print(fh, f"{env['depth_max']} {env['bottom_soundspeed']} {env['bottom_soundspeed_shear']} {env['bottom_density']/1000} /  ! {comment}")
             elif env['bottom_absorption_shear'] is None:
@@ -1663,7 +1664,7 @@ class _Bellhop:
             else:
                 self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption'], env['bottom_absorption_shear']))
 
-        if env['bottom_boundary_condition'] == "from-file":
+        if env['bottom_boundary_condition'] == _Strings.from_file:
             self._create_refl_coeff_file(fname_base+".brc", env['bottom_reflection_coefficient'])
 
         self._print_array(fh, env['tx_depth'], nn=env['tx_ndepth'], label="TX_DEPTH")
