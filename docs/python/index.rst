@@ -3,6 +3,10 @@ BELLHOP Python API Documentation
 
 This is the Python API documentation for BELLHOP, an underwater acoustic propagation modeling toolbox.
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
 API Reference
 =============
 
@@ -17,6 +21,12 @@ Plotting Utilities
 
 .. automodule:: bellhop.plot
    :members:
+
+Internal Constants (bellhop/constants.py)
+-----------------------------------------
+
+.. automodule:: bellhop.constants
+   :private-members:
 
 Indices and tables
 ==================
