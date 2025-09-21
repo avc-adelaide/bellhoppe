@@ -75,7 +75,7 @@ Acoustics Toolbox project and subsequent development efforts:
 - **[Technical Report HLS-2010-1](media/HLS-2010-1.pdf)** - Detailed technical documentation
 
 ### Additional material
-- **[Coverage Index](media/coverage-index.html)** - Interactive dashboard showing coverage statistics for all source files
+- **[Coverage Reports](media/coverage/index.html)** - Unified dashboard with code coverage for both Fortran and Python components
 - **[University of California Changes](media/CHANGES.md)** - Detailed technical changes, bug fixes, and algorithmic improvements made by the UC San Diego team
 - **[Acoustics Toolbox Changes](media/at_changes.md)** - Historical change log from the original Acoustics Toolbox development
 
@@ -119,6 +119,6 @@ The following are the major changes or additions:
     make && make install # if necessary
     hatch run test
 
-* The code coverage system uses the GCC tool `gcov`. This is controlled via the Makefile, with results compiled into HTML files using an ad hoc Python script. Improvements to this process to use more standardised COTS tools would be good. (ChatGPT/Copilot helped me a fair degree with this.) Hatch doesn’t yet run the code coverage tool; WIL to streamline.
+* The code coverage system uses both GCC tool `gcov` for Fortran code and `coverage.py` for Python code. This is controlled via the Makefile, with results compiled into HTML files. The unified coverage dashboard provides access to both Fortran and Python coverage reports in a single interface.
 
 * There are two GitHub CI workflows: regression testing, and documentation build (which includes code coverage). They are set up using [check.yml](https://github.com/AUMAG/bellhop/blob/main/.github/workflows/check.yml) and [docs.yml](https://github.com/AUMAG/bellhop/blob/main/.github/workflows/docs.yml).

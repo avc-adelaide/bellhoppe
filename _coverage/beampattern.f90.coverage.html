@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coverage Report: beampattern.f90</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .summary {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .metric {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 3px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .code-container {
+            background-color: white;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        .code-line {
+            display: flex;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .line-number {
+            background-color: #f8f9fa;
+            padding: 2px 8px;
+            width: 60px;
+            text-align: right;
+            border-right: 1px solid #dee2e6;
+            color: #6c757d;
+        }
+        .execution-count {
+            background-color: #f8f9fa;
+            padding: 2px 8px;
+            width: 80px;
+            text-align: right;
+            border-right: 1px solid #dee2e6;
+            color: #495057;
+        }
+        .source-code {
+            padding: 2px 8px;
+            flex: 1;
+            white-space: pre;
+        }
+        .executed { background-color: #d4edda; }
+        .not-executed { background-color: #f8d7da; }
+        .non-executable { background-color: #f8f9fa; }
+        .footer {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Coverage Report: beampattern.f90</h1>
+        <p>Generated from GCOV analysis of Fortran source code</p>
+    </div>
+
+    <div class="summary">
+        <div class="metric">
+            <div class="metric-value">35.7%</div>
+            <div>Lines Executed</div>
+            <div>28 total lines</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">53.8%</div>
+            <div>Branches Executed</div>
+            <div>80 total branches</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">0.0%</div>
+            <div>Calls Executed</div>
+            <div>0 total calls</div>
+        </div>
+    </div>
+
+    <div class="code-container">
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Source:beampattern.f90</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Graph:beampattern.gcno</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Data:beampattern.gcda</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Runs:57</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">1</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">!! Source beam pattern loading and processing</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">2</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">3</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">MODULE beampattern</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">4</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  !! Source beam pattern handling including loading, interpolation, and angular weighting</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">5</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">6</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  USE FatalError</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">7</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  USE monotonicMod</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">8</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">9</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  IMPLICIT NONE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">10</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  PUBLIC</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">11</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  SAVE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">12</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">13</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  INTEGER, PARAMETER         :: SBPFile = 50</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">14</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  INTEGER                    :: NSBPPts          ! Number of source beam-pattern points</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">15</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  REAL (KIND=8), ALLOCATABLE :: SrcBmPat( :, : )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">16</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  CHARACTER (LEN=1)          :: SBPFlag          ! &#x27;*&#x27; or &#x27;O&#x27; to indicate a directional or omni pattern</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">17</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">18</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">CONTAINS</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">19</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">20</div>
+            <div class="execution-count">28*</div>
+            <div class="source-code">  SUBROUTINE ReadPat( FileRoot, PRTFile )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">21</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !!    Reads a source beam pattern file (`.sbp`) based on `FileRoot``.</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">22</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !!    Reports status messages to the print/log file connected to `PRTFile``.</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">23</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">24</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    IMPLICIT NONE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">25</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">26</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Arguments</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">27</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CHARACTER (LEN=80), INTENT( IN ) :: FileRoot</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">28</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">        !! Source beampattern filename *without* `.sbp` extension</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">29</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER,            INTENT( IN ) :: PRTFile</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">30</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">        !! I/O Unit for print file</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">31</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">32</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Local variables</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">33</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER :: I, IAllocStat, IOStat</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">34</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">35</div>
+            <div class="execution-count">28</div>
+            <div class="source-code">    IF ( SBPFlag == &#x27;*&#x27; ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">36</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">37</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;______________________________&#x27;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">38</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;Using source beam pattern file&#x27;</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">39</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">40</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       OPEN( UNIT = SBPFile,   FILE = TRIM( FileRoot ) // &#x27;.sbp&#x27;, STATUS = &#x27;OLD&#x27;, IOSTAT = IOStat, ACTION = &#x27;READ&#x27; )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">41</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( IOstat /= 0 ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">42</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          WRITE( PRTFile, * ) &#x27;SBPFile = &#x27;, TRIM( FileRoot ) // &#x27;.sbp&#x27;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">43</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          CALL ERROUT( &#x27;BELLHOP-ReadPat&#x27;, &#x27;Unable to open source beampattern file&#x27; )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">44</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">45</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">46</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       READ(  SBPFile, * ) NSBPPts</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">47</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;Number of source beam pattern points&#x27;, NSBPPts</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">48</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">49</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       ALLOCATE( SrcBmPat( NSBPPts, 2 ), Stat = IAllocStat )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">50</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( IAllocStat /= 0 ) &amp;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">51</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">            CALL ERROUT( &#x27;BELLHOP-ReadPat&#x27;, &#x27;Insufficient memory for source beam pattern data: reduce # SBP points&#x27; )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">52</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">53</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">54</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27; Angle (degrees)  Power (dB)&#x27;</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">55</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">56</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       DO I = 1, NSBPPts</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">57</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          READ(  SBPFile, * ) SrcBmPat( I, : )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">58</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          WRITE( PRTFile, FMT = &quot;( 2G11.3 )&quot; ) SrcBmPat( I, : )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">59</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       END DO</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">60</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">61</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ELSE   ! no pattern given, use omni source pattern</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">62</div>
+            <div class="execution-count">28</div>
+            <div class="source-code">       NSBPPts = 2</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">63</div>
+            <div class="execution-count">28*</div>
+            <div class="source-code">       ALLOCATE( SrcBmPat( 2, 2 ), Stat = IAllocStat )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">64</div>
+            <div class="execution-count">28*</div>
+            <div class="source-code">       IF ( IAllocStat /= 0 ) CALL ERROUT( &#x27;BELLHOP-ReadPat&#x27;, &#x27;Insufficient memory&#x27;  )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">65</div>
+            <div class="execution-count">84*</div>
+            <div class="source-code">       SrcBmPat( 1, : ) = [ -180.0, 0.0 ]</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">66</div>
+            <div class="execution-count">84*</div>
+            <div class="source-code">       SrcBmPat( 2, : ) = [  180.0, 0.0 ]</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">67</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ENDIF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">68</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">69</div>
+            <div class="execution-count">28*</div>
+            <div class="source-code">    IF ( .NOT. monotonic( SrcBmPat( :, 1 ) , NSBPPts ) ) &amp;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">70</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       CALL ERROUT( &#x27;beampattern : ReadPat&#x27;, &#x27;Source beam-pattern angles are not monotonic&#x27; )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">71</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">72</div>
+            <div class="execution-count">84*</div>
+            <div class="source-code">    SrcBmPat( :, 2 ) = 10 ** ( SrcBmPat( :, 2 ) / 20 )  ! convert dB to linear scale</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">73</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">74</div>
+            <div class="execution-count">28</div>
+            <div class="source-code">  END SUBROUTINE ReadPat</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">75</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">76</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">END MODULE beampattern</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Legend:</strong></p>
+        <ul>
+            <li><span style="background-color: #d4edda; padding: 2px 4px;">Green</span> - Executed lines</li>
+            <li><span style="background-color: #f8d7da; padding: 2px 4px;">Red</span> - Not executed lines</li>
+            <li><span style="background-color: #f8f9fa; padding: 2px 4px;">Gray</span> - Non-executable lines (comments, declarations)</li>
+        </ul>
+        <p><strong>Execution Count:</strong> Number of times each line was executed. ##### indicates never executed, - indicates non-executable.</p>
+    </div>
+</body>
+</html>

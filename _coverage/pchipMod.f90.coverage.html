@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coverage Report: pchipMod.f90</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .summary {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .metric {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 3px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .code-container {
+            background-color: white;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        .code-line {
+            display: flex;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .line-number {
+            background-color: #f8f9fa;
+            padding: 2px 8px;
+            width: 60px;
+            text-align: right;
+            border-right: 1px solid #dee2e6;
+            color: #6c757d;
+        }
+        .execution-count {
+            background-color: #f8f9fa;
+            padding: 2px 8px;
+            width: 80px;
+            text-align: right;
+            border-right: 1px solid #dee2e6;
+            color: #495057;
+        }
+        .source-code {
+            padding: 2px 8px;
+            flex: 1;
+            white-space: pre;
+        }
+        .executed { background-color: #d4edda; }
+        .not-executed { background-color: #f8d7da; }
+        .non-executable { background-color: #f8f9fa; }
+        .footer {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Coverage Report: pchipMod.f90</h1>
+        <p>Generated from GCOV analysis of Fortran source code</p>
+    </div>
+
+    <div class="summary">
+        <div class="metric">
+            <div class="metric-value">0.0%</div>
+            <div>Lines Executed</div>
+            <div>73 total lines</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">0.0%</div>
+            <div>Branches Executed</div>
+            <div>0 total branches</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">0.0%</div>
+            <div>Calls Executed</div>
+            <div>0 total calls</div>
+        </div>
+    </div>
+
+    <div class="code-container">
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Source:pchipMod.f90</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Graph:pchipMod.gcno</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Data:pchipMod.gcda</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Runs:57</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">1</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">!! Piecewise Cubic Hermite Interpolating Polynomial calculations</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">2</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">3</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">MODULE pchipmod</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">4</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  !! Subroutines and functions related to the calculation of the Piecewise Cubic Hermite Interpolating Polynomial (PCHIP)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">5</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">6</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  USE splinec</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">7</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">8</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  IMPLICIT NONE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">9</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  PUBLIC</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">10</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  SAVE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">11</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">12</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  REAL (KIND=8), PRIVATE                 :: h</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">13</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  REAL (KIND=8), PRIVATE                 :: fprime_r, fprime_i</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">14</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">15</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">CONTAINS</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">16</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">17</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  SUBROUTINE PCHIP( x, y, N, PolyCoef, csWork )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">18</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">19</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! This implements the monotone piecewise cubic Hermite interpolating</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">20</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! polynomial (PCHIP) algorithm. This is a new variant of monotone PCHIP</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">21</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! (paper submitted to JASA). Also see;</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">22</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">23</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! F. N. Fritsch and J. Butland, &quot;A Method for Constructing Local Monotone</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">24</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Piecewise Cubic Interpolants&quot;, SIAM Journal on Scientific and Statistical</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">25</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Computing, 5(2):300-304, (1984) https://doi.org/10.1137/0905021</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">26</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">27</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! F. N. Fritsch and R. E. Carlson. &quot;Monotone Piecewise Cubic Interpolation&quot;,</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">28</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! SIAM Journal on Numerical Analysis, 17(2):238-246, (1980) https://doi.org/10.1137/0717021</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">29</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">30</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! N is the number of nodes</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">31</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! x is a vector of the abscissa values</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">32</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! y is a vector of the associated ordinate values</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">33</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! PolyCoef are the coefficients of the standard polynomial</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">34</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! csWork is a temporary work space for the cubic spline</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">35</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">36</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER,          INTENT( IN  )   :: N</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">37</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL    (KIND=8), INTENT( IN  )   :: x(:)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">38</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX (KIND=8), INTENT( IN  )   :: y(:)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">39</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX (KIND=8), INTENT( INOUT ) :: PolyCoef( 4, N ), csWork( 4, N )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">40</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">41</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER           :: ix, iBCBeg, iBCEnd</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">42</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8) :: h1, h2</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">43</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX  (KIND=8) :: del1, del2, f1, f2, f1prime, f2prime, fprimeT</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">44</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">45</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !  Precompute estimates of the derivatives at the nodes</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">46</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !  The vector PolyCoef(1,*) holds the ordinate values at the nodes</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">47</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !  The vector PolyCoef(2,*) holds the ordinate derivatives at the nodes</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">48</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">49</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    IF ( N == 2 ) THEN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">50</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">51</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! handle special case of two data points seperately (linear interpolation)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">52</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">53</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    PolyCoef( 1, 1 ) = y( 1 )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">54</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    PolyCoef( 2, 1 ) = ( y( 2 ) - y( 1 ) ) / ( x( 2 ) - x( 1 ) )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">55</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    PolyCoef( 3, 1 ) = 0.0D0</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">56</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    PolyCoef( 4, 1 ) = 0.0D0</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">57</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">58</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ELSE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">59</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">60</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! general case of more than two data points</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">61</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">62</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    PolyCoef( 1, 1 : N ) = y( 1 : N )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">63</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">64</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! left endpoint (non-centered 3-point difference formula)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">65</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">66</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    CALL h_del( x, y, 2, h1, h2, del1, del2 )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">67</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprimeT = ( ( 2.0D0 * h1 + h2 ) * del1 - h1 * del2 ) / ( h1 + h2 )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">68</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    PolyCoef( 2, 1 ) = fprime_left_end_Cmplx( del1, del2, fprimeT )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">69</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">70</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! right endpoint (non-centered 3-point difference formula)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">71</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">72</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    CALL h_del( x, y, N - 1, h1, h2, del1, del2 )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">73</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprimeT = ( -h2 * del1 + ( h1 + 2.0D0 * h2 ) * del2 ) / ( h1 + h2 )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">74</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    PolyCoef( 2, N ) = fprime_right_end_Cmplx( del1, del2, fprimeT )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">75</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">76</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! compute coefficients of the cubic spline interpolating polynomial</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">77</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">78</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    iBCBeg = 1   ! specified derivatives at the end points</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">79</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    iBCEnd = 1</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">80</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    csWork( 1, 1 : N ) = PolyCoef( 1, 1 : N )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">81</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    csWork( 2,     1 ) = PolyCoef( 2, 1 )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">82</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    csWork( 2,     N ) = PolyCoef( 2, N )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">83</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    CALL CSpline( x, csWork( 1, 1 ), N, iBCBeg, iBCEnd, N )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">84</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">85</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! interior nodes (use derivatives from the cubic spline as initial estimate)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">86</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">87</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    DO ix = 2, N - 1</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">88</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       CALL h_del( x, y, ix, h1, h2, del1, del2 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">89</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! check if the derivative from the cubic spline satisfies monotonicity</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">90</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       PolyCoef( 2, ix ) = fprime_interior_Cmplx( del1, del2, csWork( 2, ix ) )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">91</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    END DO</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">92</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">93</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !                                                               2      3</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">94</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! compute coefficients of std cubic polynomial: c0 + c1*x + c2*x + c3*x</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">95</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">96</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">97</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    DO ix = 1, N - 1</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">98</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       h  = x( ix + 1 ) - x( ix )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">99</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">100</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       f1 = PolyCoef( 1, ix )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">101</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       f2 = PolyCoef( 1, ix + 1 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">102</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">103</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       f1prime = PolyCoef( 2, ix )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">104</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       f2prime = PolyCoef( 2, ix + 1 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">105</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">106</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       PolyCoef( 3, ix ) = ( 3.0D0 * ( f2 - f1 )  - h * ( 2.0D0 * f1prime + f2prime ) ) / h**2</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">107</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       PolyCoef( 4, ix ) = ( h * ( f1prime + f2prime ) - 2.0D0 * ( f2 - f1 ) ) / h**3</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">108</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    END DO</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">109</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">110</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">111</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">112</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    RETURN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">113</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  END SUBROUTINE PCHIP</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">114</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">115</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  ! **********************************************************************!</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">116</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">117</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  SUBROUTINE h_del( x, y, ix, h1, h2, del1, del2 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">118</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">119</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER,          INTENT( IN  ) :: ix   ! index of the center point</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">120</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL    (KIND=8), INTENT( IN  ) :: x(:)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">121</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX (KIND=8), INTENT( IN  ) :: y(:)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">122</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL    (KIND=8), INTENT( OUT ) :: h1, h2</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">123</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX (KIND=8), INTENT( OUT ) :: del1, del2</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">124</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">125</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    h1   =   x( ix     ) - x( ix - 1 )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">126</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    h2   =   x( ix + 1 ) - x( ix     )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">127</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">128</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    del1 = ( y( ix     ) - y( ix - 1 ) ) / h1</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">129</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    del2 = ( y( ix + 1 ) - y( ix     ) ) / h2</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">130</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">131</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    RETURN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">132</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  END SUBROUTINE h_del</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">133</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">134</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  ! **********************************************************************!</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">135</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">136</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  FUNCTION fprime_interior_Cmplx( del1, del2, fprime )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">137</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">138</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX (KIND=8), INTENT( IN ) :: del1, del2, fprime</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">139</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX (KIND=8)               :: fprime_interior_Cmplx</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">140</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">141</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_r = fprime_interior( REAL(  del1 ), REAL(  del2 ), REAL(  fprime ) )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">142</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_i = fprime_interior( AIMAG( del1 ), AIMAG( del2 ), AIMAG( fprime ) )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">143</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">144</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_interior_Cmplx = CMPLX( fprime_r, fprime_i, KIND=8 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">145</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">146</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  END FUNCTION fprime_interior_Cmplx</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">147</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">148</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  ! **********************************************************************!</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">149</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">150</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  FUNCTION fprime_left_end_Cmplx( del1, del2, fprime )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">151</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">152</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX (KIND=8), INTENT( IN ) :: del1, del2, fprime</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">153</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX (KIND=8)               :: fprime_left_end_Cmplx</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">154</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">155</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_r = fprime_left_end( REAL(  del1 ), REAL(  del2 ), REAL(  fprime ) )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">156</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_i = fprime_left_end( AIMAG( del1 ), AIMAG( del2 ), AIMAG( fprime ) )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">157</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">158</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_left_end_Cmplx = CMPLX( fprime_r, fprime_i, KIND=8 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">159</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">160</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  END FUNCTION fprime_left_end_Cmplx</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">161</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">162</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  ! **********************************************************************!</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">163</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">164</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  FUNCTION fprime_right_end_Cmplx( del1, del2, fprime )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">165</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">166</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX (KIND=8), INTENT( IN ) :: del1, del2, fprime</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">167</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX (KIND=8)               :: fprime_right_end_Cmplx</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">168</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">169</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_r = fprime_right_end( REAL(  del1 ), REAL(  del2 ), REAL(  fprime ) )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">170</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_i = fprime_right_end( AIMAG( del1 ), AIMAG( del2 ), AIMAG( fprime ) )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">171</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">172</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_right_end_Cmplx = CMPLX( fprime_r, fprime_i, KIND=8 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">173</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">174</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  END FUNCTION fprime_right_end_Cmplx</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">175</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">176</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"> ! **********************************************************************!</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">177</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">178</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  FUNCTION fprime_interior( del1, del2, fprime )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">179</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">180</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL (KIND=8), INTENT( IN ) :: del1, del2, fprime</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">181</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL (KIND=8)               :: fprime_interior</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">182</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">183</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! check if derivative is within the trust region, project into it if not</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">184</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">185</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    IF ( del1 * del2 &gt; 0.0 ) THEN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">186</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">      ! adjacent secant slopes have the same sign, enforce monotonicity</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">187</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">      IF ( del1 &gt; 0.0 ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">188</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">        fprime_interior = MIN( MAX(fprime, 0.0D0), 3.0D0 * MIN(del1, del2) )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">189</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">      ELSE</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">190</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">        fprime_interior = MAX( MIN(fprime, 0.0D0), 3.0D0 * MAX(del1, del2) )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">191</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">      END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">192</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ELSE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">193</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">      ! force the interpolant to have an extrema here</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">194</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">      fprime_interior = 0.0D0;</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">195</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">196</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">197</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  END FUNCTION fprime_interior</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">198</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">199</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  ! **********************************************************************!</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">200</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">201</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  FUNCTION fprime_left_end( del1, del2, fprime )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">202</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">203</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL (KIND=8), INTENT( IN ) :: del1, del2, fprime</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">204</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL (KIND=8)               :: fprime_left_end</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">205</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">206</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_left_end = fprime</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">207</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">208</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    IF ( del1 * fprime &lt;= 0.0D0 ) THEN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">209</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! set derivative to zero if the sign differs from sign of secant slope</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">210</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       fprime_left_end = 0.0;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">211</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ELSE IF ( ( del1 * del2 &lt;= 0.0D0 ) .AND. ( ABS( fprime ) &gt; ABS( 3.0D0 * del1 ) ) ) THEN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">212</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! adjust derivative value to enforce monotonicity</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">213</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       fprime_left_end = 3.0D0 * del1;</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">214</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">215</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">216</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  END FUNCTION fprime_left_end</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">217</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">218</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  ! **********************************************************************!</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">219</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">220</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  FUNCTION fprime_right_end( del1, del2, fprime )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">221</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">222</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! This is essentially the same as fprime_left_end( del2, del1, fprime )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">223</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Written separately for clarity</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">224</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">225</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL (KIND=8), INTENT( IN ) :: del1, del2, fprime</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">226</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL (KIND=8)               :: fprime_right_end</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">227</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">228</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    fprime_right_end = fprime</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">229</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">230</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    IF ( del2 * fprime &lt;= 0.0D0 ) THEN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">231</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! set derivative to zero if the sign differs from sign of secant slope</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">232</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       fprime_right_end = 0.0;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">233</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ELSE IF ( ( del1 * del2 &lt;= 0.0D0 ) .AND. ( ABS( fprime ) &gt; ABS( 3.0D0 * del2 ) ) ) THEN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">234</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! adjust derivative value to enforce monotonicity</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">235</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       fprime_right_end = 3.0D0 * del2;</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">236</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">237</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">238</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  END FUNCTION fprime_right_end</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">239</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">240</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">END MODULE pchipmod</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Legend:</strong></p>
+        <ul>
+            <li><span style="background-color: #d4edda; padding: 2px 4px;">Green</span> - Executed lines</li>
+            <li><span style="background-color: #f8d7da; padding: 2px 4px;">Red</span> - Not executed lines</li>
+            <li><span style="background-color: #f8f9fa; padding: 2px 4px;">Gray</span> - Non-executable lines (comments, declarations)</li>
+        </ul>
+        <p><strong>Execution Count:</strong> Number of times each line was executed. ##### indicates never executed, - indicates non-executable.</p>
+    </div>
+</body>
+</html>
