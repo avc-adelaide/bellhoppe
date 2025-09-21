@@ -19,7 +19,7 @@ env["depth"] = bty
 env["depth_interp"] = interp_bty
 
 tl = bh.compute_transmission_loss(env,fname_base="tests/Dickins/DickinsB_output",debug=True)
-tl_exp = bh.bellhop._Bellhop._load_shd(None,"tests/Dickins/DickinsB_output") # implicit ".shd" suffix
+tl_exp = bh.bellhop._Bellhop._load_shd(None,"tests/Dickins/DickinsB") # implicit ".shd" suffix
 
 def test_MunkB_geo_rot_A():
     """Test using a Bellhop example that ENV file parameters are being picked up properly.

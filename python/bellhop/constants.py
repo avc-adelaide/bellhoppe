@@ -41,6 +41,11 @@ class _Strings(str, Enum):
     rectilinear = "rectilinear"
     irregular = "irregular"
 
+    # volume attenuation
+    thorp = "thorp"
+    francois_garrison = "francois-garrison"
+    biological = "biological"
+
 
 class _Maps:
     """Mappings from Bellhop single-char input file options to readable Python options

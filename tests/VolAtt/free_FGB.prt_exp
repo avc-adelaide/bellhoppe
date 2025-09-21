@@ -1,0 +1,147 @@
+ BELLHOP/BELLHOP3D
+
+ BELLHOP- Free space, point source, Francois-Garrison attenuation                
+ frequency =   5000.     Hz
+
+ Dummy parameter NMedia =            1
+
+     N2-linear approximation to SSP
+     Attenuation units: dB/wavelength
+     Francois-Garrison volume attenuation added
+ T =   19.30    degrees   S =   33.50     psu   pH =   7.500     z_bar =   4001.     m
+
+
+      z         alphaR      betaR     rho        alphaI     betaI
+
+     (m)         (m/s)      (m/s)   (g/cm^3)      (m/s)     (m/s)
+
+     ACOUSTO-ELASTIC half-space
+  -5000.00      1500.00      0.00     1.00       0.0000    0.0000
+
+ Depth =    5000.00 m
+
+ Sound speed profile:
+      z         alphaR      betaR     rho        alphaI     betaI
+     (m)         (m/s)      (m/s)   (g/cm^3)      (m/s)     (m/s)
+
+  -5000.00      1500.00      0.00     1.00       0.0000    0.0000
+   5000.00      1500.00      0.00     1.00       0.0000    0.0000
+
+                                 ( RMS roughness =   0.00     )
+     ACOUSTO-ELASTIC half-space
+   5000.00      1500.00      0.00     1.00       0.0000    0.0000
+
+ __________________________________________________________________________
+
+    Number of Source   z-coordinates, Sz =            1
+    Source   z-coordinates, Sz (m)
+                 2500.00    
+
+
+ __________________________________________________________________________
+
+    Number of Receiver z-coordinates, Rz =          201
+    Receiver z-coordinates, Rz (m)
+                 0.00000       25.0000       50.0000       75.0000    
+   100.000       125.000       150.000       175.000       200.000    
+   225.000    
+          ... 
+   5000.00    
+
+
+ __________________________________________________________________________
+
+    Number of Receiver r-coordinates, Rr =          500
+    Receiver r-coordinates, Rr (km)
+                0.250000E-01  0.449900E-01  0.649800E-01  0.849699E-01
+  0.104960      0.124950      0.144940      0.164930      0.184920    
+  0.204910    
+          ... 
+   10.0000    
+
+
+ Coherent TL calculation
+ Geometric hat beams in Cartesian coordinates
+ Point source (cylindrical coordinates)
+ Rectilinear receiver grid: Receivers at Rr( : ) x Rz( : )
+ __________________________________________________________________________
+
+    Number of beams in elevation   =         1000
+    Beam take-off angles (degrees)
+  -89.0000      -88.8218      -88.6436      -88.4655      -88.2873    
+  -88.1091      -87.9309      -87.7528      -87.5746      -87.3964    
+          ... 
+   89.0000    
+
+ __________________________________________________________________________
+
+
+ Step length,       deltas =   0.000     m
+
+ Maximum ray depth, Box%z  =  0.1000E+05 m
+ Maximum ray range, Box%r  =   10.05    km
+ No beam shift in effect
+
+
+ Step length,       deltas =   1000.     m (automatically selected)
+
+ Warning in BELLHOP : Too few beams
+ Nalpha should be at least =         1391
+Tracing beam       1    -89.00
+
+ Geometric hat beams                     
+ halfwidth  =    30.707149285222201     
+ epsilonOpt =                (0.0000000000000000,14811494.366852297)
+ EpsMult    =    1.0000000000000000     
+
+Tracing beam      21    -85.44
+Tracing beam      41    -81.87
+Tracing beam      61    -78.31
+Tracing beam      81    -74.75
+Tracing beam     101    -71.18
+Tracing beam     121    -67.62
+Tracing beam     141    -64.06
+Tracing beam     161    -60.49
+Tracing beam     181    -56.93
+Tracing beam     201    -53.36
+Tracing beam     221    -49.80
+Tracing beam     241    -46.24
+Tracing beam     261    -42.67
+Tracing beam     281    -39.11
+Tracing beam     301    -35.55
+Tracing beam     321    -31.98
+Tracing beam     341    -28.42
+Tracing beam     361    -24.86
+Tracing beam     381    -21.29
+Tracing beam     401    -17.73
+Tracing beam     421    -14.17
+Tracing beam     441    -10.60
+Tracing beam     461     -7.04
+Tracing beam     481     -3.47
+Tracing beam     501      0.09
+Tracing beam     521      3.65
+Tracing beam     541      7.22
+Tracing beam     561     10.78
+Tracing beam     581     14.34
+Tracing beam     601     17.91
+Tracing beam     621     21.47
+Tracing beam     641     25.03
+Tracing beam     661     28.60
+Tracing beam     681     32.16
+Tracing beam     701     35.72
+Tracing beam     721     39.29
+Tracing beam     741     42.85
+Tracing beam     761     46.42
+Tracing beam     781     49.98
+Tracing beam     801     53.54
+Tracing beam     821     57.11
+Tracing beam     841     60.67
+Tracing beam     861     64.23
+Tracing beam     881     67.80
+Tracing beam     901     71.36
+Tracing beam     921     74.92
+Tracing beam     941     78.49
+Tracing beam     961     82.05
+Tracing beam     981     85.61
+
+ CPU Time =       0.795E-01s

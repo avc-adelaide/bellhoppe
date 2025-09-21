@@ -1,0 +1,46 @@
+import pytest
+import bellhop as bh
+import numpy as np
+import pandas as pd
+import pandas.testing as pdt
+import os
+
+skip_if_coverage = pytest.mark.skipif(
+    os.getenv("COVERAGE_RUN") == "true",
+    reason="Skipped during coverage run"
+)
+
+env = bh.read_env2d("tests/VolAtt/free_FGB.env")
+
+tl = bh.compute_transmission_loss(env,mode='coherent',fname_base="tests/VolAtt/FGB_output",debug=True)
+tl_exp = bh.bellhop._Bellhop._load_shd(None,"tests/VolAtt/free_FGB") # implicit ".shd" suffix
+
+def test_FGB():
+    """Test using a Bellhop example that ENV file parameters are being picked up properly.
+    """
+
+    assert env['soundspeed_interp'] == 'nlinear', "SSPOPT = 'NAWF' => N == nlinear"
+    assert env['top_boundary_condition'] == 'acousto-elastic', "SSPOPT = 'NAWF' => A == acousto-elastic"
+    assert env['attenuation_units'] == 'dB per wavelength',  "SSPOPT = 'NAWF' => W == dB per wavelength"
+    assert env['volume_attenuation'] == 'francois-garrison',  "SSPOPT = 'NAWF' => F == Francois-Garrison"
+
+    assert env['step_size'] ==      0.0, "0.000000 10000.500000 10.050000"
+    assert env['box_depth'] ==  10000.5, "0.000000 10000.500000 10.050000"
+    assert env['box_range'] ==  10050.0, "0.000000 10000.500000 10.050000"
+
+    assert env['task'] == 'C'
+
+    bh.print_env(env)
+
+    assert tl is not None, "No results generated"
+    assert (tl.shape == tl_exp.shape), "Incorrect/inconsistent number of TL values calculated"
+    assert (tl.index == tl_exp.index).all(), "TL dataframe indexes not identical"
+
+
+@skip_if_coverage
+def test_table_output():
+    pdt.assert_frame_equal(
+        tl, tl_exp,
+        atol=1e-4,  # absolute tolerance
+        rtol=1e-4,  # relative tolerance
+    )

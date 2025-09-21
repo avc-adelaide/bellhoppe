@@ -89,6 +89,11 @@ def _get_default_env2d():
         'tx_type': 'default',
         'beam_type': 'default',
         'grid': 'default',
+        # francois_garrison volume attenuation parameters:
+        'fg_salinity': None,
+        'fg_temperature': None,
+        'fg_pH': None,
+        'fg_depth': None,
     }
 
 def create_env2d(**kv):
@@ -377,6 +382,15 @@ def read_env2d(fname):
         else:
             opt = ""
         env["volume_attenuation"] = _Maps.volatt.get(opt) or _invalid(opt)
+
+        if env["volume_attenuation"] == _Strings.francois_garrison:
+            fg_spec_line = f.readline().strip()
+            fg_parts = _parse_line(fg_spec_line).split()
+            env["fg_salinity"] = float(fg_parts[0])
+            env["fg_temperature"] = float(fg_parts[1])
+            env["fg_pH"] = float(fg_parts[2])
+            env["fg_depth"] = float(fg_parts[3])
+
 
         if 'A' in topopt:
             # Read halfspace parameters line
@@ -1616,6 +1630,11 @@ class _Bellhop:
             comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
             self._print(fh, f"'{svp_interp}VWT*'    ! {comment}")
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
+
+        if env['volume_attenuation'] == _Strings.francois_garrison:
+            comment = "Francois-Garrison volume attenuation parameters (sal, temp, pH, depth)"
+            self._print(fh,f"{env['fg_salinity']} {env['fg_temperature']} {env['fg_pH']} {env['fg_depth']}    ! {comment}")
+            self._print(fh, f"{svp[0,0]} {svp[0,1]} /    ! MAXDEPTH SSP") # why is this necessary? Included to match bellhop examples but seems erroneous/misplaced/redundant
 
         # max depth should be the depth of the acoustic domain, which can be deeper than the max depth bathymetry
         comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
