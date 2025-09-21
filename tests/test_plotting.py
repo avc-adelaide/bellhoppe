@@ -2,6 +2,14 @@ import pytest
 import bellhop as bh
 import numpy as np
 
+import bokeh.plotting
+
+# Avoid the tests opening up the images, thanks ChatGPT:
+@pytest.fixture(autouse=True)
+def no_bokeh_show(monkeypatch):
+    """Disable bokeh.plotting.show() during tests."""
+    monkeypatch.setattr(bokeh.plotting, "show", lambda *a, **k: None)
+
 
 def test_plot_env():
     """Test plot_env function with default environment. Just check that there are no execution errors.

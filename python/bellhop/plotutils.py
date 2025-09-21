@@ -455,13 +455,13 @@ def scatter(x, y, marker='.', filled=False, size=6, color=None, title=None, xlab
     if marker == '.':
         kwargs['size'] = kwargs['size']/2
         kwargs['fill_color'] = color
-        _figure.circle(x, y, **kwargs)
+        _figure.scatter(x, y, **kwargs)
     elif marker == 'o':
-        _figure.circle(x, y, **kwargs)
+        _figure.scatter(x, y, **kwargs)
     elif marker == 's':
         _figure.square(x, y, **kwargs)
     elif marker == '*':
-        _figure.asterisk(x, y, **kwargs)
+        _figure.scatter(x, y, marker="*", **kwargs)
     elif marker == 'x':
         _figure.x(x, y, **kwargs)
     elif marker == '+':
