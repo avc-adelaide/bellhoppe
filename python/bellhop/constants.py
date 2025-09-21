@@ -43,6 +43,18 @@ class _Strings(str, Enum):
 
 
 class _Maps:
+    """Mappings from Bellhop single-char input file options to readable Python options
+
+    These are also defined with reverse mappings in the form:
+
+    >>> _Maps.interp["S"]
+    "spline"
+
+    >>> _Maps.interp_rev["spline"]
+    "S"
+
+    """
+
     interp = {
         "S":_Strings.spline,
         "C":_Strings.linear,
