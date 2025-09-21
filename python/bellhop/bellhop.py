@@ -36,20 +36,34 @@ class Strings(str, Enum):
     linear = "linear"
     spline = "spline"
     curvilinear = "curvilinear"
+    quadrilateral = "quadrilateral"
+    pchip = "pchip"
+    hexahedral = "hexahedral"
     arrivals = "arrivals"
+    nlinear = "nlinear"
     eigenrays = "eigenrays"
     rays = "rays"
     coherent = "coherent"
     incoherent = "incoherent"
     semicoherent = "semicoherent"
+    vacuum = "vacuum"
+    acousto_elastic = "acousto-elastic"
+    rigid = "rigid"
+    from_file = "from-file"
+    flat = "flat"
+    line = "line"
+    point = "point"
+    rectilinear = "rectilinear"
+    irregular = "irregular"
+
 
 interp_map = {
     "S": Strings.spline,
     "C": Strings.linear,
-    "Q": "quadrilateral",
-    "P": "pchip",
-    "H": "hexahedral",
-    "N": "nlinear",
+    "Q": Strings.quadrilateral,
+    "P": Strings.pchip,
+    "H": Strings.hexahedral,
+    "N": Strings.nlinear,
     " ": 'default',
 }
 bty_interp_map = {
@@ -57,10 +71,10 @@ bty_interp_map = {
     "C": Strings.curvilinear,
 }
 boundcond_map = {
-    "V": "vacuum",
-    "A": "acousto-elastic",
-    "R": "rigid",
-    "F": "from-file",
+    "V": Strings.vacuum,
+    "A": Strings.acousto_elastic,
+    "R": Strings.rigid,
+    "F": Strings.from_file,
     " ": 'default',
 }
 attunits_map = {
@@ -81,19 +95,19 @@ volatt_map = {
     " ": 'default',
 }
 bottom_map = {
-    "_": 'flat',
-    "~": 'from-file',
-    "*": 'from-file',
+    "_": Strings.flat,
+    "~": Strings.from_file,
+    "*": Strings.from_file,
     " ": 'default',
 }
 source_map = {
-    "R": 'point',
-    "X": 'line',
+    "R": Strings.point,
+    "X": Strings.line,
     " ": 'default',
 }
 grid_map = {
-    "R": 'rectilinear',
-    "I": 'irregular',
+    "R": Strings.rectilinear,
+    "I": Strings.irregular,
     " ": 'default',
 }
 beam_map = {
@@ -142,9 +156,9 @@ def _get_default_env2d():
         'bottom_roughness': 0,          # m (rms)
         'bottom_beta': None,            #
         'bottom_transition_freq': None, # Hz
-        'bottom_boundary_condition': 'acousto-elastic',
+        'bottom_boundary_condition': Strings.acousto_elastic,
         'bottom_reflection_coefficient': None,
-        '_bottom_bathymetry': "flat",   #
+        '_bottom_bathymetry': Strings.flat,   #
         'surface': None,                # surface profile
         'surface_interp': Strings.linear,       # curvilinear/linear
         'tx_depth': 5,                  # m
@@ -162,7 +176,7 @@ def _get_default_env2d():
         'min_angle': -80,               # deg
         'max_angle': 80,                # deg
         'nbeams': 0,                    # number of beams (0 = auto)
-        'top_boundary_condition': 'vacuum',
+        'top_boundary_condition': Strings.vacuum,
         'volume_attenuation': 'none',
         'attenuation_units': 'frequency dependent',
         'step_size': None,
@@ -509,7 +523,7 @@ def read_env2d(fname):
         if len(botopt) > 1:
             opt = botopt[1]
             env["_bottom_bathymetry"] = bottom_map.get(opt) or _invalid(opt)
-            if env["_bottom_bathymetry"] == "from-file":
+            if env["_bottom_bathymetry"] == Strings.from_file:
                 print("TODO: automatically read bty file")
             else:
                 pass # nothing needs to be done
