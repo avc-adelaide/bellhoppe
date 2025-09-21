@@ -73,8 +73,12 @@ fort.*
 *.gcda
 *.gcno
 *.gcov
+.coverage
 
 # Generated coverage HTML reports (regenerated automatically)
+_coverage/
+_coverage_python/
+_coverage_unified/
 docs/coverage-index.html
 docs/*.coverage.html
 
