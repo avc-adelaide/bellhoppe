@@ -355,7 +355,7 @@ def plot(x, y=None, fs=None, maxpts=10000, pooling=None, color=None, style='soli
     >>> arlpy.plot.plot(np.random.normal(size=1000), fs=100, color='green', legend='B')
     """
     global _figure, _color
-    x = _np.array(x, ndmin=1, dtype=_np.float64, copy=False)
+    x = _np.asarray(x, dtype=_np.float64)
     if y is None:
         y = x
         x = _np.arange(x.size)
@@ -366,7 +366,13 @@ def plot(x, y=None, fs=None, maxpts=10000, pooling=None, color=None, style='soli
         if xlim is None:
             xlim = (x[0], x[-1])
     else:
-        y = _np.array(y, ndmin=1, dtype=_np.float64, copy=False)
+        y = _np.asarray(y, dtype=_np.float64)
+
+    if x.ndim == 0:  # 0-dimensional array (scalar)
+        x = _np.array([x])
+    if y.ndim == 0:  # 0-dimensional array (scalar)
+        y = _np.array([y])
+
     if _figure is None:
         _figure = _new_figure(title, width, height, xlabel, ylabel, xlim, ylim, xtype, ytype, interactive)
     if color is None:
@@ -436,8 +442,8 @@ def scatter(x, y, marker='.', filled=False, size=6, color=None, title=None, xlab
     global _figure, _color
     if _figure is None:
         _figure = _new_figure(title, width, height, xlabel, ylabel, xlim, ylim, xtype, ytype, interactive)
-    x = _np.array(x, ndmin=1, dtype=_np.float64, copy=False)
-    y = _np.array(y, ndmin=1, dtype=_np.float64, copy=False)
+    x = _np.asarray(x, dtype=_np.float64)
+    y = _np.asarray(y, dtype=_np.float64)
     if color is None:
         color = _colors[_color % len(_colors)]
         _color += 1
@@ -533,7 +539,7 @@ def vlines(x, color='gray', style='dashed', thickness=1, hold=False):
     global _figure
     if _figure is None:
         return
-    x = _np.array(x, ndmin=1, dtype=_np.float64, copy=False)
+    x = _np.asarray(x, dtype=_np.float64)
     for j in range(x.size):
         _figure.add_layout(_bmodels.Span(location=x[j], dimension='height', line_color=color, line_dash=style, line_width=thickness))
     if not hold and not _hold:
@@ -556,7 +562,7 @@ def hlines(y, color='gray', style='dashed', thickness=1, hold=False):
     global _figure
     if _figure is None:
         return
-    y = _np.array(y, ndmin=1, dtype=_np.float64, copy=False)
+    y = _np.asarray(y, dtype=_np.float64)
     for j in range(y.size):
         _figure.add_layout(_bmodels.Span(location=y[j], dimension='width', line_color=color, line_dash=style, line_width=thickness))
     if not hold and not _hold:

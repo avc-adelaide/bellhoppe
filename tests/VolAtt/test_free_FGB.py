@@ -15,6 +15,20 @@ env = bh.read_env2d("tests/VolAtt/free_FGB.env")
 tl = bh.compute_transmission_loss(env,mode='coherent',fname_base="tests/VolAtt/FGB_output",debug=True)
 tl_exp = bh.bellhop._Bellhop._load_shd(None,"tests/VolAtt/free_FGB") # implicit ".shd" suffix
 
+
+def test_simple():
+    env2 = bh.create_env2d()
+    env2["volume_attenuation"] = "francois-garrison"
+    env2["fg_salinity"] = 19.3
+    env2["fg_temperature"] = 33.5
+    env2["fg_depth"] = 20
+    env2["fg_pH"] = 7.5
+    arr = bh.compute_arrivals(env2,fname_base="tests/VolAtt/debug_output",debug=True)
+
+    assert arr is not None
+    assert len(arr) == 36, "Should be N=36 arrivals"
+    # don't check values here, might do that later
+
 def test_FGB():
     """Test using a Bellhop example that ENV file parameters are being picked up properly.
     """

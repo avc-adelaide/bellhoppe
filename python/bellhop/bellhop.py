@@ -1631,14 +1631,16 @@ class _Bellhop:
             self._print(fh, f"'{svp_interp}VWT*'    ! {comment}")
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
 
+        max_depth = env["depth_max"] if env["depth_max"] else env['depth'] if _np.size(env['depth']) == 1 else max(_np.max(env['depth'][:,1]), svp_depth)
+
         if env['volume_attenuation'] == _Strings.francois_garrison:
             comment = "Francois-Garrison volume attenuation parameters (sal, temp, pH, depth)"
             self._print(fh,f"{env['fg_salinity']} {env['fg_temperature']} {env['fg_pH']} {env['fg_depth']}    ! {comment}")
-            self._print(fh, f"{svp[0,0]} {svp[0,1]} /    ! MAXDEPTH SSP") # why is this necessary? Included to match bellhop examples but seems erroneous/misplaced/redundant
+            if _np.size(svp) > 1: # why is this necessary? Included to match bellhop examples but seems erroneous/misplaced/redundant
+                self._print(fh, f"{svp[0,0]} {svp[0,1]} /    ! MAXDEPTH SSP")
 
         # max depth should be the depth of the acoustic domain, which can be deeper than the max depth bathymetry
         comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
-        max_depth = env["depth_max"] if env["depth_max"] else env['depth'] if _np.size(env['depth']) == 1 else max(_np.max(env['depth'][:,1]), svp_depth)
         self._print(fh, f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}    ! {comment}")
 
         if _np.size(svp) == 1:
