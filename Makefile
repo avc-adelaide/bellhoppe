@@ -196,7 +196,7 @@ export LAPACK_LIBS = -llapack
 
 ####### TARGETS #######
 
-.PHONY: all install clean test docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full
+.PHONY: all install clean test docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full python-coverage-test python-coverage-report python-coverage-html coverage-unified
 
 all:
 	(cd fortran;	make -k all)
@@ -246,7 +246,7 @@ help:
 	@echo "cleantest - rebuild entire codebase and run test suite"
 	@echo "     lint - run code linters"
 	@echo "      doc - build online documentation"
-	@echo "      cov - run code coverage build process"
+	@echo "      cov - run code coverage build process (Fortran + Python)"
 	@echo "          -                         "
 	@echo "  DEVELOPMENT TOOLS"
 	@echo "     push - push code changes to repository"
@@ -287,6 +287,10 @@ coverage-clean:
 	@echo "Cleaning coverage output files..."
 	find . -name '*.gcda' -exec rm {} +
 	find . -name '*.gcov' -exec rm {} +
+	@echo "Cleaning Python coverage files..."
+	rm -f .coverage
+	rm -rf _coverage_python/
+	rm -rf _coverage_unified/
 
 coverage-build: clean
 	@echo "Building BELLHOP with coverage instrumentation..."
@@ -355,8 +359,30 @@ coverage-gcovr:
 		--html-tab-size 4 \
 		./fortran/
 
-coverage-full: clean coverage-build coverage-install coverage-test coverage-report coverage-html
+coverage-full: clean coverage-build coverage-install coverage-test coverage-report coverage-html python-coverage-test python-coverage-html coverage-unified
 	@echo "Full coverage analysis complete."
+
+###### PYTHON COVERAGE ######
+
+python-coverage-test: install
+	@echo "Running Python tests with coverage..."
+	export PATH="$(PWD)/bin:$$PATH" && \
+	export PYTHONPATH="$(PWD)/python:$$PYTHONPATH" && \
+	python3 -m coverage run -m pytest tests/ --tb=short
+
+python-coverage-report: 
+	@echo "Generating Python coverage report..."
+	python3 -m coverage report --include="python/bellhop/*"
+
+python-coverage-html:
+	@echo "Generating Python HTML coverage reports..."
+	python3 -m coverage html --include="python/bellhop/*"
+	@echo "Python HTML coverage reports generated in _coverage_python/"
+
+coverage-unified:
+	@echo "Generating unified coverage index..."
+	python3 python/generate_unified_coverage.py _coverage_unified
+	@echo "Unified coverage index generated in _coverage_unified/"
 
 #######################################
 

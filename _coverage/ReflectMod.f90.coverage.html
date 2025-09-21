@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coverage Report: ReflectMod.f90</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .summary {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .metric {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 3px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .code-container {
+            background-color: white;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        .code-line {
+            display: flex;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .line-number {
+            background-color: #f8f9fa;
+            padding: 2px 8px;
+            width: 60px;
+            text-align: right;
+            border-right: 1px solid #dee2e6;
+            color: #6c757d;
+        }
+        .execution-count {
+            background-color: #f8f9fa;
+            padding: 2px 8px;
+            width: 80px;
+            text-align: right;
+            border-right: 1px solid #dee2e6;
+            color: #495057;
+        }
+        .source-code {
+            padding: 2px 8px;
+            flex: 1;
+            white-space: pre;
+        }
+        .executed { background-color: #d4edda; }
+        .not-executed { background-color: #f8d7da; }
+        .non-executable { background-color: #f8f9fa; }
+        .footer {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Coverage Report: ReflectMod.f90</h1>
+        <p>Generated from GCOV analysis of Fortran source code</p>
+    </div>
+
+    <div class="summary">
+        <div class="metric">
+            <div class="metric-value">0.0%</div>
+            <div>Lines Executed</div>
+            <div>80 total lines</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">0.0%</div>
+            <div>Branches Executed</div>
+            <div>0 total branches</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">0.0%</div>
+            <div>Calls Executed</div>
+            <div>0 total calls</div>
+        </div>
+    </div>
+
+    <div class="code-container">
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Source:ReflectMod.f90</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Graph:ReflectMod.gcno</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Data:ReflectMod.gcda</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Runs:57</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">1</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">!! Reflection calculations for acoustic boundaries</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">2</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">MODULE ReflectMod</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">3</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  !! Ray reflection computations at acoustic boundaries with loss and phase calculations</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">4</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">5</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  USE bellhopMod</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">6</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">7</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  IMPLICIT NONE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">8</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  PUBLIC</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">9</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">10</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">CONTAINS</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">11</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">12</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">!! Computes reflection of ray at acoustic boundary</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">13</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  SUBROUTINE Reflect2D( is, HS, BotTop, nBdry3d, z_xx, z_xy, z_yy, kappa_xx, kappa_xy, kappa_yy, RefC, Npts, tradial )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">14</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">15</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !USE norms</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">16</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    USE RefCoef</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">17</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    USE sspMod</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">18</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    USE Cone   ! if using analytic formulas for the cone (conical seamount)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">19</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">20</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER,              INTENT( INOUT ) :: is</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">21</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    TYPE( HSInfo ),       INTENT( IN ) :: HS                              ! half-space properties</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">22</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CHARACTER (LEN=3),    INTENT( IN ) :: BotTop                          ! Flag indicating bottom or top reflection</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">23</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8),    INTENT( IN ) :: nBdry3d( 3 )                    ! Normal to the boundary</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">24</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8),    INTENT( IN ) :: z_xx, z_xy, z_yy</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">25</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8),    INTENT( IN ) :: kappa_xx, kappa_xy, kappa_yy</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">26</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    TYPE(ReflectionCoef), INTENT( IN ) :: RefC( NPts )                    ! reflection coefficient</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">27</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER,              INTENT( IN ) :: Npts</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">28</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8),    INTENT( IN ) :: tradial( 2 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">29</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER           :: is1</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">30</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8) :: c, cimag, gradc( 2 ), crr, crz, czz, rho         ! derivatives of sound speed</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">31</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8) :: RM, RN, Tg, Th, rayt( 2 ), rayn( 2 ), rayt_tilde( 2 ), rayn_tilde( 2 ), cnjump, csjump  ! for curvature change</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">32</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8) :: ck, co, si, cco, ssi, pdelta, rddelta, sddelta   ! for beam shift</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">33</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX  (KIND=8) :: gamma1, gamma2, gamma1Sq, gamma2Sq, GK, Refl, ch, a, b, d, sb, delta, ddelta</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">34</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8) :: kappa                                            ! Boundary curvature</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">35</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8) :: tBdry( 2 ), nBdry( 2 )                           ! tangent, normal to boundary</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">36</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    TYPE(ReflectionCoef) :: RInt</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">37</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL     (KIND=8) :: t_rot( 2 ), n_rot( 2 ), RotMat( 2, 2 ), kappaMat( 2, 2 ), DMat( 2, 2 )   ! for cone reflection</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">38</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">39</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    is  = is + 1</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">40</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    is1 = is + 1</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">41</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">42</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! following should perhaps be pre-calculated in Bdry3DMod</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">43</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    nBdry( 1 ) = DOT_PRODUCT( nBdry3d( 1 : 2 ), tradial )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">44</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    nBdry( 2 ) = nBdry3d( 3 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">45</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">46</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !CALL ConeFormulas( z_xx, z_xy, z_yy, nBdry, xs_3D, tradial, ray2D( is )%x, BotTop )   ! special case of a conical seamount</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">47</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">48</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    !!!! use kappa_xx or z_xx?</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">49</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! kappa = ( z_xx * tradial( 1 ) ** 2 + 2 * z_xy * tradial( 1 ) * tradial( 2 ) + z_yy * tradial( 2 ) ** 2 )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">50</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    kappa = ( kappa_xx * tradial( 1 ) ** 2 + 2 * kappa_xy * tradial( 1 ) * tradial( 2 ) + kappa_yy * tradial( 2 ) ** 2 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">51</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">52</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    IF ( BotTop == &#x27;TOP&#x27; ) kappa = -kappa</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">53</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">54</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    nBdry = nBdry / NORM2( nBdry )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">55</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">56</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    Th = DOT_PRODUCT( ray2D( is )%t, nBdry )  ! component of ray tangent normal to boundary</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">57</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">58</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    tBdry = ray2D( is )%t - Th * nBdry        ! component of ray tangent along the boundary</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">59</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    tBdry = tBdry / NORM2( tBdry )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">60</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! could also calculate tbdry as +/- of [ nbdry( 2), -nbdry( 1 ) ], but need sign</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">61</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">62</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    Tg = DOT_PRODUCT( ray2D( is )%t, tBdry )  ! component of ray tangent along boundary</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">63</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">64</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ray2D( is1 )%NumTopBnc = ray2D( is )%NumTopBnc</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">65</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ray2D( is1 )%NumBotBnc = ray2D( is )%NumBotBnc</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">66</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ray2D( is1 )%x         = ray2D( is )%x</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">67</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ray2D( is1 )%t         = ray2D( is )%t - 2.0 * Th * nBdry  ! changing the ray direction</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">68</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">69</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Calculate the change in curvature</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">70</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Based on formulas given by Muller, Geoph. J. R.A.S., 79 (1984).</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">71</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">72</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    CALL EvaluateSSP2D( ray2D( is1 )%x, ray2D( is1 )%t, c, cimag, gradc, crr, crz, czz, rho, xs_3D, tradial, freq )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">73</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">74</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! incident and reflected (tilde) unit ray tangent and normal</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">75</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    rayt       = c * ray2D( is  )%t                       ! unit tangent to ray</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">76</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    rayt_tilde = c * ray2D( is1 )%t                       ! unit tangent to ray</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">77</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    rayn       = +[ -rayt(       2 ), rayt(       1 ) ]   ! unit normal  to ray</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">78</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    rayn_tilde = -[ -rayt_tilde( 2 ), rayt_tilde( 1 ) ]   ! unit normal  to ray</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">79</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">80</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    RN = 2 * kappa / c ** 2 / Th    ! boundary curvature correction</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">81</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">82</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! get the jumps (this could be simplified, e.g. jump in rayt is roughly 2 * Th * nbdry</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">83</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    cnjump = -DOT_PRODUCT( gradc, rayn_tilde - rayn  )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">84</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    csjump = -DOT_PRODUCT( gradc, rayt_tilde - rayt )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">85</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">86</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    IF ( BotTop == &#x27;TOP&#x27; ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">87</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       cnjump = -cnjump    ! flip sign for top reflection</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">88</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       RN     = -RN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">89</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">90</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">91</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    RM = Tg / Th   ! this is tan( alpha ) where alpha is the angle of incidence</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">92</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    RN = RN + RM * ( 2 * cnjump - RM * csjump ) / c ** 2</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">93</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">94</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    SELECT CASE ( Beam%Type( 2 : 2 ) )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">95</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CASE ( &#x27;D&#x27; )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">96</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       RN = 2.0 * RN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">97</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CASE ( &#x27;Z&#x27; )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">98</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       RN = 0.0</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">99</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    END SELECT</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">100</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">101</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ray2D( is1 )%c   = c</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">102</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ray2D( is1 )%tau = ray2D( is )%tau</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">103</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ray2D( is1 )%p   = ray2D( is )%p + ray2D( is )%q * RN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">104</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ray2D( is1 )%q   = ray2D( is )%q</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">105</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">106</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! amplitude and phase change</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">107</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">108</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    SELECT CASE ( HS%BC )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">109</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CASE ( &#x27;R&#x27; )                 ! rigid</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">110</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       ray2D( is1 )%Amp   = ray2D( is )%Amp</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">111</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       ray2D( is1 )%Phase = ray2D( is )%Phase</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">112</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CASE ( &#x27;V&#x27; )                 ! vacuum</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">113</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       ray2D( is1 )%Amp   = ray2D( is )%Amp</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">114</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       ray2D( is1 )%Phase = ray2D( is )%Phase + pi</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">115</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CASE ( &#x27;F&#x27; )                 ! file</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">116</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       RInt%theta = RadDeg * ABS( ATAN2( Th, Tg ) )           ! angle of incidence (relative to normal to bathymetry)</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">117</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( RInt%theta &gt; 90 ) RInt%theta = 180. - RInt%theta  ! reflection coefficient is symmetric about 90 degrees</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">118</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       CALL InterpolateReflectionCoefficient( RInt, RefC, Npts, PRTFile )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">119</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       ray2D( is1 )%Amp   = ray2D( is )%Amp   * RInt%R</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">120</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       ray2D( is1 )%Phase = ray2D( is )%Phase + RInt%phi</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">121</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CASE ( &#x27;A&#x27;, &#x27;G&#x27; )            ! half-space</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">122</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       GK       = omega * Tg     ! wavenumber in direction parallel to bathymetry</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">123</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       gamma1Sq = ( omega / c     ) ** 2 - GK ** 2 - i * tiny( omega )   ! tiny prevents g95 giving -zero, and wrong branch cut</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">124</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       gamma2Sq = ( omega / HS%cP ) ** 2 - GK ** 2 - i * tiny( omega )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">125</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       gamma1   = SQRT( -gamma1Sq )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">126</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       gamma2   = SQRT( -gamma2Sq )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">127</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">128</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       Refl = ( HS%rho * gamma1 - rho * gamma2 ) / ( HS%rho * gamma1 + rho * gamma2 )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">129</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">130</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! write( *, * ) abs( Refl ), c, HS%cp, rho, HS%rho</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">131</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( ABS( Refl ) &lt; 1.0E-5 ) THEN   ! kill a ray that has lost its energy in reflection</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">132</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          ray2D( is1 )%Amp   = 0.0</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">133</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          ray2D( is1 )%Phase = ray2D( is )%Phase</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">134</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ELSE</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">135</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          ray2D( is1 )%Amp   = ABS( Refl ) * ray2D(  is )%Amp</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">136</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          ray2D( is1 )%Phase = ray2D( is )%Phase + ATAN2( AIMAG( Refl ), REAL( Refl ) )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">137</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">138</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          ! compute beam-displacement Tindle, Eq. (14)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">139</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          ! needs a correction to beam-width as well ...</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">140</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          !  IF ( REAL( gamma2Sq ) &lt; 0.0 ) THEN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">141</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          !     rhoW   = 1.0   ! density of water</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">142</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          !     rhoWSq  = rhoW  * rhoW</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">143</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          !     rhoHSSq = rhoHS * rhoHS</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">144</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          !     DELTA = 2 * GK * rhoW * rhoHS * ( gamma1Sq - gamma2Sq ) /</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">145</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          ! &amp;( gamma1 * i * gamma2 *</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">146</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          ! &amp;( -rhoWSq * gamma2Sq + rhoHSSq * gamma1Sq ) )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">147</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          !     RV( is + 1 ) = RV( is + 1 ) + DELTA</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">148</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          !  END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">149</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">150</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          if ( Beam%Type( 4 : 4 ) == &#x27;S&#x27; ) then   ! beam displacement &amp; width change (Seongil&#x27;s version)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">151</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">152</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             ch = ray2D( is )%c / conjg( HS%cP )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">153</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             co = ray2D( is )%t( 1 ) * ray2D( is )%c</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">154</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             si = ray2D( is )%t( 2 ) * ray2D( is )%c</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">155</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             ck = omega / ray2D( is )%c</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">156</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">157</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             a   = 2 * HS%rho * ( 1 - ch * ch )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">158</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             b   = co * co - ch * ch</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">159</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             d   = HS%rho * HS%rho * si * si + b</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">160</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             sb  = sqrt( b )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">161</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             cco = co * co</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">162</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             ssi = si * si</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">163</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">164</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">             ! LP: Missing divide by 0 check on si from 2D version re-added.</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">165</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             IF ( si /= 0.0 ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">166</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">                delta = a * co / si / ( ck * sb * d )   ! Do we need an abs() on this???</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">167</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">             ELSE</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">168</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">                delta = 0.0</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">169</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">             END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">170</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">171</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             pdelta  = real( delta ) / ( ray2D( is )%c / co)</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">172</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">             ddelta  = -a / ( ck*sb*d ) - a*cco / ssi / (ck*sb*d) + a*cco / (ck*b*sb*d) &amp;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">173</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">                  -a*co / si / (ck*sb*d*d) * (2* HS%rho * HS%rho *si*co-2*co*si)</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">174</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             rddelta = -real( ddelta )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">175</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             sddelta = rddelta / abs( rddelta )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">176</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">177</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             print *, &#x27;beam displacing ...&#x27;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">178</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             ray2D( is1 )%x( 1 ) = ray2D( is1 )%x( 1 ) + real( delta )   ! displacement</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">179</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             ray2D( is1 )%tau    = ray2D( is1 )%tau + pdelta             ! phase change</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">180</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             ray2D( is1 )%q      = ray2D( is1 )%q + sddelta * rddelta * si * c * ray2D( is )%p   ! beam-width change</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">181</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          endif</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">182</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">183</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ENDIF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">184</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    END SELECT</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">185</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  END SUBROUTINE Reflect2D</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">186</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">187</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">END MODULE ReflectMod</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Legend:</strong></p>
+        <ul>
+            <li><span style="background-color: #d4edda; padding: 2px 4px;">Green</span> - Executed lines</li>
+            <li><span style="background-color: #f8d7da; padding: 2px 4px;">Red</span> - Not executed lines</li>
+            <li><span style="background-color: #f8f9fa; padding: 2px 4px;">Gray</span> - Non-executable lines (comments, declarations)</li>
+        </ul>
+        <p><strong>Execution Count:</strong> Number of times each line was executed. ##### indicates never executed, - indicates non-executable.</p>
+    </div>
+</body>
+</html>

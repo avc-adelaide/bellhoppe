@@ -45,10 +45,12 @@ jobs:
         python-version: '3.12'
 
     - name: Install python packages
-      run: pip install hatch
+      run: |
+        pip install hatch
+        pip install coverage pytest numpy scipy pandas matplotlib bokeh
 
     - name: Run tests with coverage instrumentation
-      run: make cov
+      run: make coverage-full
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
@@ -56,6 +58,8 @@ jobs:
         name: coverage-reports
         path: |
           _coverage/*.html
+          _coverage_python/*.html
+          _coverage_unified/*.html
         retention-days: 3
 
   build:
@@ -80,7 +84,7 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: coverage-reports
-        path: './docs/static'
+        path: './docs/static/coverage'
 
     - name: Generate documentation
       run: |

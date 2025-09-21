@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coverage Report: RefCoef.f90</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .summary {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .metric {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 3px;
+            text-align: center;
+            min-width: 120px;
+        }
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .code-container {
+            background-color: white;
+            border: 1px solid #bdc3c7;
+            border-radius: 5px;
+            overflow: auto;
+        }
+        .code-line {
+            display: flex;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .line-number {
+            background-color: #f8f9fa;
+            padding: 2px 8px;
+            width: 60px;
+            text-align: right;
+            border-right: 1px solid #dee2e6;
+            color: #6c757d;
+        }
+        .execution-count {
+            background-color: #f8f9fa;
+            padding: 2px 8px;
+            width: 80px;
+            text-align: right;
+            border-right: 1px solid #dee2e6;
+            color: #495057;
+        }
+        .source-code {
+            padding: 2px 8px;
+            flex: 1;
+            white-space: pre;
+        }
+        .executed { background-color: #d4edda; }
+        .not-executed { background-color: #f8d7da; }
+        .non-executable { background-color: #f8f9fa; }
+        .footer {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Coverage Report: RefCoef.f90</h1>
+        <p>Generated from GCOV analysis of Fortran source code</p>
+    </div>
+
+    <div class="summary">
+        <div class="metric">
+            <div class="metric-value">34.5%</div>
+            <div>Lines Executed</div>
+            <div>110 total lines</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">54.2%</div>
+            <div>Branches Executed</div>
+            <div>144 total branches</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">100.0%</div>
+            <div>Calls Executed</div>
+            <div>25 total calls</div>
+        </div>
+    </div>
+
+    <div class="code-container">
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Source:RefCoef.f90</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Graph:RefCoef.gcno</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Data:RefCoef.gcda</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">0</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">Runs:57</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">1</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">!! Provides data and functions for working with reflection coefficients</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">2</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">3</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">MODULE RefCoef</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">4</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  !! Provides reflection coefficient data</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">5</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">6</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  USE FatalError</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">7</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  USE monotonicMod</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">8</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">9</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  IMPLICIT NONE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">10</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  PUBLIC</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">11</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  SAVE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">12</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">13</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  INTEGER, PARAMETER            :: BRCFile = 31, TRCFile = 32, IRCFile = 12</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">14</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  INTEGER                       :: NBotPts, NTopPts</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">15</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  INTEGER                       :: NkTab</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">16</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  INTEGER,          ALLOCATABLE :: iTab( : )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">17</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  REAL    (KIND=8), ALLOCATABLE :: xTab( : )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">18</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  COMPLEX (KIND=8), ALLOCATABLE :: fTab( : ), gTab( : )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">19</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">20</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  TYPE ReflectionCoef</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">21</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">      REAL(KIND=8) :: theta, R, phi</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">22</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  END TYPE ReflectionCoef</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">23</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">24</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">  TYPE(ReflectionCoef), ALLOCATABLE :: RBot( : ), RTop( : )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">25</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">26</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">CONTAINS</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">27</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">28</div>
+            <div class="execution-count">28*</div>
+            <div class="source-code">  SUBROUTINE ReadReflectionCoefficient( FileRoot, BotRC, TopRC, PRTFile )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">29</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">30</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Optionally read in reflection coefficient for Top or Bottom boundary</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">31</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">32</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    USE MathConstants</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">33</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    IMPLICIT NONE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">34</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER,            INTENT( IN ) :: PRTFile         ! unit number for print file</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">35</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CHARACTER (LEN=1 ), INTENT( IN ) :: BotRC, TopRC    ! flag set to &#x27;F&#x27; if refl. coef. is to be read from a File</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">36</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CHARACTER (LEN=80), INTENT( IN ) :: FileRoot</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">37</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER            :: itheta, ik, IOStat, iAllocStat</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">38</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL  ( KIND = 8 ) :: freq</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">39</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    CHARACTER (LEN=80) :: Title2</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">40</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">41</div>
+            <div class="execution-count">28</div>
+            <div class="source-code">    IF ( BotRC == &#x27;F&#x27; ) THEN</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">42</div>
+            <div class="execution-count">1</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;__________________________________________________________________________&#x27;</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">43</div>
+            <div class="execution-count">1</div>
+            <div class="source-code">       WRITE( PRTFile, * )</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">44</div>
+            <div class="execution-count">1</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;Using tabulated bottom reflection coef.&#x27;</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">45</div>
+            <div class="execution-count">1*</div>
+            <div class="source-code">       OPEN( FilE = TRIM( FileRoot ) // &#x27;.brc&#x27;, UNIT = BRCFile, STATUS = &#x27;OLD&#x27;, IOSTAT = IOStat, ACTION = &#x27;READ&#x27; )</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">46</div>
+            <div class="execution-count">1</div>
+            <div class="source-code">       IF ( IOStat /= 0 ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">47</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          WRITE( PRTFile, * ) &#x27;BRCFile = &#x27;, TRIM( FileRoot ) // &#x27;.brc&#x27;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">48</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          CALL ERROUT( &#x27;ReadReflectionCoefficient&#x27;, &#x27;Unable to open Bottom Reflection Coefficient file&#x27; )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">49</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">50</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">51</div>
+            <div class="execution-count">1</div>
+            <div class="source-code">       READ(  BRCFile, * ) NBotPts</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">52</div>
+            <div class="execution-count">1</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;Number of points in bottom reflection coefficient = &#x27;, NBotPts</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">53</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">54</div>
+            <div class="execution-count">1*</div>
+            <div class="source-code">       IF ( ALLOCATED( RBot ) ) DEALLOCATE( RBot )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">55</div>
+            <div class="execution-count">1*</div>
+            <div class="source-code">       ALLOCATE( RBot( NBotPts ), Stat = IAllocStat )</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">56</div>
+            <div class="execution-count">1</div>
+            <div class="source-code">       IF ( IAllocStat /= 0 ) &amp;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">57</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          CALL ERROUT( &#x27;ReadReflectionCoefficient&#x27;, &#x27;Insufficient memory for bot. refl. coef.: reduce # points&#x27;  )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">58</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">59</div>
+            <div class="execution-count">4*</div>
+            <div class="source-code">       READ(  BRCFile, * ) ( RBot( itheta ), itheta = 1, NBotPts )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">60</div>
+            <div class="execution-count">4*</div>
+            <div class="source-code">       IF ( .NOT. monotonic( RBot( : )%theta, NBotPts ) ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">61</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          CALL ERROUT( &#x27;ReadReflectionCoefficient&#x27;, &#x27;Bottom reflection coefficients must be monotonically increasing&#x27;  )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">62</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">63</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">64</div>
+            <div class="execution-count">1</div>
+            <div class="source-code">       CLOSE( BRCFile )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">65</div>
+            <div class="execution-count">4*</div>
+            <div class="source-code">       RBot%phi = DegRad * RBot%phi   ! convert to radians</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">66</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">67</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ELSE   ! should allocate something anyway, since variable is passed</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">68</div>
+            <div class="execution-count">27*</div>
+            <div class="source-code">       IF ( ALLOCATED( RBot ) ) DEALLOCATE( RBot )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">69</div>
+            <div class="execution-count">27*</div>
+            <div class="source-code">       ALLOCATE(  RBot( 1 ), Stat = IAllocStat )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">70</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ENDIF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">71</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">72</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Optionally read in top reflection coefficient</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">73</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">74</div>
+            <div class="execution-count">28</div>
+            <div class="source-code">    IF ( TopRC == &#x27;F&#x27; ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">75</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;__________________________________________________________________________&#x27;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">76</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">77</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;Using tabulated top    reflection coef.&#x27;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">78</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       OPEN( FILE = TRIM( FileRoot ) // &#x27;.trc&#x27;, UNIT = TRCFile, STATUS = &#x27;OLD&#x27;, IOSTAT = IOStat, ACTION = &#x27;READ&#x27; )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">79</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( IOStat /= 0 ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">80</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          WRITE( PRTFile, * ) &#x27;TRCFile = &#x27;, TRIM( FileRoot ) // &#x27;.trc&#x27;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">81</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          CALL ERROUT( &#x27;ReadReflectionCoefficient&#x27;, &#x27;Unable to open Top Reflection Coefficient file&#x27; )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">82</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">83</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">84</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       READ(  TRCFile, * ) NTopPts</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">85</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;Number of points in top reflection coefficient = &#x27;, NTopPts</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">86</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">87</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( ALLOCATED( RTop ) ) DEALLOCATE( RTop )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">88</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       ALLOCATE( RTop( NTopPts ), Stat = IAllocStat )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">89</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( iAllocStat /= 0 ) &amp;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">90</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          CALL ERROUT( &#x27;ReadReflectionCoefficient&#x27;, &#x27;Insufficient memory for top refl. coef.: reduce # points&#x27;  )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">91</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">92</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       READ(  TRCFile, * ) ( RTop( itheta ), itheta = 1, NTopPts )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">93</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( .NOT. monotonic( RTop( : )%theta, NTopPts ) ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">94</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          CALL ERROUT( &#x27;ReadReflectionCoefficient&#x27;, &#x27;Top    reflection coefficients must be monotonically increasing&#x27;  )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">95</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       END IF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">96</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">97</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       CLOSE( TRCFile )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">98</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       RTop%phi = DegRad *  RTop%phi   ! convert to radians</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">99</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ELSE   ! should allocate something anyway, since variable is passed</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">100</div>
+            <div class="execution-count">28*</div>
+            <div class="source-code">       IF ( ALLOCATED( RTop ) ) DEALLOCATE( RTop )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">101</div>
+            <div class="execution-count">28*</div>
+            <div class="source-code">       ALLOCATE( RTop( 1 ), Stat = iAllocStat )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">102</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ENDIF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">103</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">104</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Optionally read in internal reflection coefficient data</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">105</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">106</div>
+            <div class="execution-count">28</div>
+            <div class="source-code">    IF ( BotRC == &#x27;P&#x27; ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">107</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;Reading precalculated refl. coeff. table&#x27;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">108</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       OPEN( FILE = TRIM( FileRoot ) // &#x27;.irc&#x27;, UNIT = IRCFile, STATUS = &#x27;OLD&#x27;, IOSTAT = IOStat, ACTION = &#x27;READ&#x27; )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">109</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( IOStat /= 0 ) CALL ERROUT( &#x27;ReadReflectionCoefficient&#x27;, &amp;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">110</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">                                       &#x27;Unable to open Internal Reflection Coefficient file&#x27; )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">111</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">112</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       READ(  IRCFile, * ) Title2, freq</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">113</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       READ(  IRCFile, * ) NkTab</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">114</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">115</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;Number of points in internal reflection coefficient = &#x27;, NkTab</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">116</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">117</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( ALLOCATED( xTab ) )  DEALLOCATE( xTab, fTab, gTab, iTab )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">118</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       ALLOCATE( xTab( NkTab ), fTab( NkTab ), gTab( NkTab ), iTab( NkTab ), Stat = iAllocStat )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">119</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       IF ( iAllocStat /= 0 ) CALL ERROUT( &#x27;ReadReflectionCoefficient&#x27;, &#x27;Too many points in reflection coefficient&#x27; )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">120</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">121</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       READ( IRCFile, FMT = &quot;( 5G15.7, I5 )&quot; ) ( xTab( ik ), fTab( ik ), gTab( ik ), iTab( ik ), ik = 1, NkTab )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">122</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       CLOSE( IRCFile )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">123</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ENDIF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">124</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">125</div>
+            <div class="execution-count">28</div>
+            <div class="source-code">  END SUBROUTINE ReadReflectionCoefficient</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">126</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">127</div>
+            <div class="execution-count">115260</div>
+            <div class="source-code">  SUBROUTINE InterpolateReflectionCoefficient( RInt, R, NPts, PRTFile )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">128</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">129</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Given an angle RInt%ThetaInt, returns the magnitude and</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">130</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! phase of the reflection coefficient (RInt%R, RInt%phi).</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">131</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">132</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Uses linear interpolation using the two nearest abscissas</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">133</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Assumes phi has been unwrapped so that it varies smoothly.</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">134</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! I tried modifying it to allow a complex angle of incidence but</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">135</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! stopped when I realized I needed to fuss with a complex atan2 routine</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">136</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">137</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    IMPLICIT NONE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">138</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER,              INTENT( IN    ) :: PRTFile, NPts   ! unit number of print file, # pts in refl. coef.</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">139</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    TYPE(ReflectionCoef), INTENT( IN    ) :: R( NPts )       ! Reflection coefficient table</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">140</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    TYPE(ReflectionCoef), INTENT( INOUT ) :: RInt            ! interpolated value of refl. coef.</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">141</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER         :: iLeft, iRight, iMid</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">142</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL ( KIND=8 ) :: alpha, Thetaintr</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">143</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">144</div>
+            <div class="execution-count">115260</div>
+            <div class="source-code">    iLeft  = 1</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">145</div>
+            <div class="execution-count">115260</div>
+            <div class="source-code">    iRight = NPts</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">146</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">147</div>
+            <div class="execution-count">115260</div>
+            <div class="source-code">    thetaIntr = REAL( RInt%Theta )   ! This should be unnecessary? probably used when I was doing complex angles</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">148</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">149</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Three cases: ThetaInt left, in, or right of tabulated interval</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">150</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">151</div>
+            <div class="execution-count">115260*</div>
+            <div class="source-code">    IF     ( thetaIntr &lt; R( iLeft  )%theta ) THEN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">152</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       !iRight = 2</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">153</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       RInt%R   = 0.0     ! R( iLeft  )%R</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">154</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       RInt%phi = 0.0     ! R( iLeft  )%phi</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">155</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;Warning in InterpolateReflectionCoefficient : Refl. Coef. being set to 0 outside tabulated domain&#x27;</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">156</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       WRITE( PRTFile, * ) &#x27;angle = &#x27;, thetaintr, &#x27;lower limit = &#x27;, R( iLeft)%theta</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">157</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">158</div>
+            <div class="execution-count">115260*</div>
+            <div class="source-code">    ELSE IF( thetaIntr &gt; R( iRight )%theta ) THEN</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">159</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       !iLeft = NPts - 1</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">160</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       RInt%R   = 0.0     ! R( iRight )%R</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">161</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       RInt%phi = 0.0     ! R( iRight )%phi</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">162</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! WRITE( PRTFile, * ) &#x27;Warning in InterpolateReflectionCoefficient : Refl. Coef. being set to 0 outside tabulated domain&#x27;</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">163</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! WRITE( PRTFile, * ) &#x27;angle = &#x27;, ThetaIntr, &#x27;upper limit = &#x27;, R( iRight )%theta</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">164</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">165</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ELSE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">166</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! Search for bracketing abscissas: Log2( NPts ) stabs required for a bracket</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">167</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">168</div>
+            <div class="execution-count">230520</div>
+            <div class="source-code">       DO WHILE ( iLeft /= iRight - 1 )</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">169</div>
+            <div class="execution-count">115260</div>
+            <div class="source-code">          iMid = ( iLeft + iRight ) / 2</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">170</div>
+            <div class="execution-count">115260*</div>
+            <div class="source-code">          IF ( R( iMid )%theta &gt; thetaIntr ) THEN</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">171</div>
+            <div class="execution-count">25060</div>
+            <div class="source-code">             iRight = iMid</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">172</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          ELSE</div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">173</div>
+            <div class="execution-count">90200</div>
+            <div class="source-code">             iLeft  = iMid</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">174</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          ENDIF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">175</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       END DO</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">176</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">177</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! Linear interpolation for reflection coef</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">178</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">179</div>
+            <div class="execution-count">115260*</div>
+            <div class="source-code">       alpha    = ( RInt%theta - R( iLeft )%theta ) / ( R( iRight )%theta - R( iLeft )%theta )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">180</div>
+            <div class="execution-count">115260*</div>
+            <div class="source-code">       RInt%R   = ( 1 - alpha ) * R( iLeft )%R   + alpha * R( iRight )%R</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">181</div>
+            <div class="execution-count">115260*</div>
+            <div class="source-code">       RInt%phi = ( 1 - alpha ) * R( iLeft )%phi + alpha * R( iRight )%phi</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">182</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">183</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ENDIF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">184</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line executed">
+            <div class="line-number">185</div>
+            <div class="execution-count">115260</div>
+            <div class="source-code">  END SUBROUTINE InterpolateReflectionCoefficient</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">186</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">187</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  SUBROUTINE InterpolateIRC( x, f, g, iPower, xTab, fTab, gTab, iTab, NkTab )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">188</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">189</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Internal reflection coefficient interpolator.</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">190</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Returns f, g, iPower for given x using tabulated values.</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">191</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Uses polynomial interpolation to approximate the function between the tabulated values</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">192</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">193</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    USE PolyMod</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">194</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    IMPLICIT NONE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">195</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">196</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER, PARAMETER :: N = 3                    ! order of the polynomial for interpolation</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">197</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER,            INTENT( IN  ) :: NkTab, iTab( NkTab )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">198</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL    ( KIND=8 ), INTENT( IN  ) :: xTab( NkTab )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">199</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX ( KIND=8 ), INTENT( IN  ) :: fTab( NkTab ), gTab( NkTab ), x</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">200</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER,            INTENT( OUT ) :: iPower</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">201</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX ( KIND=8 ), INTENT( OUT ) :: f, g</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">202</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    INTEGER            :: i, j, iDel, iLeft, iMid, iRight, NAct</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">203</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    REAL    ( KIND=8 ) :: xReal</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">204</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    COMPLEX ( KIND=8 ) :: xT( N ), fT( N ), gT( N )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">205</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">206</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    xReal  = DBLE( x )        ! taking the real part</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">207</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    iLeft  = 1</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">208</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    iRight = NkTab</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">209</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">210</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ! Three cases: x left, in, or right of tabulated interval</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">211</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">212</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    IF (     xReal &lt; xTab( iLeft  ) ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">213</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       f      = fTab( iLeft  )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">214</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       g      = gTab( iLeft  )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">215</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       iPower = iTab( iLeft  )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">216</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">    ELSE IF( xReal &gt; xTab( iRight ) ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">217</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       f      = fTab( iRight )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">218</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       g      = gTab( iRight )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">219</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       iPower = iTab( iRight )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">220</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ELSE</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">221</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">222</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! Search for bracketing abscissas:</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">223</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! Log base 2 (NPts) stabs required for a bracket</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">224</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">225</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       DO WHILE ( iLeft /= iRight-1 )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">226</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          iMid = ( iLeft + iRight )/2</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">227</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          IF ( xTab( iMid ) &gt; xReal ) THEN</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">228</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             iRight = iMid</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">229</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          ELSE</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">230</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">             iLeft  = iMid</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">231</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">          ENDIF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">232</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       END DO</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">233</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">234</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! Extract the subset for interpolation and scale</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">235</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">236</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       iLeft  = MAX( iLeft  - ( N - 2 ) / 2, 1     )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">237</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       iRight = MiN( iRight + ( N - 1 ) / 2, NkTab )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">238</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">239</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       NAct = iRight - iLeft + 1</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">240</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       DO i = 1, NAct</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">241</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          j       = i + iLeft - 1</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">242</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          iDel    = iTab( j ) - iTab( iLeft )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">243</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          xT( i ) = xTab( j )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">244</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          fT( i ) = fTab( j ) * 10.0D0 ** iDel</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">245</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">          gT( i ) = gTab( j ) * 10.0D0 ** iDel</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">246</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       END DO</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">247</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">248</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">       ! Construct the interpolate</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">249</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">250</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       f      = Poly( x, xT, fT, NAct )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">251</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       g      = Poly( x, xT, gT, NAct )</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">252</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">       iPower = iTab( iLeft )</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">253</div>
+            <div class="execution-count">-</div>
+            <div class="source-code">    ENDIF</div>
+        </div>
+        <div class="code-line non-executable">
+            <div class="line-number">254</div>
+            <div class="execution-count">-</div>
+            <div class="source-code"></div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">255</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">  END SUBROUTINE InterpolateIRC</div>
+        </div>
+        <div class="code-line not-executed">
+            <div class="line-number">256</div>
+            <div class="execution-count">#####</div>
+            <div class="source-code">END MODULE RefCoef</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>Legend:</strong></p>
+        <ul>
+            <li><span style="background-color: #d4edda; padding: 2px 4px;">Green</span> - Executed lines</li>
+            <li><span style="background-color: #f8d7da; padding: 2px 4px;">Red</span> - Not executed lines</li>
+            <li><span style="background-color: #f8f9fa; padding: 2px 4px;">Gray</span> - Non-executable lines (comments, declarations)</li>
+        </ul>
+        <p><strong>Execution Count:</strong> Number of times each line was executed. ##### indicates never executed, - indicates non-executable.</p>
+    </div>
+</body>
+</html>
