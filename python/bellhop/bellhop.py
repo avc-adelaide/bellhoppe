@@ -29,79 +29,9 @@ import matplotlib.pyplot as _pyplt
 import matplotlib.cm as _cm
 import bokeh as _bokeh
 
-from bellhop.constants import _Strings
+from bellhop.constants import _Strings, _Maps
 
-interp_map = {
-    "S": _Strings.spline,
-    "C": _Strings.linear,
-    "Q": _Strings.quadrilateral,
-    "P": _Strings.pchip,
-    "H": _Strings.hexahedral,
-    "N": _Strings.nlinear,
-    " ": 'default',
-}
-bty_interp_map = {
-    "L": _Strings.linear,
-    "C": _Strings.curvilinear,
-}
-boundcond_map = {
-    "V": _Strings.vacuum,
-    "A": _Strings.acousto_elastic,
-    "R": _Strings.rigid,
-    "F": _Strings.from_file,
-    " ": 'default',
-}
-attunits_map = {
-    "N": "nepers per meter",
-    "F": "frequency dependent",
-    "M": "dB per meter",
-    "m": "frequency scaled dB per meter",
-    "W": "dB per wavelength",
-    "Q": "quality factor",
-    "L": "loss parameter",
-    " ": 'default',
-}
-volatt_map = {
-    "": 'none',
-    "T": 'thorp',
-    "F": 'francois-garrison',
-    "B": 'biological',
-    " ": 'default',
-}
-bottom_map = {
-    "_": _Strings.flat,
-    "~": _Strings.from_file,
-    "*": _Strings.from_file,
-    " ": 'default',
-}
-source_map = {
-    "R": _Strings.point,
-    "X": _Strings.line,
-    " ": 'default',
-}
-grid_map = {
-    "R": _Strings.rectilinear,
-    "I": _Strings.irregular,
-    " ": 'default',
-}
-beam_map = {
-    "G": 'hat-cartesian',
-    "^": 'hat-cartesian',
-    "g": 'hat-ray',
-    "B": 'gaussian-cartesian',
-    "b": 'gaussian-ray',
-    " ": 'default',
-}
 
-interp_rev = {v: k for k, v in interp_map.items()}
-bty_interp_rev = {v: k for k, v in bty_interp_map.items()}
-boundcond_rev = {v: k for k, v in boundcond_map.items()}
-attunits_rev = {v: k for k, v in attunits_map.items()}
-volatt_rev = {v: k for k, v in volatt_map.items()}
-bottom_rev = {v: k for k, v in bottom_map.items()}
-source_rev = {v: k for k, v in source_map.items()}
-grid_rev = {v: k for k, v in grid_map.items()}
-beam_rev = {v: k for k, v in beam_map.items()}
 
 
 # models (in order of preference)
@@ -424,19 +354,19 @@ def read_env2d(fname):
         def _invalid(opt):
             raise ValueError(f"Interpolation option {opt!r} not available")
         opt = topopt[0]
-        env["soundspeed_interp"] = interp_map.get(opt) or _invalid(opt)
+        env["soundspeed_interp"] = _Maps.interp.get(opt) or _invalid(opt)
 
         # Top boundary condition
         def _invalid(opt):
             raise ValueError(f"Top boundary condition option {opt!r} not available")
         opt = topopt[1]
-        env["top_boundary_condition"] = boundcond_map.get(opt) or _invalid(opt)
+        env["top_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid(opt)
 
         # Attenuation units
         def _invalid(opt):
             raise ValueError(f"Attenuation units option {opt!r} not available")
         opt = topopt[2]
-        env["attenuation_units"] = attunits_map.get(opt) or _invalid(opt)
+        env["attenuation_units"] = _Maps.attunits.get(opt) or _invalid(opt)
 
         # Volume attenuation
         def _invalid(opt):
@@ -446,7 +376,7 @@ def read_env2d(fname):
             opt = topopt[3]
         else:
             opt = ""
-        env["volume_attenuation"] = volatt_map.get(opt) or _invalid(opt)
+        env["volume_attenuation"] = _Maps.volatt.get(opt) or _invalid(opt)
 
         if 'A' in topopt:
             # Read halfspace parameters line
@@ -492,11 +422,11 @@ def read_env2d(fname):
         def _invalid(opt):
             raise ValueError(f"Bottom boundary condition option {opt!r} not available")
         opt = botopt[0]
-        env["bottom_boundary_condition"] = boundcond_map.get(opt) or _invalid(opt)
+        env["bottom_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid(opt)
 
         if len(botopt) > 1:
             opt = botopt[1]
-            env["_bottom_bathymetry"] = bottom_map.get(opt) or _invalid(opt)
+            env["_bottom_bathymetry"] = _Maps.bottom.get(opt) or _invalid(opt)
             if env["_bottom_bathymetry"] == _Strings.from_file:
                 print("TODO: automatically read bty file")
             else:
@@ -563,11 +493,11 @@ def read_env2d(fname):
         task_code = _parse_quoted_string(task_line)
         env['task'] = task_code[0]
         if len(task_code) > 1:
-            env['beam_type'] = beam_map.get(task_code[1])
+            env['beam_type'] = _Maps.beam.get(task_code[1])
         if len(task_code) > 3:
-            env['tx_type'] = source_map.get(task_code[3])
+            env['tx_type'] = _Maps.source.get(task_code[3])
         if len(task_code) > 4:
-            env['grid'] = grid_map.get(task_code[4])
+            env['grid'] = _Maps.grid.get(task_code[4])
 
         # Check for source directionality (indicated by * in task code)
         if '*' in task_code:
@@ -777,7 +707,7 @@ def read_bty(fname):
         depths_array = _np.array(depths)
 
         # Return as [range, depth] pairs
-        return _np.column_stack([ranges_m, depths_array]), bty_interp_map[interp_type]
+        return _np.column_stack([ranges_m, depths_array]), _Maps.bty_interp[interp_type]
 
 def read_refl_coeff(fname):
     """Read a reflection coefficient (.brc) file used by BELLHOP.
@@ -898,7 +828,7 @@ def check_env2d(env):
             assert env['soundspeed'][0,0] <= 0, 'First depth in soundspeed array must be 0 m'
             assert env['soundspeed'][-1,0] >= max_depth, 'Last depth in soundspeed array must be beyond water depth: '+str(max_depth)+' m'
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
-            assert env['soundspeed_interp'] in interp_rev, 'Invalid interpolation type: '+str(env['soundspeed_interp'])
+            assert env['soundspeed_interp'] in _Maps.interp_rev, 'Invalid interpolation type: '+str(env['soundspeed_interp'])
             if max_depth not in env['soundspeed'][:,0]:
                 indlarger = _np.argwhere(env['soundspeed'][:,0]>max_depth)[0][0]
                 if env['soundspeed_interp'] == _Strings.spline:
@@ -1137,7 +1067,7 @@ def compute_transmission_loss(env, tx_depth_ndx=0, mode=_Strings.coherent, model
     env = check_env2d(env)
     if mode not in [_Strings.coherent, _Strings.incoherent, _Strings.semicoherent]:
         raise ValueError('Unknown transmission loss mode: '+mode)
-    if tx_type not in source_rev:
+    if tx_type not in _Maps.source_rev:
         raise ValueError(f'Unknown source type: {tx_type!r}')
     if env['tx_type'] == 'default':
         env['tx_type'] = tx_type
@@ -1669,10 +1599,10 @@ class _Bellhop:
 
         svp = env['soundspeed']
         svp_depth = 0.0
-        svp_interp = interp_rev[env['soundspeed_interp']]
-        svp_boundcond = boundcond_rev[env['top_boundary_condition']]
-        svp_attunits = attunits_rev[env['attenuation_units']]
-        svp_volatt = volatt_rev[env['volume_attenuation']]
+        svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
+        svp_boundcond = _Maps.boundcond_rev[env['top_boundary_condition']]
+        svp_attunits = _Maps.attunits_rev[env['attenuation_units']]
+        svp_volatt = _Maps.volatt_rev[env['volume_attenuation']]
         if isinstance(svp, _pd.DataFrame):
             svp_depth = svp.index[-1]
             if len(svp.columns) > 1:
@@ -1711,8 +1641,8 @@ class _Bellhop:
                 self._print(fh, f"{svp[j,0]} {svp[j,1]} /  ! ssp_{j}")
 
         depth = env['depth']
-        bot_bc = boundcond_rev[env['bottom_boundary_condition']]
-        dp_flag = bottom_rev[env['_bottom_bathymetry']]
+        bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
+        dp_flag = _Maps.bottom_rev[env['_bottom_bathymetry']]
         comment = "BOT_Boundary_cond / BOT_Roughness"
         self._print(fh, f"{_quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}    ! {comment}")
 
@@ -1735,10 +1665,10 @@ class _Bellhop:
         self._print_array(fh, env['rx_depth'], nn=env['rx_ndepth'], label="RX_DEPTH")
         self._print_array(fh, env['rx_range']/1000, nn=env['rx_nrange'], label="RX_RANGE")
 
-        beamtype = beam_rev[env['beam_type']]
+        beamtype = _Maps.beam_rev[env['beam_type']]
         beampattern = " "
-        txtype = source_rev[env['tx_type']]
-        gridtype = grid_rev[env['grid']]
+        txtype = _Maps.source_rev[env['tx_type']]
+        gridtype = _Maps.grid_rev[env['grid']]
         if env['tx_directionality'] is not None:
             beampattern = "*"
             self._create_sbp_file(fname_base+'.sbp', env['tx_directionality'])
