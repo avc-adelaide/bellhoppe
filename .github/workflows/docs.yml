@@ -55,8 +55,8 @@ jobs:
       with:
         name: coverage-reports
         path: |
-          _coverage/*.html
-          _coverage_python/*.html
+          _coverage/
+          _coverage_python/
         retention-days: 3
 
   build:
