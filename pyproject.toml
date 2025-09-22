@@ -125,11 +125,11 @@ testv = [
     "install-dev",
     "pytest --capture=tee-sys"
 ]
-cov  = [
+covf = [
     "install-dev",
     "make coverage-full"
 ]
-python-cov = [
+covp = [
     "install-dev", 
     "make python-coverage-test",
     "make python-coverage-report"

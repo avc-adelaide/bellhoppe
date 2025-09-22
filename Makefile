@@ -196,7 +196,7 @@ export LAPACK_LIBS = -llapack
 
 ####### TARGETS #######
 
-.PHONY: all install clean test docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full python-coverage-test python-coverage-report python-coverage-html coverage-unified
+.PHONY: all install clean test docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full python-coverage-test python-coverage-report python-coverage-html
 
 all:
 	(cd fortran;	make -k all)
@@ -273,7 +273,8 @@ docs:
 
 cov:
 	@echo "Generating coverage reports..."
-	$(HATCH) cov
+	$(HATCH) covf
+	$(HATCH) covp
 
 lint:
 	@echo "Running ruff Python linter..."
@@ -290,7 +291,6 @@ coverage-clean:
 	@echo "Cleaning Python coverage files..."
 	rm -f .coverage
 	rm -rf _coverage_python/
-	rm -rf _coverage_unified/
 
 coverage-build: clean
 	@echo "Building BELLHOP with coverage instrumentation..."
@@ -359,7 +359,7 @@ coverage-gcovr:
 		--html-tab-size 4 \
 		./fortran/
 
-coverage-full: clean coverage-build coverage-install coverage-test coverage-report coverage-html python-coverage-test python-coverage-html coverage-unified
+coverage-full: clean coverage-build coverage-install coverage-test coverage-report coverage-html
 	@echo "Full coverage analysis complete."
 
 ###### PYTHON COVERAGE ######
@@ -378,11 +378,6 @@ python-coverage-html:
 	@echo "Generating Python HTML coverage reports..."
 	python3 -m coverage html --include="python/bellhop/*"
 	@echo "Python HTML coverage reports generated in _coverage_python/"
-
-coverage-unified:
-	@echo "Generating unified coverage index..."
-	python3 python/generate_unified_coverage.py _coverage_unified
-	@echo "Unified coverage index generated in _coverage_unified/"
 
 #######################################
 
