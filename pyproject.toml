@@ -74,6 +74,7 @@ omit = [
 ]
 
 [tool.coverage.report]
+show_missing = true
 exclude_lines = [
     "pragma: no cover",
     "def __repr__",
@@ -131,8 +132,8 @@ covf = [
 ]
 covp = [
     "install-dev", 
-    "make python-coverage-test",
-    "make python-coverage-report"
+    "python3 -m coverage run -m pytest tests/ --tb=short",
+    "python3 -m coverage html"
 ]
 debug = [
     "install-dev",
@@ -141,7 +142,7 @@ debug = [
 docf = "cd docs/ford; ford --graph ford.md" # config set in fpm.toml
 docp = "sphinx-build docs/python docs/_build/media/python"
 lintf = "fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003"
-lintp  = "ruff check python/"
+lintp = "ruff check python/"
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true

@@ -196,7 +196,9 @@ export LAPACK_LIBS = -llapack
 
 ####### TARGETS #######
 
-.PHONY: all install clean test docs coverage-clean coverage-build coverage-install coverage-test coverage-report coverage-html coverage-full python-coverage-test python-coverage-report python-coverage-html
+.PHONY: all install clean test doc docs cov lint \
+        coverage-clean coverage-build coverage-install coverage-test \
+        coverage-report coverage-html coverage-full
 
 all:
 	(cd fortran;	make -k all)
@@ -272,8 +274,9 @@ docs:
 	@echo "Open ./doc/index.html in a web browser to view"
 
 cov:
-	@echo "Generating coverage reports..."
+	@echo "Generating Fortran coverage report..."
 	$(HATCH) covf
+	@echo "Generating Python coverage report..."
 	$(HATCH) covp
 
 lint:
@@ -363,23 +366,6 @@ coverage-gcovr:
 
 coverage-full: clean coverage-build coverage-install coverage-test coverage-report coverage-html
 	@echo "Full coverage analysis complete."
-
-###### PYTHON COVERAGE ######
-
-python-coverage-test: install
-	@echo "Running Python tests with coverage..."
-	export PATH="$(PWD)/bin:$$PATH" && \
-	export PYTHONPATH="$(PWD)/python:$$PYTHONPATH" && \
-	python3 -m coverage run --branch -m pytest tests/ --tb=short
-
-python-coverage-report: 
-	@echo "Generating Python coverage report..."
-	python3 -m coverage report --include="python/bellhop/*" --show-missing
-
-python-coverage-html:
-	@echo "Generating Python HTML coverage reports..."
-	python3 -m coverage html --include="python/bellhop/*"
-	@echo "Python HTML coverage reports generated in _coverage_python/"
 
 #######################################
 
