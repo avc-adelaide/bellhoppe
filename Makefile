@@ -306,12 +306,11 @@ coverage-install: coverage-build
 		echo "----- Installing $$f"; cp -p $$f ./bin/; \
 	done
 
-
 coverage-test: coverage-install
-	@echo "Running coverage test..."
+	@echo "Running fortran coverage test..."
 	export PATH="$(PWD)/bin:$$PATH" && \
 	export PYTHONPATH="$(PWD)/python:$$PYTHONPATH" && \
-	export COVERAGE_RUN="true" && pytest --capture=tee-sys
+	export COVERAGE_RUN="true" && pytest --capture=tee-sys --ignore=tests/only_python/
 
 coverage-report:
 	@echo "Generating coverage report from existing data..."
