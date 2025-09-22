@@ -20,6 +20,9 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  PYTHON_VERSION: "3.12"
+
 jobs:
 
   coverage:
@@ -34,25 +37,18 @@ jobs:
         sudo apt update
         sudo apt install -y gfortran gcc
 
-    - name: Verify compiler and tools
-      run: |
-        gfortran --version
-        gcov --version
-
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
+        python-version: ${{ env.PYTHON_VERSION }}
 
     - name: Install python packages
       run: |
         pip install hatch
-        pip install coverage pytest numpy scipy pandas matplotlib bokeh
 
-    - name: Run tests with coverage instrumentation
+    - name: Run coverage
       run: |
-        make coverage-full
-        make python-coverage-test python-coverage-html
+        make cov
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
@@ -73,7 +69,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
+        python-version: ${{ env.PYTHON_VERSION }}
 
     - name: Install FORD
       run: pip install hatch FORD sphinx
