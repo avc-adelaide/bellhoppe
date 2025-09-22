@@ -75,7 +75,7 @@ Acoustics Toolbox project and subsequent development efforts:
 - **[Technical Report HLS-2010-1](media/HLS-2010-1.pdf)** - Detailed technical documentation
 
 ### Additional material
-- **[Fortran Coverage](media/coverage/coverage-index.html)** - Code coverage analysis for Fortran acoustic simulation components
+- **[Fortran Coverage](media/coverage/_coverage/coverage-index.html)** - Code coverage analysis for Fortran acoustic simulation components
 - **[Python Coverage](media/coverage/_coverage_python/index.html)** - Code coverage analysis for Python API and utilities
 - **[University of California Changes](media/CHANGES.md)** - Detailed technical changes, bug fixes, and algorithmic improvements made by the UC San Diego team
 - **[Acoustics Toolbox Changes](media/at_changes.md)** - Historical change log from the original Acoustics Toolbox development

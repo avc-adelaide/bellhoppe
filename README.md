@@ -4,7 +4,8 @@
 
 - [Main Bellhop documentation](https://avc-adelaide.github.io/bellhop/)
 - [Python API documentation](https://avc-adelaide.github.io/bellhop/media/python/)
-- [Fortran code coverage for the new test suite](https://avc-adelaide.github.io/bellhop/media/coverage-index.html)
+- [Fortran Test Coverage](https://avc-adelaide.github.io/bellhop/media/coverage/_coverage/coverage-index.html)
+- [Python Test Coverage](https://avc-adelaide.github.io/bellhop/media/coverage/_coverage_python/index.html)
 - [Github repository link](https://github.com/avc-adelaide/bellhop) (what you are reading now)
 
 [![Test Suite](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml)
