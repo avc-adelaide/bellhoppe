@@ -75,30 +75,9 @@ bellhop.exe: $(BELLHOP_OBJECTS)
 bellhop3d.exe: $(BELLHOP3D_OBJECTS)
 	$(FC) -o $@ $(FFLAGS) $(BELLHOP3D_OBJECTS)
 
-# Automatic dependency detection with minimal ordering constraints
-# Only specify the ordering that gfortran cannot detect automatically
+# Minimal dependency constraints - gfortran handles most dependencies automatically
+# Only specify dependencies that cannot be detected due to build order issues
 
-# Basic modules (no USE dependencies)
-BASIC_MODULES = FatalError.o MathConstants.o monotonicMod.o SortMod.o \
-                subtabulate.o splinec.o PolyMod.o cross_products.o
-
-# Modules that depend on basic modules only
-LEVEL1_MODULES = beampattern.o RefCoef.o pchipMod.o AttenMod.o \
-                 SourceReceiverPositions.o RWSHDFile.o bellhopMod.o \
-                 angleMod.o ArrMod.o bdryMod.o sspMod.o bdry3DMod.o
-
-# Modules that need bellhopMod and possibly others
-LEVEL2_MODULES = Cone.o ReflectMod.o WriteRay.o influence.o Step.o \
-                 ReadEnvironmentBell.o RayNormals.o
-
-# 3D-specific modules
-LEVEL3_MODULES = Reflect3DMod.o influence3D.o Step3DMod.o
-
-# Ensure build order constraints
-$(LEVEL1_MODULES): $(BASIC_MODULES)
-$(LEVEL2_MODULES): $(BASIC_MODULES) $(LEVEL1_MODULES)
-$(LEVEL3_MODULES): $(BASIC_MODULES) $(LEVEL1_MODULES) $(LEVEL2_MODULES)
-
-# Main programs depend on their respective module sets
-bellhop.o: $(BASIC_MODULES) $(LEVEL1_MODULES) $(LEVEL2_MODULES)
-bellhop3D.o: $(BASIC_MODULES) $(LEVEL1_MODULES) $(LEVEL2_MODULES) $(LEVEL3_MODULES)
+# Ensure RayNormals is built before 3D modules that need it
+RayNormals.o: bellhopMod.o
+Reflect3DMod.o Step3DMod.o influence3D.o: RayNormals.o cross_products.o
