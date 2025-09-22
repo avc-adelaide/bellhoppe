@@ -5,6 +5,8 @@ MODULE Step3DMod
   USE bellhopMod
   USE Bdry3DMod
   USE sspMod
+  USE RayNormals
+  USE cross_products
 
   IMPLICIT NONE
   PUBLIC
@@ -19,8 +21,6 @@ CONTAINS
     ! x denotes the ray coordinate, ( x, y, z )
     ! t denotes the scaled tangent to the ray (previously (xi, eta, zeta) )
     ! c * t would be the unit tangent
-
-    USE RayNormals
 
     ! rays
     TYPE( ray3DPt ), INTENT( INOUT ) :: ray0, ray2
@@ -155,8 +155,6 @@ CONTAINS
     SUBROUTINE CurvatureCorrection
 
       ! correct p-q due to jumps in the gradient of the sound speed
-
-      USE cross_products
 
       Th    = DOT_PRODUCT( ray2%t, nBdry )   ! component of ray tangent, normal to boundary
       tBdry = ray2%t - Th * nBdry            ! tangent, along the boundary, in the reflection plane

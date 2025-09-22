@@ -3,6 +3,8 @@ MODULE Reflect3DMod
   !! 3D ray reflection computations at boundaries with complex geometry and loss calculations
 
   USE bellhopMod
+  USE RayNormals
+  USE cross_products
 
   IMPLICIT NONE
   PUBLIC
@@ -147,8 +149,6 @@ CONTAINS
   CONTAINS
     SUBROUTINE CurvatureCorrection2( ray, rayOut )
 
-      USE RayNormals
-
       TYPE( ray3DPt ), INTENT( IN  ) :: ray
       TYPE( ray3DPt ), INTENT( OUT ) :: rayOut
 
@@ -231,8 +231,6 @@ CONTAINS
 
       ! given the ray tangent vector (not normalized) and the unit normal to the bdry
       ! calculate a unit tangent and the two ray normals
-
-      USE cross_products
 
       REAL (KIND=8), INTENT( IN )  :: ray3Dt( 3 ), nBdry( 3 )
       REAL (KIND=8), INTENT( OUT ) :: rayt( 3 ), rayn1( 3 ), rayn2( 3 )
