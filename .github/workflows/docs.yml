@@ -50,7 +50,9 @@ jobs:
         pip install coverage pytest numpy scipy pandas matplotlib bokeh
 
     - name: Run tests with coverage instrumentation
-      run: make coverage-full
+      run: |
+        make coverage-full
+        make python-coverage-test python-coverage-html
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
@@ -59,7 +61,6 @@ jobs:
         path: |
           _coverage/*.html
           _coverage_python/*.html
-          _coverage_unified/*.html
         retention-days: 3
 
   build:
