@@ -306,6 +306,8 @@ coverage-install: coverage-build
 
 coverage-test: coverage-install
 	@echo "Running coverage test..."
+	export PATH="$(PWD)/bin:$$PATH" && \
+	export PYTHONPATH="$(PWD)/python:$$PYTHONPATH" && \
 	export COVERAGE_RUN="true" && pytest --capture=tee-sys
 
 coverage-report:
