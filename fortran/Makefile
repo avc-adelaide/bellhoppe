@@ -1,36 +1,43 @@
+# Simplified Fortran Makefile for BELLHOP
+# Uses automatic dependency detection instead of manual rules
+
+# Compiler and tools
+FC ?= gfortran
 AR = ar
-
-# Intel compiler needed the following definition for the archiver:
-#AR = xiar
-
 ARFLAGS = r
-
 RANLIB = ranlib
 
+# Get compiler flags from environment or use defaults
+ifeq ($(FC),gfortran)
+    # If FFLAGS not set by parent Makefile, use reasonable defaults
+    FFLAGS ?= -g -Waliasing -Wampersand -Wsurprising -Wintrinsics-std \
+              -Wno-tabs -Wintrinsic-shadow -Wline-truncation \
+              -std=gnu -frecursive -O2 -ffast-math -funroll-all-loops \
+              -fomit-frame-pointer -march=native -mtune=native
+endif
+
+# Executables to build
 EXECUTABLES = bellhop.exe bellhop3d.exe
 
-# Basic modules from original misc/ directory (must be compiled first)
-BASIC_MODULES = FatalError.o MathConstants.o monotonicMod.o SortMod.o subtabulate.o \
-                splinec.o PolyMod.o cross_products.o
+# Object files for each executable
+BELLHOP_OBJECTS = FatalError.o MathConstants.o monotonicMod.o SortMod.o \
+                  subtabulate.o splinec.o PolyMod.o cross_products.o \
+                  beampattern.o RefCoef.o pchipMod.o AttenMod.o \
+                  SourceReceiverPositions.o RWSHDFile.o \
+                  bellhopMod.o angleMod.o ArrMod.o bdryMod.o sspMod.o \
+                  Cone.o ReflectMod.o WriteRay.o influence.o Step.o \
+                  ReadEnvironmentBell.o bellhop.o
 
-# Dependent misc modules 
-MISC_MODULES = beampattern.o RefCoef.o pchipMod.o AttenMod.o SourceReceiverPositions.o RWSHDFile.o
+BELLHOP3D_OBJECTS = FatalError.o MathConstants.o monotonicMod.o SortMod.o \
+                    subtabulate.o splinec.o PolyMod.o cross_products.o \
+                    beampattern.o RefCoef.o pchipMod.o AttenMod.o \
+                    SourceReceiverPositions.o RWSHDFile.o \
+                    bellhopMod.o angleMod.o ArrMod.o bdryMod.o sspMod.o \
+                    Cone.o bdry3DMod.o ReflectMod.o Reflect3DMod.o \
+                    WriteRay.o RayNormals.o influence.o influence3D.o \
+                    Step3DMod.o ReadEnvironmentBell.o bellhop3D.o
 
-# All misc objects
-MISC_OBJECTS = $(BASIC_MODULES) $(MISC_MODULES)
-
-# Basic Bellhop modules
-BELLHOP_MODULES = bellhopMod.o angleMod.o ArrMod.o bdryMod.o sspMod.o Cone.o
-
-# Objects for bellhop executable  
-BELLHOP_OBJECTS   = $(BELLHOP_MODULES) ReflectMod.o WriteRay.o influence.o Step.o ReadEnvironmentBell.o bellhop.o
-
-# Objects for bellhop3d executable
-BELLHOP3D_OBJECTS = $(BELLHOP_MODULES) bdry3DMod.o ReflectMod.o Reflect3DMod.o WriteRay.o RayNormals.o influence.o influence3D.o Step3DMod.o ReadEnvironmentBell.o bellhop3D.o
-
-# All objects combined
-ALL_OBJECTS = $(MISC_OBJECTS) $(BELLHOP_OBJECTS) $(BELLHOP3D_OBJECTS)
-
+# Default target
 .PHONY: all install clean
 
 all: $(EXECUTABLES)
@@ -38,136 +45,60 @@ all: $(EXECUTABLES)
 	@echo "************************************"
 	@echo " "
 
+# Install executables  
 install:
 	mkdir -p ../bin
 	for f in $(EXECUTABLES) ; do \
 		echo "----- Installing $$f"; cp -p $$f ../bin/; \
 	done
 
+# Clean build artifacts
 clean:
 	-rm -f *.o *.mod *.exe *_genmod.f90 *.a
 
-# Declare implicit rules (for make utilities with missing or broken build rules)
+# Suffix rules for automatic compilation
+.SUFFIXES: .f90 .o .mod
 
-.SUFFIXES: .a .o .mod .f .f90
-
-.f.o:
-	$(FC) -c $(FFLAGS) $< 
-
+# Fortran 90 source to object
 .f90.o:
-	$(FC) -c $(FFLAGS) $< 
+	$(FC) -c $(FFLAGS) $<
 
-.f90.mod:
-	$(FC) -c $(FFLAGS) $< 
+# Module files are created as a side effect of object compilation
+# This rule ensures make knows about the relationship
+%.mod: %.o
+	@true
 
 # Main executable targets
-bellhop.exe: $(BELLHOP_OBJECTS) $(MISC_OBJECTS)
-	$(FC) -o $@ $(FFLAGS) $(BELLHOP_OBJECTS) $(MISC_OBJECTS)
+bellhop.exe: $(BELLHOP_OBJECTS)
+	$(FC) -o $@ $(FFLAGS) $(BELLHOP_OBJECTS)
 
-bellhop3d.exe: $(BELLHOP3D_OBJECTS) $(MISC_OBJECTS)
-	$(FC) -o $@ $(FFLAGS) $(BELLHOP3D_OBJECTS) $(MISC_OBJECTS)
+bellhop3d.exe: $(BELLHOP3D_OBJECTS)
+	$(FC) -o $@ $(FFLAGS) $(BELLHOP3D_OBJECTS)
 
-# Ensure basic modules are built first
-$(MISC_MODULES): $(BASIC_MODULES)
-$(BELLHOP_MODULES): $(BASIC_MODULES) $(MISC_MODULES)
+# Automatic dependency detection with minimal ordering constraints
+# Only specify the ordering that gfortran cannot detect automatically
 
-# Explicit dependencies for basic modules (no dependencies)
-FatalError.o fatalerror.mod: FatalError.f90
-	$(FC) -c $(FFLAGS) $<
+# Basic modules (no USE dependencies)
+BASIC_MODULES = FatalError.o MathConstants.o monotonicMod.o SortMod.o \
+                subtabulate.o splinec.o PolyMod.o cross_products.o
 
-MathConstants.o mathconstants.mod: MathConstants.f90
-	$(FC) -c $(FFLAGS) $<
+# Modules that depend on basic modules only
+LEVEL1_MODULES = beampattern.o RefCoef.o pchipMod.o AttenMod.o \
+                 SourceReceiverPositions.o RWSHDFile.o bellhopMod.o \
+                 angleMod.o ArrMod.o bdryMod.o sspMod.o bdry3DMod.o
 
-monotonicMod.o monotonicmod.mod: monotonicMod.f90
-	$(FC) -c $(FFLAGS) $<
+# Modules that need bellhopMod and possibly others
+LEVEL2_MODULES = Cone.o ReflectMod.o WriteRay.o influence.o Step.o \
+                 ReadEnvironmentBell.o RayNormals.o
 
-SortMod.o sortmod.mod: SortMod.f90
-	$(FC) -c $(FFLAGS) $<
+# 3D-specific modules
+LEVEL3_MODULES = Reflect3DMod.o influence3D.o Step3DMod.o
 
-subtabulate.o subtabulate.mod: subtabulate.f90
-	$(FC) -c $(FFLAGS) $<
+# Ensure build order constraints
+$(LEVEL1_MODULES): $(BASIC_MODULES)
+$(LEVEL2_MODULES): $(BASIC_MODULES) $(LEVEL1_MODULES)
+$(LEVEL3_MODULES): $(BASIC_MODULES) $(LEVEL1_MODULES) $(LEVEL2_MODULES)
 
-splinec.o splinec.mod: splinec.f90
-	$(FC) -c $(FFLAGS) $<
-
-PolyMod.o polymod.mod: PolyMod.f90
-	$(FC) -c $(FFLAGS) $<
-
-cross_products.o cross_products.mod: cross_products.f90
-	$(FC) -c $(FFLAGS) $<
-
-# Dependent misc modules
-beampattern.o beampattern.mod: beampattern.f90 fatalerror.mod monotonicmod.mod
-	$(FC) -c $(FFLAGS) $<
-
-RefCoef.o refcoef.mod: RefCoef.f90 polymod.mod
-	$(FC) -c $(FFLAGS) $<
-
-pchipMod.o pchipmod.mod: pchipMod.f90 splinec.mod
-	$(FC) -c $(FFLAGS) $<
-
-AttenMod.o: AttenMod.f90 mathconstants.mod
-	$(FC) -c $(FFLAGS) $<
-
-SourceReceiverPositions.o sourcereceiverpositions.mod: SourceReceiverPositions.f90 monotonicmod.mod sortmod.mod subtabulate.mod
-	$(FC) -c $(FFLAGS) $<
-
-RWSHDFile.o: RWSHDFile.f90 sourcereceiverpositions.mod
-	$(FC) -c $(FFLAGS) $<
-
-# Bellhop modules (depend on basic modules)
-bellhopMod.o bellhopmod.mod: bellhopMod.f90 mathconstants.mod
-	$(FC) -c $(FFLAGS) $< 
-
-angleMod.o anglemod.mod: angleMod.f90 mathconstants.mod
-	$(FC) -c $(FFLAGS) $< 
-
-ArrMod.o arrmod.mod: ArrMod.f90 mathconstants.mod
-	$(FC) -c $(FFLAGS) $< 
-
-bdryMod.o bdrymod.mod: bdryMod.f90 monotonicmod.mod
-	$(FC) -c $(FFLAGS) $< 
-
-sspMod.o sspmod.mod: sspMod.f90 fatalerror.mod
-	$(FC) -c $(FFLAGS) $< 
-
-Cone.o cone.mod: Cone.f90 bellhopmod.mod
-	$(FC) -c $(FFLAGS) $<
-
-# Additional Bellhop modules that depend on bellhopMod
-ReflectMod.o reflectmod.mod: ReflectMod.f90 cone.mod
-	$(FC) -c $(FFLAGS) $<
-
-Reflect3DMod.o reflect3dmod.mod: Reflect3DMod.f90 cone.mod
-	$(FC) -c $(FFLAGS) $<
-
-WriteRay.o writeray.mod: WriteRay.f90 bellhopmod.mod
-	$(FC) -c $(FFLAGS) $<
-
-influence.o influence.mod: influence.f90 bellhopmod.mod
-	$(FC) -c $(FFLAGS) $< 
-
-influence3D.o influence3d.mod: influence3D.f90 bellhopmod.mod
-	$(FC) -c $(FFLAGS) $< 
-
-Step.o step.mod: Step.f90 bellhopmod.mod
-	$(FC) -c $(FFLAGS) $<
-
-Step3DMod.o step3dmod.mod: Step3DMod.f90 bellhopmod.mod
-	$(FC) -c $(FFLAGS) $<
-
-RayNormals.o raynormals.mod: RayNormals.f90 bellhopmod.mod
-	$(FC) -c $(FFLAGS) $<
-
-ReadEnvironmentBell.o readenvironmentbell.mod: ReadEnvironmentBell.f90 bellhopmod.mod
-	$(FC) -c $(FFLAGS) $< 
-
-bdry3DMod.o bdry3dmod.mod: bdry3DMod.f90 monotonicmod.mod
-	$(FC) -c $(FFLAGS) $< 
-
-# Main program objects (depend on all their modules)
-bellhop.o: bellhop.f90 arrmod.mod anglemod.mod bdrymod.mod readenvironmentbell.mod bellhopmod.mod sspmod.mod reflectmod.mod writeray.mod raynormals.mod influence.mod step.mod
-	$(FC) -c $(FFLAGS) $<
-
-bellhop3D.o: bellhop3D.f90 arrmod.mod anglemod.mod bdry3dmod.mod readenvironmentbell.mod bellhopmod.mod sspmod.mod reflectmod.mod reflect3dmod.mod writeray.mod raynormals.mod influence3d.mod step3dmod.mod
-	$(FC) -c $(FFLAGS) $<
+# Main programs depend on their respective module sets
+bellhop.o: $(BASIC_MODULES) $(LEVEL1_MODULES) $(LEVEL2_MODULES)
+bellhop3D.o: $(BASIC_MODULES) $(LEVEL1_MODULES) $(LEVEL2_MODULES) $(LEVEL3_MODULES)
