@@ -370,11 +370,11 @@ python-coverage-test: install
 	@echo "Running Python tests with coverage..."
 	export PATH="$(PWD)/bin:$$PATH" && \
 	export PYTHONPATH="$(PWD)/python:$$PYTHONPATH" && \
-	python3 -m coverage run -m pytest tests/ --tb=short
+	python3 -m coverage run --branch -m pytest tests/ --tb=short
 
 python-coverage-report: 
 	@echo "Generating Python coverage report..."
-	python3 -m coverage report --include="python/bellhop/*"
+	python3 -m coverage report --include="python/bellhop/*" --show-missing
 
 python-coverage-html:
 	@echo "Generating Python HTML coverage reports..."
