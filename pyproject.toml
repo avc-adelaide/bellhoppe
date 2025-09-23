@@ -131,7 +131,7 @@ covf = [
     "make coverage-full"
 ]
 covp = [
-    "install-dev", 
+    "install-dev",
     "python3 -m coverage run -m pytest tests/ --tb=short",
     "python3 -m coverage html"
 ]
@@ -139,7 +139,7 @@ debug = [
     "install-dev",
     "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import bellhop; print(\"bellhop:\", bellhop.__file__)'"
 ]
-docf = "cd docs/ford; ford --graph ford.md" # config set in fpm.toml
+docf = "cd docs; ford index.md" # config set in fpm.toml
 docp = "sphinx-build docs/python docs/_build/media/python"
 lintf = "fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003"
 lintp = "ruff check python/"

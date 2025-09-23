@@ -1,20 +1,6 @@
-#Bellhop Beam tracing for ocean acoustics
-
-   Copyright (C) 2009 Michael B. Porter
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+---
+title: Changes from the Acoustics Toolbox
+---
 
 
 12/94
@@ -138,7 +124,7 @@ June 2011
 Two small bugs fixed: the boundary curvature was not being set for the last segment of the bottom or top bathymetry. A dummy variable for the halfspace depth was not being set if the user used '/' for the completely halfspace specification. (Thanks to J. Peterson for reporting this.)
 
 January 2012
-A problem (bug) occurred if you didn't have the sound speed start a zero depth, because Bellhop was calculating the depth of the top boundary using the minval of the vector of depths where the sound speed was sampled. That included the whole length of the dimensioned array, rather than just the part used to store the sound speed, so it was using a depth of zero for the top boundary. Actually some parts of the code had the zero depth, and some parts depended on the shallowest depth for the SSP, which is what caused problems. This has been fixed to always use the first depth of the SSP. For ocean acoustic problems, this normally implies that you should make sure you have an SSP point at zero depth, since the rays will reflect at the depth of that first SSP point. 
+A problem (bug) occurred if you didn't have the sound speed start a zero depth, because Bellhop was calculating the depth of the top boundary using the minval of the vector of depths where the sound speed was sampled. That included the whole length of the dimensioned array, rather than just the part used to store the sound speed, so it was using a depth of zero for the top boundary. Actually some parts of the code had the zero depth, and some parts depended on the shallowest depth for the SSP, which is what caused problems. This has been fixed to always use the first depth of the SSP. For ocean acoustic problems, this normally implies that you should make sure you have an SSP point at zero depth, since the rays will reflect at the depth of that first SSP point.
 
 February 2013
 A range-dependent bottom (or top) type is now allowed in Bellhop. The information is added in to the bathymetry (or altimetry) file. Major changes have been made throughout to use more structure variables. The code has also been re-structured to facilitate writing a Mex wrapper so that the Fortran Bellhop can be called from Matlab.

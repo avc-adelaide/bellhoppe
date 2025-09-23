@@ -1,25 +1,12 @@
+---
+title: Usage
+---
 
-## Overview
+## Building
 
-BELLHOP is a beam/ray tracing model by Michael B. Porter (Heat, Light, and Sound Research, Inc.) for predicting acoustic pressure fields in ocean environments. The model accounts for:
+See the main [README](https://github.com/avc-adelaide/bellhop#installation) for build and installation instructions.
 
-- Sound speed profiles (SSPs) varying with depth and range
-- Ocean boundaries (surface and seafloor) with complex reflection properties
-- Acoustic sources and receiver arrays in arbitrary geometries
-- Both 2D (range-depth) and 3D (range-depth-azimuth) propagation modeling
-
-The core algorithms implement:
-- Geometric ray tracing
-- Gaussian beam superposition for smooth field predictions
-- Arrival time and amplitude calculations
-- Coherent and incoherent field summation
-
-
-## Usage
-
-See the main [README.md](../README.md) for build instructions.
-
-### Fortran
+## Fortran
 
 Basic usage:
 ```
@@ -35,7 +22,7 @@ Input files have an `.env` extension and specify:
 
 Additional text files can be provided to define tables of sound speed profile (.ssp), bathometry (.bty), and so on.
 
-### Python
+## Python
 
 A modern [Python interface](media/python/index.html) is provided in this package. Basic usage:
 ```
@@ -105,21 +92,3 @@ The following are the major changes or additions:
 
     * Allow GitHub workflows to automatically test the repository for every code change. This allows refactoring and algorithm improvements without added risk of introducing bugs.
 
-### Technical details
-
-* The base code compilation processes are based on Makefiles. These have been extended to support the code coverage tool. The [key Makefile](https://github.com/AUMAG/bellhop/blob/main/Makefile) is at the root of the repository.
-
-* A modern build system using Hatch is also used for building documentation and running tests. These are configured using [pyproject.toml](https://github.com/AUMAG/bellhop/blob/main/pyproject.toml). This build system makes the GitHub CI processes quite straightforward to define.
-
-* The documentation system uses FORD, configured using [fdm.toml](https://github.com/AUMAG/bellhop/blob/main/fpm.toml). Executing the documentation process is managed by Hatch with
-
-    hatch run doc
-
-* The test suite uses `pytest` with a build process set up using Hatch. Run the test suite using
-
-    make && make install # if necessary
-    hatch run test
-
-* The code coverage system uses both GCC tool `gcov` for Fortran code and `coverage.py` for Python code. This is controlled via the Makefile, with results compiled into HTML files. The unified coverage dashboard provides access to both Fortran and Python coverage reports in a single interface.
-
-* There are two GitHub CI workflows: regression testing, and documentation build (which includes code coverage). They are set up using [check.yml](https://github.com/AUMAG/bellhop/blob/main/.github/workflows/check.yml) and [docs.yml](https://github.com/AUMAG/bellhop/blob/main/.github/workflows/docs.yml).

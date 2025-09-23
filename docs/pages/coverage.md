@@ -1,4 +1,6 @@
-# Coverage Documentation
+---
+title: Coverage Documentation
+---
 
 BELLHOP supports comprehensive code coverage analysis for both **Fortran** and **Python** components, providing insights into code execution and test effectiveness.
 
@@ -33,7 +35,7 @@ make coverage-full
 
 This single command performs the complete workflow:
 - Cleans previous coverage data
-- Builds Fortran code with coverage instrumentation  
+- Builds Fortran code with coverage instrumentation
 - Runs all tests with coverage collection
 - Generates HTML reports for both Fortran and Python
 - Creates a unified coverage dashboard
@@ -112,7 +114,7 @@ The unified dashboard provides:
 
 **Fortran Reports:**
 - Line-by-line execution counts
-- Branch coverage analysis 
+- Branch coverage analysis
 - Call coverage statistics
 - Color-coded coverage visualization
 

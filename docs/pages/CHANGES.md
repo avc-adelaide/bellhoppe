@@ -1,5 +1,6 @@
-
-# Summary of changes
+---
+title: Changes from University of California
+---
 
 ## Edge case issues
 
