@@ -14,6 +14,7 @@ summary = '''
 src_dir = ["../../fortran"]
 media_dir = "../static"
 output_dir = "../_build"
+page_dir = "../pages"
 
 preprocessor = "gfortran -E"
 project_github = "https://github.com/AUMAG/bellhop"
