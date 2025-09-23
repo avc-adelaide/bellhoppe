@@ -1,5 +1,20 @@
 
-export FC=gfortran
+####################################
+# This is the new Bellhop Makefile #
+####################################
+
+
+####### Executables ######
+
+export FC = gfortran
+export CC = gcc
+export CFLAGS = -g
+export LAPACK_LIBS = -llapack
+
+# use gcov-15 if available (needed on Mac) otherwise just use normal gcov (normal on Linux)
+GCOV := $(shell command -v gcov-15 2>/dev/null || command -v gcov)
+
+###### Flags #######
 
 # Detect architecture
 UNAME_M := $(shell uname -m)
@@ -32,17 +47,6 @@ endif
 FFLAGS = $(FFLAGS_BASE) $(FFLAGS_OPTIM) $(FFLAGS_ARCH)
 export FFLAGS
 
-
-
-# use gcov-15 if available (needed on Mac) otherwise just use normal gcov (normal on Linux)
-GCOV := $(shell command -v gcov-15 2>/dev/null || command -v gcov)
-
-export CC=gcc
-export CFLAGS=-g
-#export FFLAGS+= -I../misc -I../tslib -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
-# No longer need -I../misc since all sources are in fortran/ directory
-
-export LAPACK_LIBS = -llapack
 
 
 ####### TARGETS #######
@@ -99,7 +103,7 @@ help:
 	@echo "cleantest - rebuild entire codebase and run test suite"
 	@echo "     lint - run code linters"
 	@echo "      doc - build online documentation"
-	@echo "      cov - run code coverage build process (Fortran + Python)"
+	@echo "      cov - run code coverage processes"
 	@echo "          -                         "
 	@echo "  DEVELOPMENT TOOLS"
 	@echo "     push - push code changes to repository"
@@ -224,18 +228,23 @@ gitokay:
 	    echo "    clean repo, continuing..."; \
 	else \
 		echo "    uncommitted changes!"; \
-		exit 1; \
+		false; \
 	fi
 
 gitclean:
-	@echo "Would delete the following:"
-	git clean -nx
-	@read -p "Continue? [y/N] " ans; \
-	if [ "$$ans" = "y" ] || [ "$$ans" = "Y" ]; then \
-		git clean -fx; \
+	@if [ -z "$$(git clean -nx)" ]; then \
+	    @true; \
 	else \
-		echo "Aborted."; \
+	    @echo "Would delete the following:"
+	    @git clean -nx; \
+	    @read -p "Continue? [y/N] " ans; \
+	    @if [ "$$ans" = "y" ] || [ "$$ans" = "Y" ]; then \
+		    git clean -fx; \
+	    else \
+		    @echo "Aborted."; false; \
+	    fi
 	fi
+
 
 push: gitokay gitclean lint test
 	@echo "============================"
