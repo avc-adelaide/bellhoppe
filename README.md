@@ -20,11 +20,13 @@
 
 * A Python wrapper for Bellhop was previously provided within the [`arlpy` package](https://github.com/org-arl/arlpy) by Mandar Chitre at the Acoustic Research Laboratory, National University of Singapore. arlpy has been superceded by a Julia wrapper by the same author within [UnderwaterAcoustics.jl](https://github.com/org-arl/UnderwaterAcoustics.jl).
 
-* This repository, from Adelaide University, Australia, is a subsequent fork and consolidation of these works, with the intention of providing a clean and well-documented repository to provide easier access to the code. The main features of the AU work are:
+* An alternative Python interface is provided in [PYAT](https://github.com/BochicTrdar/PYAT) by Orlando Camargo Rodríguez.
+
+* This repository, from Adelaide University, Australia, is a subsequent consolidation of several components of these works, with the intention of providing a clean and well-documented repository to provide easier access to the Bellhop code. The main features of the AU work are:
     * Consolidation of code files and build processes with a single set of clean sources
-    * Adaptation and extension of the arlpy-based Python wrapper for Bellhop
-    * Updated Fortran source code with automated documentation using FORD and lint checking using fortitude
-    * Addition of explicit regression and unit test files using pytest
+    * Adaptation and extension of the `arlpy`-based Python wrapper for Bellhop
+    * Updated Fortran source code with automated documentation using FORD and lint checking using `fortitude`
+    * Addition of explicit regression and unit test files using `pytest`
     * Continuous integration through Github for all documentation, linting, test suite, and code coverage
 
 
