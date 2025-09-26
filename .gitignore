@@ -87,3 +87,9 @@ docs/_build/*
 
 *_output.*
 test_debug.*
+
+# Test output files
+test_debug*.*
+test_*range.*
+simple_test.*
+
