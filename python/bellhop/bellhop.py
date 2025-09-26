@@ -185,6 +185,14 @@ def check_env2d(env):
             assert env['tx_directionality'].ndim == 2, 'tx_directionality must be an Nx2 array'
             assert env['tx_directionality'].shape[1] == 2, 'tx_directionality must be an Nx2 array'
             assert _np.all(env['tx_directionality'][:,0] >= -180) and _np.all(env['tx_directionality'][:,0] <= 180), 'tx_directionality angles must be in [-90, 90]'
+        
+        # Automatically extend angle range for negative receiver ranges
+        # Only extend if angles appear to be at default values (-80, 80)
+        if (_np.min(env['rx_range']) < 0 and 
+            env['min_angle'] == -80 and env['max_angle'] == 80):
+            env['min_angle'] = -179
+            env['max_angle'] = 179
+        
         return env
     except AssertionError as e:
         raise ValueError(e.args)
@@ -1053,7 +1061,7 @@ class _Bellhop:
         self._print(fh, "%0.6f %0.6f /   ! ALPHA1,2 (degrees)" % (env['min_angle'], env['max_angle']))
         step_size = env["step_size"] or 0.0
         box_depth = env["box_depth"] or 1.01*max_depth
-        box_range = env["box_range"] or 1.01*_np.max(env['rx_range'])
+        box_range = env["box_range"] or 1.01*_np.max(_np.abs(env['rx_range']))
         self._print(fh, f"{step_size} {box_depth} {box_range/1000} ! STEP (m), ZBOX (m), RBOX (km)")
         _os.close(fh)
         return fname_base
