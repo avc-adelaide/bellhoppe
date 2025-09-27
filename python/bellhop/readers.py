@@ -96,7 +96,10 @@ def read_env2d(fname):
     import re
 
     # Add .env extension if not present
-    if not fname.endswith('.env'):
+    if fname.endswith('.env'):
+        fname_base = fname[:-4]
+    else:
+        fname_base = fname
         fname = fname + '.env'
 
     if not os.path.exists(fname):
@@ -230,9 +233,9 @@ def read_env2d(fname):
             opt = topopt[4]
             env["_altimetry"] = _Maps.surface.get(opt) or _invalid(opt)
             if env["_altimetry"] == _Strings.from_file:
-                pass # TODO: automatically read ati file
-            else:
-                pass # nothing needs to be done
+                ati,interp_ati = bellhop.read_ati(fname_base)
+                env["surface"] = ati
+                env["surface_interp"] = interp_ati
 
         if len(topopt) > 5:
             opt = topopt[5]
@@ -280,9 +283,6 @@ def read_env2d(fname):
         env['_ssp_env'] = ssp_points
 
         # Bottom boundary options
-        print("  ")
-        print(fname)
-
         line = f.readline()
         bottom_line = line.strip()
         bottom_parts = _parse_line(bottom_line).split()
@@ -296,9 +296,9 @@ def read_env2d(fname):
             opt = botopt[1]
             env["_bathymetry"] = _Maps.bottom.get(opt) or _invalid(opt)
             if env["_bathymetry"] == _Strings.from_file:
-                pass # TODO: automatically read bty file
-            else:
-                pass # nothing needs to be done
+                bty,interp_bty = bellhop.read_bty(fname_base)
+                env["depth"] = bty
+                env["bottom_interp"] = interp_bty
 
         if len(bottom_parts) >= 2:
             env['bottom_roughness'] = float(bottom_parts[1])
@@ -307,36 +307,37 @@ def read_env2d(fname):
             env['bottom_transition_freq'] = float(bottom_parts[3])
 
         # Bottom properties (depth, sound_speed, density, absorption)
-        bottom_props_line = f.readline().strip()
-        bottom_props_line = _parse_line(bottom_props_line)
-        if bottom_props_line.endswith('/'):
-            bottom_props_line = bottom_props_line[:-1].strip()
+        if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
+            bottom_props_line = f.readline().strip()
+            bottom_props_line = _parse_line(bottom_props_line)
+            if bottom_props_line.endswith('/'):
+                bottom_props_line = bottom_props_line[:-1].strip()
 
-        bottom_props = bottom_props_line.split()
-        # fortran sources say: "z, alphaR, betaR, rhoR, alphaI, betaI"
-        # docs say:
-        #       Syntax:
-        #
-        #       ZB  CPB  CSB  RHOB  APB  ASB
-        #
-        #       Description:
-        #
-        #       ZB:   Depth (m).
-        #       CPB:  Bottom P-wave speed (m/s).
-        #       CSB:  Bottom S-wave speed (m/s).
-        #       RHOB: Bottom density (g/cm3).
-        #       APB:  Bottom P-wave attenuation. (units as given by TOPOPT(3:3) )
-        #       ASB:  Bottom S-wave attenuation. (  "   "    "    "   "   "     )
-        if len(bottom_props) > 1:
-            env['bottom_soundspeed'] = float(bottom_props[1])
-        if len(bottom_props) > 2:
-            env['bottom_soundspeed_shear'] = float(bottom_props[2])
-        if len(bottom_props) > 3:
-            env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
-        if len(bottom_props) > 4:
-            env['bottom_absorption'] = float(bottom_props[4])
-        if len(bottom_props) > 5:
-            env['bottom_absorption_shear'] = float(bottom_props[5])
+            # fortran sources say: "z, alphaR, betaR, rhoR, alphaI, betaI"
+            # docs say:
+            #       Syntax:
+            #
+            #       ZB  CPB  CSB  RHOB  APB  ASB
+            #
+            #       Description:
+            #
+            #       ZB:   Depth (m).
+            #       CPB:  Bottom P-wave speed (m/s).
+            #       CSB:  Bottom S-wave speed (m/s).
+            #       RHOB: Bottom density (g/cm3).
+            #       APB:  Bottom P-wave attenuation. (units as given by TOPOPT(3:3) )
+            #       ASB:  Bottom S-wave attenuation. (  "   "    "    "   "   "     )
+            bottom_props = bottom_props_line.split()
+            if len(bottom_props) > 1:
+                env['bottom_soundspeed'] = float(bottom_props[1])
+            if len(bottom_props) > 2:
+                env['bottom_soundspeed_shear'] = float(bottom_props[2])
+            if len(bottom_props) > 3:
+                env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
+            if len(bottom_props) > 4:
+                env['bottom_absorption'] = float(bottom_props[4])
+            if len(bottom_props) > 5:
+                env['bottom_absorption_shear'] = float(bottom_props[5])
 
         # Source depths
         source_depths, env['source_ndepth'] = _parse_vector(f)
@@ -505,7 +506,19 @@ def read_ssp(fname):
             return _pd.DataFrame(ssp_array, index=depths, columns=ranges_m)
 
 def read_bty(fname):
-    """Read a bathymetry (.bty) file used by BELLHOP.
+    """Read a bathymetry file used by Bellhop."""
+    if not fname.endswith('.bty'):
+        fname = fname + '.bty'
+    return read_ati_bty(fname)
+
+def read_ati(fname):
+    """Read an altimetry file used by Bellhop."""
+    if not fname.endswith('.ati'):
+        fname = fname + '.ati'
+    return read_ati_bty(fname)
+
+def read_ati_bty(fname):
+    """Read an altimetry (.ati) or bathymetry (.bty) file used by BELLHOP.
 
     This function reads BELLHOP's .bty files which define the bottom depth
     profile. The file format is:
@@ -541,12 +554,8 @@ def read_bty(fname):
     """
     import os
 
-    # Add .bty extension if not present
-    if not fname.endswith('.bty'):
-        fname = fname + '.bty'
-
     if not os.path.exists(fname):
-        raise FileNotFoundError(f"BTY file not found: {fname}")
+        raise FileNotFoundError(f"ATI/BTY file not found: {fname}")
 
     with open(fname, 'r') as f:
         # Read interpolation type (usually 'L' or 'C')
@@ -568,7 +577,7 @@ def read_bty(fname):
                     depths.append(float(parts[1]))  # Depth in m
 
         if len(ranges) != npoints:
-            raise ValueError(f"Expected {npoints} bathymetry points, but found {len(ranges)}")
+            raise ValueError(f"Expected {npoints} altimetry/bathymetry points, but found {len(ranges)}")
 
         # Convert ranges from km to m for consistency with bellhop env structure
         ranges_m = _np.array(ranges) * 1000

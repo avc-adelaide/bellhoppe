@@ -32,6 +32,7 @@ import bellhop.environment as _env
 # this format to explicitly mark the functions as public:
 from bellhop.readers import read_env2d as read_env2d
 from bellhop.readers import read_ssp as read_ssp
+from bellhop.readers import read_ati as read_ati
 from bellhop.readers import read_bty as read_bty
 from bellhop.readers import read_refl_coeff as read_refl_coeff
 
@@ -131,7 +132,6 @@ def check_env2d(env):
     try:
         assert env['type'] == '2D', 'Not a 2D environment'
         max_range = _np.max(env['receiver_range'])
-        max_depth = env['depth']
         if env['surface'] is not None:
             assert _np.size(env['surface']) > 1, 'surface must be an Nx2 array'
             assert env['surface'].ndim == 2, 'surface must be a scalar or an Nx2 array'
@@ -141,7 +141,6 @@ def check_env2d(env):
             assert _np.all(_np.diff(env['surface'][:,0]) > 0), 'surface array must be strictly monotonic in range'
             assert env['surface_interp'] == _Strings.curvilinear or env['surface_interp'] == _Strings.linear, 'Invalid interpolation type: '+str(env['surface_interp'])
         if _np.size(env['depth']) > 1:
-            max_depth = _np.max(env['depth'][:,1])
             assert env['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array'
             assert env['depth'].shape[1] == 2, 'depth must be a scalar or an Nx2 array'
             assert env['depth'][0,0] <= 0, 'First range in depth array must be 0 m'
@@ -156,7 +155,7 @@ def check_env2d(env):
             else:
                 assert env['soundspeed'].shape[0] > 1, 'soundspeed profile must have at least 2 points'
             assert env['soundspeed'].index[0] <= 0, 'First depth in soundspeed array must be 0 m'
-            assert env['soundspeed'].index[-1] >= max_depth, 'Last depth in soundspeed array must be beyond water depth: '+str(max_depth)+' m'
+            assert env['soundspeed'].index[-1] >= env['depth_max'], 'Last depth in soundspeed array must be beyond water depth: '+str(env['depth_max'])+' m'
             assert _np.all(_np.diff(env['soundspeed'].index) > 0), 'Soundspeed array must be strictly monotonic in depth'
         elif _np.size(env['soundspeed']) > 1:
             assert env['soundspeed'].ndim == 2, 'soundspeed must be a scalar or an Nx2 array'
@@ -167,20 +166,20 @@ def check_env2d(env):
             else:
                 assert env['soundspeed'].shape[0] > 1, 'soundspeed profile must have at least 2 points'
             assert env['soundspeed'][0,0] <= 0, 'First depth in soundspeed array must be 0 m'
-            assert env['soundspeed'][-1,0] >= max_depth, 'Last depth in soundspeed array must be beyond water depth: '+str(max_depth)+' m'
+            assert env['soundspeed'][-1,0] >= env['depth_max'], 'Last depth in soundspeed array must be beyond water depth: '+str(env['depth_max'])+' m'
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
             assert env['soundspeed_interp'] in _Maps.interp_rev, 'Invalid interpolation type: '+str(env['soundspeed_interp'])
-            if max_depth not in env['soundspeed'][:,0]:
-                indlarger = _np.argwhere(env['soundspeed'][:,0]>max_depth)[0][0]
+            if env['depth_max'] not in env['soundspeed'][:,0]:
+                indlarger = _np.argwhere(env['soundspeed'][:,0]>env['depth_max'])[0][0]
                 if env['soundspeed_interp'] == _Strings.spline:
                     tck = _interp.splrep(env['soundspeed'][:,0], env['soundspeed'][:,1], s=0)
-                    insert_ss_val = _interp.splev(max_depth, tck, der=0)
+                    insert_ss_val = _interp.splev(env['depth_max'], tck, der=0)
                 else:
-                    insert_ss_val = _np.interp(max_depth, env['soundspeed'][:,0], env['soundspeed'][:,1])
-                env['soundspeed'] = _np.insert(env['soundspeed'],indlarger,[max_depth,insert_ss_val],axis = 0)
+                    insert_ss_val = _np.interp(env['depth_max'], env['soundspeed'][:,0], env['soundspeed'][:,1])
+                env['soundspeed'] = _np.insert(env['soundspeed'],indlarger,[env['depth_max'],insert_ss_val],axis = 0)
                 env['soundspeed'] = env['soundspeed'][:indlarger+1,:]
-        assert _np.max(env['source_depth']) <= max_depth, 'source_depth cannot exceed water depth: '+str(max_depth)+' m'
-        assert _np.max(env['receiver_depth']) <= max_depth, 'receiver_depth cannot exceed water depth: '+str(max_depth)+' m'
+        assert _np.max(env['source_depth']) <= env['depth_max'], 'source_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
+        assert _np.max(env['receiver_depth']) <= env['depth_max'], 'receiver_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
         assert env['beam_angle_min'] > -180 and env['beam_angle_min'] <= 180, 'beam_angle_min must be in range (-180, 180]'
         assert env['beam_angle_max'] > -180 and env['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
         if env["bottom_reflection_coefficient"] is not None:
