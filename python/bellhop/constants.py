@@ -94,7 +94,6 @@ class _Maps:
         "T": "thorp",
         "F": "francois-garrison",
         "B": "biological",
-        " ": "default",
         " ": "none",
     }
     bottom = {
