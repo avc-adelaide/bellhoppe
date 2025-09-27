@@ -999,13 +999,11 @@ class _Bellhop:
         self._print(fh, "1    ! NMedia=1 always for Bellhop")
 
         svp = env['soundspeed']
-        svp_depth = 0.0
         svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
         svp_boundcond = _Maps.boundcond_rev[env['top_boundary_condition']]
         svp_attunits = _Maps.attunits_rev[env['attenuation_units']]
         svp_volatt = _Maps.volatt_rev[env['volume_attenuation']]
         if isinstance(svp, _pd.DataFrame):
-            svp_depth = svp.index[-1]
             if len(svp.columns) > 1:
                 assert svp_interp == 'Q', "SVP DataFrame with multiple columns implies quadrilateral interpolation."
             else:
