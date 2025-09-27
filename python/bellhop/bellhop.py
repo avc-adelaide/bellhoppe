@@ -35,6 +35,7 @@ from bellhop.readers import read_env2d as read_env2d
 from bellhop.readers import read_ssp as read_ssp
 from bellhop.readers import read_ati as read_ati
 from bellhop.readers import read_bty as read_bty
+from bellhop.readers import read_sbp as read_sbp
 from bellhop.readers import read_refl_coeff as read_refl_coeff
 
 # models (in order of preference)
@@ -102,7 +103,7 @@ def create_env2d(**kv):
     >>> env = bh.create_env2d(depth=[[0,20], [300,10], [500,18], [1000,15]])
     """
     env = _env.new()
-    
+
     # Apply user-provided values to environment
     for k, v in kv.items():
         if k not in env.keys():
@@ -118,14 +119,14 @@ def create_env2d(**kv):
 
     # Validate options using dataclass validation
     env = _validate_options_with_dataclass(env)
-    
+
     return env
 
 
 
 def _validate_options_with_dataclass(env):
     """Validate environment options using dataclass validation.
-    
+
     This function validates all option fields using the dataclass,
     then returns the original dictionary.
     """
@@ -154,10 +155,10 @@ def check_env2d(env):
     >>> env = check_env2d(env)
     """
     env = _finalise_environment(env)
-    
+
     # Use dataclass validation for option checking
     env = _validate_options_with_dataclass(env)
-    
+
     try:
         assert env['type'] == '2D', 'Not a 2D environment'
         max_range = _np.max(env['receiver_range'])
@@ -206,8 +207,8 @@ def check_env2d(env):
                 env['soundspeed'] = env['soundspeed'][:indlarger+1,:]
         assert _np.max(env['source_depth']) <= env['depth_max'], 'source_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
         assert _np.max(env['receiver_depth']) <= env['depth_max'], 'receiver_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
-        assert env['beam_angle_min'] > -180 and env['beam_angle_min'] <= 180, 'beam_angle_min must be in range (-180, 180]'
-        assert env['beam_angle_max'] > -180 and env['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
+        assert env['beam_angle_min'] >= -180 and env['beam_angle_min'] <= 180, 'beam_angle_min must be in range (-180, 180]'
+        assert env['beam_angle_max'] >= -180 and env['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
         if env["bottom_reflection_coefficient"] is not None:
             assert env["bottom_boundary_condition"] == _Strings.from_file, "BRC values need to be read from file"
         if env["surface_reflection_coefficient"] is not None:
@@ -216,7 +217,7 @@ def check_env2d(env):
             assert _np.size(env['source_directionality']) > 1, 'source_directionality must be an Nx2 array'
             assert env['source_directionality'].ndim == 2, 'source_directionality must be an Nx2 array'
             assert env['source_directionality'].shape[1] == 2, 'source_directionality must be an Nx2 array'
-            assert _np.all(env['source_directionality'][:,0] > -180) and _np.all(env['source_directionality'][:,0] <= 180), 'source_directionality angles must be in (-180, 180]'
+            assert _np.all(env['source_directionality'][:,0] >= -180) and _np.all(env['source_directionality'][:,0] <= 180), 'source_directionality angles must be in (-180, 180]'
 
         return env
     except AssertionError as e:

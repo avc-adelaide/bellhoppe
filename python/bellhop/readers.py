@@ -326,9 +326,7 @@ def read_env2d(fname):
 
         # Check for source directionality (indicated by * in task code)
         if env["_sbp_file"] == _Strings.from_file:
-            pass # TODO: implement
-            #sbp = bellhop.read_sbp(fname_base)
-            #env["source_directionality"] = sbp
+            env["source_directionality"] = bellhop.read_sbp(fname_base)
 
         # Number of beams
         beam_num_line = f.readline().strip()
@@ -541,6 +539,48 @@ def read_ati_bty(fname):
 
         # Return as [range, depth] pairs
         return _np.column_stack([ranges_m, depths_array]), _Maps.bty_interp[interp_type]
+
+def read_sbp(fname):
+    """Read an source beam patterm (.sbp) file used by BELLHOP.
+
+    The file format is:
+    - Line 1: Number of points
+    - Line 2+: Angle (deg) and power (dB) pairs
+
+    :param fname: path to .sbp file (with or without extension)
+    :returns: numpy array with [angle, power] pairs
+    """
+
+    import os
+
+    if not fname.endswith('.sbp'):
+        fname = fname + '.sbp'
+
+    if not os.path.exists(fname):
+        raise FileNotFoundError(f"SBP file not found: {fname}")
+
+    with open(fname, 'r') as f:
+
+        # Read number of points
+        npoints = int(f.readline().strip())
+
+        # Read range,depth pairs
+        angles = []
+        powers = []
+
+        for i in range(npoints):
+            line = f.readline().strip()
+            if line:  # Skip empty lines
+                parts = line.split()
+                if len(parts) >= 2:
+                    angles.append(float(parts[0]))  # Range in km
+                    powers.append(float(parts[1]))  # Depth in m
+
+        if len(angles) != npoints:
+            raise ValueError(f"Expected {npoints} points, but found {len(angles)}")
+
+        # Return as [range, depth] pairs
+        return _np.column_stack([angles, powers])
 
 def read_refl_coeff(fname):
     """Read a reflection coefficient (.brc/.trc) file used by BELLHOP.
