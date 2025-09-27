@@ -8,6 +8,15 @@ class Defaults:
     beam_angle_halfspace: float = 89.999
     beam_angle_fullspace: float = 179.999
 
+# Import the new dataclass-based environment
+try:
+    from bellhop.environment_dataclass import EnvironmentConfig, create_env2d_dataclass, dataclass_to_legacy_dict
+except ImportError:
+    # Fallback if there are any import issues
+    EnvironmentConfig = None
+    create_env2d_dataclass = None
+    dataclass_to_legacy_dict = None
+
 
 def new():
     """Get default environment dictionary for 2D underwater acoustic modeling.
