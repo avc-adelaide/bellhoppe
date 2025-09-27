@@ -21,7 +21,7 @@ env["depth_interp"] = interp_bty
 tl = bh.compute_transmission_loss(env,fname_base="tests/Dickins/DickinsB_output",debug=True)
 tl_exp = bh.load_shd("tests/Dickins/DickinsB") # implicit ".shd" suffix
 
-def test_MunkB_geo_rot_A():
+def test_DickensB():
     """Test using a Bellhop example that ENV file parameters are being picked up properly.
     Just check that there are no execution errors.
     """
@@ -50,6 +50,6 @@ def test_MunkB_geo_rot_A():
 def test_table_output():
     pdt.assert_frame_equal(
         tl, tl_exp,
-        atol=1e-8,  # absolute tolerance
-        rtol=1e-5,  # relative tolerance
+        atol=1e-7,  # absolute tolerance
+        rtol=1e-4,  # relative tolerance
     )

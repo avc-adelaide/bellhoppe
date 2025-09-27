@@ -198,7 +198,16 @@ def check_env2d(env):
         raise ValueError(e.args)
 
 def _set_env_params(env):
-    env['depth_max'] = env['depth_max'] or _np.max(env['depth'])
+
+    # this is a weird one, sometimes "depth_max" is defined as 0 in the env file and the simulation breaks if not
+    # so we only set depth_max to be the maximum depth iff it hasn't been pre-set
+    if env['depth_max'] is None:
+        svp = env['soundspeed']
+        svp_max_depth = 0.0
+        if isinstance(svp, _pd.DataFrame):
+            svp_max_depth = _np.max(svp.index[-1])
+        bty_max_depth = _np.max(env['depth'])
+        env['depth_max'] = max(bty_max_depth, svp_max_depth)
 
     # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
     if env['min_angle'] is None:
@@ -1009,8 +1018,6 @@ class _Bellhop:
             self._print(fh, f"'{svp_interp}VWT*'    ! {comment}")
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
 
-        max_depth = env["depth_max"] if env["depth_max"] else env['depth'] if _np.size(env['depth']) == 1 else max(_np.max(env['depth'][:,1]), svp_depth)
-
         if env['volume_attenuation'] == _Strings.francois_garrison:
             comment = "Francois-Garrison volume attenuation parameters (sal, temp, pH, depth)"
             self._print(fh,f"{env['fg_salinity']} {env['fg_temperature']} {env['fg_pH']} {env['fg_depth']}    ! {comment}")
@@ -1023,7 +1030,7 @@ class _Bellhop:
 
         if _np.size(svp) == 1:
             self._print(fh, f"0.0 {svp} /    ! '0.0' SSP_Const")
-            self._print(fh, f"{max_depth} {svp} /    ! MAXDEPTH SSP_Const")
+            self._print(fh, f"{env['depth_max']} {svp} /    ! MAXDEPTH SSP_Const")
         elif svp_interp == 'Q':
             sspenv = env['ssp_env']
             # if the SSP data was provided in the ENV file, use that:
@@ -1076,7 +1083,7 @@ class _Bellhop:
         self._print(fh, f"{env['nbeams']} ! NBeams")
         self._print(fh, "%0.6f %0.6f /   ! ALPHA1,2 (degrees)" % (env['min_angle'], env['max_angle']))
         step_size = env["step_size"] or 0.0
-        box_depth = env["box_depth"] or 1.01*max_depth
+        box_depth = env["box_depth"] or 1.01*env['depth_max']
         box_range = env["box_range"] or 1.01*_np.max(_np.abs(env['rx_range']))
         self._print(fh, f"{step_size} {box_depth} {box_range/1000} ! STEP (m), ZBOX (m), RBOX (km)")
         _os.close(fh)

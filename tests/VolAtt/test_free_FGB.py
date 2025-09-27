@@ -55,6 +55,7 @@ def test_FGB():
 def test_table_output():
     pdt.assert_frame_equal(
         tl, tl_exp,
+        check_names=False,
         atol=1e-4,  # absolute tolerance
-        rtol=1e-4,  # relative tolerance
+        rtol=1e-6,  # relative tolerance
     )

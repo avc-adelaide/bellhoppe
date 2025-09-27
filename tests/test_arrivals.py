@@ -136,7 +136,7 @@ def test_variable_soundspeed():
 
     if not len(t_arr_exp) == len(arrival_times):
         print(arrival_times)
-        assert False, "Different number of arrivals!"
+        assert len(t_arr_exp) == len(arrival_times), "Different number of arrivals!"
 
     a_test = arrivals["time_of_arrival"] - t_arr_exp < 1e-6
     assert( a_test.all() )
@@ -151,7 +151,7 @@ def test_bathy():
         [1000, 20]  # 25 m water depth at 1 km
 	]
 
-    env = bh.create_env2d(depth=bathy)
+    env = bh.create_env2d(depth=bathy,max_angle=80,min_angle=-80)
     # print(env)
     assert(env["bottom_absorption"] == None)
     assert(env["bottom_density"] == 1600)
@@ -159,8 +159,6 @@ def test_bathy():
     assert(env["bottom_soundspeed"] == 1600)
     assert(env["depth_interp"] == "linear")
     assert(env["frequency"] == 25000)
-    env["max_angle"] == 80
-    env["min_angle"] == -80
     assert(env["nbeams"] == 0)
     assert(env["rx_depth"] == 10)
     assert(env["rx_range"] == 1000)
@@ -206,7 +204,7 @@ def test_bathy():
 
     if not len(t_arr_exp) == len(arrival_times):
         print(arrival_times)
-        assert False, "Different number of arrivals!"
+        assert len(t_arr_exp) == len(arrival_times), "Different number of arrivals!"
 
     a_test = arrival_times - t_arr_exp < 1e-6
     assert( a_test.all() )

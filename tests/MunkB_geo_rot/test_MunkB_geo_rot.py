@@ -39,7 +39,6 @@ def test_MunkB_geo_rot_A():
     assert env['box_range'] == 5000.0, "0.0  99500.0  5.0		! STEP (m), ZBOX (m), RBOX (km)"
 
     bh.check_env2d(env)
-    # bh.print_env(env)
 
     assert tl is not None, "No results generated"
     assert (tl.shape == tl_exp.shape), "Incorrect/inconsistent number of TL values calculated"
@@ -48,8 +47,9 @@ def test_MunkB_geo_rot_A():
 
 @skip_if_coverage
 def test_table_output():
-	pdt.assert_frame_equal(
-		tl, tl_exp,
-		atol=1e-8,  # absolute tolerance
-		rtol=1e-5,  # relative tolerance
-	)
+    pdt.assert_frame_equal(
+        tl, tl_exp,
+        check_names=False,
+        atol=1e-8,  # absolute tolerance
+        rtol=1e-5,  # relative tolerance
+    )
