@@ -223,7 +223,7 @@ def read_env2d(fname):
         if len(topopt) > 3:
             opt = topopt[3]
         else:
-            opt = ""
+            opt = " "
         env["volume_attenuation"] = _Maps.volatt.get(opt) or _invalid(opt)
 
         if env["volume_attenuation"] == _Strings.francois_garrison:

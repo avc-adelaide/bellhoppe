@@ -91,11 +91,11 @@ class _Maps:
         " ": "default",
     }
     volatt = {
-        "": "none",
         "T": "thorp",
         "F": "francois-garrison",
         "B": "biological",
         " ": "default",
+        " ": "none",
     }
     bottom = {
         "_":_Strings.flat,
