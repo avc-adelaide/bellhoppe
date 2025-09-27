@@ -1,5 +1,13 @@
 
+from dataclasses import dataclass
+
 from bellhop.constants import _Strings
+
+@dataclass(frozen=True)
+class Defaults:
+    beam_angle_halfspace: int = 89
+    beam_angle_fullspace: int = 179
+
 
 def new():
     """Get default environment dictionary for 2D underwater acoustic modeling.
@@ -41,8 +49,8 @@ def new():
         'depth_npts': 0,                #
         'depth_sigmaz': 0,              #
         'depth_max': None,              # m
-        'min_angle': -80,               # deg
-        'max_angle': 80,                # deg
+        'min_angle': None,              # deg
+        'max_angle': None,              # deg
         'nbeams': 0,                    # number of beams (0 = auto)
         'top_boundary_condition': _Strings.vacuum,
         'volume_attenuation': 'none',

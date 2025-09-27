@@ -32,7 +32,7 @@ import matplotlib.cm as _cm
 import bokeh as _bokeh
 
 from bellhop.constants import _Strings, _Maps
-import bellhop.environment
+import bellhop.environment as _env
 import bellhop.plotutils as _plt
 
 # this format to explicitly mark the functions as public:
@@ -100,12 +100,18 @@ def create_env2d(**kv):
     >>> import bellhop as bh
     >>> env = bh.create_env2d(depth=[[0,20], [300,10], [500,18], [1000,15]])
     """
-    env = bellhop.environment.new()
+    env = _env.new()
     for k, v in kv.items():
         if k not in env.keys():
             raise KeyError('Unknown key: '+k)
         env[k] = _np.asarray(v, dtype=_np.float64) if not isinstance(v, _pd.DataFrame) and _np.size(v) > 1 else v
+
     env['depth_max'] = env['depth_max'] or _np.max(env['depth'])
+
+    # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
+    env['min_angle'] = env['min_angle'] or -1 * _env.defaults.beam_angle_fullspace if env['rx_range'][0] < 0 else -1 * _env.defaults.beam_angle_halfspace
+    env['max_angle'] = env['max_angle'] or +1 * _env.defaults.beam_angle_fullspace if env['rx_range'][0] < 0 else +1 * _env.defaults.beam_angle_halfspace
+
     env = check_env2d(env)
     return env
 
@@ -185,14 +191,7 @@ def check_env2d(env):
             assert env['tx_directionality'].ndim == 2, 'tx_directionality must be an Nx2 array'
             assert env['tx_directionality'].shape[1] == 2, 'tx_directionality must be an Nx2 array'
             assert _np.all(env['tx_directionality'][:,0] >= -180) and _np.all(env['tx_directionality'][:,0] <= 180), 'tx_directionality angles must be in [-90, 90]'
-        
-        # Automatically extend angle range for negative receiver ranges
-        # Only extend if angles appear to be at default values (-80, 80)
-        if (_np.min(env['rx_range']) < 0 and 
-            env['min_angle'] == -80 and env['max_angle'] == 80):
-            env['min_angle'] = -179
-            env['max_angle'] = 179
-        
+
         return env
     except AssertionError as e:
         raise ValueError(e.args)
