@@ -28,6 +28,7 @@ import pandas as _pd
 
 from bellhop.constants import _Strings, _Maps
 import bellhop.environment as _env
+from bellhop.environment_dataclass import EnvironmentConfig, validate_transmission_loss_mode, validate_source_type
 
 # this format to explicitly mark the functions as public:
 from bellhop.readers import read_env2d as read_env2d
@@ -111,6 +112,68 @@ def create_env2d(**kv):
     return env
 
 
+def create_env2d_with_dataclass(**kv):
+    """Create a new 2D underwater environment using dataclass validation.
+
+    This function provides the same interface as create_env2d() but uses
+    dataclass-based validation to automatically check option validity.
+
+    Parameters
+    ----------
+    **kv : dict
+        Keyword arguments for environment configuration.
+
+    Returns
+    -------
+    env : dict
+        A new 2D underwater environment dictionary (for backward compatibility).
+
+    Raises
+    ------
+    ValueError
+        If any parameter value is invalid according to BELLHOP constraints.
+
+    Example
+    -------
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d_with_dataclass(depth=40, soundspeed=1540)
+    >>> # This will raise ValueError for invalid interpolation:
+    >>> env = bh.create_env2d_with_dataclass(soundspeed_interp='invalid')
+    """
+    # Create dataclass instance with validation
+    env_config = EnvironmentConfig(**kv)
+    
+    # Convert back to dictionary format for backward compatibility
+    env = env_config.to_dict()
+    
+    # Convert numpy arrays as needed (same logic as original create_env2d)
+    for k, v in kv.items():
+        if isinstance(v, _pd.DataFrame):
+            env[k] = v
+        elif _np.isscalar(v):
+            env[k] = v
+        else:
+            env[k] = _np.asarray(v, dtype=_np.float64)
+    
+    return env
+
+
+def _validate_options_with_dataclass(env):
+    """Validate environment options using dataclass validation.
+    
+    This function replaces manual option checking with dataclass field validation.
+    It creates a temporary dataclass instance to validate all option fields,
+    then returns the original dictionary.
+    """
+    try:
+        # Create a temporary dataclass instance to validate options
+        # This will automatically check all enum-based options
+        temp_config = EnvironmentConfig.from_dict(env)
+        return env  # Return original dict if validation passes
+    except (ValueError, TypeError) as e:
+        # Re-raise with appropriate error message
+        raise ValueError(str(e))
+
 
 def check_env2d(env):
     """Check the validity of a 2D underwater environment definition.
@@ -129,6 +192,10 @@ def check_env2d(env):
     >>> env = check_env2d(env)
     """
     env = _finalise_environment(env)
+    
+    # Use dataclass validation for option checking
+    env = _validate_options_with_dataclass(env)
+    
     try:
         assert env['type'] == '2D', 'Not a 2D environment'
         max_range = _np.max(env['receiver_range'])
@@ -139,14 +206,14 @@ def check_env2d(env):
             assert env['surface'][0,0] <= 0, 'First range in surface array must be 0 m'
             assert env['surface'][-1,0] >= max_range, 'Last range in surface array must be beyond maximum range: '+str(max_range)+' m'
             assert _np.all(_np.diff(env['surface'][:,0]) > 0), 'surface array must be strictly monotonic in range'
-            assert env['surface_interp'] == _Strings.curvilinear or env['surface_interp'] == _Strings.linear, 'Invalid interpolation type: '+str(env['surface_interp'])
+            # Removed manual interpolation type check - now handled by dataclass validation
         if _np.size(env['depth']) > 1:
             assert env['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array'
             assert env['depth'].shape[1] == 2, 'depth must be a scalar or an Nx2 array'
             assert env['depth'][0,0] <= 0, 'First range in depth array must be 0 m'
             assert env['depth'][-1,0] >= max_range, 'Last range in depth array must be beyond maximum range: '+str(max_range)+' m'
             assert _np.all(_np.diff(env['depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
-            assert env['depth_interp'] == _Strings.curvilinear or env['depth_interp'] == _Strings.linear, 'Invalid interpolation type: '+str(env['depth_interp'])
+            # Removed manual interpolation type check - now handled by dataclass validation
             assert env["_bathymetry"] == _Strings.from_file, 'len(depth)>1 requires BTY file'
         if isinstance(env['soundspeed'], _pd.DataFrame):
             # For DataFrames, apply the same minimum point requirements as numpy arrays
@@ -168,7 +235,7 @@ def check_env2d(env):
             assert env['soundspeed'][0,0] <= 0, 'First depth in soundspeed array must be 0 m'
             assert env['soundspeed'][-1,0] >= env['depth_max'], 'Last depth in soundspeed array must be beyond water depth: '+str(env['depth_max'])+' m'
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
-            assert env['soundspeed_interp'] in _Maps.interp_rev, 'Invalid interpolation type: '+str(env['soundspeed_interp'])
+            # Removed manual interpolation type check - now handled by dataclass validation
             if env['depth_max'] not in env['soundspeed'][:,0]:
                 indlarger = _np.argwhere(env['soundspeed'][:,0]>env['depth_max'])[0][0]
                 if env['soundspeed_interp'] == _Strings.spline:
@@ -347,10 +414,9 @@ def compute_transmission_loss(env, source_depth_ndx=0, mode=_Strings.coherent, m
     >>> bh.plot_transmission_loss(tloss, width=1000)
     """
     env = check_env2d(env)
-    if mode not in [_Strings.coherent, _Strings.incoherent, _Strings.semicoherent]:
-        raise ValueError('Unknown transmission loss mode: '+mode)
-    if source_type not in _Maps.source_rev:
-        raise ValueError(f'Unknown source type: {source_type!r}')
+    # Use dataclass validation for option checking
+    validate_transmission_loss_mode(mode)
+    validate_source_type(source_type)
     if env['source_type'] == 'default':
         env['source_type'] = source_type
     else:
