@@ -226,6 +226,22 @@ def read_env2d(fname):
             opt = " "
         env["volume_attenuation"] = _Maps.volatt.get(opt) or _invalid(opt)
 
+        if len(topopt) > 4:
+            opt = topopt[4]
+            env["_altimetry"] = _Maps.surface.get(opt) or _invalid(opt)
+            if env["_altimetry"] == _Strings.from_file:
+                pass # TODO: automatically read ati file
+            else:
+                pass # nothing needs to be done
+
+        if len(topopt) > 5:
+            opt = topopt[5]
+            env["single_beam"] = _Maps.single_beam.get(opt) or _invalid(opt)
+            if env["single_beam"] == _Strings.single_beam:
+                pass # TODO: read in the beam spec later!!
+            else:
+                pass # nothing needs to be done
+
         if env["volume_attenuation"] == _Strings.francois_garrison:
             fg_spec_line = f.readline().strip()
             fg_parts = _parse_line(fg_spec_line).split()
@@ -241,11 +257,6 @@ def read_env2d(fname):
             # This line contains: depth, alphaR, betaR, rho, alphaI, betaI
             # We skip this for now as it's not part of the standard env structure
 
-        # Check for surface altimetry (indicated by * in topopt)
-        if '*' in topopt:
-            # Surface altimetry file exists - would need to read .ati file
-            # For now, just note that surface is present
-            env['surface'] = _np.array([[0, 0], [1000, 0]])  # placeholder
 
         # Line 5 or 6: SSP depth specification (format: npts sigma_z max_depth)
         ssp_spec_line = f.readline().strip()
@@ -285,7 +296,7 @@ def read_env2d(fname):
             opt = botopt[1]
             env["_bathymetry"] = _Maps.bottom.get(opt) or _invalid(opt)
             if env["_bathymetry"] == _Strings.from_file:
-                print("TODO: automatically read bty file")
+                pass # TODO: automatically read bty file
             else:
                 pass # nothing needs to be done
 
@@ -567,7 +578,7 @@ def read_bty(fname):
         return _np.column_stack([ranges_m, depths_array]), _Maps.bty_interp[interp_type]
 
 def read_refl_coeff(fname):
-    """Read a reflection coefficient (.brc) file used by BELLHOP.
+    """Read a reflection coefficient (.brc/.trc) file used by BELLHOP.
 
     This function reads BELLHOP's .brc files which define the reflection coefficient
     data. The file format is:
@@ -582,7 +593,7 @@ def read_refl_coeff(fname):
     :param fname: path to .brc/.trc file (extension required)
     :returns: numpy array with [theta, rmag, rphase] triplets compatible with create_env2d()
 
-    The returned array can be assigned to env["bottom_reflection_coefficient"] or env["top_reflection_coefficient"] .
+    The returned array can be assigned to env["bottom_reflection_coefficient"] or env["surface_reflection_coefficient"] .
 
     **Example:**
 
@@ -627,7 +638,7 @@ def read_refl_coeff(fname):
                     rphas.append(float(parts[2]))
 
         if len(theta) != npoints:
-            raise ValueError(f"Expected {npoints} bathymetry points, but found {len(theta)}")
+            raise ValueError(f"Expected {npoints} reflection coefficient points, but found {len(theta)}")
 
         # Return as [range, depth] pairs
         return _np.column_stack([theta, rmagn, rphas])

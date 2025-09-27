@@ -185,6 +185,8 @@ def check_env2d(env):
         assert env['beam_angle_max'] > -180 and env['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
         if env["bottom_reflection_coefficient"] is not None:
             assert env["bottom_boundary_condition"] == _Strings.from_file, "BRC values need to be read from file"
+        if env["surface_reflection_coefficient"] is not None:
+            assert env["surface_boundary_condition"] == _Strings.from_file, "TRC values need to be read from file"
         if env['source_directionality'] is not None:
             assert _np.size(env['source_directionality']) > 1, 'source_directionality must be an Nx2 array'
             assert env['source_directionality'].ndim == 2, 'source_directionality must be an Nx2 array'
@@ -203,10 +205,12 @@ def _finalise_environment(env):
 
     if _np.size(env['depth']) > 1:
         env["_bathymetry"] = _Strings.from_file
-    if env["bottom_reflection_coefficient"] is not None:
-        env["bottom_boundary_condition"] = _Strings.from_file
     if env["surface"] is not None:
         env["_altimetry"] = _Strings.from_file
+    if env["bottom_reflection_coefficient"] is not None:
+        env["bottom_boundary_condition"] = _Strings.from_file
+    if env["surface_reflection_coefficient"] is not None:
+        env["surface_boundary_condition"] = _Strings.from_file
 
     # this is a weird one, sometimes "depth_max" is defined as 0 in the env file and the simulation breaks if not
     # so we only set depth_max to be the maximum depth iff it hasn't been pre-set
@@ -627,6 +631,9 @@ class _Bellhop:
 
         if env['bottom_boundary_condition'] == "from-file":
             self._create_refl_coeff_file(fname_base+".brc", env['bottom_reflection_coefficient'])
+
+        if env['surface_boundary_condition'] == "from-file":
+            self._create_refl_coeff_file(fname_base+".trc", env['surface_reflection_coefficient'])
 
         self._print_array(fh, env['source_depth'], nn=env['source_ndepth'], label="TX_DEPTH")
         self._print_array(fh, env['receiver_depth'], nn=env['receiver_ndepth'], label="RX_DEPTH")

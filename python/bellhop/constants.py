@@ -64,6 +64,8 @@ class _Strings(str, Enum):
     quality_factor = "quality factor"
     loss_parameter = "loss parameter"
 
+    single_beam = "single beam"
+
 class _Maps:
     """Mappings from Bellhop single-char input file options to readable Python options
 
@@ -99,7 +101,7 @@ class _Maps:
     }
     attunits = {
         "N": _Strings.nepers_per_meter,
-        "F": _Strings.frequency dependent,
+        "F": _Strings.frequency_dependent,
         "M": _Strings.db_per_meter,
         "m": _Strings.frequency_scaled_db_per_meter,
         "W": _Strings.db_per_wavelength,
@@ -143,6 +145,10 @@ class _Maps:
         "b": _Strings.gaussian_ray,
         " ": _Strings.default,
     }
+    single_beam = {
+        "I": _Strings.single_beam,
+        " ": _Strings.default,
+    }
 
     # reverse maps
     interp_rev = {v: k for k, v in interp.items()}
@@ -155,3 +161,4 @@ class _Maps:
     source_rev = {v: k for k, v in source.items()}
     grid_rev = {v: k for k, v in grid.items()}
     beam_rev = {v: k for k, v in beam.items()}
+    single_beam_rev = {v: k for k, v in single_beam.items()}
