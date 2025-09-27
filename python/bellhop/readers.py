@@ -15,52 +15,6 @@ def read_env2d(fname):
 
     :returns: environment dictionary compatible with create_env2d()
 
-    The environment dictionary used in this code contains a large
-    number of parameters, documented here to keep the code later more concise:
-
-    ENV parameters
-    ---------------
-
-    :name: environment title/name
-    :type: '2D' (fixed for 2D environments)
-    :frequency: acoustic frequency in Hz
-    :soundspeed: sound speed profile (scalar for constant, array for depth-dependent)
-    :soundspeed_interp: interpolation method ('linear', 'spline', 'quadrilateral')
-    :bottom_soundspeed: bottom sediment sound speed in m/s
-    :bottom_soundspeed_shear: bottom sediment sound speed in m/s
-    :bottom_density: bottom sediment density in kg/m³
-    :bottom_absorption: bottom sediment absorption in dB/wavelength
-    :bottom_absorption_shear: bottom sediment absorption in dB/wavelength
-    :bottom_roughness: bottom roughness RMS in meters
-    :surface: surface altimetry profile (None if flat surface)
-    :surface_interp: surface interpolation method ('linear', 'curvilinear')
-    :surface_boundary_condition: ('vacuum', 'acousto-elastic', 'rigid', 'from-file')
-    :volume_attenuation: ('none', 'thorp', 'francois-garrison', 'biological')
-    :attenuation_units: ('nepers per meter', 'frequency dependent', 'dB per meter', 'frequency scaled dB per meter', 'dB per wavelength', 'quality factor', 'loss parameter')
-    :source_depth: transmitter depth(s) in meters
-    :source_directionality: transmitter beam pattern (None if omnidirectional)
-    :receiver_depth: receiver depth(s) in meters
-    :receiver_range: receiver range(s) in meters
-    :depth: maximum water depth in meters
-    :depth_interp: bathymetry interpolation method ('linear', 'curvilinear')
-    :beam_angle_min: minimum beam angle in degrees
-    :beam_angle_max: maximum beam angle in degrees
-    :beam_num: number of beams (0 for automatic)
-    :step_size: (maximum) step size to trace rays in meters (0 for automatic)
-    :box_depth: box extent to trace rays in meters (auto-calculated based on max depth data if not specified)
-    :box_range: box extent to trace rays in meters (auto-calculated based on max receiver range if not specified)
-    :source_type: point (default) or line
-    :beam_type: todo
-    :grid: rectilinear or irregular
-
-    **Supported ENV file formats:**
-
-    - Standard BELLHOP format with various boundary conditions
-    - Constant or depth-dependent sound speed profiles
-    - Compressed vector notation (e.g., "0.0 5000.0 /" for linearly spaced values)
-    - Comments (lines with ! are handled correctly)
-    - Different top/bottom boundary options (halfspace, file-based, etc.)
-
     **Unit conversions performed:**
 
     - Receiver ranges: km → m
