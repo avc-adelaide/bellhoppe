@@ -11,7 +11,6 @@ import numpy as np
 import bellhop as bh
 from bellhop.environment_dataclass import (
     EnvironmentConfig, 
-    create_env2d_dataclass, 
     validate_transmission_loss_mode, 
     validate_source_type
 )
@@ -125,9 +124,9 @@ class TestEnvironmentConfigValidation:
 class TestDataclassIntegration:
     """Test integration of dataclass validation with existing functions."""
     
-    def test_create_env2d_with_dataclass_valid(self):
-        """Test that create_env2d_with_dataclass works with valid options."""
-        env = bh.create_env2d_with_dataclass(
+    def test_create_env2d_with_validation(self):
+        """Test that create_env2d works with valid options and validation."""
+        env = bh.create_env2d(
             depth=40,
             soundspeed=1540,
             soundspeed_interp='linear'
@@ -137,10 +136,10 @@ class TestDataclassIntegration:
         assert env['soundspeed'] == 1540
         assert env['soundspeed_interp'] == 'linear'
     
-    def test_create_env2d_with_dataclass_invalid(self):
-        """Test that create_env2d_with_dataclass fails with invalid options."""
+    def test_create_env2d_with_invalid_options(self):
+        """Test that create_env2d fails with invalid options."""
         with pytest.raises(ValueError, match="Invalid soundspeed_interp"):
-            bh.create_env2d_with_dataclass(soundspeed_interp='invalid_option')
+            bh.create_env2d(soundspeed_interp='invalid_option')
     
     def test_check_env2d_with_dataclass_validation(self):
         """Test that check_env2d uses dataclass validation."""
