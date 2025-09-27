@@ -43,9 +43,6 @@ _models = []
 def create_env2d(**kv):
     """Create a new 2D underwater environment with automatic validation.
 
-    This function creates a new environment dictionary with automatic validation
-    of all string-based options using dataclass validation.
-
     Parameters
     ----------
     **kv : dict
@@ -129,17 +126,14 @@ def create_env2d(**kv):
 def _validate_options_with_dataclass(env):
     """Validate environment options using dataclass validation.
     
-    This function replaces manual option checking with dataclass field validation.
-    It creates a temporary dataclass instance to validate all option fields,
+    This function validates all option fields using the dataclass,
     then returns the original dictionary.
     """
     try:
-        # Create a temporary dataclass instance to validate options
-        # This will automatically check all enum-based options
-        temp_config = EnvironmentConfig.from_dict(env)
+        # Validate options by creating dataclass instance (for side effects only)
+        EnvironmentConfig.from_dict(env)
         return env  # Return original dict if validation passes
     except (ValueError, TypeError) as e:
-        # Re-raise with appropriate error message
         raise ValueError(str(e))
 
 
@@ -226,7 +220,7 @@ def check_env2d(env):
 
         return env
     except AssertionError as e:
-        raise ValueError(e.args)
+        raise ValueError(str(e))
 
 def _finalise_environment(env):
     """Reviews the data within an environment and updates settings for consistency.
