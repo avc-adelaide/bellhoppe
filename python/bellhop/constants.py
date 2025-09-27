@@ -64,7 +64,19 @@ class _Strings(str, Enum):
     quality_factor = "quality factor"
     loss_parameter = "loss parameter"
 
+    omnidirectional = "omnidirectional"
     single_beam = "single beam"
+
+    # tasks
+    ray = "ray"
+    eigenray = "eigenray"
+    amplitude = "amplitude"
+    amplitude_b = "amplitude-binary"
+    tl_coherent = "TL-coherent"
+    tl_incoherent = "TL-incoherent"
+    tl_semicoherent = "TL-semicoherent"
+
+
 
 class _Maps:
     """Mappings from Bellhop single-char input file options to readable Python options
@@ -132,6 +144,11 @@ class _Maps:
         "X": _Strings.line,
         " ": _Strings.default,
     }
+    sbp = {
+        "*": _Strings.from_file,
+        "O": _Strings.omnidirectional,
+        " ": _Strings.default,
+    }
     grid = {
         "R": _Strings.rectilinear,
         "I": _Strings.irregular,
@@ -149,6 +166,15 @@ class _Maps:
         "I": _Strings.single_beam,
         " ": _Strings.default,
     }
+    task = {
+        "R": _Strings.ray,
+        "E": _Strings.eigenray,
+        "A": _Strings.amplitude,
+        "a": _Strings.amplitude_b,
+        "C": _Strings.tl_coherent,
+        "I": _Strings.tl_incoherent,
+        "S": _Strings.tl_semicoherent,
+    }
 
     # reverse maps
     interp_rev = {v: k for k, v in interp.items()}
@@ -162,3 +188,4 @@ class _Maps:
     grid_rev = {v: k for k, v in grid.items()}
     beam_rev = {v: k for k, v in beam.items()}
     single_beam_rev = {v: k for k, v in single_beam.items()}
+    task_rev = {v: k for k, v in task.items()}

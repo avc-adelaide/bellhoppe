@@ -360,19 +360,21 @@ def read_env2d(fname):
         # Task/run type (e.g., 'R', 'C', etc.)
         task_line = f.readline().strip()
         task_code = _parse_quoted_string(task_line)
-        env['task'] = task_code[0]
+        env['task'] = _Maps.task.get(task_code[0])
         if len(task_code) > 1:
             env['beam_type'] = _Maps.beam.get(task_code[1])
+        if len(task_code) > 2:
+            env['_sbp_file'] = _Maps.sbp.get(task_code[2])
         if len(task_code) > 3:
             env['source_type'] = _Maps.source.get(task_code[3])
         if len(task_code) > 4:
             env['grid'] = _Maps.grid.get(task_code[4])
 
         # Check for source directionality (indicated by * in task code)
-        if '*' in task_code:
-            # Source directionality file exists - would need to read .sbp file
-            # For now, just note that directionality is present
-            env['source_directionality'] = _np.array([[0, 0]])  # placeholder
+        if env["_sbp_file"] == _Strings.from_file:
+            pass # TODO: implement
+            #sbp = bellhop.read_sbp(fname_base)
+            #env["source_directionality"] = sbp
 
         # Number of beams
         beam_num_line = f.readline().strip()
