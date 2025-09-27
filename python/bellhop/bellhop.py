@@ -109,8 +109,8 @@ def create_env2d(**kv):
     env['depth_max'] = env['depth_max'] or _np.max(env['depth'])
 
     # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
-    env['min_angle'] = env['min_angle'] or -1 * _env.defaults.beam_angle_fullspace if _np.min(env['rx_range']) < 0 else -1 * _env.defaults.beam_angle_halfspace
-    env['max_angle'] = env['max_angle'] or +1 * _env.defaults.beam_angle_fullspace if _np.min(env['rx_range']) < 0 else +1 * _env.defaults.beam_angle_halfspace
+    env['min_angle'] = env['min_angle'] or -1 * _env.Defaults.beam_angle_fullspace if _np.min(env['rx_range']) < 0 else -1 * _env.Defaults.beam_angle_halfspace
+    env['max_angle'] = env['max_angle'] or +1 * _env.Defaults.beam_angle_fullspace if _np.min(env['rx_range']) < 0 else +1 * _env.Defaults.beam_angle_halfspace
 
     env = check_env2d(env)
     return env
