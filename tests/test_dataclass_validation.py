@@ -9,7 +9,7 @@ manual checking.
 import pytest
 import numpy as np
 import bellhop as bh
-from bellhop.environment_dataclass import (
+from bellhop.environment import (
     EnvironmentConfig, 
     validate_transmission_loss_mode, 
     validate_source_type

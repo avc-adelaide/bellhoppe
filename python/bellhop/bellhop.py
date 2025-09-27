@@ -28,7 +28,7 @@ import pandas as _pd
 
 from bellhop.constants import _Strings, _Maps
 import bellhop.environment as _env
-from bellhop.environment_dataclass import EnvironmentConfig, validate_transmission_loss_mode, validate_source_type
+from bellhop.environment import EnvironmentConfig, validate_transmission_loss_mode, validate_source_type
 
 # this format to explicitly mark the functions as public:
 from bellhop.readers import read_env2d as read_env2d

@@ -1,126 +1,240 @@
 
-from dataclasses import dataclass
+"""
+Environment configuration for BELLHOP.
 
-from bellhop.constants import _Strings
+This module provides dataclass-based environment configuration with automatic validation,
+replacing manual option checking with field validators.
+"""
+
+from dataclasses import dataclass, fields
+from typing import Optional, Union, Any, Dict
+
+try:
+    import numpy as np
+    import pandas as pd
+except ImportError:
+    # Allow the module to be imported even without numpy/pandas for testing
+    np = None
+    pd = None
+
+from .constants import _Strings, _Maps
+
 
 @dataclass(frozen=True)
 class Defaults:
     beam_angle_halfspace: float = 89.999
     beam_angle_fullspace: float = 179.999
 
-# Import the new dataclass-based environment
-try:
-    from bellhop.environment_dataclass import EnvironmentConfig, create_env2d_dataclass, dataclass_to_legacy_dict
-except ImportError:
-    # Fallback if there are any import issues
-    EnvironmentConfig = None
-    create_env2d_dataclass = None
-    dataclass_to_legacy_dict = None
 
-
-def new():
-    """Get default environment dictionary for 2D underwater acoustic modeling.
-
-    This function provides the shared default values used by both create_env2d()
-    and read_env2d() to avoid duplication. Where defaults are not provided (equal to None)
-    some will be supplied in a "clean up" step as part of check_env2d().
-
-    ENV parameters
-    ---------------
-
-    :name: environment title/name
-    :type: '2D' (fixed for 2D environments)
-    :frequency: acoustic frequency in Hz
-    :soundspeed: sound speed profile (scalar for constant, array for depth-dependent)
-    :soundspeed_interp: interpolation method ('linear', 'spline', 'quadrilateral')
-    :bottom_soundspeed: bottom sediment sound speed in m/s
-    :bottom_soundspeed_shear: bottom sediment sound speed in m/s
-    :bottom_density: bottom sediment density in kg/m³
-    :bottom_absorption: bottom sediment absorption in dB/wavelength
-    :bottom_absorption_shear: bottom sediment absorption in dB/wavelength
-    :bottom_roughness: bottom roughness RMS in meters
-    :surface: surface altimetry profile (None if flat surface)
-    :surface_interp: surface interpolation method ('linear', 'curvilinear')
-    :surface_boundary_condition: ('vacuum', 'acousto-elastic', 'rigid', 'from-file')
-    :volume_attenuation: ('none', 'thorp', 'francois-garrison', 'biological')
-    :attenuation_units: ('nepers per meter', 'frequency dependent', 'dB per meter', 'frequency scaled dB per meter', 'dB per wavelength', 'quality factor', 'loss parameter')
-    :source_depth: transmitter depth(s) in meters
-    :source_directionality: transmitter beam pattern (None if omnidirectional)
-    :receiver_depth: receiver depth(s) in meters
-    :receiver_range: receiver range(s) in meters
-    :depth: maximum water depth in meters
-    :depth_interp: bathymetry interpolation method ('linear', 'curvilinear')
-    :beam_angle_min: minimum beam angle in degrees
-    :beam_angle_max: maximum beam angle in degrees
-    :beam_num: number of beams (0 for automatic)
-    :step_size: (maximum) step size to trace rays in meters (0 for automatic)
-    :box_depth: box extent to trace rays in meters (auto-calculated based on max depth data if not specified)
-    :box_range: box extent to trace rays in meters (auto-calculated based on max receiver range if not specified)
-    :source_type: point (default) or line
-    :beam_type: todo
-    :grid: rectilinear or irregular
-
-    :returns: dictionary with default environment parameters
+@dataclass
+class EnvironmentConfig:
+    """Dataclass for 2D underwater acoustic environment configuration.
+    
+    This class provides automatic validation of environment parameters,
+    eliminating the need for manual checking of option validity.
     """
-    return {
-        'name': 'bellhop/python default',
-        'type': '2D',                   # 2D/3D
-        'frequency': 25000,             # Hz
-        # sound speed parameters
-        'soundspeed': 1500,              # m/s
-        'soundspeed_interp': _Strings.spline,  # spline/linear
-        '_ssp_env': None,                #
-        # bottom parameters
-        'bottom_soundspeed': 1600,       # m/s
-        'bottom_soundspeed_shear': 0,    # m/s
-        'bottom_density': 1600,          # kg/m^3
-        'bottom_absorption': None,       # dB/wavelength??
-        'bottom_absorption_shear': None, # dB/wavelength??
-        'bottom_roughness': 0,           # m (rms)
-        'bottom_beta': None,             #
-        'bottom_transition_freq': None,  # Hz
-        'bottom_boundary_condition': _Strings.acousto_elastic,
-        'bottom_reflection_coefficient': None,
-        '_bathymetry': _Strings.flat,    # set to "from-file" if multiple bottom depths
-        # surface parameters
-        'surface': None,                # surface profile
-        'surface_interp': _Strings.linear,       # curvilinear/linear
-        'surface_boundary_condition': _Strings.vacuum,
-        'surface_reflection_coefficient': None,
-        '_altimetry': _Strings.flat,    # set to "from-file" if multiple surface heights
-        # source parameters
-        'source_type': 'default',
-        'source_depth': 5,                  # m
-        'source_ndepth': None,              #
-        'source_directionality': None,      # [(deg, dB)...]
-        '_sbp_file': _Strings.default,
-        # receiver parameters
-        'receiver_depth': 10,                 # m
-        'receiver_ndepth': None,              #
-        'receiver_range': 1000,               # m
-        'receiver_nrange': None,              #
-        # bathymetry parameters
-        'depth': 25,                    # m
-        'depth_interp': _Strings.linear,         # curvilinear/linear
-        'depth_npts': 0,                #
-        'depth_sigmaz': 0,              #
-        'depth_max': None,              # m
-        # beam settings
-        'beam_angle_min': None,         # deg
-        'beam_angle_max': None,         # deg
-        'beam_num': 0,                  # number of beams (0 = auto)
-        'beam_type': 'default',
-        # solution parameters
-        'step_size': None,
-        'box_depth': None,
-        'box_range': None,
-        'grid': 'default',
-        # attentuation parameters
-        'volume_attenuation': 'none',
-        'attenuation_units': 'frequency dependent',
-        # francois_garrison volume attenuation parameters
-        'fg_salinity': None,
-        'fg_temperature': None,
-        'fg_pH': None,
-        'fg_depth': None,
-    }
+    
+    # Basic environment properties
+    name: str = 'bellhop/python default'
+    type: str = '2D'
+    frequency: float = 25000.0  # Hz
+    
+    # Sound speed parameters
+    soundspeed: Union[float, Any] = 1500.0  # m/s - Any allows for np.ndarray, pd.DataFrame
+    soundspeed_interp: str = _Strings.spline  # spline/linear/quadrilateral/pchip/hexahedral/nlinear
+    _ssp_env: Optional[Any] = None
+    
+    # Bottom parameters
+    bottom_soundspeed: float = 1600.0  # m/s
+    bottom_soundspeed_shear: float = 0.0  # m/s
+    bottom_density: float = 1600.0  # kg/m^3
+    bottom_absorption: Optional[float] = None  # dB/wavelength
+    bottom_absorption_shear: Optional[float] = None  # dB/wavelength
+    bottom_roughness: float = 0.0  # m (rms)
+    bottom_beta: Optional[float] = None
+    bottom_transition_freq: Optional[float] = None  # Hz
+    bottom_boundary_condition: str = _Strings.acousto_elastic
+    bottom_reflection_coefficient: Optional[Any] = None
+    _bathymetry: str = _Strings.flat  # set to "from-file" if multiple bottom depths
+    
+    # Surface parameters
+    surface: Optional[Any] = None  # surface profile
+    surface_interp: str = _Strings.linear  # curvilinear/linear
+    surface_boundary_condition: str = _Strings.vacuum
+    surface_reflection_coefficient: Optional[Any] = None
+    _altimetry: str = _Strings.flat  # set to "from-file" if multiple surface heights
+    
+    # Source parameters
+    source_type: str = 'default'
+    source_depth: Union[float, Any] = 5.0  # m - Any allows for np.ndarray
+    source_ndepth: Optional[int] = None
+    source_directionality: Optional[Any] = None  # [(deg, dB)...] - Any allows for np.ndarray
+    _sbp_file: str = _Strings.default
+    
+    # Receiver parameters
+    receiver_depth: Union[float, Any] = 10.0  # m - Any allows for np.ndarray
+    receiver_ndepth: Optional[int] = None
+    receiver_range: Union[float, Any] = 1000.0  # m - Any allows for np.ndarray
+    receiver_nrange: Optional[int] = None
+    
+    # Bathymetry parameters
+    depth: Union[float, Any] = 25.0  # m - Any allows for np.ndarray
+    depth_interp: str = _Strings.linear  # curvilinear/linear
+    depth_npts: int = 0
+    depth_sigmaz: float = 0.0
+    depth_max: Optional[float] = None  # m
+    
+    # Beam settings
+    beam_angle_min: Optional[float] = None  # deg
+    beam_angle_max: Optional[float] = None  # deg
+    beam_num: int = 0  # number of beams (0 = auto)
+    beam_type: str = 'default'
+    
+    # Solution parameters
+    step_size: Optional[float] = None
+    box_depth: Optional[float] = None
+    box_range: Optional[float] = None
+    grid: str = 'default'
+    
+    # Attenuation parameters
+    volume_attenuation: str = 'none'
+    attenuation_units: str = 'frequency dependent'
+    
+    # Francois-Garrison volume attenuation parameters
+    fg_salinity: Optional[float] = None
+    fg_temperature: Optional[float] = None
+    fg_pH: Optional[float] = None
+    fg_depth: Optional[float] = None
+    
+    def __post_init__(self):
+        """Validate field values after initialization."""
+        self._validate_interpolation_types()
+        self._validate_boundary_conditions()
+        self._validate_grid_types()
+        self._validate_beam_types()
+        self._validate_attenuation_options()
+        self._validate_volume_attenuation()
+        
+    def _validate_interpolation_types(self):
+        """Validate interpolation type options."""
+        valid_interp = set(_Maps.interp_rev.keys())
+        if self.soundspeed_interp not in valid_interp:
+            raise ValueError(f"Invalid soundspeed_interp: {self.soundspeed_interp}. "
+                           f"Must be one of: {sorted(valid_interp)}")
+        
+        valid_bty_interp = set(_Maps.bty_interp_rev.keys())
+        if self.depth_interp not in valid_bty_interp:
+            raise ValueError(f"Invalid depth_interp: {self.depth_interp}. "
+                           f"Must be one of: {sorted(valid_bty_interp)}")
+        
+        if self.surface_interp not in valid_bty_interp:
+            raise ValueError(f"Invalid surface_interp: {self.surface_interp}. "
+                           f"Must be one of: {sorted(valid_bty_interp)}")
+    
+    def _validate_boundary_conditions(self):
+        """Validate boundary condition options."""
+        valid_boundary = set(_Maps.boundcond_rev.keys())
+        if self.bottom_boundary_condition not in valid_boundary:
+            raise ValueError(f"Invalid bottom_boundary_condition: {self.bottom_boundary_condition}. "
+                           f"Must be one of: {sorted(valid_boundary)}")
+        
+        if self.surface_boundary_condition not in valid_boundary:
+            raise ValueError(f"Invalid surface_boundary_condition: {self.surface_boundary_condition}. "
+                           f"Must be one of: {sorted(valid_boundary)}")
+    
+    def _validate_grid_types(self):
+        """Validate grid type options."""
+        valid_grid = set(_Maps.grid_rev.keys())
+        if self.grid not in valid_grid:
+            raise ValueError(f"Invalid grid: {self.grid}. "
+                           f"Must be one of: {sorted(valid_grid)}")
+    
+    def _validate_beam_types(self):
+        """Validate beam type options."""
+        valid_beam = set(_Maps.beam_rev.keys())
+        if self.beam_type not in valid_beam:
+            raise ValueError(f"Invalid beam_type: {self.beam_type}. "
+                           f"Must be one of: {sorted(valid_beam)}")
+    
+    def _validate_attenuation_options(self):
+        """Validate attenuation unit options."""
+        valid_attunits = set(_Maps.attunits_rev.keys())
+        if self.attenuation_units not in valid_attunits:
+            raise ValueError(f"Invalid attenuation_units: {self.attenuation_units}. "
+                           f"Must be one of: {sorted(valid_attunits)}")
+    
+    def _validate_volume_attenuation(self):
+        """Validate volume attenuation options."""
+        valid_volatt = set(_Maps.volatt_rev.keys())
+        if self.volume_attenuation not in valid_volatt:
+            raise ValueError(f"Invalid volume_attenuation: {self.volume_attenuation}. "
+                           f"Must be one of: {sorted(valid_volatt)}")
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert dataclass to dictionary format for backward compatibility."""
+        result = {}
+        for field_obj in fields(self):
+            value = getattr(self, field_obj.name)
+            result[field_obj.name] = value
+        return result
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'EnvironmentConfig':
+        """Create EnvironmentConfig from dictionary."""
+        # Filter out any keys that aren't valid field names
+        valid_fields = {f.name for f in fields(cls)}
+        filtered_data = {k: v for k, v in data.items() if k in valid_fields}
+        return cls(**filtered_data)
+
+
+def new() -> Dict[str, Any]:
+    """Get default environment dictionary for 2D underwater acoustic modeling.
+    
+    Creates a new environment using the dataclass and returns it as a dictionary
+    for backward compatibility.
+    
+    Returns
+    -------
+    dict
+        Default environment parameters as a dictionary.
+    """
+    config = EnvironmentConfig()
+    return config.to_dict()
+
+
+def validate_transmission_loss_mode(mode: str) -> None:
+    """Validate transmission loss mode using predefined options.
+    
+    Parameters
+    ----------
+    mode : str
+        The transmission loss mode to validate.
+        
+    Raises
+    ------
+    ValueError
+        If the mode is not valid.
+    """
+    valid_modes = {_Strings.coherent, _Strings.incoherent, _Strings.semicoherent}
+    if mode not in valid_modes:
+        raise ValueError(f'Invalid transmission loss mode: {mode}. '
+                        f'Must be one of: {sorted(valid_modes)}')
+
+
+def validate_source_type(source_type: str) -> None:
+    """Validate source type using predefined options.
+    
+    Parameters
+    ----------
+    source_type : str
+        The source type to validate.
+        
+    Raises
+    ------
+    ValueError
+        If the source type is not valid.
+    """
+    valid_source_types = set(_Maps.source_rev.keys())
+    if source_type not in valid_source_types:
+        raise ValueError(f'Invalid source type: {source_type}. '
+                        f'Must be one of: {sorted(valid_source_types)}')
