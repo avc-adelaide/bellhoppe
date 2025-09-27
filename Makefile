@@ -233,16 +233,11 @@ gitokay:
 
 gitclean:
 	@if [ -z "$$(git clean -nx)" ]; then \
-	    @true; \
+	    true; \
 	else \
-	    @echo "Would delete the following:"
-	    @git clean -nx; \
-	    @read -p "Continue? [y/N] " ans; \
-	    @if [ "$$ans" = "y" ] || [ "$$ans" = "Y" ]; then \
-		    git clean -fx; \
-	    else \
-		    @echo "Aborted."; false; \
-	    fi
+	    git clean -nx; \
+	    echo "Git repository not clean. Run:"; \
+	    echo "    git clean -fx"; \
 	fi
 
 
