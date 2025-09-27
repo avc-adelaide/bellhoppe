@@ -10,6 +10,12 @@ This is the Python API documentation for BELLHOP, an underwater acoustic propaga
 API Reference
 =============
 
+Environment definition
+----------------------
+
+.. automodule:: bellhop.environment
+   :members:
+
 Core Functions
 --------------
 
