@@ -7,6 +7,9 @@ class _Strings(str, Enum):
     This helps prevent typos and permits autocomplete (if your editor is smart enough).
     """
 
+    default = "default"
+    none = "none"
+
     # interpolation
     linear = "linear"
     spline = "spline"
@@ -37,6 +40,12 @@ class _Strings(str, Enum):
     line = "line"
     point = "point"
 
+    # beam
+    hat_cartesian = "hat-cartesian",
+    hat_ray = "hat-ray",
+    gaussian_cartesian = "gaussian-cartesian",
+    gaussian_ray = "gaussian-ray",
+
     # grid
     rectilinear = "rectilinear"
     irregular = "irregular"
@@ -46,6 +55,14 @@ class _Strings(str, Enum):
     francois_garrison = "francois-garrison"
     biological = "biological"
 
+    # attenuation units
+    nepers_per_meter = "nepers per meter"
+    frequency_dependent = "frequency dependent"
+    db_per_meter = "dB per meter"
+    frequency_scaled_db_per_meter = "frequency scaled dB per meter"
+    db_per_wavelength = "dB per wavelength"
+    quality_factor = "quality factor"
+    loss_parameter = "loss parameter"
 
 class _Maps:
     """Mappings from Bellhop single-char input file options to readable Python options
@@ -61,70 +78,70 @@ class _Maps:
     """
 
     interp = {
-        "S":_Strings.spline,
-        "C":_Strings.linear,
-        "Q":_Strings.quadrilateral,
-        "P":_Strings.pchip,
-        "H":_Strings.hexahedral,
-        "N":_Strings.nlinear,
-        " ": "default",
+        "S": _Strings.spline,
+        "C": _Strings.linear,
+        "Q": _Strings.quadrilateral,
+        "P": _Strings.pchip,
+        "H": _Strings.hexahedral,
+        "N": _Strings.nlinear,
+        " ": _Strings.default,
     }
     bty_interp = {
-        "L":_Strings.linear,
-        "C":_Strings.curvilinear,
+        "L": _Strings.linear,
+        "C": _Strings.curvilinear,
     }
     boundcond = {
-        "V":_Strings.vacuum,
-        "A":_Strings.acousto_elastic,
-        "R":_Strings.rigid,
-        "F":_Strings.from_file,
-        " ": "default",
+        "V": _Strings.vacuum,
+        "A": _Strings.acousto_elastic,
+        "R": _Strings.rigid,
+        "F": _Strings.from_file,
+        " ": _Strings.default,
     }
     attunits = {
-        "N": "nepers per meter",
-        "F": "frequency dependent",
-        "M": "dB per meter",
-        "m": "frequency scaled dB per meter",
-        "W": "dB per wavelength",
-        "Q": "quality factor",
-        "L": "loss parameter",
-        " ": "default",
+        "N": _Strings.nepers_per_meter,
+        "F": _Strings.frequency dependent,
+        "M": _Strings.db_per_meter,
+        "m": _Strings.frequency_scaled_db_per_meter,
+        "W": _Strings.db_per_wavelength,
+        "Q": _Strings.quality_factor,
+        "L": _Strings.loss_parameter,
+        " ": _Strings.default,
     }
     volatt = {
-        "T": "thorp",
-        "F": "francois-garrison",
-        "B": "biological",
-        " ": "none",
+        "T": _Strings.thorp,
+        "F": _Strings.francois_garrison,
+        "B": _Strings.biological,
+        " ": _Strings.none,
     }
     bottom = {
-        "_":_Strings.flat,
-        "~":_Strings.from_file,
-        "*":_Strings.from_file,
-        " ": "default",
+        "_": _Strings.flat,
+        "~": _Strings.from_file,
+        "*": _Strings.from_file,
+        " ": _Strings.default,
     }
     surface = {
-        "_":_Strings.flat,
-        "~":_Strings.from_file,
-        "*":_Strings.from_file,
-        " ": "default",
+        "_": _Strings.flat,
+        "~": _Strings.from_file,
+        "*": _Strings.from_file,
+        " ": _Strings.default,
     }
     source = {
-        "R":_Strings.point,
-        "X":_Strings.line,
-        " ": "default",
+        "R": _Strings.point,
+        "X": _Strings.line,
+        " ": _Strings.default,
     }
     grid = {
-        "R":_Strings.rectilinear,
-        "I":_Strings.irregular,
-        " ": "default",
+        "R": _Strings.rectilinear,
+        "I": _Strings.irregular,
+        " ": _Strings.default,
     }
     beam = {
-        "G": "hat-cartesian",
-        "^": "hat-cartesian",
-        "g": "hat-ray",
-        "B": "gaussian-cartesian",
-        "b": "gaussian-ray",
-        " ": "default",
+        "G": _Strings.hat_cartesian,
+        "^": _Strings.hat_cartesian,
+        "g": _Strings.hat_ray,
+        "B": _Strings.gaussian_cartesian,
+        "b": _Strings.gaussian_ray,
+        " ": _Strings.default,
     }
 
     # reverse maps
