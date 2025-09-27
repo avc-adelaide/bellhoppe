@@ -49,6 +49,7 @@ def new():
         'source_depth': 5,                  # m
         'source_ndepth': None,              #
         'source_directionality': None,      # [(deg, dB)...]
+        '_sbp_file': _Strings.default,
         # receiver parameters
         'receiver_depth': 10,                 # m
         'receiver_ndepth': None,              #
