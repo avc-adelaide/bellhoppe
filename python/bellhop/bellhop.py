@@ -104,15 +104,15 @@ def create_env2d(**kv):
     for k, v in kv.items():
         if k not in env.keys():
             raise KeyError('Unknown key: '+k)
-        env[k] = _np.asarray(v, dtype=_np.float64) if not isinstance(v, _pd.DataFrame) and _np.size(v) > 1 else v
 
-    env['depth_max'] = env['depth_max'] or _np.max(env['depth'])
+        # Convert everything to ndarray except DataFrames and scalars
+        if isinstance(v, _pd.DataFrame):
+            env[k] = v
+        elif _np.isscalar(v):
+            env[k] = v
+        else:
+            env[k] = _np.asarray(v, dtype=_np.float64)
 
-    # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
-    env['min_angle'] = env['min_angle'] or -1 * _env.Defaults.beam_angle_fullspace if _np.min(env['rx_range']) < 0 else -1 * _env.Defaults.beam_angle_halfspace
-    env['max_angle'] = env['max_angle'] or +1 * _env.Defaults.beam_angle_fullspace if _np.min(env['rx_range']) < 0 else +1 * _env.Defaults.beam_angle_halfspace
-
-    env = check_env2d(env)
     return env
 
 
@@ -128,6 +128,7 @@ def check_env2d(env):
     >>> env = bh.create_env2d()
     >>> check_env2d(env)
     """
+    env = _set_env_params(env)
     try:
         assert env['type'] == '2D', 'Not a 2D environment'
         max_range = _np.max(env['rx_range'])
@@ -195,6 +196,22 @@ def check_env2d(env):
         return env
     except AssertionError as e:
         raise ValueError(e.args)
+
+def _set_env_params(env):
+    env['depth_max'] = env['depth_max'] or _np.max(env['depth'])
+
+    # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
+    if env['min_angle'] is None:
+        if _np.min(env['rx_range']) < 0:
+            env['min_angle'] = -_env.Defaults.beam_angle_fullspace
+        else:
+            env['min_angle'] = -_env.Defaults.beam_angle_halfspace
+    if env['max_angle'] is None:
+        if _np.min(env['rx_range']) < 0:
+            env['max_angle'] = _env.Defaults.beam_angle_fullspace
+        else:
+            env['max_angle'] = _env.Defaults.beam_angle_halfspace
+    return env
 
 def print_env(env):
     """Display the environment in a human readable form.

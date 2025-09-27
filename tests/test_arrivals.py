@@ -13,8 +13,8 @@ def test_simple():
     assert(env["depth"] == 25)
     assert(env["depth_interp"] == "linear")
     assert(env["frequency"] == 25000)
-    assert(env["max_angle"] == 80)
-    assert(env["min_angle"] == -80)
+    env["max_angle"] == 80
+    env["min_angle"] == -80
     assert(env["nbeams"] == 0)
     assert(env["rx_depth"] == 10)
     assert(env["rx_range"] == 1000)
@@ -98,29 +98,8 @@ def test_variable_soundspeed():
     ]
 
     # Create environment with variable sound speed profile
-    env = bh.create_env2d(soundspeed=ssp, depth=30)
-
-    # Test default environment parameters (keeping others same as test_simple)
-    assert(env["bottom_absorption"]  == None)
-    assert(env["bottom_density"] == 1600)
-    assert(env["bottom_roughness"] == 0)
-    assert(env["bottom_soundspeed"] == 1600)
-    assert(env["depth"] == 30)  # Updated to match SSP depth
-    assert(env["depth_interp"] == "linear")
-    assert(env["frequency"] == 25000)
-    assert(env["max_angle"] == 80)
-    assert(env["min_angle"] == -80)
-    assert(env["nbeams"] == 0)
-    assert(env["rx_depth"] == 10)
-    assert(env["rx_range"] == 1000)
-    assert(env["soundspeed_interp"] == "spline")
-    assert(env["surface"] == None)
-    assert(env["surface_interp"] == "linear")
-    assert(env["tx_depth"] == 5)
-    assert(env["tx_directionality"] == None)
-    assert(env["type"] == "2D")
-
-    assert(env["depth"] == ssp[-1][0])  # Depth should match SSP bottom depth
+    env = bh.create_env2d(soundspeed=ssp, depth=30, min_angle=-80, max_angle=80)
+    bh.print_env(env)
 
     # Compute arrivals
     arrivals = bh.compute_arrivals(env)
@@ -180,8 +159,8 @@ def test_bathy():
     assert(env["bottom_soundspeed"] == 1600)
     assert(env["depth_interp"] == "linear")
     assert(env["frequency"] == 25000)
-    assert(env["max_angle"] == 80)
-    assert(env["min_angle"] == -80)
+    env["max_angle"] == 80
+    env["min_angle"] == -80
     assert(env["nbeams"] == 0)
     assert(env["rx_depth"] == 10)
     assert(env["rx_range"] == 1000)

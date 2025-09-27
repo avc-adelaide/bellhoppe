@@ -27,4 +27,5 @@ def test_variable_soundspeed_error():
     # Create environment with variable sound speed profile
     with pytest.raises(ValueError, match=r"Soundspeed array must be strictly monotonic in depth"):
     	env = bh.create_env2d(soundspeed=ssp, depth=30)
+    	env = bh.check_env2d(env)
 

@@ -60,6 +60,7 @@ def test_read_env2d_round_trip():
         max_angle=30.0,
         nbeams=31
     )
+    env_orig = bh.check_env2d(env_orig)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         fname_base = os.path.join(temp_dir, "test_env")
