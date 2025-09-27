@@ -5,8 +5,8 @@ from bellhop.constants import _Strings
 
 @dataclass(frozen=True)
 class Defaults:
-    beam_angle_halfspace: int = 89
-    beam_angle_fullspace: int = 179
+    beam_angle_halfspace: int = 89.999
+    beam_angle_fullspace: int = 179.999
 
 
 def new():

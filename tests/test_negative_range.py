@@ -1,5 +1,6 @@
 import bellhop as bh
 import numpy as np
+import bellhop.environment as _env
 
 def test_negative_receiver_ranges():
     """Test that BELLHOP produces arrivals for negative receiver ranges."""
@@ -16,8 +17,8 @@ def test_negative_receiver_ranges():
     bh.check_env2d(env)
 
     # Verify that angle range was automatically extended for negative ranges
-    assert env['min_angle'] == -179, "min_angle should be automatically extended to -179 for negative ranges"
-    assert env['max_angle'] == 179, "max_angle should be automatically extended to 179 for negative ranges"
+    assert env['min_angle'] == -_env.Defaults.beam_angle_fullspace, "min_angle should be automatically extended to -179 for negative ranges"
+    assert env['max_angle'] == +_env.Defaults.beam_angle_fullspace, "max_angle should be automatically extended to 179 for negative ranges"
 
     # Compute arrivals
     arrivals = bh.compute_arrivals(env, debug=False, fname_base="test_negative_range")
@@ -40,8 +41,8 @@ def test_positive_receiver_ranges_unchanged():
     bh.check_env2d(env)
 
     # Verify that angle range was NOT modified for positive-only ranges
-    assert env['min_angle'] == -89, "min_angle should not be modified for positive-only ranges"
-    assert env['max_angle'] == +89, "max_angle should not be modified for positive-only ranges"
+    assert env['min_angle'] == -_env.Defaults.beam_angle_halfspace, "min_angle should not be modified for positive-only ranges"
+    assert env['max_angle'] == +_env.Defaults.beam_angle_halfspace, "max_angle should not be modified for positive-only ranges"
 
     # Compute arrivals to ensure it still works
     arrivals = bh.compute_arrivals(env, debug=False, fname_base="test_positive_range")
