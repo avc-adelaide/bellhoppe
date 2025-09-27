@@ -34,7 +34,7 @@ def test_FGB():
     """
 
     assert env['soundspeed_interp'] == 'nlinear', "SSPOPT = 'NAWF' => N == nlinear"
-    assert env['top_boundary_condition'] == 'acousto-elastic', "SSPOPT = 'NAWF' => A == acousto-elastic"
+    assert env['surface_boundary_condition'] == 'acousto-elastic', "SSPOPT = 'NAWF' => A == acousto-elastic"
     assert env['attenuation_units'] == 'dB per wavelength',  "SSPOPT = 'NAWF' => W == dB per wavelength"
     assert env['volume_attenuation'] == 'francois-garrison',  "SSPOPT = 'NAWF' => F == Francois-Garrison"
 

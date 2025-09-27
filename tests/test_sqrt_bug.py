@@ -10,7 +10,7 @@ def test_sqrt_bug():
     env["depth"] = np.array([[-2000,dp],[2000,dp]])
     env["rx_depth"] = 10
     env["rx_range"] = np.array([-1000, -500, -1, 1, 500, 1000])
-    env["nbeams"] = 9999
+    env["beam_num"] = 9999
 
     nn = len(env["rx_range"])
 

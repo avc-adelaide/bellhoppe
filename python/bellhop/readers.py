@@ -34,7 +34,7 @@ def read_env2d(fname):
     :bottom_roughness: bottom roughness RMS in meters
     :surface: surface altimetry profile (None if flat surface)
     :surface_interp: surface interpolation method ('linear', 'curvilinear')
-    :top_boundary_condition: ('vacuum', 'acousto-elastic', 'rigid', 'from-file')
+    :surface_boundary_condition: ('vacuum', 'acousto-elastic', 'rigid', 'from-file')
     :volume_attenuation: ('none', 'thorp', 'francois-garrison', 'biological')
     :attenuation_units: ('nepers per meter', 'frequency dependent', 'dB per meter', 'frequency scaled dB per meter', 'dB per wavelength', 'quality factor', 'loss parameter')
     :tx_depth: transmitter depth(s) in meters
@@ -43,9 +43,9 @@ def read_env2d(fname):
     :rx_range: receiver range(s) in meters
     :depth: maximum water depth in meters
     :depth_interp: bathymetry interpolation method ('linear', 'curvilinear')
-    :min_angle: minimum beam angle in degrees
-    :max_angle: maximum beam angle in degrees
-    :nbeams: number of beams (0 for automatic)
+    :beam_angle_min: minimum beam angle in degrees
+    :beam_angle_max: maximum beam angle in degrees
+    :beam_num: number of beams (0 for automatic)
     :step_size: (maximum) step size to trace rays in meters (0 for automatic)
     :box_depth: box extent to trace rays in meters (auto-calculated based on max depth data if not specified)
     :box_range: box extent to trace rays in meters (auto-calculated based on max receiver range if not specified)
@@ -208,7 +208,7 @@ def read_env2d(fname):
         def _invalid(opt):
             raise ValueError(f"Top boundary condition option {opt!r} not available")
         opt = topopt[1]
-        env["top_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid(opt)
+        env["surface_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid(opt)
 
         # Attenuation units
         def _invalid(opt):
@@ -266,7 +266,7 @@ def read_env2d(fname):
             else:
                 # Multiple points - depth, sound speed pairs
                 env['soundspeed'] = ssp_points
-        env['ssp_env'] = ssp_points
+        env['_ssp_env'] = ssp_points
 
         # Bottom boundary options
         print("  ")
@@ -363,10 +363,10 @@ def read_env2d(fname):
             env['tx_directionality'] = _np.array([[0, 0]])  # placeholder
 
         # Number of beams
-        nbeams_line = f.readline().strip()
-        env['nbeams'] = int(_parse_line(nbeams_line))
+        beam_num_line = f.readline().strip()
+        env['beam_num'] = int(_parse_line(beam_num_line))
 
-        # Beam angles (min_angle, max_angle)
+        # Beam angles (beam_angle_min, beam_angle_max)
         angles_line = f.readline().strip()
         angles_line = _parse_line(angles_line)
         if angles_line.endswith('/'):
@@ -374,8 +374,8 @@ def read_env2d(fname):
 
         angle_parts = angles_line.split()
         if len(angle_parts) >= 2:
-            env['min_angle'] = float(angle_parts[0])
-            env['max_angle'] = float(angle_parts[1])
+            env['beam_angle_min'] = float(angle_parts[0])
+            env['beam_angle_max'] = float(angle_parts[1])
 
         # Ray tracing limits (step, max_depth, max_range) - last line
         limits_line = f.readline().strip()

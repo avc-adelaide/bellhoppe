@@ -20,7 +20,7 @@ ssp = [
 ]
 
 # Create environment with variable sound speed profile
-env = bh.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="linear", min_angle=-80, max_angle=80)
+env = bh.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="linear", beam_angle_min=-80, beam_angle_max=80)
 
 # Compute arrivals
 arrivals = bh.compute_arrivals(env)

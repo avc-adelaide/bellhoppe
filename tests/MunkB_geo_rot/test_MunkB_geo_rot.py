@@ -29,7 +29,7 @@ def test_MunkB_geo_rot_A():
     assert bty.shape[0] == 30, "Should be N=30 BTY data points"
 
     assert env['soundspeed_interp'] == 'quadrilateral', "SSPOPT = 'QVF' => Q == quadrilateral"
-    assert env['top_boundary_condition'] == 'vacuum', "SSPOPT = 'QVF' => V == vacuum"
+    assert env['surface_boundary_condition'] == 'vacuum', "SSPOPT = 'QVF' => V == vacuum"
     assert env['attenuation_units'] == 'frequency dependent',  "SSPOPT = 'QVF' => F == frequency dependent"
 
     assert env['depth'].shape == (30,2), "BTY file should contain 30 data points"

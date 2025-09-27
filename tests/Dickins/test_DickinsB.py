@@ -29,7 +29,7 @@ def test_DickensB():
     assert bty.shape[0] == 5,  "Should be N= 5 BTY data points"
 
     assert env['soundspeed_interp'] == 'linear', "SSPOPT = 'CVW' => C == linear"
-    assert env['top_boundary_condition'] == 'vacuum', "SSPOPT = 'CVW' => V == vacuum"
+    assert env['surface_boundary_condition'] == 'vacuum', "SSPOPT = 'CVW' => V == vacuum"
     assert env['attenuation_units'] == 'dB per wavelength',  "SSPOPT = 'CVW' => W == dB per wavelength"
 
     assert env['depth'].shape == (5,2), "BTY file should contain 30 data points"

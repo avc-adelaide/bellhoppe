@@ -86,8 +86,8 @@ def test_plot_transmission_loss():
     env = bh.create_env2d(
         rx_depth=np.arange(0, 25),
         rx_range=np.arange(0, 1000),
-        min_angle=-45,
-        max_angle=45
+        beam_angle_min=-45,
+        beam_angle_max=45
     )
     tloss = bh.compute_transmission_loss(env)
     bhp.plot_transmission_loss(tloss)
@@ -99,8 +99,8 @@ def test_plot_transmission_loss_with_env():
     env = bh.create_env2d(
         rx_depth=np.arange(0, 25),
         rx_range=np.arange(0, 1000),
-        min_angle=-45,
-        max_angle=45
+        beam_angle_min=-45,
+        beam_angle_max=45
     )
     tloss = bh.compute_transmission_loss(env)
     bhp.plot_transmission_loss(tloss, env=env)
@@ -180,8 +180,8 @@ def test_pyplot_transmission_loss():
     env = bh.create_env2d(
         rx_depth=np.arange(0, 25),
         rx_range=np.arange(0, 1000),
-        min_angle=-45,
-        max_angle=45
+        beam_angle_min=-45,
+        beam_angle_max=45
     )
     tloss = bh.compute_transmission_loss(env)
     bhp.pyplot_transmission_loss(tloss)
@@ -193,8 +193,8 @@ def test_pyplot_transmission_loss_with_env():
     env = bh.create_env2d(
         rx_depth=np.arange(0, 25),
         rx_range=np.arange(0, 1000),
-        min_angle=-45,
-        max_angle=45
+        beam_angle_min=-45,
+        beam_angle_max=45
     )
     tloss = bh.compute_transmission_loss(env)
     bhp.pyplot_transmission_loss(tloss, env=env)

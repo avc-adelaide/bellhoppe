@@ -212,8 +212,8 @@ def plot_transmission_loss(tloss, env=None, **kwargs):
     >>> env = bh.create_env2d(
             rx_depth=np.arange(0, 25),
             rx_range=np.arange(0, 1000),
-            min_angle=-45,
-            max_angle=45
+            beam_angle_min=-45,
+            beam_angle_max=45
         )
     >>> tloss = bh.compute_transmission_loss(env)
     >>> bh.plot_transmission_loss(tloss, width=1000)
@@ -440,8 +440,8 @@ def pyplot_transmission_loss(tloss, env=None, **kwargs):
     >>> env = bh.create_env2d(
             rx_depth=np.arange(0, 25),
             rx_range=np.arange(0, 1000),
-            min_angle=-45,
-            max_angle=45
+            beam_angle_min=-45,
+            beam_angle_max=45
         )
     >>> tloss = bh.compute_transmission_loss(env)
     >>> bh.plot_transmission_loss(tloss, width=1000)

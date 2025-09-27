@@ -177,8 +177,8 @@ def check_env2d(env):
                 env['soundspeed'] = env['soundspeed'][:indlarger+1,:]
         assert _np.max(env['tx_depth']) <= max_depth, 'tx_depth cannot exceed water depth: '+str(max_depth)+' m'
         assert _np.max(env['rx_depth']) <= max_depth, 'rx_depth cannot exceed water depth: '+str(max_depth)+' m'
-        assert env['min_angle'] > -180 and env['min_angle'] <= 180, 'min_angle must be in range (-180, 180]'
-        assert env['max_angle'] > -180 and env['max_angle'] <= 180, 'max_angle must be in range (-180, 180]'
+        assert env['beam_angle_min'] > -180 and env['beam_angle_min'] <= 180, 'beam_angle_min must be in range (-180, 180]'
+        assert env['beam_angle_max'] > -180 and env['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
         if env["bottom_reflection_coefficient"] is not None:
             env["bottom_boundary_condition"] = "from-file"
         if env['tx_directionality'] is not None:
@@ -204,16 +204,16 @@ def _set_env_params(env):
         env['depth_max'] = max(bty_max_depth, svp_max_depth)
 
     # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
-    if env['min_angle'] is None:
+    if env['beam_angle_min'] is None:
         if _np.min(env['rx_range']) < 0:
-            env['min_angle'] = -_env.Defaults.beam_angle_fullspace
+            env['beam_angle_min'] = -_env.Defaults.beam_angle_fullspace
         else:
-            env['min_angle'] = -_env.Defaults.beam_angle_halfspace
-    if env['max_angle'] is None:
+            env['beam_angle_min'] = -_env.Defaults.beam_angle_halfspace
+    if env['beam_angle_max'] is None:
         if _np.min(env['rx_range']) < 0:
-            env['max_angle'] = _env.Defaults.beam_angle_fullspace
+            env['beam_angle_max'] = _env.Defaults.beam_angle_fullspace
         else:
-            env['max_angle'] = _env.Defaults.beam_angle_halfspace
+            env['beam_angle_max'] = _env.Defaults.beam_angle_halfspace
     return env
 
 def print_env(env):
@@ -550,7 +550,7 @@ class _Bellhop:
 
         svp = env['soundspeed']
         svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
-        svp_boundcond = _Maps.boundcond_rev[env['top_boundary_condition']]
+        svp_boundcond = _Maps.boundcond_rev[env['surface_boundary_condition']]
         svp_attunits = _Maps.attunits_rev[env['attenuation_units']]
         svp_volatt = _Maps.volatt_rev[env['volume_attenuation']]
         if isinstance(svp, _pd.DataFrame):
@@ -580,7 +580,7 @@ class _Bellhop:
             self._print(fh, f"0.0 {svp} /    ! '0.0' SSP_Const")
             self._print(fh, f"{env['depth_max']} {svp} /    ! MAXDEPTH SSP_Const")
         elif svp_interp == 'Q':
-            sspenv = env['ssp_env']
+            sspenv = env['_ssp_env']
             # if the SSP data was provided in the ENV file, use that:
             if sspenv is not None:
                 for j in range(sspenv.shape[0]):
@@ -628,8 +628,8 @@ class _Bellhop:
             self._create_sbp_file(fname_base+'.sbp', env['tx_directionality'])
         runtype_str = taskcode + beamtype + beampattern + txtype + gridtype
         self._print(fh, f"'{runtype_str.rstrip()}'  ! RUN TYPE")
-        self._print(fh, f"{env['nbeams']} ! NBeams")
-        self._print(fh, "%0.6f %0.6f /   ! ALPHA1,2 (degrees)" % (env['min_angle'], env['max_angle']))
+        self._print(fh, f"{env['beam_num']} ! NBeams")
+        self._print(fh, "%0.6f %0.6f /   ! ALPHA1,2 (degrees)" % (env['beam_angle_min'], env['beam_angle_max']))
         step_size = env["step_size"] or 0.0
         box_depth = env["box_depth"] or 1.01*env['depth_max']
         box_range = env["box_range"] or 1.01*_np.max(_np.abs(env['rx_range']))

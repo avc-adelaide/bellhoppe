@@ -17,8 +17,8 @@ def test_negative_receiver_ranges():
     bh.check_env2d(env)
 
     # Verify that angle range was automatically extended for negative ranges
-    assert env['min_angle'] == -_env.Defaults.beam_angle_fullspace, "min_angle should be automatically extended to -179 for negative ranges"
-    assert env['max_angle'] == +_env.Defaults.beam_angle_fullspace, "max_angle should be automatically extended to 179 for negative ranges"
+    assert env['beam_angle_min'] == -_env.Defaults.beam_angle_fullspace, "beam_angle_min should be automatically extended to -179 for negative ranges"
+    assert env['beam_angle_max'] == +_env.Defaults.beam_angle_fullspace, "beam_angle_max should be automatically extended to 179 for negative ranges"
 
     # Compute arrivals
     arrivals = bh.compute_arrivals(env, debug=False, fname_base="test_negative_range")
@@ -41,8 +41,8 @@ def test_positive_receiver_ranges_unchanged():
     bh.check_env2d(env)
 
     # Verify that angle range was NOT modified for positive-only ranges
-    assert env['min_angle'] == -_env.Defaults.beam_angle_halfspace, "min_angle should not be modified for positive-only ranges"
-    assert env['max_angle'] == +_env.Defaults.beam_angle_halfspace, "max_angle should not be modified for positive-only ranges"
+    assert env['beam_angle_min'] == -_env.Defaults.beam_angle_halfspace, "beam_angle_min should not be modified for positive-only ranges"
+    assert env['beam_angle_max'] == +_env.Defaults.beam_angle_halfspace, "beam_angle_max should not be modified for positive-only ranges"
 
     # Compute arrivals to ensure it still works
     arrivals = bh.compute_arrivals(env, debug=False, fname_base="test_positive_range")
@@ -60,13 +60,13 @@ def test_manual_angle_override():
 
     # Set up environment with negative ranges AND manual angles
     env["rx_range"] = np.array([-500, 500])
-    env["min_angle"] = -45  # User explicitly set narrow angle range
-    env["max_angle"] = 45
+    env["beam_angle_min"] = -45  # User explicitly set narrow angle range
+    env["beam_angle_max"] = 45
 
     # Verify environment is valid
     bh.check_env2d(env)
 
     # Verify that manually set angles are respected (not auto-extended)
-    # The condition checks if min_angle > -120, so -45 should not trigger auto-extension
-    assert env['min_angle'] == -45, "Manually set min_angle should be preserved"
-    assert env['max_angle'] == 45, "Manually set max_angle should be preserved"
+    # The condition checks if beam_angle_min > -120, so -45 should not trigger auto-extension
+    assert env['beam_angle_min'] == -45, "Manually set beam_angle_min should be preserved"
+    assert env['beam_angle_max'] == 45, "Manually set beam_angle_max should be preserved"
