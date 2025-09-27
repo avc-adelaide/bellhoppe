@@ -42,7 +42,7 @@ def test_FGB():
     assert env['box_depth'] ==  10000.5, "0.000000 10000.500000 10.050000"
     assert env['box_range'] ==  10050.0, "0.000000 10000.500000 10.050000"
 
-    assert env['task'] == 'C'
+    assert env['task'] == 'TL-coherent'
 
     bh.print_env(env)
 
