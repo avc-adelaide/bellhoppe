@@ -41,7 +41,10 @@ from bellhop.readers import read_refl_coeff as read_refl_coeff
 _models = []
 
 def create_env2d(**kv):
-    """Create a new 2D underwater environment.
+    """Create a new 2D underwater environment with automatic validation.
+
+    This function creates a new environment dictionary with automatic validation
+    of all string-based options using dataclass validation.
 
     Parameters
     ----------
@@ -52,6 +55,11 @@ def create_env2d(**kv):
     -------
     env : dict
         A new 2D underwater environment dictionary.
+
+    Raises
+    ------
+    ValueError
+        If any parameter value is invalid according to BELLHOP constraints.
 
     Example
     -------
@@ -97,6 +105,8 @@ def create_env2d(**kv):
     >>> env = bh.create_env2d(depth=[[0,20], [300,10], [500,18], [1000,15]])
     """
     env = _env.new()
+    
+    # Apply user-provided values to environment
     for k, v in kv.items():
         if k not in env.keys():
             raise KeyError('Unknown key: '+k)
@@ -109,53 +119,11 @@ def create_env2d(**kv):
         else:
             env[k] = _np.asarray(v, dtype=_np.float64)
 
-    return env
-
-
-def create_env2d_with_dataclass(**kv):
-    """Create a new 2D underwater environment using dataclass validation.
-
-    This function provides the same interface as create_env2d() but uses
-    dataclass-based validation to automatically check option validity.
-
-    Parameters
-    ----------
-    **kv : dict
-        Keyword arguments for environment configuration.
-
-    Returns
-    -------
-    env : dict
-        A new 2D underwater environment dictionary (for backward compatibility).
-
-    Raises
-    ------
-    ValueError
-        If any parameter value is invalid according to BELLHOP constraints.
-
-    Example
-    -------
-    >>> import bellhop as bh
-    >>> env = bh.create_env2d_with_dataclass(depth=40, soundspeed=1540)
-    >>> # This will raise ValueError for invalid interpolation:
-    >>> env = bh.create_env2d_with_dataclass(soundspeed_interp='invalid')
-    """
-    # Create dataclass instance with validation
-    env_config = EnvironmentConfig(**kv)
-    
-    # Convert back to dictionary format for backward compatibility
-    env = env_config.to_dict()
-    
-    # Convert numpy arrays as needed (same logic as original create_env2d)
-    for k, v in kv.items():
-        if isinstance(v, _pd.DataFrame):
-            env[k] = v
-        elif _np.isscalar(v):
-            env[k] = v
-        else:
-            env[k] = _np.asarray(v, dtype=_np.float64)
+    # Validate options using dataclass validation
+    env = _validate_options_with_dataclass(env)
     
     return env
+
 
 
 def _validate_options_with_dataclass(env):
@@ -206,14 +174,12 @@ def check_env2d(env):
             assert env['surface'][0,0] <= 0, 'First range in surface array must be 0 m'
             assert env['surface'][-1,0] >= max_range, 'Last range in surface array must be beyond maximum range: '+str(max_range)+' m'
             assert _np.all(_np.diff(env['surface'][:,0]) > 0), 'surface array must be strictly monotonic in range'
-            # Removed manual interpolation type check - now handled by dataclass validation
         if _np.size(env['depth']) > 1:
             assert env['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array'
             assert env['depth'].shape[1] == 2, 'depth must be a scalar or an Nx2 array'
             assert env['depth'][0,0] <= 0, 'First range in depth array must be 0 m'
             assert env['depth'][-1,0] >= max_range, 'Last range in depth array must be beyond maximum range: '+str(max_range)+' m'
             assert _np.all(_np.diff(env['depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
-            # Removed manual interpolation type check - now handled by dataclass validation
             assert env["_bathymetry"] == _Strings.from_file, 'len(depth)>1 requires BTY file'
         if isinstance(env['soundspeed'], _pd.DataFrame):
             # For DataFrames, apply the same minimum point requirements as numpy arrays
@@ -235,7 +201,6 @@ def check_env2d(env):
             assert env['soundspeed'][0,0] <= 0, 'First depth in soundspeed array must be 0 m'
             assert env['soundspeed'][-1,0] >= env['depth_max'], 'Last depth in soundspeed array must be beyond water depth: '+str(env['depth_max'])+' m'
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
-            # Removed manual interpolation type check - now handled by dataclass validation
             if env['depth_max'] not in env['soundspeed'][:,0]:
                 indlarger = _np.argwhere(env['soundspeed'][:,0]>env['depth_max'])[0][0]
                 if env['soundspeed_interp'] == _Strings.spline:
