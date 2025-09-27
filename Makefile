@@ -238,6 +238,7 @@ gitclean:
 	    git clean -nx; \
 	    echo "Git repository not clean. Run:"; \
 	    echo "    git clean -fx"; \
+	    false; \
 	fi
 
 
