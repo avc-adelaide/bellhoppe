@@ -37,10 +37,10 @@ def read_env2d(fname):
     :surface_boundary_condition: ('vacuum', 'acousto-elastic', 'rigid', 'from-file')
     :volume_attenuation: ('none', 'thorp', 'francois-garrison', 'biological')
     :attenuation_units: ('nepers per meter', 'frequency dependent', 'dB per meter', 'frequency scaled dB per meter', 'dB per wavelength', 'quality factor', 'loss parameter')
-    :tx_depth: transmitter depth(s) in meters
-    :tx_directionality: transmitter beam pattern (None if omnidirectional)
-    :rx_depth: receiver depth(s) in meters
-    :rx_range: receiver range(s) in meters
+    :source_depth: transmitter depth(s) in meters
+    :source_directionality: transmitter beam pattern (None if omnidirectional)
+    :receiver_depth: receiver depth(s) in meters
+    :receiver_range: receiver range(s) in meters
     :depth: maximum water depth in meters
     :depth_interp: bathymetry interpolation method ('linear', 'curvilinear')
     :beam_angle_min: minimum beam angle in degrees
@@ -49,7 +49,7 @@ def read_env2d(fname):
     :step_size: (maximum) step size to trace rays in meters (0 for automatic)
     :box_depth: box extent to trace rays in meters (auto-calculated based on max depth data if not specified)
     :box_range: box extent to trace rays in meters (auto-calculated based on max receiver range if not specified)
-    :tx_type: point (default) or line
+    :source_type: point (default) or line
     :beam_type: todo
     :grid: rectilinear or irregular
 
@@ -283,8 +283,8 @@ def read_env2d(fname):
 
         if len(botopt) > 1:
             opt = botopt[1]
-            env["_bottom_bathymetry"] = _Maps.bottom.get(opt) or _invalid(opt)
-            if env["_bottom_bathymetry"] == _Strings.from_file:
+            env["_bathymetry"] = _Maps.bottom.get(opt) or _invalid(opt)
+            if env["_bathymetry"] == _Strings.from_file:
                 print("TODO: automatically read bty file")
             else:
                 pass # nothing needs to be done
@@ -328,22 +328,22 @@ def read_env2d(fname):
             env['bottom_absorption_shear'] = float(bottom_props[5])
 
         # Source depths
-        tx_depths, env['tx_ndepth'] = _parse_vector(f)
-        if len(tx_depths) == 1:
-            env['tx_depth'] = tx_depths[0]
+        source_depths, env['source_ndepth'] = _parse_vector(f)
+        if len(source_depths) == 1:
+            env['source_depth'] = source_depths[0]
         else:
-            env['tx_depth'] = tx_depths
+            env['source_depth'] = source_depths
 
         # Receiver depths
-        rx_depths, env['rx_ndepth'] = _parse_vector(f)
-        if len(rx_depths) == 1:
-            env['rx_depth'] = rx_depths[0]
+        receiver_depths, env['receiver_ndepth'] = _parse_vector(f)
+        if len(receiver_depths) == 1:
+            env['receiver_depth'] = receiver_depths[0]
         else:
-            env['rx_depth'] = rx_depths
+            env['receiver_depth'] = receiver_depths
 
         # Receiver ranges (in km, need to convert to m)
-        rx_ranges, env['rx_nrange'] = _parse_vector(f)
-        env['rx_range'] = rx_ranges * 1000  # convert km to m
+        receiver_ranges, env['receiver_nrange'] = _parse_vector(f)
+        env['receiver_range'] = receiver_ranges * 1000  # convert km to m
 
         # Task/run type (e.g., 'R', 'C', etc.)
         task_line = f.readline().strip()
@@ -352,7 +352,7 @@ def read_env2d(fname):
         if len(task_code) > 1:
             env['beam_type'] = _Maps.beam.get(task_code[1])
         if len(task_code) > 3:
-            env['tx_type'] = _Maps.source.get(task_code[3])
+            env['source_type'] = _Maps.source.get(task_code[3])
         if len(task_code) > 4:
             env['grid'] = _Maps.grid.get(task_code[4])
 
@@ -360,7 +360,7 @@ def read_env2d(fname):
         if '*' in task_code:
             # Source directionality file exists - would need to read .sbp file
             # For now, just note that directionality is present
-            env['tx_directionality'] = _np.array([[0, 0]])  # placeholder
+            env['source_directionality'] = _np.array([[0, 0]])  # placeholder
 
         # Number of beams
         beam_num_line = f.readline().strip()

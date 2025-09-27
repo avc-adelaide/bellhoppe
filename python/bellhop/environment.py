@@ -13,7 +13,8 @@ def new():
     """Get default environment dictionary for 2D underwater acoustic modeling.
 
     This function provides the shared default values used by both create_env2d()
-    and read_env2d() to avoid duplication.
+    and read_env2d() to avoid duplication. Where defaults are not provided (equal to None)
+    some will be supplied in a "clean up" step as part of check_env2d().
 
     :returns: dictionary with default environment parameters
     """
@@ -36,21 +37,23 @@ def new():
         'bottom_transition_freq': None,  # Hz
         'bottom_boundary_condition': _Strings.acousto_elastic,
         'bottom_reflection_coefficient': None,
-        '_bottom_bathymetry': _Strings.flat,   #
+        '_bathymetry': _Strings.flat,    # set to "from-file" if multiple bottom depths
         # surface parameters
         'surface': None,                # surface profile
         'surface_interp': _Strings.linear,       # curvilinear/linear
         'surface_boundary_condition': _Strings.vacuum,
+        'surface_reflection_coefficient': None,
+        '_altimetry': _Strings.flat,    # set to "from-file" if multiple surface heights
         # source parameters
-        'tx_type': 'default',
-        'tx_depth': 5,                  # m
-        'tx_ndepth': None,              #
-        'tx_directionality': None,      # [(deg, dB)...]
+        'source_type': 'default',
+        'source_depth': 5,                  # m
+        'source_ndepth': None,              #
+        'source_directionality': None,      # [(deg, dB)...]
         # receiver parameters
-        'rx_depth': 10,                 # m
-        'rx_ndepth': None,              #
-        'rx_range': 1000,               # m
-        'rx_nrange': None,              #
+        'receiver_depth': 10,                 # m
+        'receiver_ndepth': None,              #
+        'receiver_range': 1000,               # m
+        'receiver_nrange': None,              #
         # bathymetry parameters
         'depth': 25,                    # m
         'depth_interp': _Strings.linear,         # curvilinear/linear

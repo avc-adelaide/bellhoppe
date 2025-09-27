@@ -103,6 +103,12 @@ class _Maps:
         "*":_Strings.from_file,
         " ": "default",
     }
+    surface = {
+        "_":_Strings.flat,
+        "~":_Strings.from_file,
+        "*":_Strings.from_file,
+        " ": "default",
+    }
     source = {
         "R":_Strings.point,
         "X":_Strings.line,
@@ -129,6 +135,7 @@ class _Maps:
     attunits_rev = {v: k for k, v in attunits.items()}
     volatt_rev = {v: k for k, v in volatt.items()}
     bottom_rev = {v: k for k, v in bottom.items()}
+    surface_rev = {v: k for k, v in surface.items()}
     source_rev = {v: k for k, v in source.items()}
     grid_rev = {v: k for k, v in grid.items()}
     beam_rev = {v: k for k, v in beam.items()}

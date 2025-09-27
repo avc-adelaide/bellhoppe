@@ -114,18 +114,24 @@ def create_env2d(**kv):
 def check_env2d(env):
     """Check the validity of a 2D underwater environment definition.
 
+    This function is automatically executed before any of the compute_ functions,
+    but must be called manually after setting environment parameters if you need to
+    query against defaults that may be affected.
+
     :param env: environment definition
+    :returns: updated environment definition
 
     Exceptions are thrown with appropriate error messages if the environment is invalid.
 
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
-    >>> check_env2d(env)
+    >>> env = check_env2d(env)
     """
-    env = _set_env_params(env)
+    env = _finalise_environment(env)
     try:
         assert env['type'] == '2D', 'Not a 2D environment'
-        max_range = _np.max(env['rx_range'])
+        max_range = _np.max(env['receiver_range'])
+        max_depth = env['depth']
         if env['surface'] is not None:
             assert _np.size(env['surface']) > 1, 'surface must be an Nx2 array'
             assert env['surface'].ndim == 2, 'surface must be a scalar or an Nx2 array'
@@ -135,19 +141,17 @@ def check_env2d(env):
             assert _np.all(_np.diff(env['surface'][:,0]) > 0), 'surface array must be strictly monotonic in range'
             assert env['surface_interp'] == _Strings.curvilinear or env['surface_interp'] == _Strings.linear, 'Invalid interpolation type: '+str(env['surface_interp'])
         if _np.size(env['depth']) > 1:
+            max_depth = _np.max(env['depth'][:,1])
             assert env['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array'
             assert env['depth'].shape[1] == 2, 'depth must be a scalar or an Nx2 array'
             assert env['depth'][0,0] <= 0, 'First range in depth array must be 0 m'
             assert env['depth'][-1,0] >= max_range, 'Last range in depth array must be beyond maximum range: '+str(max_range)+' m'
             assert _np.all(_np.diff(env['depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
             assert env['depth_interp'] == _Strings.curvilinear or env['depth_interp'] == _Strings.linear, 'Invalid interpolation type: '+str(env['depth_interp'])
-            max_depth = _np.max(env['depth'][:,1])
-            env["_bottom_bathymetry"] = "from-file"
-        else:
-            max_depth = env['depth']
+            assert env["_bathymetry"] == _Strings.from_file, 'len(depth)>1 requires BTY file'
         if isinstance(env['soundspeed'], _pd.DataFrame):
             # For DataFrames, apply the same minimum point requirements as numpy arrays
-            if env['soundspeed_interp'] == 'spline':
+            if env['soundspeed_interp'] == _Strings.spline:
                 assert env['soundspeed'].shape[0] > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
             else:
                 assert env['soundspeed'].shape[0] > 1, 'soundspeed profile must have at least 2 points'
@@ -158,7 +162,7 @@ def check_env2d(env):
             assert env['soundspeed'].ndim == 2, 'soundspeed must be a scalar or an Nx2 array'
             assert env['soundspeed'].shape[1] == 2, 'soundspeed must be a scalar or an Nx2 array'
             # Minimum points depend on interpolation type
-            if env['soundspeed_interp'] == 'spline':
+            if env['soundspeed_interp'] == _Strings.spline:
                 assert env['soundspeed'].shape[0] > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
             else:
                 assert env['soundspeed'].shape[0] > 1, 'soundspeed profile must have at least 2 points'
@@ -175,23 +179,34 @@ def check_env2d(env):
                     insert_ss_val = _np.interp(max_depth, env['soundspeed'][:,0], env['soundspeed'][:,1])
                 env['soundspeed'] = _np.insert(env['soundspeed'],indlarger,[max_depth,insert_ss_val],axis = 0)
                 env['soundspeed'] = env['soundspeed'][:indlarger+1,:]
-        assert _np.max(env['tx_depth']) <= max_depth, 'tx_depth cannot exceed water depth: '+str(max_depth)+' m'
-        assert _np.max(env['rx_depth']) <= max_depth, 'rx_depth cannot exceed water depth: '+str(max_depth)+' m'
+        assert _np.max(env['source_depth']) <= max_depth, 'source_depth cannot exceed water depth: '+str(max_depth)+' m'
+        assert _np.max(env['receiver_depth']) <= max_depth, 'receiver_depth cannot exceed water depth: '+str(max_depth)+' m'
         assert env['beam_angle_min'] > -180 and env['beam_angle_min'] <= 180, 'beam_angle_min must be in range (-180, 180]'
         assert env['beam_angle_max'] > -180 and env['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
         if env["bottom_reflection_coefficient"] is not None:
-            env["bottom_boundary_condition"] = "from-file"
-        if env['tx_directionality'] is not None:
-            assert _np.size(env['tx_directionality']) > 1, 'tx_directionality must be an Nx2 array'
-            assert env['tx_directionality'].ndim == 2, 'tx_directionality must be an Nx2 array'
-            assert env['tx_directionality'].shape[1] == 2, 'tx_directionality must be an Nx2 array'
-            assert _np.all(env['tx_directionality'][:,0] > -180) and _np.all(env['tx_directionality'][:,0] <= 180), 'tx_directionality angles must be in (-180, 180]'
+            assert env["bottom_boundary_condition"] == _Strings.from_file, "BRC values need to be read from file"
+        if env['source_directionality'] is not None:
+            assert _np.size(env['source_directionality']) > 1, 'source_directionality must be an Nx2 array'
+            assert env['source_directionality'].ndim == 2, 'source_directionality must be an Nx2 array'
+            assert env['source_directionality'].shape[1] == 2, 'source_directionality must be an Nx2 array'
+            assert _np.all(env['source_directionality'][:,0] > -180) and _np.all(env['source_directionality'][:,0] <= 180), 'source_directionality angles must be in (-180, 180]'
 
         return env
     except AssertionError as e:
         raise ValueError(e.args)
 
-def _set_env_params(env):
+def _finalise_environment(env):
+    """Reviews the data within an environment and updates settings for consistency.
+
+    This function is run as the first step of check_env2d().
+    """
+
+    if _np.size(env['depth']) > 1:
+        env["_bathymetry"] = _Strings.from_file
+    if env["bottom_reflection_coefficient"] is not None:
+        env["bottom_boundary_condition"] = _Strings.from_file
+    if env["surface"] is not None:
+        env["_altimetry"] = _Strings.from_file
 
     # this is a weird one, sometimes "depth_max" is defined as 0 in the env file and the simulation breaks if not
     # so we only set depth_max to be the maximum depth iff it hasn't been pre-set
@@ -205,12 +220,12 @@ def _set_env_params(env):
 
     # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
     if env['beam_angle_min'] is None:
-        if _np.min(env['rx_range']) < 0:
+        if _np.min(env['receiver_range']) < 0:
             env['beam_angle_min'] = -_env.Defaults.beam_angle_fullspace
         else:
             env['beam_angle_min'] = -_env.Defaults.beam_angle_halfspace
     if env['beam_angle_max'] is None:
-        if _np.min(env['rx_range']) < 0:
+        if _np.min(env['receiver_range']) < 0:
             env['beam_angle_max'] = _env.Defaults.beam_angle_fullspace
         else:
             env['beam_angle_max'] = _env.Defaults.beam_angle_halfspace
@@ -257,13 +272,13 @@ def compute_arrivals(env, model=None, debug=False, fname_base=None):
         print('[DEBUG] Model: '+model_name)
     return model.run(env, _Strings.arrivals, debug, fname_base)
 
-def compute_eigenrays(env, tx_depth_ndx=0, rx_depth_ndx=0, rx_range_ndx=0, model=None, debug=False, fname_base=None):
+def compute_eigenrays(env, source_depth_ndx=0, receiver_depth_ndx=0, receiver_range_ndx=0, model=None, debug=False, fname_base=None):
     """Compute eigenrays between a given transmitter and receiver.
 
     :param env: environment definition
-    :param tx_depth_ndx: transmitter depth index
-    :param rx_depth_ndx: receiver depth index
-    :param rx_range_ndx: receiver range index
+    :param source_depth_ndx: transmitter depth index
+    :param receiver_depth_ndx: receiver depth index
+    :param receiver_range_ndx: receiver range index
     :param model: propagation model to use (None to auto-select)
     :param debug: generate debug information for propagation model
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
@@ -276,22 +291,22 @@ def compute_eigenrays(env, tx_depth_ndx=0, rx_depth_ndx=0, rx_range_ndx=0, model
     """
     env = check_env2d(env)
     env = env.copy()
-    if _np.size(env['tx_depth']) > 1:
-        env['tx_depth'] = env['tx_depth'][tx_depth_ndx]
-    if _np.size(env['rx_depth']) > 1:
-        env['rx_depth'] = env['rx_depth'][rx_depth_ndx]
-    if _np.size(env['rx_range']) > 1:
-        env['rx_range'] = env['rx_range'][rx_range_ndx]
+    if _np.size(env['source_depth']) > 1:
+        env['source_depth'] = env['source_depth'][source_depth_ndx]
+    if _np.size(env['receiver_depth']) > 1:
+        env['receiver_depth'] = env['receiver_depth'][receiver_depth_ndx]
+    if _np.size(env['receiver_range']) > 1:
+        env['receiver_range'] = env['receiver_range'][receiver_range_ndx]
     (model_name, model) = _select_model(env, _Strings.eigenrays, model)
     if debug:
         print('[DEBUG] Model: '+model_name)
     return model.run(env, _Strings.eigenrays, debug, fname_base)
 
-def compute_rays(env, tx_depth_ndx=0, model=None, debug=False, fname_base=None):
+def compute_rays(env, source_depth_ndx=0, model=None, debug=False, fname_base=None):
     """Compute rays from a given transmitter.
 
     :param env: environment definition
-    :param tx_depth_ndx: transmitter depth index
+    :param source_depth_ndx: transmitter depth index
     :param model: propagation model to use (None to auto-select)
     :param debug: generate debug information for propagation model
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
@@ -303,22 +318,22 @@ def compute_rays(env, tx_depth_ndx=0, model=None, debug=False, fname_base=None):
     >>> bh.plot_rays(rays, width=1000)
     """
     env = check_env2d(env)
-    if _np.size(env['tx_depth']) > 1:
+    if _np.size(env['source_depth']) > 1:
         env = env.copy()
-        env['tx_depth'] = env['tx_depth'][tx_depth_ndx]
+        env['source_depth'] = env['source_depth'][source_depth_ndx]
     (model_name, model) = _select_model(env, _Strings.rays, model)
     if debug:
         print('[DEBUG] Model: '+model_name)
     return model.run(env, _Strings.rays, debug, fname_base)
 
-def compute_transmission_loss(env, tx_depth_ndx=0, mode=_Strings.coherent, model=None, tx_type="default", debug=False, fname_base=None):
+def compute_transmission_loss(env, source_depth_ndx=0, mode=_Strings.coherent, model=None, source_type="default", debug=False, fname_base=None):
     """Compute transmission loss from a given transmitter to all receviers.
 
     :param env: environment definition
-    :param tx_depth_ndx: transmitter depth index
+    :param source_depth_ndx: transmitter depth index
     :param mode: coherent, incoherent or semicoherent
     :param model: propagation model to use (None to auto-select)
-    :param tx_type: point or line
+    :param source_type: point or line
     :param debug: generate debug information for propagation model
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
     :returns: complex transmission loss at each receiver depth and range
@@ -331,16 +346,16 @@ def compute_transmission_loss(env, tx_depth_ndx=0, mode=_Strings.coherent, model
     env = check_env2d(env)
     if mode not in [_Strings.coherent, _Strings.incoherent, _Strings.semicoherent]:
         raise ValueError('Unknown transmission loss mode: '+mode)
-    if tx_type not in _Maps.source_rev:
-        raise ValueError(f'Unknown source type: {tx_type!r}')
-    if env['tx_type'] == 'default':
-        env['tx_type'] = tx_type
+    if source_type not in _Maps.source_rev:
+        raise ValueError(f'Unknown source type: {source_type!r}')
+    if env['source_type'] == 'default':
+        env['source_type'] = source_type
     else:
-        if not(tx_type == 'default') and not(env['tx_type'] == tx_type):
-            raise ValueError('ENV file defines source type "'+env['tx_type']+'" inconsistent with Python argument tx_type="'+tx_type+'"')
-    if _np.size(env['tx_depth']) > 1:
+        if not(source_type == 'default') and not(env['source_type'] == source_type):
+            raise ValueError('ENV file defines source type "'+env['source_type']+'" inconsistent with Python argument source_type="'+source_type+'"')
+    if _np.size(env['source_depth']) > 1:
         env = env.copy()
-        env['tx_depth'] = env['tx_depth'][tx_depth_ndx]
+        env['source_depth'] = env['source_depth'][source_depth_ndx]
     (model_name, model) = _select_model(env, mode, model)
     if debug:
         print('[DEBUG] Model: '+model_name)
@@ -553,17 +568,15 @@ class _Bellhop:
         svp_boundcond = _Maps.boundcond_rev[env['surface_boundary_condition']]
         svp_attunits = _Maps.attunits_rev[env['attenuation_units']]
         svp_volatt = _Maps.volatt_rev[env['volume_attenuation']]
+        svp_alti = _Maps.surface_rev[env['_altimetry']]
         if isinstance(svp, _pd.DataFrame):
             if len(svp.columns) > 1:
                 assert svp_interp == 'Q', "SVP DataFrame with multiple columns implies quadrilateral interpolation."
             else:
                 svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
-        if env['surface'] is None:
-            comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
-            self._print(fh, f"'{svp_interp}{svp_boundcond}{svp_attunits}{svp_volatt}'    ! {comment}")
-        else:
-            comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
-            self._print(fh, f"'{svp_interp}VWT*'    ! {comment}")
+        comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
+        self._print(fh, f"'{svp_interp}{svp_boundcond}{svp_attunits}{svp_volatt}{svp_alti}'    ! {comment}")
+        if env['surface'] is not None:
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
 
         if env['volume_attenuation'] == _Strings.francois_garrison:
@@ -596,7 +609,7 @@ class _Bellhop:
 
         depth = env['depth']
         bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
-        dp_flag = _Maps.bottom_rev[env['_bottom_bathymetry']]
+        dp_flag = _Maps.bottom_rev[env['_bathymetry']]
         comment = "BOT_Boundary_cond / BOT_Roughness"
         self._print(fh, f"{_quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}    ! {comment}")
 
@@ -615,24 +628,24 @@ class _Bellhop:
         if env['bottom_boundary_condition'] == "from-file":
             self._create_refl_coeff_file(fname_base+".brc", env['bottom_reflection_coefficient'])
 
-        self._print_array(fh, env['tx_depth'], nn=env['tx_ndepth'], label="TX_DEPTH")
-        self._print_array(fh, env['rx_depth'], nn=env['rx_ndepth'], label="RX_DEPTH")
-        self._print_array(fh, env['rx_range']/1000, nn=env['rx_nrange'], label="RX_RANGE")
+        self._print_array(fh, env['source_depth'], nn=env['source_ndepth'], label="TX_DEPTH")
+        self._print_array(fh, env['receiver_depth'], nn=env['receiver_ndepth'], label="RX_DEPTH")
+        self._print_array(fh, env['receiver_range']/1000, nn=env['receiver_nrange'], label="RX_RANGE")
 
         beamtype = _Maps.beam_rev[env['beam_type']]
         beampattern = " "
-        txtype = _Maps.source_rev[env['tx_type']]
+        txtype = _Maps.source_rev[env['source_type']]
         gridtype = _Maps.grid_rev[env['grid']]
-        if env['tx_directionality'] is not None:
+        if env['source_directionality'] is not None:
             beampattern = "*"
-            self._create_sbp_file(fname_base+'.sbp', env['tx_directionality'])
+            self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
         runtype_str = taskcode + beamtype + beampattern + txtype + gridtype
         self._print(fh, f"'{runtype_str.rstrip()}'  ! RUN TYPE")
         self._print(fh, f"{env['beam_num']} ! NBeams")
         self._print(fh, "%0.6f %0.6f /   ! ALPHA1,2 (degrees)" % (env['beam_angle_min'], env['beam_angle_max']))
         step_size = env["step_size"] or 0.0
         box_depth = env["box_depth"] or 1.01*env['depth_max']
-        box_range = env["box_range"] or 1.01*_np.max(_np.abs(env['rx_range']))
+        box_range = env["box_range"] or 1.01*_np.max(_np.abs(env['receiver_range']))
         self._print(fh, f"{step_size} {box_depth} {box_range/1000} ! STEP (m), ZBOX (m), RBOX (km)")
         _os.close(fh)
         return fname_base
@@ -695,38 +708,38 @@ class _Bellhop:
             hdr = f.readline()
             if hdr.find('2D') >= 0:
                 freq = self._readf(f, (float,))
-                tx_depth_info = self._readf(f, (int,), float)
-                tx_depth_count = tx_depth_info[0]
-                tx_depth = tx_depth_info[1:]
-                assert tx_depth_count == len(tx_depth)
-                rx_depth_info = self._readf(f, (int,), float)
-                rx_depth_count = rx_depth_info[0]
-                rx_depth = rx_depth_info[1:]
-                assert rx_depth_count == len(rx_depth)
-                rx_range_info = self._readf(f, (int,), float)
-                rx_range_count = rx_range_info[0]
-                rx_range = rx_range_info[1:]
-                assert rx_range_count == len(rx_range)
+                source_depth_info = self._readf(f, (int,), float)
+                source_depth_count = source_depth_info[0]
+                source_depth = source_depth_info[1:]
+                assert source_depth_count == len(source_depth)
+                receiver_depth_info = self._readf(f, (int,), float)
+                receiver_depth_count = receiver_depth_info[0]
+                receiver_depth = receiver_depth_info[1:]
+                assert receiver_depth_count == len(receiver_depth)
+                receiver_range_info = self._readf(f, (int,), float)
+                receiver_range_count = receiver_range_info[0]
+                receiver_range = receiver_range_info[1:]
+                assert receiver_range_count == len(receiver_range)
             else:
-                freq, tx_depth_count, rx_depth_count, rx_range_count = self._readf(hdr, (float, int, int, int))
-                tx_depth = self._readf(f, (float,)*tx_depth_count)
-                rx_depth = self._readf(f, (float,)*rx_depth_count)
-                rx_range = self._readf(f, (float,)*rx_range_count)
+                freq, source_depth_count, receiver_depth_count, receiver_range_count = self._readf(hdr, (float, int, int, int))
+                source_depth = self._readf(f, (float,)*source_depth_count)
+                receiver_depth = self._readf(f, (float,)*receiver_depth_count)
+                receiver_range = self._readf(f, (float,)*receiver_range_count)
             arrivals = []
-            for j in range(tx_depth_count):
+            for j in range(source_depth_count):
                 f.readline()
-                for k in range(rx_depth_count):
-                    for m in range(rx_range_count):
+                for k in range(receiver_depth_count):
+                    for m in range(receiver_range_count):
                         count = int(f.readline())
                         for n in range(count):
                             data = self._readf(f, (float, float, float, float, float, float, int, int))
                             arrivals.append(_pd.DataFrame({
-                                'tx_depth_ndx': [j],
-                                'rx_depth_ndx': [k],
-                                'rx_range_ndx': [m],
-                                'tx_depth': [tx_depth[j]],
-                                'rx_depth': [rx_depth[k]],
-                                'rx_range': [rx_range[m]],
+                                'source_depth_ndx': [j],
+                                'receiver_depth_ndx': [k],
+                                'receiver_range_ndx': [m],
+                                'source_depth': [source_depth[j]],
+                                'receiver_depth': [receiver_depth[k]],
+                                'receiver_range': [receiver_range[m]],
                                 'arrival_number': [n],
                                 # 'arrival_amplitude': [data[0]*_np.exp(1j * data[1]* _np.pi/180)],
                                 'arrival_amplitude': [data[0] * _np.exp( -1j * (_np.deg2rad(data[1]) + freq[0] * 2 * _np.pi * (data[3] * 1j +  data[2])))],

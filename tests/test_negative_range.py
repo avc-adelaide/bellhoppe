@@ -10,8 +10,8 @@ def test_negative_receiver_ranges():
     # Set up environment with negative and positive receiver ranges
     dp = env["depth"]
     env["depth"] = np.array([[-2000, dp], [2000, dp]])
-    env["rx_depth"] = 10
-    env["rx_range"] = np.array([-1000, -500, -1, 1, 500, 1000])
+    env["receiver_depth"] = 10
+    env["receiver_range"] = np.array([-1000, -500, -1, 1, 500, 1000])
 
     # Verify environment is valid
     bh.check_env2d(env)
@@ -24,9 +24,9 @@ def test_negative_receiver_ranges():
     arrivals = bh.compute_arrivals(env, debug=False, fname_base="test_negative_range")
 
     # Verify we have arrivals for all receiver ranges
-    for i in range(len(env["rx_range"])):
-        arr_subset = arrivals[arrivals.rx_range_ndx == i]
-        assert len(arr_subset) > 0, f"No arrivals found for receiver range {env['rx_range'][i]}"
+    for i in range(len(env["receiver_range"])):
+        arr_subset = arrivals[arrivals.receiver_range_ndx == i]
+        assert len(arr_subset) > 0, f"No arrivals found for receiver range {env['receiver_range'][i]}"
 
 
 def test_positive_receiver_ranges_unchanged():
@@ -35,7 +35,7 @@ def test_positive_receiver_ranges_unchanged():
     env = bh.create_env2d(name="Test positive ranges only")
 
     # Set up environment with only positive receiver ranges
-    env["rx_range"] = np.array([1, 500, 1000])
+    env["receiver_range"] = np.array([1, 500, 1000])
 
     # Verify environment is valid
     bh.check_env2d(env)
@@ -48,9 +48,9 @@ def test_positive_receiver_ranges_unchanged():
     arrivals = bh.compute_arrivals(env, debug=False, fname_base="test_positive_range")
 
     # Verify we have arrivals for all receiver ranges
-    for i in range(len(env["rx_range"])):
-        arr_subset = arrivals[arrivals.rx_range_ndx == i]
-        assert len(arr_subset) > 0, f"No arrivals found for receiver range {env['rx_range'][i]}"
+    for i in range(len(env["receiver_range"])):
+        arr_subset = arrivals[arrivals.receiver_range_ndx == i]
+        assert len(arr_subset) > 0, f"No arrivals found for receiver range {env['receiver_range'][i]}"
 
 
 def test_manual_angle_override():
@@ -59,7 +59,7 @@ def test_manual_angle_override():
     env = bh.create_env2d(name="Test manual angle override")
 
     # Set up environment with negative ranges AND manual angles
-    env["rx_range"] = np.array([-500, 500])
+    env["receiver_range"] = np.array([-500, 500])
     env["beam_angle_min"] = -45  # User explicitly set narrow angle range
     env["beam_angle_max"] = 45
 

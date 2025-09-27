@@ -53,9 +53,9 @@ def test_read_env2d_round_trip():
         bottom_soundspeed=1700.0,
         bottom_density=1800.0,
         bottom_absorption=0.2,
-        tx_depth=5.0,
-        rx_depth=np.array([2.0, 10.0, 25.0]),
-        rx_range=np.array([100.0, 500.0, 1000.0]),
+        source_depth=5.0,
+        receiver_depth=np.array([2.0, 10.0, 25.0]),
+        receiver_range=np.array([100.0, 500.0, 1000.0]),
         beam_angle_min=-30.0,
         beam_angle_max=30.0,
         beam_num=31
@@ -88,9 +88,9 @@ def test_read_env2d_round_trip():
             assert env_read['soundspeed'][0, 1] == env_orig['soundspeed']
 
         # Arrays should match
-        np.testing.assert_array_equal(env_read['tx_depth'], env_orig['tx_depth'])
-        np.testing.assert_array_equal(env_read['rx_depth'], env_orig['rx_depth'])
-        np.testing.assert_array_equal(env_read['rx_range'], env_orig['rx_range'])
+        np.testing.assert_array_equal(env_read['source_depth'], env_orig['source_depth'])
+        np.testing.assert_array_equal(env_read['receiver_depth'], env_orig['receiver_depth'])
+        np.testing.assert_array_equal(env_read['receiver_range'], env_orig['receiver_range'])
 
 
 def test_read_env2d_missing_file():
@@ -117,15 +117,15 @@ def test_read_env2d_vector_parsing():
     env = bh.read_env2d(env_file)
 
     # Check that compressed vector notation works (should have generated linearly spaced values)
-    assert len(env['rx_depth']) == 2  # From "51" and "0.0 5000.0 /"
-    assert env['rx_ndepth'] == 51  # From "51" and "0.0 5000.0 /"
-    assert env['rx_depth'][0] == 0.0
-    assert env['rx_depth'][-1] == 5000.0
+    assert len(env['receiver_depth']) == 2  # From "51" and "0.0 5000.0 /"
+    assert env['receiver_ndepth'] == 51  # From "51" and "0.0 5000.0 /"
+    assert env['receiver_depth'][0] == 0.0
+    assert env['receiver_depth'][-1] == 5000.0
 
-    assert len(env['rx_range']) == 2  # From "1001" and "0.0 100.0 /"
-    assert env['rx_nrange'] == 1001  # From "1001" and "0.0 100.0 /"
-    assert env['rx_range'][0] == 0.0
-    assert env['rx_range'][-1] == 100000.0  # Converted from km to m
+    assert len(env['receiver_range']) == 2  # From "1001" and "0.0 100.0 /"
+    assert env['receiver_nrange'] == 1001  # From "1001" and "0.0 100.0 /"
+    assert env['receiver_range'][0] == 0.0
+    assert env['receiver_range'][-1] == 100000.0  # Converted from km to m
 
 
 def test_read_env2d_vector_parsing():
@@ -134,12 +134,12 @@ def test_read_env2d_vector_parsing():
     env = bh.read_env2d(env_file)
 
     # Check that compressed vector notation works (should have generated linearly spaced values)
-    assert len(env['rx_depth']) == 2  # From "51" and "0.0 5000.0 /"
-    assert env['rx_ndepth'] == 51  # From "51" and "0.0 5000.0 /"
-    assert env['rx_depth'][0] == 0.0
-    assert env['rx_depth'][-1] == 5000.0
+    assert len(env['receiver_depth']) == 2  # From "51" and "0.0 5000.0 /"
+    assert env['receiver_ndepth'] == 51  # From "51" and "0.0 5000.0 /"
+    assert env['receiver_depth'][0] == 0.0
+    assert env['receiver_depth'][-1] == 5000.0
 
-    assert len(env['rx_range']) == 2  # From "1001" and "0.0 100.0 /"
-    assert env['rx_nrange'] == 1001  # From "1001" and "0.0 100.0 /"
-    assert env['rx_range'][0] == 0.0
-    assert env['rx_range'][-1] == 100000.0  # Converted from km to m
+    assert len(env['receiver_range']) == 2  # From "1001" and "0.0 100.0 /"
+    assert env['receiver_nrange'] == 1001  # From "1001" and "0.0 100.0 /"
+    assert env['receiver_range'][0] == 0.0
+    assert env['receiver_range'][-1] == 100000.0  # Converted from km to m

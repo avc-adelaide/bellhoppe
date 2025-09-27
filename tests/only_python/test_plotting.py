@@ -84,8 +84,8 @@ def test_plot_transmission_loss():
     """Test plot_transmission_loss function with computed transmission loss. Just check that there are no execution errors.
     """
     env = bh.create_env2d(
-        rx_depth=np.arange(0, 25),
-        rx_range=np.arange(0, 1000),
+        receiver_depth=np.arange(0, 25),
+        receiver_range=np.arange(0, 1000),
         beam_angle_min=-45,
         beam_angle_max=45
     )
@@ -97,8 +97,8 @@ def test_plot_transmission_loss_with_env():
     """Test plot_transmission_loss function with environment overlay. Just check that there are no execution errors.
     """
     env = bh.create_env2d(
-        rx_depth=np.arange(0, 25),
-        rx_range=np.arange(0, 1000),
+        receiver_depth=np.arange(0, 25),
+        receiver_range=np.arange(0, 1000),
         beam_angle_min=-45,
         beam_angle_max=45
     )
@@ -178,8 +178,8 @@ def test_pyplot_transmission_loss():
     """Test pyplot_transmission_loss function with computed transmission loss. Just check that there are no execution errors.
     """
     env = bh.create_env2d(
-        rx_depth=np.arange(0, 25),
-        rx_range=np.arange(0, 1000),
+        receiver_depth=np.arange(0, 25),
+        receiver_range=np.arange(0, 1000),
         beam_angle_min=-45,
         beam_angle_max=45
     )
@@ -191,8 +191,8 @@ def test_pyplot_transmission_loss_with_env():
     """Test pyplot_transmission_loss function with environment overlay. Just check that there are no execution errors.
     """
     env = bh.create_env2d(
-        rx_depth=np.arange(0, 25),
-        rx_range=np.arange(0, 1000),
+        receiver_depth=np.arange(0, 25),
+        receiver_range=np.arange(0, 1000),
         beam_angle_min=-45,
         beam_angle_max=45
     )

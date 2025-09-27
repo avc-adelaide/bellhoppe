@@ -25,20 +25,20 @@ from bellhop.constants import _Strings
 import bellhop.plotutils as _plt
 
 
-def plot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='orangered', rx_color='midnightblue', rx_plot=None, **kwargs):
+def plot_env(env, surface_color='dodgerblue', bottom_color='peru', source_color='orangered', receiver_color='midnightblue', receiver_plot=None, **kwargs):
     """Plots a visual representation of the environment.
 
     :param env: environment description
     :param surface_color: color of the surface (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
     :param bottom_color: color of the bottom (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
-    :param tx_color: color of transmitters (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
-    :param rx_color: color of receviers (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
-    :param rx_plot: True to plot all receivers, False to not plot any receivers, None to automatically decide
+    :param source_color: color of transmitters (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    :param receiver_color: color of receviers (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    :param receiver_plot: True to plot all receivers, False to not plot any receivers, None to automatically decide
 
     Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
 
     The surface, bottom, transmitters (marker: '*') and receivers (marker: 'o')
-    are plotted in the environment. If `rx_plot` is set to None and there are
+    are plotted in the environment. If `receiver_plot` is set to None and there are
     more than 2000 receivers, they are not plotted.
 
     >>> import bellhop as bh
@@ -47,7 +47,7 @@ def plot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='ora
     """
 
     min_x = 0
-    max_x = _np.max(env['rx_range'])
+    max_x = _np.max(env['receiver_range'])
     if max_x-min_x > 10000:
         divisor = 1000
         min_x /= divisor
@@ -79,17 +79,17 @@ def plot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='ora
         # linear and curvilinear options use the same bathymetry, just with different normals
         s = env['depth']
         _plt.plot(s[:,0]/divisor, -s[:,1], color=bottom_color)
-    txd = env['tx_depth']
-    _plt.plot([0]*_np.size(txd), -txd, marker='*', style=None, color=tx_color)
-    if rx_plot is None:
-        rx_plot = _np.size(env['rx_depth'])*_np.size(env['rx_range']) < 2000
-    if rx_plot:
-        rxr = env['rx_range']
+    txd = env['source_depth']
+    _plt.plot([0]*_np.size(txd), -txd, marker='*', style=None, color=source_color)
+    if receiver_plot is None:
+        receiver_plot = _np.size(env['receiver_depth'])*_np.size(env['receiver_range']) < 2000
+    if receiver_plot:
+        rxr = env['receiver_range']
         if _np.size(rxr) == 1:
             rxr = [rxr]
         for r in _np.array(rxr):
-            rxd = env['rx_depth']
-            _plt.plot([r/divisor]*_np.size(rxd), -rxd, marker='o', style=None, color=rx_color)
+            rxd = env['receiver_depth']
+            _plt.plot([r/divisor]*_np.size(rxd), -rxd, marker='o', style=None, color=receiver_color)
     _plt.hold(oh)
 
 def plot_ssp(env, **kwargs):
@@ -210,8 +210,8 @@ def plot_transmission_loss(tloss, env=None, **kwargs):
     >>> import bellhop as bh
     >>> import numpy as np
     >>> env = bh.create_env2d(
-            rx_depth=np.arange(0, 25),
-            rx_range=np.arange(0, 1000),
+            receiver_depth=np.arange(0, 25),
+            receiver_range=np.arange(0, 1000),
             beam_angle_min=-45,
             beam_angle_max=45
         )
@@ -227,24 +227,24 @@ def plot_transmission_loss(tloss, env=None, **kwargs):
     oh = _plt.hold()
     _plt.image(20*_np.log10(_fi.epsilon+_np.abs(_np.flipud(_np.array(tloss)))), x=xr, y=yr, xlabel=xlabel, ylabel='Depth (m)', xlim=xr, ylim=yr, **kwargs)
     if env is not None:
-        plot_env(env, rx_plot=False)
+        plot_env(env, receiver_plot=False)
     _plt.hold(oh)
 
-def pyplot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='orangered', rx_color='midnightblue',
-               rx_plot=None, **kwargs):
+def pyplot_env(env, surface_color='dodgerblue', bottom_color='peru', source_color='orangered', receiver_color='midnightblue',
+               receiver_plot=None, **kwargs):
     """Plots a visual representation of the environment with matplotlib.
 
     :param env: environment description
     :param surface_color: color of the surface (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
     :param bottom_color: color of the bottom (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
-    :param tx_color: color of transmitters (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
-    :param rx_color: color of receviers (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
-    :param rx_plot: True to plot all receivers, False to not plot any receivers, None to automatically decide
+    :param source_color: color of transmitters (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    :param receiver_color: color of receviers (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    :param receiver_plot: True to plot all receivers, False to not plot any receivers, None to automatically decide
 
     Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
 
     The surface, bottom, transmitters (marker: '*') and receivers (marker: 'o')
-    are plotted in the environment. If `rx_plot` is set to None and there are
+    are plotted in the environment. If `receiver_plot` is set to None and there are
     more than 2000 receivers, they are not plotted.
 
     >>> import bellhop as bh
@@ -252,11 +252,11 @@ def pyplot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='o
     >>> bh.plot_env(env)
     """
 
-    if _np.array(env['rx_range']).size > 1:
-        min_x = _np.min(env['rx_range'])
+    if _np.array(env['receiver_range']).size > 1:
+        min_x = _np.min(env['receiver_range'])
     else:
         min_x = 0
-    max_x = _np.max(env['rx_range'])
+    max_x = _np.max(env['receiver_range'])
     if max_x - min_x > 10000:
         divisor = 1000
         min_x /= divisor
@@ -296,18 +296,18 @@ def pyplot_env(env, surface_color='dodgerblue', bottom_color='peru', tx_color='o
         # linear and curvilinear options use the same bathymetry, just with different normals
         s = env['depth']
         _pyplt.plot(s[:, 0] / divisor, -s[:, 1], color=bottom_color, **kwargs)
-    txd = env['tx_depth']
+    txd = env['source_depth']
     # print(txd, [0]*_np.size(txd))
-    _pyplt.plot([0] * _np.size(txd), -txd, marker='*', markersize=6, color=tx_color, **kwargs)
-    if rx_plot is None:
-        rx_plot = _np.size(env['rx_depth']) * _np.size(env['rx_range']) < 2000
-    if rx_plot:
-        rxr = env['rx_range']
+    _pyplt.plot([0] * _np.size(txd), -txd, marker='*', markersize=6, color=source_color, **kwargs)
+    if receiver_plot is None:
+        receiver_plot = _np.size(env['receiver_depth']) * _np.size(env['receiver_range']) < 2000
+    if receiver_plot:
+        rxr = env['receiver_range']
         if _np.size(rxr) == 1:
             rxr = [rxr]
         for r in _np.array(rxr):
-            rxd = env['rx_depth']
-            _pyplt.plot([r / divisor] * _np.size(rxd), -rxd, marker='o', color=rx_color, **kwargs)
+            rxd = env['receiver_depth']
+            _pyplt.plot([r / divisor] * _np.size(rxd), -rxd, marker='o', color=receiver_color, **kwargs)
 
 def pyplot_ssp(env, **kwargs):
     """Plots the sound speed profile with matplotlib.
@@ -438,8 +438,8 @@ def pyplot_transmission_loss(tloss, env=None, **kwargs):
     >>> import bellhop as bh
     >>> import numpy as np
     >>> env = bh.create_env2d(
-            rx_depth=np.arange(0, 25),
-            rx_range=np.arange(0, 1000),
+            receiver_depth=np.arange(0, 25),
+            receiver_range=np.arange(0, 1000),
             beam_angle_min=-45,
             beam_angle_max=45
         )
@@ -467,7 +467,7 @@ def pyplot_transmission_loss(tloss, env=None, **kwargs):
     _pyplt.ylabel('Depth (m)')
     _pyplt.colorbar(label="Transmission Loss(dB)")
     if env is not None:
-        pyplot_env(env, rx_plot=False)
+        pyplot_env(env, receiver_plot=False)
 
 
 
