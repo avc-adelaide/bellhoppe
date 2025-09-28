@@ -106,6 +106,12 @@ def read_env2d(fname):
         """Read sound speed profile points until we find the bottom boundary line"""
         ssp_points = []
 
+        # according to "EnvironmentalFile.htm":
+        prev_speed = 1500.0
+        prev_speed_shear = 0.0
+        prev_density = 1000.0
+        prev_att = 0.0
+        prev_att_shear = 0.0
         while True:
             line = f.readline().strip()
             if not line:
@@ -122,12 +128,22 @@ def read_env2d(fname):
             if line.endswith('/'):
                 line = line[:-1].strip()
 
-            parts = line.split()
-            if len(parts) >= 2:
+            parts = line.split() + [None] * 6 # pad with 6x None to allow numerical indexing always
+            if len(parts) >= 1:
                 try:
                     depth = float(parts[0])
-                    speed = float(parts[1])
+                    speed = float(parts[1] or prev_speed)
+                    speed_shear = float(parts[2] or prev_speed_shear)
+                    density = float(parts[3] or prev_density)
+                    att = float(parts[4] or prev_att)
+                    att_shear = float(parts[5] or prev_att_shear)
                     ssp_points.append([depth, speed])
+                    # TODO: add extra terms to ssp_points array (but other fixes needed)
+                    prev_speed = speed
+                    prev_speed_shear = speed_shear
+                    prev_density = density
+                    prev_att = att
+                    prev_att_shear = att_shear
                 except ValueError:
                     # This might be the end of SSP or a different format
                     # Put the line back and break
@@ -289,12 +305,12 @@ def read_env2d(fname):
         # Bottom properties (depth, sound_speed, density, absorption)
         if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
             bottom_props_line = f.readline().strip()
-            if bottom_props_line == "/": # undocument? copy top options
-                env['bottom_soundspeed']       = env['surface_soundspeed']
-                env['bottom_soundspeed_shear'] = env['surface_soundspeed_shear']
-                env['bottom_density']          = env['surface_density']
-                env['bottom_absorption']       = env['surface_absorption']
-                env['bottom_absorption_shear'] = env['surface_absorption_shear']
+            if bottom_props_line == "/": # undocumented?
+                env['bottom_soundspeed']       = None
+                env['bottom_soundspeed_shear'] = None
+                env['bottom_density']          = None
+                env['bottom_absorption']       = None
+                env['bottom_absorption_shear'] = None
             else:
                 bottom_props_line = _parse_line(bottom_props_line)
                 if bottom_props_line.endswith('/'):

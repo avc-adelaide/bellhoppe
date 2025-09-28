@@ -644,7 +644,9 @@ class _Bellhop:
 
         if env['bottom_boundary_condition'] == "acousto-elastic":
             comment = "DEPTH_Max  BOT_SoundSpeed  BOT_SoundSpeed_Shear BOT_Density [ BOT_Absorp [ BOT_Absorp_Shear ] ]"
-            if env['bottom_absorption'] is None:
+            if env['bottom_soundspeed'] is None:
+                self._print(fh, f"/  ! {comment}")
+            elif env['bottom_absorption'] is None:
                 self._print(fh, f"{env['depth_max']} {env['bottom_soundspeed']} {env['bottom_soundspeed_shear']} {env['bottom_density']/1000} /  ! {comment}")
             elif env['bottom_absorption_shear'] is None:
                 self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption']))
