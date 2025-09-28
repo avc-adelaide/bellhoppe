@@ -478,12 +478,15 @@ def read_ssp(fname):
 
         # Read sound speed data - read all remaining lines as a matrix
         ssp_data = []
+        line_num = 2  # We've already read 2 lines (nprofiles and ranges)
         for line in f:
+            line_num += 1
             line = line.strip()
             if line:  # Skip empty lines
                 values = [float(x) for x in line.split()]
-                if len(values) == nprofiles:
-                    ssp_data.append(values)
+                if len(values) != nprofiles:
+                    raise ValueError(f"Line {line_num} has {len(values)} values, expected {nprofiles}")
+                ssp_data.append(values)
 
         ssp_array = _np.array(ssp_data)
 
