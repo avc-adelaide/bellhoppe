@@ -735,7 +735,7 @@ class _Bellhop:
         err = None
         try:
             with open(fname_base+'.prt', 'rt') as f:
-                for lno, s in enumerate(f):
+                for s in f:
                     if err is not None:
                         err += '[BELLHOP] ' + s
                     elif '*** FATAL ERROR ***' in s:
