@@ -602,8 +602,6 @@ class _Bellhop:
         if env['volume_attenuation'] == _Strings.francois_garrison:
             comment = "Francois-Garrison volume attenuation parameters (sal, temp, pH, depth)"
             self._print(fh,f"{env['fg_salinity']} {env['fg_temperature']} {env['fg_pH']} {env['fg_depth']}    ! {comment}")
-            if _np.size(svp) > 1: # why is this necessary? Included to match bellhop examples but seems erroneous/misplaced/redundant
-                self._print(fh, f"{svp[0,0]} {svp[0,1]} /    ! MAXDEPTH SSP")
 
         if env['surface_boundary_condition'] == _Strings.acousto_elastic:
             comment = "DEPTH_Top (m)  TOP_SoundSpeed (m/s)  TOP_SoundSpeed_Shear (m/s)  TOP_Density (g/cm^3)  [ TOP_Absorp [ TOP_Absorp_Shear ] ]"

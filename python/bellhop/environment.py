@@ -39,7 +39,7 @@ class EnvironmentConfig:
     # Bottom parameters
     bottom_soundspeed: float = 1600.0  # m/s
     bottom_soundspeed_shear: float = 0.0  # m/s
-    bottom_density: float = 1000.0  # kg/m^3
+    bottom_density: float = 1600  # kg/m^3  # this value doesn't seem right but is copied from ARLpy
     bottom_absorption: Optional[float] = None  # dB/wavelength
     bottom_absorption_shear: Optional[float] = None  # dB/wavelength
     bottom_roughness: float = 0.0  # m (rms)

@@ -229,9 +229,12 @@ def read_env2d(fname):
 
             surface_props = surface_props_line.split()
             env['surface_depth'] = float(surface_props[0])
-            env['surface_soundspeed'] = float(surface_props[1])
-            env['surface_soundspeed_shear'] = float(surface_props[2])
-            env['surface_density'] = float(surface_props[3]) * 1000  # convert from g/cm³ to kg/m³
+            if len(surface_props) > 1:
+                env['surface_soundspeed'] = float(surface_props[1])
+            if len(surface_props) > 2:
+                env['surface_soundspeed_shear'] = float(surface_props[2])
+            if len(surface_props) > 3:
+                env['surface_density'] = float(surface_props[3]) * 1000  # convert from g/cm³ to kg/m³
             if len(surface_props) > 4:
                 env['surface_absorption'] = float(surface_props[4])
             if len(surface_props) > 5:
@@ -313,9 +316,12 @@ def read_env2d(fname):
                 #       ASB:  Bottom S-wave attenuation. (  "   "    "    "   "   "     )
 
                 bottom_props = bottom_props_line.split()
-                env['bottom_soundspeed'] = float(bottom_props[1])
-                env['bottom_soundspeed_shear'] = float(bottom_props[2])
-                env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
+                if len(bottom_props) > 1:
+                    env['bottom_soundspeed'] = float(bottom_props[1])
+                if len(bottom_props) > 2:
+                    env['bottom_soundspeed_shear'] = float(bottom_props[2])
+                if len(bottom_props) > 3:
+                    env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
                 if len(bottom_props) > 4:
                     env['bottom_absorption'] = float(bottom_props[4])
                 if len(bottom_props) > 5:
