@@ -208,11 +208,34 @@ def read_env2d(fname):
             env["fg_depth"] = float(fg_parts[3])
 
 
-        if 'A' in topopt:
-            # Read halfspace parameters line
-            f.readline().strip()
-            # This line contains: depth, alphaR, betaR, rho, alphaI, betaI
-            # We skip this for now as it's not part of the standard env structure
+        if env["surface_boundary_condition"] == _Strings.acousto_elastic:
+            surface_props_line = f.readline().strip()
+            surface_props_line = _parse_line(surface_props_line)
+            if surface_props_line.endswith('/'):
+               surface_props_line = surface_props_line[:-1].strip()
+
+            #     Syntax:
+            #
+            #     ZT  CPT  CST  RHOT  APT  AST
+            #
+            #     Description:
+            #
+            #     ZT:   Depth (m).
+            #     CPT:  Top P-wave speed (m/s).
+            #     CST:  Top S-wave speed (m/s).
+            #     RHOT: Top density (g/cm3).
+            #     APT:  Top P-wave attenuation. (units as given by Option(3:3) )
+            #     AST:  Top S-wave attenuation. (  "   "    "    "   "   "     )
+
+            surface_props = surface_props_line.split()
+            env['surface_depth'] = float(surface_props[0])
+            env['surface_soundspeed'] = float(surface_props[1])
+            env['surface_soundspeed_shear'] = float(surface_props[2])
+            env['surface_density'] = float(surface_props[3]) * 1000  # convert from g/cm³ to kg/m³
+            if len(surface_props) > 4:
+                env['surface_absorption'] = float(surface_props[4])
+            if len(surface_props) > 5:
+                env['surface_absorption_shear'] = float(surface_props[5])
 
 
         # Line 5 or 6: SSP depth specification (format: npts sigma_z max_depth)
@@ -263,35 +286,40 @@ def read_env2d(fname):
         # Bottom properties (depth, sound_speed, density, absorption)
         if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
             bottom_props_line = f.readline().strip()
-            bottom_props_line = _parse_line(bottom_props_line)
-            if bottom_props_line.endswith('/'):
-                bottom_props_line = bottom_props_line[:-1].strip()
+            if bottom_props_line == "/": # undocument? copy top options
+                env['bottom_soundspeed']       = env['surface_soundspeed']
+                env['bottom_soundspeed_shear'] = env['surface_soundspeed_shear']
+                env['bottom_density']          = env['surface_density']
+                env['bottom_absorption']       = env['surface_absorption']
+                env['bottom_absorption_shear'] = env['surface_absorption_shear']
+            else:
+                bottom_props_line = _parse_line(bottom_props_line)
+                if bottom_props_line.endswith('/'):
+                    bottom_props_line = bottom_props_line[:-1].strip()
 
-            # fortran sources say: "z, alphaR, betaR, rhoR, alphaI, betaI"
-            # docs say:
-            #       Syntax:
-            #
-            #       ZB  CPB  CSB  RHOB  APB  ASB
-            #
-            #       Description:
-            #
-            #       ZB:   Depth (m).
-            #       CPB:  Bottom P-wave speed (m/s).
-            #       CSB:  Bottom S-wave speed (m/s).
-            #       RHOB: Bottom density (g/cm3).
-            #       APB:  Bottom P-wave attenuation. (units as given by TOPOPT(3:3) )
-            #       ASB:  Bottom S-wave attenuation. (  "   "    "    "   "   "     )
-            bottom_props = bottom_props_line.split()
-            if len(bottom_props) > 1:
+                # fortran sources say: "z, alphaR, betaR, rhoR, alphaI, betaI"
+                # docs say:
+                #       Syntax:
+                #
+                #       ZB  CPB  CSB  RHOB  APB  ASB
+                #
+                #       Description:
+                #
+                #       ZB:   Depth (m).
+                #       CPB:  Bottom P-wave speed (m/s).
+                #       CSB:  Bottom S-wave speed (m/s).
+                #       RHOB: Bottom density (g/cm3).
+                #       APB:  Bottom P-wave attenuation. (units as given by TOPOPT(3:3) )
+                #       ASB:  Bottom S-wave attenuation. (  "   "    "    "   "   "     )
+
+                bottom_props = bottom_props_line.split()
                 env['bottom_soundspeed'] = float(bottom_props[1])
-            if len(bottom_props) > 2:
                 env['bottom_soundspeed_shear'] = float(bottom_props[2])
-            if len(bottom_props) > 3:
                 env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
-            if len(bottom_props) > 4:
-                env['bottom_absorption'] = float(bottom_props[4])
-            if len(bottom_props) > 5:
-                env['bottom_absorption_shear'] = float(bottom_props[5])
+                if len(bottom_props) > 4:
+                    env['bottom_absorption'] = float(bottom_props[4])
+                if len(bottom_props) > 5:
+                    env['bottom_absorption_shear'] = float(bottom_props[5])
 
         # Source depths
         source_depths, env['source_ndepth'] = _parse_vector(f)

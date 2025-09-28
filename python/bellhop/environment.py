@@ -39,7 +39,7 @@ class EnvironmentConfig:
     # Bottom parameters
     bottom_soundspeed: float = 1600.0  # m/s
     bottom_soundspeed_shear: float = 0.0  # m/s
-    bottom_density: float = 1600.0  # kg/m^3
+    bottom_density: float = 1000.0  # kg/m^3
     bottom_absorption: Optional[float] = None  # dB/wavelength
     bottom_absorption_shear: Optional[float] = None  # dB/wavelength
     bottom_roughness: float = 0.0  # m (rms)
@@ -54,6 +54,12 @@ class EnvironmentConfig:
     surface_interp: str = _Strings.linear  # curvilinear/linear
     surface_boundary_condition: str = _Strings.vacuum
     surface_reflection_coefficient: Optional[Any] = None
+    surface_depth: float = 0.0  # m
+    surface_soundspeed: float = 1600.0  # m/s
+    surface_soundspeed_shear: float = 0.0  # m/s
+    surface_density: float = 1000.0  # kg/m^3
+    surface_absorption: Optional[float] = None  # dB/wavelength
+    surface_absorption_shear: Optional[float] = None  # dB/wavelength
     _altimetry: str = _Strings.flat  # set to "from-file" if multiple surface heights
 
     # Source parameters

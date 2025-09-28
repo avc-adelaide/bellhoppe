@@ -605,6 +605,15 @@ class _Bellhop:
             if _np.size(svp) > 1: # why is this necessary? Included to match bellhop examples but seems erroneous/misplaced/redundant
                 self._print(fh, f"{svp[0,0]} {svp[0,1]} /    ! MAXDEPTH SSP")
 
+        if env['surface_boundary_condition'] == _Strings.acousto_elastic:
+            comment = "DEPTH_Top (m)  TOP_SoundSpeed (m/s)  TOP_SoundSpeed_Shear (m/s)  TOP_Density (g/cm^3)  [ TOP_Absorp [ TOP_Absorp_Shear ] ]"
+            if env['surface_absorption'] is None:
+                self._print(fh, f"{env['surface_depth']} {env['surface_soundspeed']} {env['surface_soundspeed_shear']} {env['surface_density']/1000} /  ! {comment}")
+            elif env['surface_absorption_shear'] is None:
+                self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['surface_soundspeed'], env['surface_soundspeed_shear'], env['surface_density']/1000, env['surface_absorption']))
+            else:
+                self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['surface_soundspeed'], env['surface_soundspeed_shear'], env['surface_density']/1000, env['surface_absorption'], env['surface_absorption_shear']))
+
         # max depth should be the depth of the acoustic domain, which can be deeper than the max depth bathymetry
         comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
         self._print(fh, f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}    ! {comment}")

@@ -22,3 +22,12 @@ def test_shaded_read_data():
     # bh.print_env(env)
     bh.check_env2d(env)
 
+
+def test_shaded_calc():
+    """Test using a Bellhop example that something is calculated.
+    """
+
+    tl = bh.compute_transmission_loss(env,mode="coherent",debug=False,fname_base="tests/BeamPattern/shaded_output")
+
+    assert tl is not None, "No TL results calculated?"
+
