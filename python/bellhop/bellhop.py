@@ -292,9 +292,7 @@ def compute_arrivals(env, model=None, debug=False, fname_base=None):
     >>> bh.plot_arrivals(arrivals)
     """
     env = check_env2d(env)
-    (model_name, model) = _select_model(env, _Strings.arrivals, model)
-    if debug:
-        print('[DEBUG] Model: '+model_name)
+    model = _select_model(env, _Strings.arrivals, model, debug)
     return model.run(env, _Strings.arrivals, debug, fname_base)
 
 def compute_eigenrays(env, source_depth_ndx=0, receiver_depth_ndx=0, receiver_range_ndx=0, model=None, debug=False, fname_base=None):
@@ -322,9 +320,7 @@ def compute_eigenrays(env, source_depth_ndx=0, receiver_depth_ndx=0, receiver_ra
         env['receiver_depth'] = env['receiver_depth'][receiver_depth_ndx]
     if _np.size(env['receiver_range']) > 1:
         env['receiver_range'] = env['receiver_range'][receiver_range_ndx]
-    (model_name, model) = _select_model(env, _Strings.eigenrays, model)
-    if debug:
-        print('[DEBUG] Model: '+model_name)
+    model = _select_model(env, _Strings.eigenrays, model, debug)
     return model.run(env, _Strings.eigenrays, debug, fname_base)
 
 def compute_rays(env, source_depth_ndx=0, model=None, debug=False, fname_base=None):
@@ -346,9 +342,7 @@ def compute_rays(env, source_depth_ndx=0, model=None, debug=False, fname_base=No
     if _np.size(env['source_depth']) > 1:
         env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]
-    (model_name, model) = _select_model(env, _Strings.rays, model)
-    if debug:
-        print('[DEBUG] Model: '+model_name)
+    model = _select_model(env, _Strings.rays, model, debug)
     return model.run(env, _Strings.rays, debug, fname_base)
 
 def compute_transmission_loss(env, source_depth_ndx=0, mode=_Strings.coherent, model=None, source_type="default", debug=False, fname_base=None):
@@ -380,9 +374,7 @@ def compute_transmission_loss(env, source_depth_ndx=0, mode=_Strings.coherent, m
     if _np.size(env['source_depth']) > 1:
         env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]
-    (model_name, model) = _select_model(env, mode, model)
-    if debug:
-        print('[DEBUG] Model: '+model_name)
+    model = _select_model(env, mode, model, debug)
     return model.run(env, mode, debug, fname_base)
 
 def arrivals_to_impulse_response(arrivals, fs, abs_time=False):
@@ -441,16 +433,20 @@ def models(env=None, task=None):
             rv.append(m[0])
     return rv
 
-def _select_model(env, task, model):
+def _select_model(env, task, model, debug):
     if model is not None:
         for m in _models:
             if m[0] == model:
-                return (m[0], m[1]())
+                if debug:
+                    print('[DEBUG] Model: '+m[0])
+                return m[1]()
         raise ValueError('Unknown model: '+model)
     for m in _models:
         mm = m[1]()
         if mm.supports(env, task):
-            return (m[0], mm)
+            if debug:
+                print('[DEBUG] Model: '+m[0])
+            return mm
     raise ValueError('No suitable propagation model available')
 
 def load_shd(fname_base):
