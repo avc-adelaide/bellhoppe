@@ -1,6 +1,7 @@
 import pytest
 import bellhop as bh
 import numpy as np
+import pandas as pd
 import tempfile
 import os
 
@@ -143,3 +144,15 @@ def test_read_env2d_vector_parsing():
     assert env['receiver_nrange'] == 1001  # From "1001" and "0.0 100.0 /"
     assert env['receiver_range'][0] == 0.0
     assert env['receiver_range'][-1] == 100000.0  # Converted from km to m
+
+
+def test_read_env2e_dataframe():
+
+    env1 = bh.create_env2d(soundspeed=[[0,1540], [5,1535], [10,1535], [20,1530]])
+
+    ssp2 = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")  # Returns DataFrame
+    env2 = bh.create_env2d(soundspeed=ssp2)
+
+    assert isinstance(env1['soundspeed'],np.ndarray), "Expect plain array => Numpy array"
+    assert isinstance(env2['soundspeed'],pd.DataFrame), "Expect DataFrame => preserved"
+
