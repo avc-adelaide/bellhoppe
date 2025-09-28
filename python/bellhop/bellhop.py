@@ -241,12 +241,7 @@ def _finalise_environment(env):
     # this is a weird one, sometimes "depth_max" is defined as 0 in the env file and the simulation breaks if not
     # so we only set depth_max to be the maximum depth iff it hasn't been pre-set
     if env['depth_max'] is None:
-        svp = env['soundspeed']
-        svp_max_depth = 0.0
-        if isinstance(svp, _pd.DataFrame):
-            svp_max_depth = _np.max(svp.index[-1])
-        bty_max_depth = _np.max(env['depth'])
-        env['depth_max'] = max(bty_max_depth, svp_max_depth)
+        env['depth_max'] = _np.max(env['depth'])
 
     # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
     if env['beam_angle_min'] is None:
@@ -636,17 +631,16 @@ class _Bellhop:
             for j in range(svp.shape[0]):
                 self._print(fh, f"{svp[j,0]} {svp[j,1]} /  ! ssp_{j}")
 
-        depth = env['depth']
         bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
         dp_flag = _Maps.bottom_rev[env['_bathymetry']]
         comment = "BOT_Boundary_cond / BOT_Roughness"
         self._print(fh, f"{_quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}    ! {comment}")
 
-        comment = "DEPTH_Max  BOT_SoundSpeed  BOT_SoundSpeed_Shear BOT_Density [ BOT_Absorp [ BOT_Absorp_Shear ] ]"
-        if _np.size(depth) > 1:
-            self._create_bty_ati_file(fname_base+'.bty', depth, env['depth_interp'])
+        if _np.size(env['depth']) > 1:
+            self._create_bty_ati_file(fname_base+'.bty', env['depth'], env['depth_interp'])
 
         if env['bottom_boundary_condition'] == "acousto-elastic":
+            comment = "DEPTH_Max  BOT_SoundSpeed  BOT_SoundSpeed_Shear BOT_Density [ BOT_Absorp [ BOT_Absorp_Shear ] ]"
             if env['bottom_absorption'] is None:
                 self._print(fh, f"{env['depth_max']} {env['bottom_soundspeed']} {env['bottom_soundspeed_shear']} {env['bottom_density']/1000} /  ! {comment}")
             elif env['bottom_absorption_shear'] is None:
