@@ -99,8 +99,8 @@ def read_env2d(fname):
         parts = values_line.split()
         values = [dtype(p) for p in parts]
 
-        # Note that we do not try to interpolate here, since Bellhop has its own routines
-        return _np.array(values), linecount
+        valout = _np.array(values) if len(values) > 1 else values[0]
+        return valout, linecount
 
     def _read_ssp_points(f):
         """Read sound speed profile points until we find the bottom boundary line"""
@@ -349,19 +349,9 @@ def read_env2d(fname):
                 if len(bottom_props) > 5:
                     env['bottom_absorption_shear'] = float(bottom_props[5])
 
-        # Source depths
-        source_depths, env['source_ndepth'] = _parse_vector(f)
-        if len(source_depths) == 1:
-            env['source_depth'] = source_depths[0]
-        else:
-            env['source_depth'] = source_depths
-
-        # Receiver depths
-        receiver_depths, env['receiver_ndepth'] = _parse_vector(f)
-        if len(receiver_depths) == 1:
-            env['receiver_depth'] = receiver_depths[0]
-        else:
-            env['receiver_depth'] = receiver_depths
+        # Source & receiver depths
+        env['source_depth'], env['source_ndepth'] = _parse_vector(f)
+        env['receiver_depth'], env['receiver_ndepth'] = _parse_vector(f)
 
         # Receiver ranges (in km, need to convert to m)
         receiver_ranges, env['receiver_nrange'] = _parse_vector(f)

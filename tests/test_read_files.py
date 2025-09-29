@@ -176,3 +176,6 @@ def test_file_not_found():
 
     with pytest.raises(FileNotFoundError):
         bh.read_refl_coeff("nonexistent.brc")
+
+    with pytest.raises(FileNotFoundError):
+        bh.read_sbp("nonexistent.sbp")
