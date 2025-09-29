@@ -25,63 +25,58 @@ env:
 
 jobs:
 
-  coverage:
+  build:
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install dependencies
+    - name: Cache apt packages
+      uses: actions/cache@v4
+      with:
+        path: /var/cache/apt/archives
+        key: ${{ runner.os }}-apt-gfortran-graphviz-gcc
+        restore-keys: |
+          ${{ runner.os }}-apt-
+
+    - name: Install system dependencies
       run: |
         sudo apt update
-        sudo apt install -y gfortran gcc
+        sudo apt install -y gfortran gcc graphviz
 
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
+    - name: Cache Python packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-docs-${{ hashFiles('pyproject.toml') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-docs-
+          ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-
+          ${{ runner.os }}-pip-
+
     - name: Install python packages
       run: |
-        pip install hatch
+        pip install hatch FORD sphinx
 
     - name: Run coverage
       run: |
         make cov
 
-    - name: Upload coverage reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-reports
-        path: |
-          _coverage/
-          _coverage_python/
-        retention-days: 3
-
-  build:
-    runs-on: ubuntu-latest
-    needs: coverage
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-
-    - name: Install FORD
-      run: pip install hatch FORD sphinx
-
-    - name: Install gfortran and graphviz
-      run: sudo apt-get update && sudo apt-get install -y gfortran graphviz gcc
-
-    - name: Download coverage reports
-      uses: actions/download-artifact@v4
-      with:
-        name: coverage-reports
-        path: './docs/static/coverage'
+    - name: Move coverage reports to documentation
+      run: |
+        mkdir -p ./docs/static/coverage
+        if [ -d "_coverage/" ]; then
+          cp -r _coverage/ ./docs/static/coverage/
+        fi
+        if [ -d "_coverage_python/" ]; then
+          cp -r _coverage_python/ ./docs/static/coverage/
+        fi
 
     - name: Generate documentation
       run: |
