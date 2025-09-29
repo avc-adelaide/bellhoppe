@@ -65,6 +65,6 @@ def test_DickensB_one_beam():
     """Artificial scenario to test if one beam"""
     env3 = bh.read_env2d("tests/Dickins/DickinsB_one_beam.env")
     assert env3['soundspeed'] == 1476.7, "Single entry in SSP should be singleton float"
-    arr3 = bh.compute_rays(env3,fname_base="tests/Dickins/DickinsB_output3",debug=True)
-    print(arr3)
-    #assert arr3 is not None
+    ray3 = bh.compute_rays(env3,fname_base="tests/Dickins/DickinsB_output3",debug=True)
+    assert ray3 is not None, "No results generated"
+    assert len(ray3) == 1, "One beam should result in one row of results only"
