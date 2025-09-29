@@ -17,7 +17,6 @@ class _Strings(str, Enum):
     quadrilateral = "quadrilateral"
     pchip = "pchip"
     hexahedral = "hexahedral"
-    arrivals = "arrivals"
     nlinear = "nlinear"
 
     # tasks
@@ -70,6 +69,7 @@ class _Strings(str, Enum):
     # tasks
     ray = "ray"
     eigenray = "eigenray"
+    arrivals = "arrivals"
     amplitude = "amplitude"
     amplitude_b = "amplitude-binary"
     tl_coherent = "TL-coherent"
@@ -94,9 +94,9 @@ class _Maps:
     interp = {
         "S": _Strings.spline,
         "C": _Strings.linear,
-        "Q": _Strings.quadrilateral,
+        "Q": _Strings.quadrilateral, # TODO: add test
         "P": _Strings.pchip,
-        "H": _Strings.hexahedral,
+        "H": _Strings.hexahedral, # TODO: add test
         "N": _Strings.nlinear,
         " ": _Strings.default,
     }
