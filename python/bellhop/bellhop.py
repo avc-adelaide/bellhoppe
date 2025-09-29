@@ -496,6 +496,17 @@ class _Bellhop:
         self._unlink(fname_base+'.log')
         return rv
 
+    def _rm_files(self,fname_base):
+        self._unlink(fname_base+'.bty')
+        self._unlink(fname_base+'.ssp')
+        self._unlink(fname_base+'.ati')
+        self._unlink(fname_base+'.sbp')
+        self._unlink(fname_base+'.prt')
+        self._unlink(fname_base+'.log')
+        self._unlink(fname_base+'.arr')
+        self._unlink(fname_base+'.ray')
+        self._unlink(fname_base+'.shd')
+
     def run(self, env, task, debug=False, fname_base=None):
         taskmap = {
             _Strings.arrivals:     ['A', self._load_arrivals],
@@ -509,6 +520,10 @@ class _Bellhop:
         if fname_base is not None:
             fname_flag = True
 
+        if fname_base:
+            print('[CUSTOM FILES] Deleting prior working files: '+fname_base+'.*')
+            self._rm_files(fname_base)
+
         fname_base = self._create_env_file(env, taskmap[task][0], fname_base)
 
         results = None
@@ -521,21 +536,14 @@ class _Bellhop:
                     results = taskmap[task][1](fname_base)
                 except FileNotFoundError:
                     print('[WARN] Bellhop did not generate expected output file')
+
         if debug:
             print('[DEBUG] Bellhop working files: '+fname_base+'.*')
         elif fname_flag:
             print('[CUSTOM FILES] Bellhop working files: '+fname_base+'.*')
         else:
-            self._unlink(fname_base+'.env')
-            self._unlink(fname_base+'.bty')
-            self._unlink(fname_base+'.ssp')
-            self._unlink(fname_base+'.ati')
-            self._unlink(fname_base+'.sbp')
-            self._unlink(fname_base+'.prt')
-            self._unlink(fname_base+'.log')
-            self._unlink(fname_base+'.arr')
-            self._unlink(fname_base+'.ray')
-            self._unlink(fname_base+'.shd')
+            self._rm_files(fname_base)
+
         return results
 
     def _bellhop(self,*args):
