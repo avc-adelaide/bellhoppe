@@ -295,6 +295,8 @@ def read_env2d(fname):
         env["bottom_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid(opt)
 
         if len(botopt) > 1:
+            def _invalid(opt):
+                raise ValueError(f"Bathymetry option {opt!r} not available")
             opt = botopt[1]
             env["_bathymetry"] = _Maps.bottom.get(opt) or _invalid(opt)
             if env["_bathymetry"] == _Strings.from_file:

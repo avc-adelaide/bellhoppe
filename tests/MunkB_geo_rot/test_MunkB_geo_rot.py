@@ -53,3 +53,10 @@ def test_table_output():
         atol=1e-8,  # absolute tolerance
         rtol=1e-5,  # relative tolerance
     )
+
+def test_MunkB_extra_bot_param():
+    env2 = bh.read_env2d("tests/MunkB_geo_rot/MunkB_geo_rot_botx.env")
+    assert env2['bottom_beta'] == 3.3, "Bottom beta value not read correctly"
+    assert env2['bottom_transition_freq'] == 4.4, "Bottom trans freq value not read correctly"
+    assert env2['bottom_absorption'] == 7.7, "Bottom abs value not read correctly"
+    assert env2['bottom_absorption_shear'] == 8.8, "Bottom abs shear value not read correctly"

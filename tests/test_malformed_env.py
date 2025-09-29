@@ -43,3 +43,15 @@ def test_malformed_env_sb():
     with pytest.raises(ValueError, match="Single beam option 'Z' not available"):
         bh.read_env2d("tests/malformed_env/bad_sb.env")
 
+
+def test_malformed_env_bot():
+    """Test ENV file where bottom bc doesn't match allowed option'"""
+    with pytest.raises(ValueError, match="Bottom boundary condition option 'Z' not available"):
+        bh.read_env2d("tests/malformed_env/bad_bot.env")
+
+
+def test_malformed_env_bty():
+    """Test ENV file where bathymetry doesn't match allowed option'"""
+    with pytest.raises(ValueError, match="Bathymetry option 'Z' not available"):
+        bh.read_env2d("tests/malformed_env/bad_bty.env")
+
