@@ -214,12 +214,7 @@ def read_env2d(fname):
             raise ValueError(f"Single beam option {opt!r} not available")
         if len(topopt) > 5:
             opt = topopt[5]
-            print(opt)
-            env["single_beam"] = _Maps.single_beam.get(opt) or _invalid(opt)
-            if env["single_beam"] == _Strings.single_beam:
-                pass # TODO: read in the beam spec later!!
-            else:
-                pass # nothing needs to be done
+            env["_single_beam"] = _Maps.single_beam.get(opt) or _invalid(opt)
 
         if env["volume_attenuation"] == _Strings.francois_garrison:
             fg_spec_line = f.readline().strip()
@@ -378,7 +373,10 @@ def read_env2d(fname):
 
         # Number of beams
         beam_num_line = f.readline().strip()
-        env['beam_num'] = int(_parse_line(beam_num_line))
+        beam_num_parts = _parse_line(beam_num_line).split()
+        env['beam_num'] = int(beam_num_parts[0])
+        if len(beam_num_parts) > 1:
+            env['single_beam_index'] = int(beam_num_parts[1])
 
         # Beam angles (beam_angle_min, beam_angle_max)
         angles_line = f.readline().strip()

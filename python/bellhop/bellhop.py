@@ -219,6 +219,9 @@ def check_env2d(env):
             assert env['source_directionality'].shape[1] == 2, 'source_directionality must be an Nx2 array'
             assert _np.all(env['source_directionality'][:,0] >= -180) and _np.all(env['source_directionality'][:,0] <= 180), 'source_directionality angles must be in (-180, 180]'
 
+        if env['_single_beam'] == _Strings.single_beam:
+            assert env['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
+
         return env
     except AssertionError as e:
         raise ValueError(str(e))
@@ -254,6 +257,7 @@ def _finalise_environment(env):
             env['beam_angle_max'] = _env.Defaults.beam_angle_fullspace
         else:
             env['beam_angle_max'] = _env.Defaults.beam_angle_halfspace
+
     return env
 
 def print_env(env):
@@ -589,13 +593,15 @@ class _Bellhop:
         svp_attunits = _Maps.attunits_rev[env['attenuation_units']]
         svp_volatt = _Maps.volatt_rev[env['volume_attenuation']]
         svp_alti = _Maps.surface_rev[env['_altimetry']]
+        svp_singlebeam = _Maps.single_beam_rev[env['_single_beam']]
         if isinstance(svp, _pd.DataFrame):
             if len(svp.columns) > 1:
                 assert svp_interp == 'Q', "SVP DataFrame with multiple columns implies quadrilateral interpolation."
             else:
                 svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
         comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
-        self._print(fh, f"'{svp_interp}{svp_boundcond}{svp_attunits}{svp_volatt}{svp_alti}'    ! {comment}")
+        topopt = f"{svp_interp}{svp_boundcond}{svp_attunits}{svp_volatt}{svp_alti}{svp_singlebeam}".strip()
+        self._print(fh, f"'{topopt}'    ! {comment}")
         if env['surface'] is not None:
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
 
@@ -618,7 +624,7 @@ class _Bellhop:
 
         if _np.size(svp) == 1:
             self._print(fh, f"0.0 {svp} /    ! '0.0' SSP_Const")
-            self._print(fh, f"{env['depth_max']} {svp} /    ! MAXDEPTH SSP_Const")
+            #self._print(fh, f"{env['depth_max']} {svp} /    ! MAXDEPTH SSP_Const")
         elif svp_interp == 'Q':
             sspenv = env['_ssp_env']
             # if the SSP data was provided in the ENV file, use that:
@@ -672,9 +678,12 @@ class _Bellhop:
             self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
         runtype_str = taskcode + beamtype + beampattern + txtype + gridtype
         self._print(fh, f"'{runtype_str.rstrip()}'  ! RUN TYPE")
-        self._print(fh, f"{env['beam_num']} ! NBeams")
-        self._print(fh, "%0.6f %0.6f /   ! ALPHA1,2 (degrees)" % (env['beam_angle_min'], env['beam_angle_max']))
-        step_size = env["step_size"] or 0.0
+        if env['single_beam_index'] is None:
+            self._print(fh, f"{env['beam_num']} ! NBeams") #beam_single_index
+        else:
+            self._print(fh, f"{env['beam_num']}  {env['single_beam_index']}    ! NBeams Single_Beam_Index")
+        self._print(fh, f"{env['beam_angle_min']}  { env['beam_angle_max']}  /   ! Beam angle range: ALPHA1,2 (degrees)")
+        step_size = env["step_size"]
         box_depth = env["box_depth"] or 1.01*env['depth_max']
         box_range = env["box_range"] or 1.01*_np.max(_np.abs(env['receiver_range']))
         self._print(fh, f"{step_size} {box_depth} {box_range/1000} ! STEP (m), ZBOX (m), RBOX (km)")

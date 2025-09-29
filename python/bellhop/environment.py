@@ -83,13 +83,15 @@ class EnvironmentConfig:
     depth_max: Optional[float] = None  # m
 
     # Beam settings
+    beam_type: str = _Strings.default
     beam_angle_min: Optional[float] = None  # deg
     beam_angle_max: Optional[float] = None  # deg
     beam_num: int = 0  # number of beams (0 = auto)
-    beam_type: str = 'default'
+    single_beam_index: Optional[int] = None # if a single beam is traced only, select this one
+    _single_beam: str = _Strings.default
 
     # Solution parameters
-    step_size: Optional[float] = None
+    step_size: Optional[float] = 0.0
     box_depth: Optional[float] = None
     box_range: Optional[float] = None
     grid: str = 'default'
