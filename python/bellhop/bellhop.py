@@ -562,9 +562,10 @@ class _Bellhop:
         _os.write(fh, (s+'\n' if newline else s).encode())
 
     def _print_array(self, fh, a, label="", nn=None):
+        na = _np.size(a)
         if nn is None:
-            nn = _np.size(a)
-        if nn == 1:
+            nn = na
+        if nn == 1 or na == 1:
             self._print(fh, "1")
             self._print(fh, f"{a} /  ! {label} (single value)")
         else:
