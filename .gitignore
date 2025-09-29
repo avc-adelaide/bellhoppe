@@ -85,7 +85,7 @@ docs/coverage
 
 docs/_build/*
 
-*_output.*
+*_output*
 test_debug.*
 
 # Test output files
