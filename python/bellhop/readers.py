@@ -128,27 +128,30 @@ def read_env2d(fname):
             if line.endswith('/'):
                 line = line[:-1].strip()
 
-            parts = line.split() + [None] * 6 # pad with 6x None to allow numerical indexing always
-            if len(parts) >= 1:
-                try:
-                    depth = float(parts[0])
-                    speed = float(parts[1] or prev_speed)
-                    speed_shear = float(parts[2] or prev_speed_shear)
-                    density = float(parts[3] or prev_density)
-                    att = float(parts[4] or prev_att)
-                    att_shear = float(parts[5] or prev_att_shear)
-                    ssp_points.append([depth, speed])
-                    # TODO: add extra terms to ssp_points array (but other fixes needed)
-                    prev_speed = speed
-                    prev_speed_shear = speed_shear
-                    prev_density = density
-                    prev_att = att
-                    prev_att_shear = att_shear
-                except ValueError:
-                    # This might be the end of SSP or a different format
-                    # Put the line back and break
-                    f.seek(f.tell() - len(line.encode()) - 1)
-                    break
+            # Pad line with 6x None to allow numerical indexing
+            parts = line.split() + [None] * 6
+            if parts[0] is None:
+                continue # skip empty lines
+  
+            try:
+                depth = float(parts[0])
+                speed = float(parts[1] or prev_speed)
+                speed_shear = float(parts[2] or prev_speed_shear)
+                density = float(parts[3] or prev_density)
+                att = float(parts[4] or prev_att)
+                att_shear = float(parts[5] or prev_att_shear)
+                ssp_points.append([depth, speed])
+                # TODO: add extra terms to ssp_points array (but other fixes needed)
+                prev_speed = speed
+                prev_speed_shear = speed_shear
+                prev_density = density
+                prev_att = att
+                prev_att_shear = att_shear
+            except ValueError:
+                # This might be the end of SSP or a different format
+                # Put the line back and break
+                f.seek(f.tell() - len(line.encode()) - 1)
+                break
 
         return _np.array(ssp_points) if ssp_points else None
 
@@ -307,44 +310,38 @@ def read_env2d(fname):
 
         # Bottom properties (depth, sound_speed, density, absorption)
         if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
+
             bottom_props_line = f.readline().strip()
-            if bottom_props_line == "/": # undocumented?
-                env['bottom_soundspeed']       = None
-                env['bottom_soundspeed_shear'] = None
-                env['bottom_density']          = None
-                env['bottom_absorption']       = None
-                env['bottom_absorption_shear'] = None
-            else:
-                bottom_props_line = _parse_line(bottom_props_line)
-                if bottom_props_line.endswith('/'):
-                    bottom_props_line = bottom_props_line[:-1].strip()
+            bottom_props_line = _parse_line(bottom_props_line)
+            if bottom_props_line.endswith('/'):
+                bottom_props_line = bottom_props_line[:-1].strip()
+            bottom_props = bottom_props_line.split()
 
-                # fortran sources say: "z, alphaR, betaR, rhoR, alphaI, betaI"
-                # docs say:
-                #       Syntax:
-                #
-                #       ZB  CPB  CSB  RHOB  APB  ASB
-                #
-                #       Description:
-                #
-                #       ZB:   Depth (m).
-                #       CPB:  Bottom P-wave speed (m/s).
-                #       CSB:  Bottom S-wave speed (m/s).
-                #       RHOB: Bottom density (g/cm3).
-                #       APB:  Bottom P-wave attenuation. (units as given by TOPOPT(3:3) )
-                #       ASB:  Bottom S-wave attenuation. (  "   "    "    "   "   "     )
+            # fortran sources say: "z, alphaR, betaR, rhoR, alphaI, betaI"
+            # docs say:
+            #       Syntax:
+            #
+            #       ZB  CPB  CSB  RHOB  APB  ASB
+            #
+            #       Description:
+            #
+            #       ZB:   Depth (m).
+            #       CPB:  Bottom P-wave speed (m/s).
+            #       CSB:  Bottom S-wave speed (m/s).
+            #       RHOB: Bottom density (g/cm3).
+            #       APB:  Bottom P-wave attenuation. (units as given by TOPOPT(3:3) )
+            #       ASB:  Bottom S-wave attenuation. (  "   "    "    "   "   "     )
 
-                bottom_props = bottom_props_line.split()
-                if len(bottom_props) > 1:
-                    env['bottom_soundspeed'] = float(bottom_props[1])
-                if len(bottom_props) > 2:
-                    env['bottom_soundspeed_shear'] = float(bottom_props[2])
-                if len(bottom_props) > 3:
-                    env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
-                if len(bottom_props) > 4:
-                    env['bottom_absorption'] = float(bottom_props[4])
-                if len(bottom_props) > 5:
-                    env['bottom_absorption_shear'] = float(bottom_props[5])
+            if len(bottom_props) > 1:
+                env['bottom_soundspeed'] = float(bottom_props[1])
+            if len(bottom_props) > 2:
+                env['bottom_soundspeed_shear'] = float(bottom_props[2])
+            if len(bottom_props) > 3:
+                env['bottom_density'] = float(bottom_props[3]) * 1000  # convert from g/cm³ to kg/m³
+            if len(bottom_props) > 4:
+                env['bottom_absorption'] = float(bottom_props[4])
+            if len(bottom_props) > 5:
+                env['bottom_absorption_shear'] = float(bottom_props[5])
 
         # Source & receiver depths
         env['source_depth'], env['source_ndepth'] = _parse_vector(f)
