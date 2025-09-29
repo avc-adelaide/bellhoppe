@@ -13,3 +13,33 @@ def test_malformed_env_media():
     with pytest.raises(ValueError, match="BELLHOP only supports 1 medium, found 2"):
         bh.read_env2d("tests/malformed_env/bad_media.env")
 
+
+def test_malformed_env_top():
+    """Test ENV file where top bc doesn't match allowed option'"""
+    with pytest.raises(ValueError, match="Top boundary condition option 'Z' not available"):
+        bh.read_env2d("tests/malformed_env/bad_top.env")
+
+
+def test_malformed_env_att():
+    """Test ENV file where attentuation units doesn't match allowed option'"""
+    with pytest.raises(ValueError, match="Attenuation units option 'Z' not available"):
+        bh.read_env2d("tests/malformed_env/bad_att.env")
+
+
+def test_malformed_env_vol():
+    """Test ENV file where volume attenuation doesn't match allowed option'"""
+    with pytest.raises(ValueError, match="Volume attenuation option 'Z' not available"):
+        bh.read_env2d("tests/malformed_env/bad_vol.env")
+
+
+def test_malformed_env_ati():
+    """Test ENV file where altimetry doesn't match allowed option'"""
+    with pytest.raises(ValueError, match="Altimetry option 'Z' not available"):
+        bh.read_env2d("tests/malformed_env/bad_ati.env")
+
+
+def test_malformed_env_sb():
+    """Test ENV file where single beam doesn't match allowed option'"""
+    with pytest.raises(ValueError, match="Single beam option 'Z' not available"):
+        bh.read_env2d("tests/malformed_env/bad_sb.env")
+

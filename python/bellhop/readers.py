@@ -192,13 +192,15 @@ def read_env2d(fname):
         # Volume attenuation
         def _invalid(opt):
             raise ValueError(f"Volume attenuation option {opt!r} not available")
-        env["volume_attenuation"] = 'none'
         if len(topopt) > 3:
             opt = topopt[3]
         else:
             opt = " "
         env["volume_attenuation"] = _Maps.volatt.get(opt) or _invalid(opt)
 
+        # Altimetry
+        def _invalid(opt):
+            raise ValueError(f"Altimetry option {opt!r} not available")
         if len(topopt) > 4:
             opt = topopt[4]
             env["_altimetry"] = _Maps.surface.get(opt) or _invalid(opt)
@@ -207,8 +209,12 @@ def read_env2d(fname):
                 env["surface"] = ati
                 env["surface_interp"] = interp_ati
 
+        # Single beam
+        def _invalid(opt):
+            raise ValueError(f"Single beam option {opt!r} not available")
         if len(topopt) > 5:
             opt = topopt[5]
+            print(opt)
             env["single_beam"] = _Maps.single_beam.get(opt) or _invalid(opt)
             if env["single_beam"] == _Strings.single_beam:
                 pass # TODO: read in the beam spec later!!

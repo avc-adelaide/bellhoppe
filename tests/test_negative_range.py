@@ -21,7 +21,7 @@ def test_negative_receiver_ranges():
     assert env['beam_angle_max'] == +_env.Defaults.beam_angle_fullspace, "beam_angle_max should be automatically extended to 179 for negative ranges"
 
     # Compute arrivals
-    arrivals = bh.compute_arrivals(env, debug=False, fname_base="test_negative_range")
+    arrivals = bh.compute_arrivals(env, debug=False, fname_base="tests/_test_negative_range")
 
     # Verify we have arrivals for all receiver ranges
     for i in range(len(env["receiver_range"])):
@@ -45,7 +45,7 @@ def test_positive_receiver_ranges_unchanged():
     assert env['beam_angle_max'] == +_env.Defaults.beam_angle_halfspace, "beam_angle_max should not be modified for positive-only ranges"
 
     # Compute arrivals to ensure it still works
-    arrivals = bh.compute_arrivals(env, debug=False, fname_base="test_positive_range")
+    arrivals = bh.compute_arrivals(env, debug=False, fname_base="tests/_test_positive_range")
 
     # Verify we have arrivals for all receiver ranges
     for i in range(len(env["receiver_range"])):

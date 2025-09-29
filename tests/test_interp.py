@@ -23,7 +23,7 @@ ssp = [
 env = bh.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="linear", beam_angle_min=-80, beam_angle_max=80)
 
 # Compute arrivals
-arrivals = bh.compute_arrivals(env,debug=True,fname_base="test_debug")
+arrivals = bh.compute_arrivals(env,debug=True,fname_base="tests/_test_interp")
 arrival_times = arrivals["time_of_arrival"]
 print(arrival_times)
 t_arr_exp = pd.Series([

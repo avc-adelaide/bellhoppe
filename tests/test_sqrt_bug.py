@@ -21,7 +21,7 @@ def test_sqrt_bug():
     assert(env["receiver_range"].ndim == 1)
     assert(env["receiver_range"].size == nn)
 
-    arrivals = bh.compute_arrivals(env,debug=True,fname_base="test_debug")
+    arrivals = bh.compute_arrivals(env,debug=True,fname_base="tests/_test_sqrt")
 
     for i in range(len(env["receiver_range"])):
         arr_subset = arrivals[arrivals.receiver_range_ndx == i]
