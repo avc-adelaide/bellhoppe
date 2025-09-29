@@ -625,7 +625,7 @@ class _Bellhop:
 
         if _np.size(svp) == 1:
             self._print(fh, f"0.0 {svp} /    ! '0.0' SSP_Const")
-            #self._print(fh, f"{env['depth_max']} {svp} /    ! MAXDEPTH SSP_Const")
+            self._print(fh, f"{env['depth_max']} {svp} /    ! MAXDEPTH SSP_Const")
         elif svp_interp == 'Q':
             sspenv = env['_ssp_env']
             # if the SSP data was provided in the ENV file, use that:
