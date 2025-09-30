@@ -4,6 +4,20 @@ import pandas as _pd
 from bellhop.constants import _Strings, _Maps
 import bellhop.environment
 
+def _read_next_valid_line(f):
+    """Read the next valid text line of an input file, discarding invalid lines"""
+    while True:
+        line = f.readline()
+        if not line: # EOF
+            raise EOFError("End of file reached before finding a valid line")
+        line = line.strip()
+        if not line: # empty
+            continue
+        if '!' in line: # strip comments
+            line = line[:line.index('!')].strip()
+        if line:
+            return line.strip()
+
 def read_env2d(fname):
     """Read a 2D underwater environment from a BELLHOP .env file.
 
@@ -132,7 +146,7 @@ def read_env2d(fname):
             parts = line.split() + [None] * 6
             if parts[0] is None:
                 continue # skip empty lines
-  
+
             try:
                 depth = float(parts[0])
                 speed = float(parts[1] or prev_speed)

@@ -77,3 +77,15 @@ def test_DickensB_one_beam_wrong():
         assert env3['soundspeed'] == 1476.7, "Single entry in SSP should be singleton float"
         ray3 = bh.compute_rays(env3,fname_base="tests/Dickins/DickinsB_output3",debug=True)
         assert ray3 is not None, "No results generated"
+
+
+def xtest_DickensB_empty_lines():
+    """Test if empty lines are okay"""
+    env5 = bh.read_env2d("tests/Dickins/DickinsB_simpl.env")
+    env6 = bh.read_env2d("tests/Dickins/DickinsB_simpl_empty_lines.env")
+    assert env5['soundspeed'] == env6['soundspeed'], "SSP is identical"
+    tl5 = bh.compute_transmission_loss(env5)
+    tl6 = bh.compute_transmission_loss(env6)
+    assert tl5 is not None, "No results generated"
+    assert tl6 is not None, "No results generated"
+    assert tl5 == tl6, "Results should be identical"
