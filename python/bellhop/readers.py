@@ -167,6 +167,10 @@ def read_env2d(fname):
 
         return _np.array(ssp_points) if ssp_points else None
 
+    def _invalid_option(name,opt):
+        raise ValueError(f"{name} option {opt!r} not available")
+
+    # the proper start to the function:
     with open(fname, 'r') as f:
         # Line 1: Title
         title_line = _read_next_valid_line(f)
@@ -186,32 +190,29 @@ def read_env2d(fname):
         topopt_line = _read_next_valid_line(f)
         topopt = _parse_quoted_string(topopt_line)
 
-        def _invalid(name,opt):
-            raise ValueError(f"{name} option {opt!r} not available")
-
         # Parse SSP interpolation type from first character
         opt = topopt[0]
-        env["soundspeed_interp"] = _Maps.interp.get(opt) or _invalid("Interpolation",opt)
+        env["soundspeed_interp"] = _Maps.interp.get(opt) or _invalid_option("Interpolation",opt)
 
         # Top boundary condition
         opt = topopt[1]
-        env["surface_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid("Top boundary condition",opt)
+        env["surface_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid_option("Top boundary condition",opt)
 
         # Attenuation units
         opt = topopt[2]
-        env["attenuation_units"] = _Maps.attunits.get(opt) or _invalid("Attenuation units",opt)
+        env["attenuation_units"] = _Maps.attunits.get(opt) or _invalid_option("Attenuation units",opt)
 
         # Volume attenuation
         if len(topopt) > 3:
             opt = topopt[3]
         else:
             opt = " "
-        env["volume_attenuation"] = _Maps.volatt.get(opt) or _invalid("Volume attenuation",opt)
+        env["volume_attenuation"] = _Maps.volatt.get(opt) or _invalid_option("Volume attenuation",opt)
 
         # Altimetry
         if len(topopt) > 4:
             opt = topopt[4]
-            env["_altimetry"] = _Maps.surface.get(opt) or _invalid("Altimetry",opt)
+            env["_altimetry"] = _Maps.surface.get(opt) or _invalid_option("Altimetry",opt)
             if env["_altimetry"] == _Strings.from_file:
                 ati,interp_ati = bellhop.read_ati(fname_base)
                 env["surface"] = ati
@@ -220,7 +221,7 @@ def read_env2d(fname):
         # Single beam
         if len(topopt) > 5:
             opt = topopt[5]
-            env["_single_beam"] = _Maps.single_beam.get(opt) or _invalid("Single beam",opt)
+            env["_single_beam"] = _Maps.single_beam.get(opt) or _invalid_option("Single beam",opt)
 
         if env["volume_attenuation"] == _Strings.francois_garrison:
             fg_spec_line = _read_next_valid_line(f)
@@ -232,25 +233,13 @@ def read_env2d(fname):
 
 
         if env["surface_boundary_condition"] == _Strings.acousto_elastic:
+
             surface_props_line = _read_next_valid_line(f)
             surface_props_line = _parse_line(surface_props_line)
             if surface_props_line.endswith('/'):
                surface_props_line = surface_props_line[:-1].strip()
-
-            #     Syntax:
-            #
-            #     ZT  CPT  CST  RHOT  APT  AST
-            #
-            #     Description:
-            #
-            #     ZT:   Depth (m).
-            #     CPT:  Top P-wave speed (m/s).
-            #     CST:  Top S-wave speed (m/s).
-            #     RHOT: Top density (g/cm3).
-            #     APT:  Top P-wave attenuation. (units as given by Option(3:3) )
-            #     AST:  Top S-wave attenuation. (  "   "    "    "   "   "     )
-
             surface_props = surface_props_line.split()
+
             env['surface_depth'] = float(surface_props[0])
             if len(surface_props) > 1:
                 env['surface_soundspeed'] = float(surface_props[1])
@@ -263,8 +252,7 @@ def read_env2d(fname):
             if len(surface_props) > 5:
                 env['surface_absorption_shear'] = float(surface_props[5])
 
-
-        # Line 5 or 6: SSP depth specification (format: npts sigma_z max_depth)
+        # SSP depth specification (format: npts sigma_z max_depth)
         ssp_spec_line = _read_next_valid_line(f)
         ssp_parts = _parse_line(ssp_spec_line).split()
         env['depth_npts'] = int(ssp_parts[0])
@@ -292,16 +280,12 @@ def read_env2d(fname):
         print(bottom_line)
         bottom_parts = _parse_line(bottom_line).split()
         botopt = _parse_quoted_string(bottom_parts[0])
-        def _invalid(opt):
-            raise ValueError(f"Bottom boundary condition option {opt!r} not available")
         opt = botopt[0]
-        env["bottom_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid(opt)
+        env["bottom_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid_option("Bottom boundary condition",opt)
 
         if len(botopt) > 1:
-            def _invalid(opt):
-                raise ValueError(f"Bathymetry option {opt!r} not available")
             opt = botopt[1]
-            env["_bathymetry"] = _Maps.bottom.get(opt) or _invalid(opt)
+            env["_bathymetry"] = _Maps.bottom.get(opt) or _invalid_option("Bathymetry",opt)
             if env["_bathymetry"] == _Strings.from_file:
                 bty,interp_bty = bellhop.read_bty(fname_base)
                 env["depth"] = bty
@@ -321,21 +305,6 @@ def read_env2d(fname):
             if bottom_props_line.endswith('/'):
                 bottom_props_line = bottom_props_line[:-1].strip()
             bottom_props = bottom_props_line.split()
-
-            # fortran sources say: "z, alphaR, betaR, rhoR, alphaI, betaI"
-            # docs say:
-            #       Syntax:
-            #
-            #       ZB  CPB  CSB  RHOB  APB  ASB
-            #
-            #       Description:
-            #
-            #       ZB:   Depth (m).
-            #       CPB:  Bottom P-wave speed (m/s).
-            #       CSB:  Bottom S-wave speed (m/s).
-            #       RHOB: Bottom density (g/cm3).
-            #       APB:  Bottom P-wave attenuation. (units as given by TOPOPT(3:3) )
-            #       ASB:  Bottom S-wave attenuation. (  "   "    "    "   "   "     )
 
             if len(bottom_props) > 1:
                 env['bottom_soundspeed'] = float(bottom_props[1])
