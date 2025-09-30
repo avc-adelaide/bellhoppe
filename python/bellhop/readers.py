@@ -95,15 +95,13 @@ def read_env2d(fname):
 
     def _parse_vector(f, dtype=float):
         """Parse a vector that starts with count then values, ending with '/'"""
-        line = f.readline().strip()
-        if not line:
-            raise ValueError("Unexpected end of file while reading vector")
+        line = _read_next_valid_line(f)
 
         # First line is the count
         linecount = int(_parse_line(line))
 
         # Second line has the values
-        values_line = f.readline().strip()
+        values_line = _read_next_valid_line(f)
         values_line = _parse_line(values_line)
 
         # Split by '/' and take only the first part (before the '/')
@@ -129,7 +127,7 @@ def read_env2d(fname):
         while True:
             line = f.readline().strip()
             if not line:
-                break
+                continue # skip empty
 
             # Check if this is a bottom boundary line (starts with quote)
             if line.startswith("'"):
@@ -171,70 +169,61 @@ def read_env2d(fname):
 
     with open(fname, 'r') as f:
         # Line 1: Title
-        title_line = f.readline().strip()
+        title_line = _read_next_valid_line(f)
         env['name'] = _parse_quoted_string(title_line)
 
         # Line 2: Frequency
-        freq_line = f.readline().strip()
+        freq_line = _read_next_valid_line(f)
         env['frequency'] = float(_parse_line(freq_line))
 
         # Line 3: NMedia (should be 1 for BELLHOP)
-        nmedia_line = f.readline().strip()
+        nmedia_line = _read_next_valid_line(f)
         nmedia = int(_parse_line(nmedia_line))
         if nmedia != 1:
             raise ValueError(f"BELLHOP only supports 1 medium, found {nmedia}")
 
         # Line 4: Top boundary options
-        topopt_line = f.readline().strip()
+        topopt_line = _read_next_valid_line(f)
         topopt = _parse_quoted_string(topopt_line)
 
+        def _invalid(name,opt):
+            raise ValueError(f"{name} option {opt!r} not available")
+
         # Parse SSP interpolation type from first character
-        def _invalid(opt):
-            raise ValueError(f"Interpolation option {opt!r} not available")
         opt = topopt[0]
-        env["soundspeed_interp"] = _Maps.interp.get(opt) or _invalid(opt)
+        env["soundspeed_interp"] = _Maps.interp.get(opt) or _invalid("Interpolation",opt)
 
         # Top boundary condition
-        def _invalid(opt):
-            raise ValueError(f"Top boundary condition option {opt!r} not available")
         opt = topopt[1]
-        env["surface_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid(opt)
+        env["surface_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid("Top boundary condition",opt)
 
         # Attenuation units
-        def _invalid(opt):
-            raise ValueError(f"Attenuation units option {opt!r} not available")
         opt = topopt[2]
-        env["attenuation_units"] = _Maps.attunits.get(opt) or _invalid(opt)
+        env["attenuation_units"] = _Maps.attunits.get(opt) or _invalid("Attenuation units",opt)
 
         # Volume attenuation
-        def _invalid(opt):
-            raise ValueError(f"Volume attenuation option {opt!r} not available")
         if len(topopt) > 3:
             opt = topopt[3]
         else:
             opt = " "
-        env["volume_attenuation"] = _Maps.volatt.get(opt) or _invalid(opt)
+        env["volume_attenuation"] = _Maps.volatt.get(opt) or _invalid("Volume attenuation",opt)
 
         # Altimetry
-        def _invalid(opt):
-            raise ValueError(f"Altimetry option {opt!r} not available")
         if len(topopt) > 4:
             opt = topopt[4]
-            env["_altimetry"] = _Maps.surface.get(opt) or _invalid(opt)
+            env["_altimetry"] = _Maps.surface.get(opt) or _invalid("Altimetry",opt)
             if env["_altimetry"] == _Strings.from_file:
                 ati,interp_ati = bellhop.read_ati(fname_base)
                 env["surface"] = ati
                 env["surface_interp"] = interp_ati
 
         # Single beam
-        def _invalid(opt):
-            raise ValueError(f"Single beam option {opt!r} not available")
         if len(topopt) > 5:
             opt = topopt[5]
-            env["_single_beam"] = _Maps.single_beam.get(opt) or _invalid(opt)
+            env["_single_beam"] = _Maps.single_beam.get(opt) or _invalid("Single beam",opt)
 
         if env["volume_attenuation"] == _Strings.francois_garrison:
-            fg_spec_line = f.readline().strip()
+            fg_spec_line = _read_next_valid_line(f)
             fg_parts = _parse_line(fg_spec_line).split()
             env["fg_salinity"] = float(fg_parts[0])
             env["fg_temperature"] = float(fg_parts[1])
@@ -243,7 +232,7 @@ def read_env2d(fname):
 
 
         if env["surface_boundary_condition"] == _Strings.acousto_elastic:
-            surface_props_line = f.readline().strip()
+            surface_props_line = _read_next_valid_line(f)
             surface_props_line = _parse_line(surface_props_line)
             if surface_props_line.endswith('/'):
                surface_props_line = surface_props_line[:-1].strip()
@@ -276,7 +265,7 @@ def read_env2d(fname):
 
 
         # Line 5 or 6: SSP depth specification (format: npts sigma_z max_depth)
-        ssp_spec_line = f.readline().strip()
+        ssp_spec_line = _read_next_valid_line(f)
         ssp_parts = _parse_line(ssp_spec_line).split()
         env['depth_npts'] = int(ssp_parts[0])
         if len(ssp_parts) > 1:
@@ -296,9 +285,11 @@ def read_env2d(fname):
                 env['soundspeed'] = ssp_points
         env['_ssp_env'] = ssp_points
 
+        print(ssp_points)
+
         # Bottom boundary options
-        line = f.readline()
-        bottom_line = line.strip()
+        bottom_line = _read_next_valid_line(f)
+        print(bottom_line)
         bottom_parts = _parse_line(bottom_line).split()
         botopt = _parse_quoted_string(bottom_parts[0])
         def _invalid(opt):
@@ -325,7 +316,7 @@ def read_env2d(fname):
         # Bottom properties (depth, sound_speed, density, absorption)
         if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
 
-            bottom_props_line = f.readline().strip()
+            bottom_props_line = _read_next_valid_line(f)
             bottom_props_line = _parse_line(bottom_props_line)
             if bottom_props_line.endswith('/'):
                 bottom_props_line = bottom_props_line[:-1].strip()
@@ -366,7 +357,7 @@ def read_env2d(fname):
         env['receiver_range'] = receiver_ranges * 1000  # convert km to m
 
         # Task/run type (e.g., 'R', 'C', etc.)
-        task_line = f.readline().strip()
+        task_line = _read_next_valid_line(f)
         task_code = _parse_quoted_string(task_line)
         env['task'] = _Maps.task.get(task_code[0])
         if len(task_code) > 1:
@@ -383,14 +374,14 @@ def read_env2d(fname):
             env["source_directionality"] = bellhop.read_sbp(fname_base)
 
         # Number of beams
-        beam_num_line = f.readline().strip()
+        beam_num_line = _read_next_valid_line(f)
         beam_num_parts = _parse_line(beam_num_line).split()
         env['beam_num'] = int(beam_num_parts[0])
         if len(beam_num_parts) > 1:
             env['single_beam_index'] = int(beam_num_parts[1])
 
         # Beam angles (beam_angle_min, beam_angle_max)
-        angles_line = f.readline().strip()
+        angles_line = _read_next_valid_line(f)
         angles_line = _parse_line(angles_line)
         if angles_line.endswith('/'):
             angles_line = angles_line[:-1].strip()
@@ -401,7 +392,7 @@ def read_env2d(fname):
             env['beam_angle_max'] = float(angle_parts[1])
 
         # Ray tracing limits (step, max_depth, max_range) - last line
-        limits_line = f.readline().strip()
+        limits_line = _read_next_valid_line(f)
         limits_parse = _parse_line(limits_line)
         limits_parts = limits_parse.split()
         env['step_size'] = float(limits_parts[0])
@@ -474,10 +465,10 @@ def read_ssp(fname):
 
     with open(fname, 'r') as f:
         # Read number of range profiles
-        nprofiles = int(f.readline().strip())
+        nprofiles = int(_read_next_valid_line(f))
 
         # Read range coordinates (in km)
-        range_line = f.readline().strip()
+        range_line = _read_next_valid_line(f)
         ranges = _np.array([float(x) for x in range_line.split()])
 
         if len(ranges) != nprofiles:
@@ -573,22 +564,24 @@ def read_ati_bty(fname):
 
     with open(fname, 'r') as f:
         # Read interpolation type (usually 'L' or 'C')
-        interp_type = f.readline().strip().strip("'\"")
+        interp_type = _read_next_valid_line(f).strip("'\"")
 
         # Read number of points
-        npoints = int(f.readline().strip())
+        npoints = int(_read_next_valid_line(f))
 
         # Read range,depth pairs
         ranges = []
         depths = []
 
         for i in range(npoints):
-            line = f.readline().strip()
-            if line:  # Skip empty lines
-                parts = line.split()
-                if len(parts) >= 2:
-                    ranges.append(float(parts[0]))  # Range in km
-                    depths.append(float(parts[1]))  # Depth in m
+            try:
+                line = _read_next_valid_line(f)
+            except EOFError:
+                break
+            parts = line.split()
+            if len(parts) >= 2:
+                ranges.append(float(parts[0]))  # Range in km
+                depths.append(float(parts[1]))  # Depth in m
 
         if len(ranges) != npoints:
             raise ValueError(f"Expected {npoints} altimetry/bathymetry points, but found {len(ranges)}")
@@ -622,19 +615,21 @@ def read_sbp(fname):
     with open(fname, 'r') as f:
 
         # Read number of points
-        npoints = int(f.readline().strip())
+        npoints = int(_read_next_valid_line(f))
 
         # Read range,depth pairs
         angles = []
         powers = []
 
         for i in range(npoints):
-            line = f.readline().strip()
-            if line:  # Skip empty lines
-                parts = line.split()
-                if len(parts) >= 2:
-                    angles.append(float(parts[0]))  # Range in km
-                    powers.append(float(parts[1]))  # Depth in m
+            try:
+                line = _read_next_valid_line(f)
+            except EOFError:
+                break
+            parts = line.split()
+            if len(parts) >= 2:
+                angles.append(float(parts[0]))  # Range in km
+                powers.append(float(parts[1]))  # Depth in m
 
         if len(angles) != npoints:
             raise ValueError(f"Expected {npoints} points, but found {len(angles)}")
@@ -686,7 +681,7 @@ def read_refl_coeff(fname):
     with open(fname, 'r') as f:
 
         # Read number of points
-        npoints = int(f.readline().strip())
+        npoints = int(_read_next_valid_line(f))
 
         # Read range,depth pairs
         theta = []
@@ -694,13 +689,15 @@ def read_refl_coeff(fname):
         rphas = []
 
         for i in range(npoints):
-            line = f.readline().strip()
-            if line:  # Skip empty lines
-                parts = line.split()
-                if len(parts) == 3:
-                    theta.append(float(parts[0]))
-                    rmagn.append(float(parts[1]))
-                    rphas.append(float(parts[2]))
+            try:
+                line = _read_next_valid_line(f)
+            except EOFError:
+                break
+            parts = line.split()
+            if len(parts) == 3:
+                theta.append(float(parts[0]))
+                rmagn.append(float(parts[1]))
+                rphas.append(float(parts[2]))
 
         if len(theta) != npoints:
             raise ValueError(f"Expected {npoints} reflection coefficient points, but found {len(theta)}")

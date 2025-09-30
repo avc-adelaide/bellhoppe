@@ -30,13 +30,13 @@ def test_parse_vector_unexpected_eof():
 51
 0.0 5000.0 /
 """  # File ends when trying to read receiver range count (triggers EOF in _parse_vector)
-    
+
     with tempfile.NamedTemporaryFile(mode='w', suffix='.env', delete=False) as f:
         f.write(env_content)
         fname = f.name
-    
+
     try:
-        with pytest.raises(ValueError, match="Unexpected end of file while reading vector"):
+        with pytest.raises(EOFError):
             bh.read_env2d(fname)
     finally:
         os.unlink(fname)
@@ -67,20 +67,20 @@ def test_read_ssp_points_empty_line_break():
 -20.0 20.0 /
 0.0  5500.0 101.0
 """
-    
+
     with tempfile.NamedTemporaryFile(mode='w', suffix='.env', delete=False) as f:
         f.write(env_content)
         fname = f.name
-    
+
     try:
         # This should successfully parse, stopping at the empty line
         env = bh.read_env2d(fname)
         assert env['name'] == 'Test profile'
-        
+
         # Should have captured the SSP points before the empty line
         assert env['_ssp_env'] is not None
         assert len(env['_ssp_env']) == 2  # Two SSP points before empty line
-        
+
         # Verify the SSP points are correct
         assert env['_ssp_env'][0][0] == 0.0   # First depth
         assert env['_ssp_env'][0][1] == 1500.0  # First sound speed
@@ -95,7 +95,7 @@ def test_read_ssp_points_value_error_recovery():
     # This test demonstrates the ValueError recovery mechanism where invalid
     # numerical data in the SSP section gets caught, the line is put back,
     # and parsing continues with that line treated as the next section
-    
+
     # Create an .env file where the bottom boundary line will be mistaken for SSP data,
     # trigger a ValueError, then get put back and processed correctly
     env_content = """'Test profile'
@@ -118,22 +118,22 @@ def test_read_ssp_points_value_error_recovery():
 -20.0 20.0 /
 0.0  5500.0 101.0
 """
-    
+
     with tempfile.NamedTemporaryFile(mode='w', suffix='.env', delete=False) as f:
         f.write(env_content)
         fname = f.name
-    
+
     try:
         # This should successfully parse. The 'A' line will initially be read as SSP data,
         # trigger a ValueError when trying to parse 'A' as a float, then get put back
         # and correctly processed as the bottom boundary condition
         env = bh.read_env2d(fname)
         assert env['name'] == 'Test profile'
-        
+
         # Should have captured the SSP points before the 'A' line
         assert env['_ssp_env'] is not None
         assert len(env['_ssp_env']) == 2  # Two SSP points before 'A' line
-        
+
         # The 'A' line should have been put back and processed as bottom boundary
         from bellhop.constants import _Strings
         assert env['bottom_boundary_condition'] == _Strings.acousto_elastic  # 'A' maps to acousto_elastic
@@ -144,13 +144,13 @@ def test_read_ssp_points_value_error_recovery():
 def test_comprehensive_edge_cases():
     """Test that all edge cases work together and improve coverage"""
     # This test combines multiple scenarios to ensure robustness
-    
+
     # Test 1: EOF case
     test_parse_vector_unexpected_eof()
-    
-    # Test 2: Empty line case  
+
+    # Test 2: Empty line case
     test_read_ssp_points_empty_line_break()
-    
+
     # Test 3: ValueError recovery case
     test_read_ssp_points_value_error_recovery()
 
@@ -158,21 +158,21 @@ def test_comprehensive_edge_cases():
 if __name__ == "__main__":
     # Allow running this test file directly
     import sys
-    
+
     try:
         test_parse_vector_unexpected_eof()
         print("✓ EOF test passed")
     except Exception as e:
         print(f"✗ EOF test failed: {e}")
         sys.exit(1)
-    
+
     try:
         test_read_ssp_points_empty_line_break()
         print("✓ Empty line test passed")
     except Exception as e:
         print(f"✗ Empty line test failed: {e}")
         sys.exit(1)
-    
+
     try:
         test_read_ssp_points_value_error_recovery()
         print("✓ ValueError recovery test passed")
@@ -181,5 +181,5 @@ if __name__ == "__main__":
         import traceback
         traceback.print_exc()
         sys.exit(1)
-    
+
     print("All readers.py coverage tests passed!")
