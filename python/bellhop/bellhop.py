@@ -569,6 +569,16 @@ class _Bellhop:
     def _print(self, fh, s, newline=True):
         _os.write(fh, (s+'\n' if newline else s).encode())
 
+    COMMENT_PAD = 50
+
+    def _print_env_line(self, fh, data, comment = ""):
+        data_str = data if isinstance(data,str) else f"{data}"
+        comment_str = comment if isinstance(comment,str) else f"{comment}"
+        line_str = (data_str + " " * self.COMMENT_PAD)[0:max(len(data_str),self.COMMENT_PAD)]
+        if comment_str != "":
+            line_str = line_str + " ! " + comment_str
+        self._print(fh,line_str)
+
     def _print_array(self, fh, a, label="", nn=None):
         na = _np.size(a)
         if nn is None:
@@ -577,10 +587,10 @@ class _Bellhop:
             self._print(fh, "1")
             self._print(fh, f"{a} /  ! {label} (single value)")
         else:
-            self._print(fh, f"{nn}")
+            self._print_env_line(fh, nn, f"{label}s ({nn} values)")
             for j in a:
                 self._print(fh, f"{j} ", newline=False)
-            self._print(fh, f"/   ! {label} ({nn} values)")
+            self._print(fh, f" /")
 
     def _create_env_file(self, env, taskcode, fname_base=None):
 
@@ -592,9 +602,19 @@ class _Bellhop:
             fh, fname = _mkstemp(suffix='.env')
             fname_base = fname[:-4]
 
-        self._print(fh, "'"+env['name']+"'")
-        self._print(fh, f"{env['frequency']}    ! FREQ (Hz)")
-        self._print(fh, "1    ! NMedia=1 always for Bellhop")
+        def _print_env_line(data,comment=""):
+            self._print_env_line(fh, data, comment)
+
+        def _print_array(a, label="", nn=None):
+            self._print_array(fh, a, label, nn)
+
+        # _print_env_line("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        # _print_env_line("!! Bellhop environment file, by bellhop.py !!")
+        # _print_env_line("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+        _print_env_line("'"+env['name']+"'")
+        _print_env_line(env['frequency'],"FREQ (Hz)")
+        _print_env_line(1,"NMedia -- always =1 for Bellhop")
 
         svp = env['soundspeed']
         svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
@@ -629,44 +649,41 @@ class _Bellhop:
 
         # max depth should be the depth of the acoustic domain, which can be deeper than the max depth bathymetry
         comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
-        self._print(fh, f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}    ! {comment}")
+        _print_env_line(f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}",comment)
 
         if _np.size(svp) == 1:
-            self._print(fh, f"0.0 {svp} /    ! '0.0' SSP_Const")
-            self._print(fh, f"{env['depth_max']} {svp} /    ! MAXDEPTH SSP_Const")
+            _print_env_line(f"0.0 {svp} /","'0.0' SSP_Const")
+            _print_env_line(f"{max_depth} {svp} /","MAXDEPTH SSP_Const")
         elif svp_interp == 'Q':
             sspenv = env['_ssp_env']
             # if the SSP data was provided in the ENV file, use that:
             if sspenv is not None:
                 for j in range(sspenv.shape[0]):
-                    self._print(fh, f"{sspenv[j,0]} {sspenv[j,1]} /  ! ssp_{j}")
+                    _print_env_line(f"{sspenv[j,0]} {sspenv[j,1]} /",f"ssp_{j}")
             # otherwise use the SSP data specified in the dataframe:
             else:
                 for j in range(svp.shape[0]):
-                    self._print(fh, f"{svp.index[j]} {svp.iloc[j,0]} /  ! ssp_{j}")
+                    _print_env_line(f"{svp.index[j]} {svp.iloc[j,0]} /",f"ssp_{j}")
             self._create_ssp_file(fname_base+'.ssp', svp)
         else:
             for j in range(svp.shape[0]):
-                self._print(fh, f"{svp[j,0]} {svp[j,1]} /  ! ssp_{j}")
+                _print_env_line(f"{svp[j,0]} {svp[j,1]} /",f"ssp_{j}")
 
         bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
         dp_flag = _Maps.bottom_rev[env['_bathymetry']]
         comment = "BOT_Boundary_cond / BOT_Roughness"
-        self._print(fh, f"{_quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}    ! {comment}")
+        _print_env_line(f"{_quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}",comment)
 
         if _np.size(env['depth']) > 1:
             self._create_bty_ati_file(fname_base+'.bty', env['depth'], env['depth_interp'])
 
         if env['bottom_boundary_condition'] == "acousto-elastic":
-            comment = "DEPTH_Max  BOT_SoundSpeed  BOT_SoundSpeed_Shear BOT_Density [ BOT_Absorp [ BOT_Absorp_Shear ] ]"
-            if env['bottom_soundspeed'] is None:
-                self._print(fh, f"/  ! {comment}")
-            elif env['bottom_absorption'] is None:
-                self._print(fh, f"{env['depth_max']} {env['bottom_soundspeed']} {env['bottom_soundspeed_shear']} {env['bottom_density']/1000} /  ! {comment}")
+            if env['bottom_absorption'] is None:
+                _print_env_line(f"{env['depth_max']} {env['bottom_soundspeed']} {env['bottom_soundspeed_shear']} {env['bottom_density']/1000} /",comment)
             elif env['bottom_absorption_shear'] is None:
-                self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption']))
+                _print_env_line("%0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption']),comment)
             else:
-                self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption'], env['bottom_absorption_shear']))
+                _print_env_line("%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['bottom_soundspeed'], env['bottom_soundspeed_shear'], env['bottom_density']/1000, env['bottom_absorption'], env['bottom_absorption_shear']),comment)
 
         if env['bottom_boundary_condition'] == "from-file":
             self._create_refl_coeff_file(fname_base+".brc", env['bottom_reflection_coefficient'])
@@ -686,16 +703,16 @@ class _Bellhop:
             beampattern = "*"
             self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
         runtype_str = taskcode + beamtype + beampattern + txtype + gridtype
-        self._print(fh, f"'{runtype_str.rstrip()}'  ! RUN TYPE")
-        if env['single_beam_index'] is None:
-            self._print(fh, f"{env['beam_num']} ! NBeams") #beam_single_index
-        else:
-            self._print(fh, f"{env['beam_num']}  {env['single_beam_index']}    ! NBeams Single_Beam_Index")
-        self._print(fh, f"{env['beam_angle_min']}  { env['beam_angle_max']}  /   ! Beam angle range: ALPHA1,2 (degrees)")
-        step_size = env["step_size"]
-        box_depth = env["box_depth"] or 1.01*env['depth_max']
-        box_range = env["box_range"] or 1.01*_np.max(_np.abs(env['receiver_range']))
-        self._print(fh, f"{step_size} {box_depth} {box_range/1000} ! STEP (m), ZBOX (m), RBOX (km)")
+        _print_env_line(f"'{runtype_str.rstrip()}'","RUN TYPE")
+        _print_env_line(env['nbeams'],"NBeams")
+        _print_env_line(f"{env['min_angle']} {env['max_angle']} /","ALPHA1,2 (degrees)")
+        step_size = env["step_size"] or 0.0
+        box_depth = env["box_depth"] or 1.01*max_depth
+        box_range = env["box_range"] or 1.01*_np.max(env['rx_range'])
+        _print_env_line(f"{step_size} {box_depth} {box_range/1000}","STEP (m), ZBOX (m), RBOX (km)")
+        _print_env_line("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        _print_env_line("!! End of Bellhop environment file !!")
+        _print_env_line("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         _os.close(fh)
         return fname_base
 
