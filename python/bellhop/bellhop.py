@@ -704,7 +704,10 @@ class _Bellhop:
             self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
         runtype_str = taskcode + beamtype + beampattern + txtype + gridtype
         _print_env_line(f"'{runtype_str.rstrip()}'","RUN TYPE")
-        _print_env_line(env['beam_num'],"Number of beams")
+        if env['single_beam_index'] is None:
+            _print_env_line(env['beam_num'],"Number of beams")
+        else:
+            _print_env_line(f"{env['beam_num']}  {env['single_beam_index']}","Num_Beams  Single_Beam_Index")
         _print_env_line(f"{env['beam_angle_min']} {env['beam_angle_max']} /","ALPHA1,2 (degrees)")
         step_size = env["step_size"] or 0.0
         box_depth = env["box_depth"] or 1.01*env['depth_max']
