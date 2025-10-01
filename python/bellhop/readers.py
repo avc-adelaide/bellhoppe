@@ -18,6 +18,11 @@ def _read_next_valid_line(f):
         if line:
             return line.strip()
 
+def _parse_line(line: str) -> list[str]:
+    """Parse a line, removing comments, /, and whitespace, and return the parts in a list"""
+    line = line.split("!", 1)[0].split('/', 1)[0].strip()
+    return line.split()
+
 def read_env2d(fname):
     """Read a 2D underwater environment from a BELLHOP .env file.
 
@@ -85,21 +90,6 @@ def read_env2d(fname):
         mtch = re.search(r"'([^']*)'", line)
         mtch2 = re.search(r"([^']*)'$", line)
         return mtch.group(1) if mtch else mtch2.group(1) if mtch2 else line.strip()
-
-    def _parse_line(line):
-        """Parse a line, removing comments and whitespace"""
-
-        line = line.strip()
-
-        # Remove comments (everything after !)
-        if '!' in line:
-            line = line[:line.index('!')].strip()
-
-        # Split by '/' and take only the first part (before the '/')
-        if '/' in line:
-            line = line.split('/')[0].strip()
-
-        return line.split()
 
     def _parse_vector(f, dtype=float):
         """Parse a vector that starts with count then values, ending with '/'"""
@@ -419,7 +409,7 @@ def read_ssp(fname):
 
         # Read range coordinates (in km)
         range_line = _read_next_valid_line(f)
-        ranges = _np.array([float(x) for x in range_line.split()])
+        ranges = _np.array([float(x) for x in _parse_line(range_line)])
 
         if len(ranges) != nprofiles:
             raise ValueError(f"Expected {nprofiles} range profiles, but found {len(ranges)} ranges")
@@ -528,7 +518,7 @@ def read_ati_bty(fname):
                 line = _read_next_valid_line(f)
             except EOFError:
                 break
-            parts = line.split()
+            parts = _parse_line(line)
             if len(parts) >= 2:
                 ranges.append(float(parts[0]))  # Range in km
                 depths.append(float(parts[1]))  # Depth in m
@@ -576,7 +566,7 @@ def read_sbp(fname):
                 line = _read_next_valid_line(f)
             except EOFError:
                 break
-            parts = line.split()
+            parts = _parse_line(line)
             if len(parts) >= 2:
                 angles.append(float(parts[0]))  # Range in km
                 powers.append(float(parts[1]))  # Depth in m
@@ -643,7 +633,7 @@ def read_refl_coeff(fname):
                 line = _read_next_valid_line(f)
             except EOFError:
                 break
-            parts = line.split()
+            parts = _parse_line(line)
             if len(parts) == 3:
                 theta.append(float(parts[0]))
                 rmagn.append(float(parts[1]))
