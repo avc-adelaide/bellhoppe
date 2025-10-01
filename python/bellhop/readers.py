@@ -99,18 +99,18 @@ def read_env2d(fname):
         if '/' in line:
             line = line.split('/')[0].strip()
 
-        return line
+        return line.split()
 
     def _parse_vector(f, dtype=float):
         """Parse a vector that starts with count then values, ending with '/'"""
         line = _read_next_valid_line(f)
 
         # First line is the count
-        linecount = int(_parse_line(line))
+        linecount = int(_parse_line(line)[0])
 
         # Second line has the values
         values_line = _read_next_valid_line(f)
-        parts = _parse_line(values_line).split()
+        parts = _parse_line(values_line)
         val = [dtype(p) for p in parts]
 
         valout = _np.array(val) if len(val) > 1 else val[0]
@@ -138,7 +138,7 @@ def read_env2d(fname):
                 break
 
             # Parse SSP point and pad with 6x None to allow numerical indexing
-            parts = _parse_line(line).split() + [None] * 6
+            parts = _parse_line(line) + [None] * 6
             if parts[0] is None:
                 continue # skip empty lines
 
@@ -175,11 +175,11 @@ def read_env2d(fname):
 
         # Line 2: Frequency
         freq_line = _read_next_valid_line(f)
-        env['frequency'] = float(_parse_line(freq_line))
+        env['frequency'] = float(_parse_line(freq_line)[0])
 
         # Line 3: NMedia (should be 1 for BELLHOP)
         nmedia_line = _read_next_valid_line(f)
-        nmedia = int(_parse_line(nmedia_line))
+        nmedia = int(_parse_line(nmedia_line)[0])
         if nmedia != 1:
             raise ValueError(f"BELLHOP only supports 1 medium, found {nmedia}")
 
@@ -220,7 +220,7 @@ def read_env2d(fname):
 
         if env["volume_attenuation"] == _Strings.francois_garrison:
             fg_spec_line = _read_next_valid_line(f)
-            fg_parts = _parse_line(fg_spec_line).split()
+            fg_parts = _parse_line(fg_spec_line)
             env["fg_salinity"] = float(fg_parts[0])
             env["fg_temperature"] = float(fg_parts[1])
             env["fg_pH"] = float(fg_parts[2])
@@ -230,7 +230,7 @@ def read_env2d(fname):
         if env["surface_boundary_condition"] == _Strings.acousto_elastic:
 
             surface_props_line = _read_next_valid_line(f)
-            surface_props = _parse_line(surface_props_line).split()
+            surface_props = _parse_line(surface_props_line)
 
             env['surface_depth'] = float(surface_props[0])
             if len(surface_props) > 1:
@@ -246,7 +246,7 @@ def read_env2d(fname):
 
         # SSP depth specification (format: npts sigma_z max_depth)
         ssp_spec_line = _read_next_valid_line(f)
-        ssp_parts = _parse_line(ssp_spec_line).split()
+        ssp_parts = _parse_line(ssp_spec_line)
         env['depth_npts'] = int(ssp_parts[0])
         if len(ssp_parts) > 1:
             env['depth_sigmaz'] = float(ssp_parts[1])
@@ -267,7 +267,7 @@ def read_env2d(fname):
 
         # Bottom boundary options
         bottom_line = _read_next_valid_line(f)
-        bottom_parts = _parse_line(bottom_line).split()
+        bottom_parts = _parse_line(bottom_line)
         botopt = _parse_quoted_string(bottom_parts[0])
         opt = botopt[0]
         env["bottom_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid_option("Bottom boundary condition",opt)
@@ -290,7 +290,7 @@ def read_env2d(fname):
         if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
 
             bottom_props_line = _read_next_valid_line(f)
-            bottom_props = _parse_line(bottom_props_line).split()
+            bottom_props = _parse_line(bottom_props_line)
 
             if len(bottom_props) > 1:
                 env['bottom_soundspeed'] = float(bottom_props[1])
@@ -330,21 +330,21 @@ def read_env2d(fname):
 
         # Number of beams
         beam_num_line = _read_next_valid_line(f)
-        beam_num_parts = _parse_line(beam_num_line).split()
+        beam_num_parts = _parse_line(beam_num_line)
         env['beam_num'] = int(beam_num_parts[0])
         if len(beam_num_parts) > 1:
             env['single_beam_index'] = int(beam_num_parts[1])
 
         # Beam angles (beam_angle_min, beam_angle_max)
         angles_line = _read_next_valid_line(f)
-        angle_parts = _parse_line(angles_line).split()
+        angle_parts = _parse_line(angles_line)
         if len(angle_parts) >= 2:
             env['beam_angle_min'] = float(angle_parts[0])
             env['beam_angle_max'] = float(angle_parts[1])
 
         # Ray tracing limits (step, max_depth, max_range) - last line
         limits_line = _read_next_valid_line(f)
-        limits_parts = _parse_line(limits_line).split()
+        limits_parts = _parse_line(limits_line)
         env['step_size'] = float(limits_parts[0])
         env['box_depth'] = float(limits_parts[1])
         env['box_range'] = 1000*float(limits_parts[2])
