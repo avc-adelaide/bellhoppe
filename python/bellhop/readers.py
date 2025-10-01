@@ -88,10 +88,18 @@ def read_env2d(fname):
 
     def _parse_line(line):
         """Parse a line, removing comments and whitespace"""
+
+        line = line.strip()
+
         # Remove comments (everything after !)
         if '!' in line:
             line = line[:line.index('!')].strip()
-        return line.strip()
+
+        # Split by '/' and take only the first part (before the '/')
+        if '/' in line:
+            line = line.split('/')[0].strip()
+
+        return line
 
     def _parse_vector(f, dtype=float):
         """Parse a vector that starts with count then values, ending with '/'"""
@@ -102,16 +110,10 @@ def read_env2d(fname):
 
         # Second line has the values
         values_line = _read_next_valid_line(f)
-        values_line = _parse_line(values_line)
+        parts = _parse_line(values_line).split()
+        val = [dtype(p) for p in parts]
 
-        # Split by '/' and take only the first part (before the '/')
-        if '/' in values_line:
-            values_line = values_line.split('/')[0].strip()
-
-        parts = values_line.split()
-        values = [dtype(p) for p in parts]
-
-        valout = _np.array(values) if len(values) > 1 else values[0]
+        valout = _np.array(val) if len(val) > 1 else val[0]
         return valout, linecount
 
     def _read_ssp_points(f):
@@ -135,13 +137,8 @@ def read_env2d(fname):
                 f.seek(f.tell() - len(line.encode()) - 1)
                 break
 
-            # Parse SSP point
-            line = _parse_line(line)
-            if line.endswith('/'):
-                line = line[:-1].strip()
-
-            # Pad line with 6x None to allow numerical indexing
-            parts = line.split() + [None] * 6
+            # Parse SSP point and pad with 6x None to allow numerical indexing
+            parts = _parse_line(line).split() + [None] * 6
             if parts[0] is None:
                 continue # skip empty lines
 
@@ -214,9 +211,7 @@ def read_env2d(fname):
             opt = topopt[4]
             env["_altimetry"] = _Maps.surface.get(opt) or _invalid_option("Altimetry",opt)
             if env["_altimetry"] == _Strings.from_file:
-                ati,interp_ati = bellhop.read_ati(fname_base)
-                env["surface"] = ati
-                env["surface_interp"] = interp_ati
+                env["surface"], env["surface_interp"] = bellhop.read_ati(fname_base)
 
         # Single beam
         if len(topopt) > 5:
@@ -235,10 +230,7 @@ def read_env2d(fname):
         if env["surface_boundary_condition"] == _Strings.acousto_elastic:
 
             surface_props_line = _read_next_valid_line(f)
-            surface_props_line = _parse_line(surface_props_line)
-            if surface_props_line.endswith('/'):
-               surface_props_line = surface_props_line[:-1].strip()
-            surface_props = surface_props_line.split()
+            surface_props = _parse_line(surface_props_line).split()
 
             env['surface_depth'] = float(surface_props[0])
             if len(surface_props) > 1:
@@ -298,10 +290,7 @@ def read_env2d(fname):
         if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
 
             bottom_props_line = _read_next_valid_line(f)
-            bottom_props_line = _parse_line(bottom_props_line)
-            if bottom_props_line.endswith('/'):
-                bottom_props_line = bottom_props_line[:-1].strip()
-            bottom_props = bottom_props_line.split()
+            bottom_props = _parse_line(bottom_props_line).split()
 
             if len(bottom_props) > 1:
                 env['bottom_soundspeed'] = float(bottom_props[1])
@@ -348,19 +337,14 @@ def read_env2d(fname):
 
         # Beam angles (beam_angle_min, beam_angle_max)
         angles_line = _read_next_valid_line(f)
-        angles_line = _parse_line(angles_line)
-        if angles_line.endswith('/'):
-            angles_line = angles_line[:-1].strip()
-
-        angle_parts = angles_line.split()
+        angle_parts = _parse_line(angles_line).split()
         if len(angle_parts) >= 2:
             env['beam_angle_min'] = float(angle_parts[0])
             env['beam_angle_max'] = float(angle_parts[1])
 
         # Ray tracing limits (step, max_depth, max_range) - last line
         limits_line = _read_next_valid_line(f)
-        limits_parse = _parse_line(limits_line)
-        limits_parts = limits_parse.split()
+        limits_parts = _parse_line(limits_line).split()
         env['step_size'] = float(limits_parts[0])
         env['box_depth'] = float(limits_parts[1])
         env['box_range'] = 1000*float(limits_parts[2])
