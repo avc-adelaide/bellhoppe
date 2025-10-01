@@ -592,7 +592,7 @@ class _Bellhop:
             self._print_env_line(fh, nn, f"{label}s ({nn} values)")
             for j in a:
                 self._print(fh, f"{j} ", newline=False)
-            self._print(fh, f" /")
+            self._print(fh, " /")
 
     def _create_env_file(self, env, taskcode, fname_base=None):
 
