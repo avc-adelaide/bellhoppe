@@ -273,11 +273,8 @@ def read_env2d(fname):
                 env['soundspeed'] = ssp_points
         env['_ssp_env'] = ssp_points
 
-        print(ssp_points)
-
         # Bottom boundary options
         bottom_line = _read_next_valid_line(f)
-        print(bottom_line)
         bottom_parts = _parse_line(bottom_line).split()
         botopt = _parse_quoted_string(bottom_parts[0])
         opt = botopt[0]
