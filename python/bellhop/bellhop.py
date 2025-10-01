@@ -630,22 +630,22 @@ class _Bellhop:
                 svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
         comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
         topopt = f"{svp_interp}{svp_boundcond}{svp_attunits}{svp_volatt}{svp_alti}{svp_singlebeam}".strip()
-        self._print(fh, f"'{topopt}'    ! {comment}")
+        _print_env_line(f"'{topopt}'",comment)
         if env['surface'] is not None:
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
 
         if env['volume_attenuation'] == _Strings.francois_garrison:
             comment = "Francois-Garrison volume attenuation parameters (sal, temp, pH, depth)"
-            self._print(fh,f"{env['fg_salinity']} {env['fg_temperature']} {env['fg_pH']} {env['fg_depth']}    ! {comment}")
+            _print_env_line(f"{env['fg_salinity']} {env['fg_temperature']} {env['fg_pH']} {env['fg_depth']}",comment)
 
         if env['surface_boundary_condition'] == _Strings.acousto_elastic:
             comment = "DEPTH_Top (m)  TOP_SoundSpeed (m/s)  TOP_SoundSpeed_Shear (m/s)  TOP_Density (g/cm^3)  [ TOP_Absorp [ TOP_Absorp_Shear ] ]"
             if env['surface_absorption'] is None:
-                self._print(fh, f"{env['surface_depth']} {env['surface_soundspeed']} {env['surface_soundspeed_shear']} {env['surface_density']/1000} /  ! {comment}")
+                _print_env_line(f"{env['surface_depth']} {env['surface_soundspeed']} {env['surface_soundspeed_shear']} {env['surface_density']/1000} /",comment)
             elif env['surface_absorption_shear'] is None:
-                self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['surface_soundspeed'], env['surface_soundspeed_shear'], env['surface_density']/1000, env['surface_absorption']))
+                _print_env_line("%0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['surface_soundspeed'], env['surface_soundspeed_shear'], env['surface_density']/1000, env['surface_absorption']),comment)
             else:
-                self._print(fh, "%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['surface_soundspeed'], env['surface_soundspeed_shear'], env['surface_density']/1000, env['surface_absorption'], env['surface_absorption_shear']))
+                _print_env_line("%0.6f %0.6f %0.6f %0.6f %0.6f %0.6f /" % (env['depth_max'], env['surface_soundspeed'], env['surface_soundspeed_shear'], env['surface_density']/1000, env['surface_absorption'], env['surface_absorption_shear']),comment)
 
         # max depth should be the depth of the acoustic domain, which can be deeper than the max depth bathymetry
         comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
@@ -653,7 +653,7 @@ class _Bellhop:
 
         if _np.size(svp) == 1:
             _print_env_line(f"0.0 {svp} /","'0.0' SSP_Const")
-            _print_env_line(f"{max_depth} {svp} /","MAXDEPTH SSP_Const")
+            _print_env_line(f"{env['depth_max']} {svp} /","MAXDEPTH SSP_Const")
         elif svp_interp == 'Q':
             sspenv = env['_ssp_env']
             # if the SSP data was provided in the ENV file, use that:
@@ -704,11 +704,11 @@ class _Bellhop:
             self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
         runtype_str = taskcode + beamtype + beampattern + txtype + gridtype
         _print_env_line(f"'{runtype_str.rstrip()}'","RUN TYPE")
-        _print_env_line(env['nbeams'],"NBeams")
-        _print_env_line(f"{env['min_angle']} {env['max_angle']} /","ALPHA1,2 (degrees)")
+        _print_env_line(env['beam_num'],"Number of beams")
+        _print_env_line(f"{env['beam_angle_min']} {env['beam_angle_max']} /","ALPHA1,2 (degrees)")
         step_size = env["step_size"] or 0.0
-        box_depth = env["box_depth"] or 1.01*max_depth
-        box_range = env["box_range"] or 1.01*_np.max(env['rx_range'])
+        box_depth = env["box_depth"] or 1.01*env['depth_max']
+        box_range = env["box_range"] or 1.01*_np.max(env['receiver_range'])
         _print_env_line(f"{step_size} {box_depth} {box_range/1000}","STEP (m), ZBOX (m), RBOX (km)")
         _print_env_line("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         _print_env_line("!! End of Bellhop environment file !!")
