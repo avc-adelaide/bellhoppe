@@ -23,6 +23,14 @@ def _parse_line(line: str) -> list[str]:
     line = line.split("!", 1)[0].split('/', 1)[0].strip()
     return line.split()
 
+def _float(x,scale=1):
+    """Permissive floatenator"""
+    return None if x is None else float(x) * scale
+
+def _int(x):
+    """Permissive floatenator"""
+    return None if x is None else int(x)
+
 def read_env2d(fname):
     """Read a 2D underwater environment from a BELLHOP .env file.
 
@@ -220,29 +228,22 @@ def read_env2d(fname):
         if env["surface_boundary_condition"] == _Strings.acousto_elastic:
 
             surface_props_line = _read_next_valid_line(f)
-            surface_props = _parse_line(surface_props_line)
+            surface_props = _parse_line(surface_props_line) + [None] * 6
 
-            env['surface_depth'] = float(surface_props[0])
-            if len(surface_props) > 1:
-                env['surface_soundspeed'] = float(surface_props[1])
-            if len(surface_props) > 2:
-                env['surface_soundspeed_shear'] = float(surface_props[2])
-            if len(surface_props) > 3:
-                env['surface_density'] = float(surface_props[3]) * 1000  # convert from g/cm³ to kg/m³
-            if len(surface_props) > 4:
-                env['surface_absorption'] = float(surface_props[4])
-            if len(surface_props) > 5:
-                env['surface_absorption_shear'] = float(surface_props[5])
+            env['surface_depth'] = _float(surface_props[0])
+            env['surface_soundspeed'] = _float(surface_props[1])
+            env['surface_soundspeed_shear'] = _float(surface_props[2])
+            env['surface_density'] = _float(surface_props[3], scale=1000)  # convert from g/cm³ to kg/m³
+            env['surface_absorption'] = _float(surface_props[4])
+            env['surface_absorption_shear'] = _float(surface_props[5])
 
         # SSP depth specification (format: npts sigma_z max_depth)
         ssp_spec_line = _read_next_valid_line(f)
-        ssp_parts = _parse_line(ssp_spec_line)
+        ssp_parts = _parse_line(ssp_spec_line) + [None] * 3
         env['depth_npts'] = int(ssp_parts[0])
-        if len(ssp_parts) > 1:
-            env['depth_sigmaz'] = float(ssp_parts[1])
-        if len(ssp_parts) > 2:
-            env['depth_max'] = float(ssp_parts[2])
-            env['depth'] = float(ssp_parts[2])
+        env['depth_sigmaz'] = _float(ssp_parts[1])
+        env['depth_max'] = _float(ssp_parts[2])
+        env['depth'] = _float(ssp_parts[2])
 
         # Read SSP points
         ssp_points = _read_ssp_points(f)
@@ -320,17 +321,15 @@ def read_env2d(fname):
 
         # Number of beams
         beam_num_line = _read_next_valid_line(f)
-        beam_num_parts = _parse_line(beam_num_line)
+        beam_num_parts = _parse_line(beam_num_line) + [None] * 1
         env['beam_num'] = int(beam_num_parts[0])
-        if len(beam_num_parts) > 1:
-            env['single_beam_index'] = int(beam_num_parts[1])
+        env['single_beam_index'] = _int(beam_num_parts[1])
 
         # Beam angles (beam_angle_min, beam_angle_max)
         angles_line = _read_next_valid_line(f)
-        angle_parts = _parse_line(angles_line)
-        if len(angle_parts) >= 2:
-            env['beam_angle_min'] = float(angle_parts[0])
-            env['beam_angle_max'] = float(angle_parts[1])
+        angle_parts = _parse_line(angles_line) + [None] * 2
+        env['beam_angle_min'] = _float(angle_parts[0])
+        env['beam_angle_max'] = _float(angle_parts[1])
 
         # Ray tracing limits (step, max_depth, max_range) - last line
         limits_line = _read_next_valid_line(f)
