@@ -264,6 +264,9 @@ def _finalise_environment(env):
         else:
             env['beam_angle_max'] = _env.Defaults.beam_angle_halfspace
 
+    env['box_depth'] = env['box_depth'] or 1.01 * env['depth_max']
+    env['box_range'] = env['box_range'] or 1.01 * (_np.max(env['receiver_range']) - min(0,_np.min(env['receiver_range'])))
+
     return env
 
 def print_env(env):
@@ -716,11 +719,9 @@ class _Bellhop:
             self._create_refl_coeff_file(fname_base+".brc", env['bottom_reflection_coefficient'])
 
         _print_env_line("")
-
-        self._print_array(fh, env['source_depth'], nn=env['source_ndepth'], label="Source depth")
-        self._print_array(fh, env['receiver_depth'], nn=env['receiver_ndepth'], label="Receiver depth")
-        self._print_array(fh, env['receiver_range']/1000, nn=env['receiver_nrange'], label="Receiver range")
-
+        self._print_array(fh, env['source_depth'], nn=env['source_ndepth'], label="Source depth (m)")
+        self._print_array(fh, env['receiver_depth'], nn=env['receiver_ndepth'], label="Receiver depth (m)")
+        self._print_array(fh, env['receiver_range']/1000, nn=env['receiver_nrange'], label="Receiver range (km)")
         _print_env_line("")
 
         beamtype = _Maps.beam_rev[env['beam_type']]
@@ -734,32 +735,29 @@ class _Bellhop:
         _print_env_line(f"{runtype_str}","RUN TYPE")
         _print_env_line(_array2str([env['beam_num'], env['single_beam_index']]),"Num_Beams [ Single_Beam_Index ]")
         _print_env_line(f"{env['beam_angle_min']} {env['beam_angle_max']} /","ALPHA1,2 (degrees)")
-        step_size = env["step_size"] or 0.0
-        box_depth = env["box_depth"] or 1.01*env['depth_max']
-        box_range = env["box_range"] or 1.01*_np.max(env['receiver_range'])
-        _print_env_line(f"{step_size} {box_depth} {box_range/1000}","STEP (m), ZBOX (m), RBOX (km)")
+        _print_env_line(f"{env['step_size']} {env['box_depth']} {env['box_range'] / 1000}","Step_Size (m), ZBOX (m), RBOX (km)")
         _print_env_line("","End of Bellhop environment file")
         _os.close(fh)
         return fname_base
 
     def _create_bty_ati_file(self, filename, depth, interp):
         with open(filename, 'wt') as f:
-            f.write("'%c'\n" % ('C' if interp == _Strings.curvilinear else 'L'))
+            f.write(f"'{_Maps.bty_interp_rev[interp]}'\n")
             f.write(str(depth.shape[0])+"\n")
             for j in range(depth.shape[0]):
-                f.write("%0.6f %0.6f\n" % (depth[j,0]/1000, depth[j,1]))
+                f.write(f"{depth[j,0]/1000} {depth[j,1]}\n")
 
     def _create_sbp_file(self, filename, dir):
         with open(filename, 'wt') as f:
             f.write(str(dir.shape[0])+"\n")
             for j in range(dir.shape[0]):
-                f.write("%0.6f %0.6f\n" % (dir[j,0], dir[j,1]))
+                f.write(f"{dir[j,0]}  {dir[j,1]}\n")
 
     def _create_refl_coeff_file(self, filename, rc):
         with open(filename, 'wt') as f:
             f.write(str(rc.shape[0])+"\n")
             for j in range(rc.shape[0]):
-                f.write(f"{rc[j,0]} {rc[j,1]} {rc[j,2]}\n")
+                f.write(f"{rc[j,0]}  {rc[j,1]}  {rc[j,2]}\n")
 
     def _create_ssp_file(self, filename, svp):
         with open(filename, 'wt') as f:
