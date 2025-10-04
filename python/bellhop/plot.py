@@ -19,7 +19,6 @@ from scipy import interpolate as _interp
 import pandas as _pd
 
 import matplotlib.pyplot as _pyplt
-import matplotlib.cm as _cm
 import matplotlib.colors as _mplc
 
 from bellhop.constants import _Strings
