@@ -53,6 +53,7 @@ dist/
 # Temporary files
 *~
 .DS_Store
+._GIT_CLEAN_CHECK
 
 # Compiled MATLAB code
 *.asv
