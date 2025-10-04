@@ -29,3 +29,11 @@ def test_variable_soundspeed_error():
     	env = bh.create_env2d(soundspeed=ssp, depth=30)
     	env = bh.check_env2d(env)
 
+
+
+def test_error_type():
+    """Test that an error is raised for unknown model type."""
+
+    with pytest.raises(ValueError, match=r"Not a 2D environment"):
+        env = bh.create_env2d(type="4D")
+        bh.check_env2d(env)
