@@ -162,7 +162,10 @@ def read_env2d(fname: str) -> Dict[str, Any]:
                 break
 
         if ssp_points is None:
-            raise(ValueError,"No SSP points were found in the env file.")
+            raise ValueError("No SSP points were found in the env file.")
+
+        if len(ssp_points) == 1:
+            raise ValueError("Only one SSP point found but at least two required (top and bottom)")
 
         return _np.array(ssp_points)
 
@@ -187,7 +190,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
         # Line 4: Top boundary options
         topopt_line = _read_next_valid_line(f)
-        topopt = _parse_quoted_string(topopt_line)
+        topopt = _parse_quoted_string(topopt_line) + "      "
 
         # Parse SSP interpolation type from first character
         opt = topopt[0]
@@ -202,10 +205,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
         env["attenuation_units"] = _Maps.attunits.get(opt) or _invalid_option("Attenuation units",opt)
 
         # Volume attenuation
-        if len(topopt) > 3:
-            opt = topopt[3]
-        else:
-            opt = " "
+        opt = topopt[3]
         env["volume_attenuation"] = _Maps.volatt.get(opt) or _invalid_option("Volume attenuation",opt)
 
         # Altimetry
@@ -250,32 +250,25 @@ def read_env2d(fname: str) -> Dict[str, Any]:
         env['depth'] = _float(ssp_parts[2])
 
         # Read SSP points
-        ssp_points = _read_ssp_points(f)
-        if ssp_points is not None and len(ssp_points) > 0:
-            if len(ssp_points) == 1:
-                # Single sound speed value
-                env['soundspeed'] = ssp_points[0, 1]
-            else:
-                # Multiple points - depth, sound speed pairs
-                env['soundspeed'] = ssp_points
+        env['soundspeed'] = _read_ssp_points(f)
         if env["soundspeed_interp"] == _Strings.quadrilateral:
-            depths = ssp_points[:,0]
+            depths = env['soundspeed'][:,0]
             env['soundspeed'] = read_ssp(fname_base,depths)
 
         # Bottom boundary options
         bottom_line = _read_next_valid_line(f)
         bottom_parts = _parse_line(bottom_line)
-        botopt = _parse_quoted_string(bottom_parts[0])
+        botopt = _parse_quoted_string(bottom_parts[0]) + " "
+
         opt = botopt[0]
         env["bottom_boundary_condition"] = _Maps.boundcond.get(opt) or _invalid_option("Bottom boundary condition",opt)
 
-        if len(botopt) > 1:
-            opt = botopt[1]
-            env["_bathymetry"] = _Maps.bottom.get(opt) or _invalid_option("Bathymetry",opt)
-            if env["_bathymetry"] == _Strings.from_file:
-                bty,interp_bty = read_bty(fname_base)
-                env["depth"] = bty
-                env["bottom_interp"] = interp_bty
+        opt = botopt[1]
+        env["_bathymetry"] = _Maps.bottom.get(opt) or _invalid_option("Bathymetry",opt)
+        if env["_bathymetry"] == _Strings.from_file:
+            bty,interp_bty = read_bty(fname_base)
+            env["depth"] = bty
+            env["bottom_interp"] = interp_bty
 
         if len(bottom_parts) >= 2:
             env['bottom_roughness'] = float(bottom_parts[1])
