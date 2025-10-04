@@ -1,11 +1,11 @@
 
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union, TextIO
 import numpy as _np
 import pandas as _pd
 from bellhop.constants import _Strings, _Maps
 import bellhop.environment
 
-def _read_next_valid_line(f: Any) -> str:
+def _read_next_valid_line(f: TextIO) -> str:
     """Read the next valid text line of an input file, discarding invalid lines"""
     while True:
         line = f.readline()

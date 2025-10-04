@@ -742,7 +742,7 @@ class _Bellhop:
         _os.close(fh)
         return fname_base
 
-    def _create_bty_ati_file(self, filename: str, depth: Any, interp: str) -> None:
+    def _create_bty_ati_file(self, filename: str, depth: Any, interp: _Strings) -> None:
         with open(filename, 'wt') as f:
             f.write(f"'{_Maps.bty_interp_rev[interp]}'\n")
             f.write(str(depth.shape[0])+"\n")

@@ -20,7 +20,7 @@ import pandas as _pd
 
 import matplotlib.pyplot as _pyplt
 import matplotlib.cm as _cm
-import bokeh as _bokeh
+import matplotlib.colors as _mplc
 
 from bellhop.constants import _Strings
 import bellhop.plotutils as _plt
@@ -188,11 +188,12 @@ def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bo
         xlabel = 'Range (km)'
     oh = _plt.hold()
     for _, row in rays.iterrows():
-        c = int(255*_np.abs(row.bottom_bounces)/max_amp)
+        c = float(_np.abs(row.bottom_bounces) / max_amp)
         if invert_colors:
-            c = 255-c
-        c = _bokeh.colors.RGB(c, c, c)
-        _plt.plot(row.ray[:,0]/divisor, -row.ray[:,1], color=c, xlabel=xlabel, ylabel='Depth (m)', **kwargs)
+            c = 1.0 - c
+        cmap = _pyplt.get_cmap("gray")
+        col_str = _mplc.to_hex(cmap(c))
+        _plt.plot(row.ray[:,0]/divisor, -row.ray[:,1], color=col_str, xlabel=xlabel, ylabel='Depth (m)', **kwargs)
     if env is not None:
         plot_env(env)
     _plt.hold(oh if oh is not None else False)
@@ -412,14 +413,15 @@ def pyplot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: 
         divisor = 1000
         xlabel = 'Range (km)'
     for _, row in rays.iterrows():
-        c = _np.abs(row.bottom_bounces) / max_amp
+        c = float(_np.abs(row.bottom_bounces) / max_amp)
         if invert_colors:
             c = 1.0 - c
-        c = _cm.gray(c)
+        cmap = _pyplt.get_cmap("gray")
+        col_str = _mplc.to_hex(cmap(c))
         if "color" in kwargs.keys():
             _pyplt.plot(row.ray[:, 0] / divisor, -row.ray[:, 1], **kwargs)
         else:
-            _pyplt.plot(row.ray[:, 0] / divisor, -row.ray[:, 1], color=c, **kwargs)
+            _pyplt.plot(row.ray[:, 0] / divisor, -row.ray[:, 1], color=col_str, **kwargs)
         _pyplt.xlabel(xlabel)
         _pyplt.ylabel('Depth (m)')
     if env is not None:
