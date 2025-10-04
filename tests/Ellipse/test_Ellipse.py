@@ -39,3 +39,5 @@ def test_Ellipse_read_data():
     bh.print_env(env)
     bh.check_env2d(env)
 
+    rays = bh.compute_rays(env, debug=True, fname_base="tests/Ellipse/ellipse_debug")
+    assert rays is not None
