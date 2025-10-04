@@ -21,7 +21,7 @@ import subprocess as _proc
 
 from tempfile import mkstemp as _mkstemp
 from struct import unpack as _unpack
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as _np
 from scipy import interpolate as _interp
