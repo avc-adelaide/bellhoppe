@@ -71,6 +71,17 @@ python_version = "3.11"
 strict = true
 warn_return_any = true
 
+[[tool.mypy.overrides]]
+module = [
+    "numpy.*",
+    "scipy.*",
+    "pandas.*",
+    "matplotlib.*",
+    "bokeh.*",
+    "IPython.*"
+]
+ignore_missing_imports = true
+
 ####### COVERAGE #######
 
 [tool.coverage.run]
