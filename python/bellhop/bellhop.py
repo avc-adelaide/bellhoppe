@@ -186,9 +186,9 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
                 assert env['soundspeed_interp'] == _Strings.quadrilateral, "SVP DataFrame with multiple columns implies quadrilateral interpolation."
             # For DataFrames, apply the same minimum point requirements as numpy arrays
             if env['soundspeed_interp'] == _Strings.spline:
-                assert env['soundspeed'].shape[1] > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
+                assert len(env['soundspeed']) > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
             else:
-                assert env['soundspeed'].shape[1] > 1, 'soundspeed profile must have at least 2 points'
+                assert len(env['soundspeed']) > 1, 'soundspeed profile must have at least 2 points'
             assert env['soundspeed'].index[0] <= 0, 'First depth in soundspeed array must be 0 m'
             assert env['soundspeed'].index[-1] >= env['depth_max'], 'Last depth in soundspeed array must be beyond water depth: '+str(env['depth_max'])+' m'
             assert _np.all(_np.diff(env['soundspeed'].index) > 0), 'Soundspeed array must be strictly monotonic in depth'
