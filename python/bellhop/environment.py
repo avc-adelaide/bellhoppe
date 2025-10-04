@@ -34,7 +34,6 @@ class EnvironmentConfig:
     # Sound speed parameters
     soundspeed: Union[float, Any] = 1500.0  # m/s - Any allows for np.ndarray, pd.DataFrame
     soundspeed_interp: str = _Strings.spline  # spline/linear/quadrilateral/pchip/hexahedral/nlinear
-    _ssp_env: Optional[Any] = None
 
     # Bottom parameters
     bottom_soundspeed: float = 1600.0  # m/s

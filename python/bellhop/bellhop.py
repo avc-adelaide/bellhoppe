@@ -186,12 +186,13 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
                 assert env['soundspeed_interp'] == _Strings.quadrilateral, "SVP DataFrame with multiple columns implies quadrilateral interpolation."
             # For DataFrames, apply the same minimum point requirements as numpy arrays
             if env['soundspeed_interp'] == _Strings.spline:
-                assert env['soundspeed'].shape[0] > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
+                assert env['soundspeed'].shape[1] > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
             else:
-                assert env['soundspeed'].shape[0] > 1, 'soundspeed profile must have at least 2 points'
+                assert env['soundspeed'].shape[1] > 1, 'soundspeed profile must have at least 2 points'
             assert env['soundspeed'].index[0] <= 0, 'First depth in soundspeed array must be 0 m'
             assert env['soundspeed'].index[-1] >= env['depth_max'], 'Last depth in soundspeed array must be beyond water depth: '+str(env['depth_max'])+' m'
             assert _np.all(_np.diff(env['soundspeed'].index) > 0), 'Soundspeed array must be strictly monotonic in depth'
+            # TODO: check soundspeed range limits
         elif _np.size(env['soundspeed']) > 1:
             assert env['soundspeed'].ndim == 2, 'soundspeed must be a scalar or an Nx2 array'
             assert env['soundspeed'].shape[1] == 2, 'soundspeed must be a scalar or an Nx2 array'
@@ -535,7 +536,7 @@ class _Bellhop:
             print('[CUSTOM FILES] Deleting prior working files: '+fname_base+'.*')
             self._rm_files(fname_base)
 
-        fname_base = self._create_env_file(env, taskmap[task][0], fname_base)
+        fname_base = self._create_env_file(env, taskmap[task][0], fname_base, debug)
 
         results = None
         if self._bellhop(fname_base):
@@ -612,7 +613,7 @@ class _Bellhop:
             fname_base = fname[:-4]
         return fh, fname_base
 
-    def _create_env_file(self, env: Dict[str, Any], taskcode: str, fname_base: Optional[str] = None) -> str:
+    def _create_env_file(self, env: Dict[str, Any], taskcode: str, fname_base: Optional[str] = None, debug: bool = False) -> str:
 
         fh, fname_base = self._open_env_file(fname_base)
 
@@ -679,20 +680,16 @@ class _Bellhop:
         if isinstance(svp, _pd.DataFrame) and len(svp.columns) == 1:
             svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
         if _np.size(svp) == 1:
+            debug and print("One SSP point only")
             _print_env_line(_array2str([0.0, svp]),"Min_Depth SSP_Const")
             _print_env_line(_array2str([env['depth_max'], svp]),"Max_Depth SSP_Const")
-        elif svp_interp == 'Q':
-            sspenv = env['_ssp_env']
-            # if the SSP data was provided in the ENV file, use that:
-            if sspenv is not None:
-                for j in range(sspenv.shape[0]):
-                    _print_env_line(_array2str([sspenv[j,0], sspenv[j,1]]),f"ssp_{j}")
-            # otherwise use the SSP data specified in the dataframe:
-            else:
-                for j in range(svp.shape[0]):
-                    _print_env_line(_array2str([svp.index[j], svp.iloc[j,0]]),f"ssp_{j}")
-            self._create_ssp_file(fname_base+'.ssp', svp)
+        elif svp_interp == "Q":
+            debug and print("SSP: Q interpolation")
+            for j in range(svp.shape[0]):
+                _print_env_line(_array2str([svp.index[j], svp.iloc[j,0]]),f"ssp_{j}")
+            self._create_ssp_quad_file(fname_base+'.ssp', svp)
         else:
+            debug and print(f"SSP: standard 2xN array of depths and sound speeds -- interpolation: {svp_interp}")
             for j in range(svp.shape[0]):
                 _print_env_line(_array2str([svp[j,0], svp[j,1]]),f"ssp_{j}")
 
@@ -761,9 +758,9 @@ class _Bellhop:
             for j in range(rc.shape[0]):
                 f.write(f"{rc[j,0]}  {rc[j,1]}  {rc[j,2]}\n")
 
-    def _create_ssp_file(self, filename: str, svp: Any) -> None:
+    def _create_ssp_quad_file(self, filename: str, svp: _pd.DataFrame) -> None:
         with open(filename, 'wt') as f:
-            f.write(str(svp.shape[1])+"\n")
+            f.write(str(svp.shape[1])+"\n") # number of SSP points
             for j in range(svp.shape[1]):
                 f.write("%0.6f%c" % (svp.columns[j]/1000, '\n' if j == svp.shape[1]-1 else ' '))
             for k in range(svp.shape[0]):

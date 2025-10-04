@@ -11,11 +11,6 @@ skip_if_coverage = pytest.mark.skipif(
 )
 
 env = bh.read_env2d("tests/MunkB_geo_rot/MunkB_geo_rot.env")
-ssp = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")
-bty,interp_bty = bh.read_bty("tests/MunkB_geo_rot/MunkB_geo_rot.bty")
-
-env["soundspeed"] = ssp
-env["depth"] = bty
 
 tl = bh.compute_transmission_loss(env,fname_base="tests/MunkB_geo_rot/MunkB_output",debug=True)
 tl_exp = bh.load_shd("tests/MunkB_geo_rot/MunkB_geo_rot") # implicit ".shd" suffix
@@ -25,14 +20,12 @@ def test_MunkB_geo_rot_A():
     Just check that there are no execution errors.
     """
 
-    assert ssp.shape[1] == 30, "Should be N=30 SSP data points"
-    assert bty.shape[0] == 30, "Should be N=30 BTY data points"
+    assert env["soundspeed"].shape[1] == 30, "Should be N=30 SSP data points"
+    assert env['depth'].shape == (30,2), "BTY file should contain 30 data points"
 
     assert env['soundspeed_interp'] == 'quadrilateral', "SSPOPT = 'QVF' => Q == quadrilateral"
     assert env['surface_boundary_condition'] == 'vacuum', "SSPOPT = 'QVF' => V == vacuum"
     assert env['attenuation_units'] == 'frequency dependent',  "SSPOPT = 'QVF' => F == frequency dependent"
-
-    assert env['depth'].shape == (30,2), "BTY file should contain 30 data points"
 
     assert env['step_size'] == 0, "0.0  99500.0  5.0		! STEP (m), ZBOX (m), RBOX (km)"
     assert env['box_depth'] == 99500.0, "0.0  99500.0  5.0		! STEP (m), ZBOX (m), RBOX (km)"

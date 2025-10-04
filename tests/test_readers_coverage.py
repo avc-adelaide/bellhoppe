@@ -78,14 +78,14 @@ def test_read_ssp_points_empty_line_break():
         assert env['name'] == 'Test profile'
 
         # Should have captured the SSP points before the empty line
-        assert env['_ssp_env'] is not None
-        assert len(env['_ssp_env']) == 2  # Two SSP points before empty line
+        assert env['soundspeed'] is not None
+        assert len(env['soundspeed']) == 2  # Two SSP points before empty line
 
         # Verify the SSP points are correct
-        assert env['_ssp_env'][0][0] == 0.0   # First depth
-        assert env['_ssp_env'][0][1] == 1500.0  # First sound speed
-        assert env['_ssp_env'][1][0] == 200.0   # Second depth
-        assert env['_ssp_env'][1][1] == 1530.0  # Second sound speed
+        assert env['soundspeed'][0][0] == 0.0   # First depth
+        assert env['soundspeed'][0][1] == 1500.0  # First sound speed
+        assert env['soundspeed'][1][0] == 200.0   # Second depth
+        assert env['soundspeed'][1][1] == 1530.0  # Second sound speed
     finally:
         os.unlink(fname)
 
@@ -131,8 +131,8 @@ def test_read_ssp_points_value_error_recovery():
         assert env['name'] == 'Test profile'
 
         # Should have captured the SSP points before the 'A' line
-        assert env['_ssp_env'] is not None
-        assert len(env['_ssp_env']) == 2  # Two SSP points before 'A' line
+        assert env['soundspeed'] is not None
+        assert len(env['soundspeed']) == 2  # Two SSP points before 'A' line
 
         # The 'A' line should have been put back and processed as bottom boundary
         from bellhop.constants import _Strings

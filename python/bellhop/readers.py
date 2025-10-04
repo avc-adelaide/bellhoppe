@@ -1,5 +1,5 @@
 
-from typing import Any, Dict, Optional, Tuple, Union, TextIO
+from typing import Any, Dict, Optional, Tuple, Union, TextIO, List
 import numpy as _np
 import pandas as _pd
 from bellhop.constants import _Strings, _Maps
@@ -255,7 +255,9 @@ def read_env2d(fname: str) -> Dict[str, Any]:
             else:
                 # Multiple points - depth, sound speed pairs
                 env['soundspeed'] = ssp_points
-        env['_ssp_env'] = ssp_points
+        if env["soundspeed_interp"] == _Strings.quadrilateral:
+            depths = ssp_points[:,0]
+            env['soundspeed'] = bellhop.read_ssp(fname_base,depths)
 
         # Bottom boundary options
         bottom_line = _read_next_valid_line(f)
@@ -341,7 +343,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
     return env
 
-def read_ssp(fname: str) -> Union[Any, _pd.DataFrame]:
+def read_ssp(fname: str, depths: Optional[Union[List, _np.array]] = None) -> Union[Any, _pd.DataFrame]:
     """Read a 2D sound speed profile (.ssp) file used by BELLHOP.
 
     This function reads BELLHOP's .ssp files which contain range-dependent
@@ -443,8 +445,9 @@ def read_ssp(fname: str) -> Union[Any, _pd.DataFrame]:
             ranges_m = ranges * 1000
 
             # Create depth indices (actual depths would come from associated .env file)
-            ndepths = ssp_array.shape[0]
-            depths = _np.arange(ndepths, dtype=float)
+            if depths is None:
+                ndepths = ssp_array.shape[0]
+                depths = _np.arange(ndepths, dtype=float)
 
             # Create DataFrame with ranges as columns and depths as index
             # ssp_array is [ndepths, nprofiles] which is the correct orientation
