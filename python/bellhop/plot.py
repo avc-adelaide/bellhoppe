@@ -47,15 +47,15 @@ def plot_env(env: Dict[str, Any], surface_color: str = 'dodgerblue', bottom_colo
     >>> bh.plot_env(env)
     """
 
-    min_x = 0
-    max_x = _np.max(env['receiver_range'])
+    min_x = 0.0
+    max_x = float(_np.max(env['receiver_range']))
     if max_x-min_x > 10000:
-        divisor = 1000
+        divisor = 1000.0
         min_x /= divisor
         max_x /= divisor
         xlabel = 'Range (km)'
     else:
-        divisor = 1
+        divisor = 1.0
         xlabel = 'Range (m)'
     if env['surface'] is None:
         min_y = 0
@@ -81,7 +81,7 @@ def plot_env(env: Dict[str, Any], surface_color: str = 'dodgerblue', bottom_colo
         s = env['depth']
         _plt.plot(s[:,0]/divisor, -s[:,1], color=bottom_color)
     txd = env['source_depth']
-    _plt.plot([0]*_np.size(txd), -txd, marker='*', style=None, color=source_color)
+    _plt.plot([0]*_np.size(txd), -txd, marker='*', style='solid', color=source_color)
     if receiver_plot is None:
         receiver_plot = _np.size(env['receiver_depth'])*_np.size(env['receiver_range']) < 2000
     if receiver_plot:
@@ -90,8 +90,8 @@ def plot_env(env: Dict[str, Any], surface_color: str = 'dodgerblue', bottom_colo
             rxr = [rxr]
         for r in _np.array(rxr):
             rxd = env['receiver_depth']
-            _plt.plot([r/divisor]*_np.size(rxd), -rxd, marker='o', style=None, color=receiver_color)
-    _plt.hold(oh)
+            _plt.plot([r/divisor]*_np.size(rxd), -rxd, marker='o', style='solid', color=receiver_color)
+    _plt.hold(oh if oh is not None else False)
 
 def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
     """Plots the sound speed profile.
@@ -121,7 +121,7 @@ def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
         tck = _interp.splrep(svp[:,0], svp[:,1], s=0)
         xnew = _interp.splev(ynew, tck, der=0)
         _plt.plot(xnew, -ynew, xlabel='Soundspeed (m/s)', ylabel='Depth (m)', hold=True, **kwargs)
-        _plt.plot(svp[:,1], -svp[:,0], marker='.', style=None, **kwargs)
+        _plt.plot(svp[:,1], -svp[:,0], marker='.', style='solid', **kwargs)
     else:
         _plt.plot(svp[:,1], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
 

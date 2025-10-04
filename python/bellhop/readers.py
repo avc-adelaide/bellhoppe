@@ -240,7 +240,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
         # SSP depth specification (format: npts sigma_z max_depth)
         ssp_spec_line = _read_next_valid_line(f)
-        ssp_parts = _parse_line(ssp_spec_line) + [None] * 3  # type: ignore
+        ssp_parts = _parse_line(ssp_spec_line) + [None] * 3
         env['depth_npts'] = int(ssp_parts[0] or 0)
         env['depth_sigmaz'] = _float(ssp_parts[1])
         env['depth_max'] = _float(ssp_parts[2])
@@ -322,7 +322,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
         # Number of beams
         beam_num_line = _read_next_valid_line(f)
-        beam_num_parts = _parse_line(beam_num_line) + [None] * 1  # type: ignore
+        beam_num_parts = _parse_line(beam_num_line) + [None] * 1
         env['beam_num'] = int(beam_num_parts[0] or 0)
         env['single_beam_index'] = _int(beam_num_parts[1])
 

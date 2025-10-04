@@ -535,7 +535,7 @@ class _Bellhop:
             print('[CUSTOM FILES] Deleting prior working files: '+fname_base+'.*')
             self._rm_files(fname_base)
 
-        fname_base = self._create_env_file(env, taskmap[task][0], fname_base)  # type: ignore
+        fname_base = self._create_env_file(env, taskmap[task][0], fname_base)
 
         results = None
         if self._bellhop(fname_base):
@@ -544,7 +544,7 @@ class _Bellhop:
                 print(err)
             else:
                 try:
-                    results = taskmap[task][1](fname_base)  # type: ignore
+                    results = taskmap[task][1](fname_base)
                 except FileNotFoundError:
                     print('[WARN] Bellhop did not generate expected output file')
 
@@ -744,7 +744,7 @@ class _Bellhop:
 
     def _create_bty_ati_file(self, filename: str, depth: Any, interp: str) -> None:
         with open(filename, 'wt') as f:
-            f.write(f"'{_Maps.bty_interp_rev[interp]}'\n")  # type: ignore
+            f.write(f"'{_Maps.bty_interp_rev[interp]}'\n")
             f.write(str(depth.shape[0])+"\n")
             for j in range(depth.shape[0]):
                 f.write(f"{depth[j,0]/1000} {depth[j,1]}\n")
