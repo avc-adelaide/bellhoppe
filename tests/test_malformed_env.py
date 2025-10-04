@@ -55,3 +55,9 @@ def test_malformed_env_bty():
     with pytest.raises(ValueError, match="Bathymetry option 'Z' not available"):
         bh.read_env2d("tests/malformed_env/bad_bty.env")
 
+
+def test_malformed_env_ssp_eof():
+    """Test ENV file where file ends while inside SSP list"""
+    with pytest.raises(EOFError, match="File ended during env file reading of SSP points"):
+        bh.read_env2d("tests/malformed_env/eof_ssp.env")
+

@@ -116,52 +116,33 @@ def read_env2d(fname: str) -> Dict[str, Any]:
         return valout, linecount
 
     def _read_ssp_points(f: Any) -> _np.ndarray:
-        """Read sound speed profile points until we find the bottom boundary line"""
+        """Read sound speed profile points until we find the bottom boundary line
+
+           Default values are according to 'EnvironmentalFile.htm'."""
 
         ssp_points: list[list[float]] = []
-
-        # according to "EnvironmentalFile.htm":
-        prev_speed = 1500.0
-        prev_speed_shear = 0.0
-        prev_density = 1000.0
-        prev_att = 0.0
-        prev_att_shear = 0.0
+        ssp = dict(depth=0.0, speed=1500.0, speed_shear=0.0, density=1000.0, att=0.0, att_shear=0.0)
 
         while True:
-            line = f.readline().strip()
+            line = f.readline()
             if not line:
-                continue # skip empty
-
-            # Check if this is a bottom boundary line (starts with quote)
-            if line.startswith("'"):
+                raise EOFError("File ended during env file reading of SSP points.")
+            line = line.strip()
+            if not line:   # empty line
+                continue
+            if line.startswith("'"): # Check if this is a bottom boundary line (starts with quote)
                 # This is the bottom boundary line, put it back
                 f.seek(f.tell() - len(line.encode()) - 1)
                 break
 
-            # Parse SSP point and pad with 6x None to allow numerical indexing
-            parts = _parse_line(line) + [None] * 6
+            parts = (_parse_line(line) + [None] * 6)[0:6]
             if parts[0] is None:
                 continue # skip empty lines
-
-            try:
-                depth = float(parts[0])
-                speed = float(parts[1] or prev_speed)
-                speed_shear = float(parts[2] or prev_speed_shear)
-                density = float(parts[3] or prev_density)
-                att = float(parts[4] or prev_att)
-                att_shear = float(parts[5] or prev_att_shear)
-                ssp_points.append([depth, speed])
-                # TODO: add extra terms to ssp_points array (but other fixes needed)
-                prev_speed = speed
-                prev_speed_shear = speed_shear
-                prev_density = density
-                prev_att = att
-                prev_att_shear = att_shear
-            except ValueError:
-                # This might be the end of SSP or a different format
-                # Put the line back and break
-                f.seek(f.tell() - len(line.encode()) - 1)
-                break
+            ssp.update({
+                k: float(v) if v is not None else ssp[k] for k, v in zip(ssp.keys(), parts)
+            })
+            ssp_points.append([ssp["depth"], ssp["speed"]])
+            # TODO: add extra terms (but this needs adjustments elsewhere)
 
         if len(ssp_points) == 0:
             raise ValueError("No SSP points were found in the env file.")
