@@ -15,7 +15,7 @@ from typing import Any, Dict, Optional
 from sys import float_info as _fi
 
 import numpy as _np
-from scipy import interpolate as _interp
+import scipy.interpolate as _interp
 import pandas as _pd
 
 import matplotlib.pyplot as _pyplt
