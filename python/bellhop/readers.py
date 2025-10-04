@@ -1,10 +1,11 @@
 
+from typing import Any, Dict, Optional, Tuple, Union
 import numpy as _np
 import pandas as _pd
 from bellhop.constants import _Strings, _Maps
 import bellhop.environment
 
-def _read_next_valid_line(f):
+def _read_next_valid_line(f: Any) -> str:
     """Read the next valid text line of an input file, discarding invalid lines"""
     while True:
         line = f.readline()
@@ -23,15 +24,15 @@ def _parse_line(line: str) -> list[str]:
     line = line.split("!", 1)[0].split('/', 1)[0].strip()
     return line.split()
 
-def _float(x,scale=1):
+def _float(x: Optional[float], scale: float = 1) -> Optional[float]:
     """Permissive floatenator"""
     return None if x is None else float(x) * scale
 
-def _int(x):
+def _int(x: Optional[int]) -> Optional[int]:
     """Permissive floatenator"""
     return None if x is None else int(x)
 
-def read_env2d(fname):
+def read_env2d(fname: str) -> Dict[str, Any]:
     """Read a 2D underwater environment from a BELLHOP .env file.
 
     This function parses a BELLHOP .env file and returns a Python data structure
@@ -89,7 +90,7 @@ def read_env2d(fname):
     # Initialize environment with default values
     env = bellhop.environment.new()
 
-    def _parse_quoted_string(line):
+    def _parse_quoted_string(line: str) -> str:
         """Extract string from within quotes
 
         Sometimes (why??) the leading quote was being stripped, so we also try to catch
@@ -99,7 +100,7 @@ def read_env2d(fname):
         mtch2 = re.search(r"([^']*)'$", line)
         return mtch.group(1) if mtch else mtch2.group(1) if mtch2 else line.strip()
 
-    def _parse_vector(f, dtype=float):
+    def _parse_vector(f: Any, dtype: type = float) -> Tuple[Any, int]:
         """Parse a vector that starts with count then values, ending with '/'"""
         line = _read_next_valid_line(f)
 
@@ -114,9 +115,9 @@ def read_env2d(fname):
         valout = _np.array(val) if len(val) > 1 else val[0]
         return valout, linecount
 
-    def _read_ssp_points(f):
+    def _read_ssp_points(f: Any) -> Optional[Any]:
         """Read sound speed profile points until we find the bottom boundary line"""
-        ssp_points = []
+        ssp_points: list[list[float]] = []
 
         # according to "EnvironmentalFile.htm":
         prev_speed = 1500.0
@@ -162,7 +163,7 @@ def read_env2d(fname):
 
         return _np.array(ssp_points) if ssp_points else None
 
-    def _invalid_option(name,opt):
+    def _invalid_option(name: str, opt: str) -> None:
         raise ValueError(f"{name} option {opt!r} not available")
 
     # the proper start to the function:
@@ -340,7 +341,7 @@ def read_env2d(fname):
 
     return env
 
-def read_ssp(fname):
+def read_ssp(fname: str) -> Union[Any, _pd.DataFrame]:
     """Read a 2D sound speed profile (.ssp) file used by BELLHOP.
 
     This function reads BELLHOP's .ssp files which contain range-dependent
@@ -449,19 +450,19 @@ def read_ssp(fname):
             # ssp_array is [ndepths, nprofiles] which is the correct orientation
             return _pd.DataFrame(ssp_array, index=depths, columns=ranges_m)
 
-def read_bty(fname):
+def read_bty(fname: str) -> Tuple[Any, str]:
     """Read a bathymetry file used by Bellhop."""
     if not fname.endswith('.bty'):
         fname = fname + '.bty'
     return read_ati_bty(fname)
 
-def read_ati(fname):
+def read_ati(fname: str) -> Tuple[Any, str]:
     """Read an altimetry file used by Bellhop."""
     if not fname.endswith('.ati'):
         fname = fname + '.ati'
     return read_ati_bty(fname)
 
-def read_ati_bty(fname):
+def read_ati_bty(fname: str) -> Tuple[Any, str]:
     """Read an altimetry (.ati) or bathymetry (.bty) file used by BELLHOP.
 
     This function reads BELLHOP's .bty files which define the bottom depth
@@ -532,7 +533,7 @@ def read_ati_bty(fname):
         # Return as [range, depth] pairs
         return _np.column_stack([ranges_m, depths_array]), _Maps.bty_interp[interp_type]
 
-def read_sbp(fname):
+def read_sbp(fname: str) -> Any:
     """Read an source beam patterm (.sbp) file used by BELLHOP.
 
     The file format is:
@@ -576,7 +577,7 @@ def read_sbp(fname):
         # Return as [range, depth] pairs
         return _np.column_stack([angles, powers])
 
-def read_refl_coeff(fname):
+def read_refl_coeff(fname: str) -> Any:
     """Read a reflection coefficient (.brc/.trc) file used by BELLHOP.
 
     This function reads BELLHOP's .brc files which define the reflection coefficient
