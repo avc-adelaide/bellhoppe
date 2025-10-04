@@ -18,13 +18,13 @@ and `bellhop.exe` should be in your PATH.
 import os as _os
 import re as _re
 import subprocess as _proc
+import warnings
 
 from tempfile import mkstemp as _mkstemp
 from struct import unpack as _unpack
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as _np
-from scipy import interpolate as _interp
 import pandas as _pd
 
 from bellhop.constants import _Strings, _Maps
@@ -206,13 +206,11 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
             if env['depth_max'] not in env['soundspeed'][:,0]:
                 indlarger = _np.argwhere(env['soundspeed'][:,0]>env['depth_max'])[0][0]
-                if env['soundspeed_interp'] == _Strings.spline:
-                    tck = _interp.splrep(env['soundspeed'][:,0], env['soundspeed'][:,1], s=0)
-                    insert_ss_val = _interp.splev(env['depth_max'], tck, der=0)
-                else:
-                    insert_ss_val = _np.interp(env['depth_max'], env['soundspeed'][:,0], env['soundspeed'][:,1])
+                insert_ss_val = _np.interp(env['depth_max'], env['soundspeed'][:,0], env['soundspeed'][:,1])
                 env['soundspeed'] = _np.insert(env['soundspeed'],indlarger,[env['depth_max'],insert_ss_val],axis = 0)
                 env['soundspeed'] = env['soundspeed'][:indlarger+1,:]
+                warnings.warn("Bellhop.py has used linear interpolation to ensure the sound speed profile ends at the max depth. Ensure this is what you want.", UserWarning)
+
         assert _np.max(env['source_depth']) <= env['depth_max'], 'source_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
         assert _np.max(env['receiver_depth']) <= env['depth_max'], 'receiver_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
         assert env['beam_angle_min'] >= -180 and env['beam_angle_min'] <= 180, 'beam_angle_min must be in range (-180, 180]'
@@ -418,13 +416,6 @@ def arrivals_to_impulse_response(arrivals: Any, fs: float, abs_time: bool = Fals
     return ir
 
 
-def _quoted_opt(*args: str) -> str:
-    """Concatenate N input _Strings. strip whitespace, surround with single quotes
-    """
-    combined = "".join(args).strip()
-    return f"'{combined}'"
-
-
 def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> List[str]:
     """List available models.
 
@@ -488,6 +479,14 @@ def load_shd(fname_base: str) -> _pd.DataFrame:
             temp = _np.array(_unpack('f'*2*nrr, f.read(2*nrr*4)))
             pressure[ird,:] = temp[::2] + 1j*temp[1::2]
     return _pd.DataFrame(pressure, index=pos_r_depth, columns=pos_r_range)
+
+
+def _quoted_opt(*args: str) -> str:
+    """Concatenate N input _Strings. strip whitespace, surround with single quotes
+    """
+    combined = "".join(args).strip()
+    return f"'{combined}'"
+
 
 ### Bellhop propagation model ###
 

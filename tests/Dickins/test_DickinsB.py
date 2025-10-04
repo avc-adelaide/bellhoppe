@@ -96,3 +96,11 @@ def test_DickensB_empty_lines():
     env6 = bh.read_env2d("tests/Dickins/DickinsB_simpl_empty_lines.env")
     pdt.assert_frame_equal(pd.DataFrame(env5['soundspeed']),pd.DataFrame(env6['soundspeed']))
 
+
+def test_DickensB_interpolate_depth():
+    """Test what happens when the SSP extends below max depth"""
+    with pytest.warns(UserWarning):
+        env7 = bh.read_env2d("tests/Dickins/DickinsB_interp_depth.env")
+        tl = bh.compute_transmission_loss(env7,fname_base="tests/Dickins/DickinsB_idepth_output",debug=True)
+        assert tl is not None, "Interpolated values should allow Bellhop to run"
+
