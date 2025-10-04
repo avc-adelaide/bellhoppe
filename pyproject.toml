@@ -63,6 +63,14 @@ build-backend = "hatchling.build"
 [tool.ruff]
 output-format = "github"
 
+
+####### MYPI #######
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+
 ####### COVERAGE #######
 
 [tool.coverage.run]
@@ -106,7 +114,8 @@ dev = [
     "pytest",
     "gcovr",
     "ruff",
-    "coverage"
+    "coverage",
+    "mypy",
 ]
 
 [tool.hatch.envs.default]
@@ -143,6 +152,7 @@ docf = "cd docs; ford index.md" # config set in fpm.toml
 docp = "sphinx-build docs/python docs/_build/media/python"
 lintf = "fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003"
 lintp = "ruff check python/"
+typep = ["install-dev", "mypy python/"]
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true
