@@ -18,6 +18,8 @@ jobs:
       run: pip install hatch fortitude-lint ruff
     - name: Ruff
       run: hatch run lintp
+    - name: mypy
+      run: hatch run typep
     - name: Fortitude
       run: hatch run lintf
 

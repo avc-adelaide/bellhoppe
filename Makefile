@@ -137,6 +137,8 @@ cov:
 lint:
 	@echo "Running ruff Python linter..."
 	$(HATCH) lintp
+	@echo "Running mypy Python type checker..."
+	$(HATCH) testp
 	@echo "Running fortitude Fortran linter..."
 	$(HATCH) lintf
 
@@ -242,7 +244,7 @@ gitclean:
 	fi
 
 
-push: gitokay gitclean lint test
+push: gitokay gitclean lint type test
 	@echo "============================"
 	@echo "Testing okay, now pushing..."
 	@echo "============================"
