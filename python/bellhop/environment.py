@@ -106,7 +106,7 @@ class EnvironmentConfig:
     fg_pH: Optional[float] = None
     fg_depth: Optional[float] = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate field values after initialization."""
         self._validate_interpolation_types()
         self._validate_boundary_conditions()
@@ -115,7 +115,7 @@ class EnvironmentConfig:
         self._validate_attenuation_options()
         self._validate_volume_attenuation()
 
-    def _validate_interpolation_types(self):
+    def _validate_interpolation_types(self) -> None:
         """Validate interpolation type options."""
         valid_interp = set(_Maps.interp_rev.keys())
         if self.soundspeed_interp not in valid_interp:
@@ -131,7 +131,7 @@ class EnvironmentConfig:
             raise ValueError(f"Invalid surface_interp: {self.surface_interp}. "
                            f"Must be one of: {sorted(valid_bty_interp)}")
 
-    def _validate_boundary_conditions(self):
+    def _validate_boundary_conditions(self) -> None:
         """Validate boundary condition options."""
         valid_boundary = set(_Maps.boundcond_rev.keys())
         if self.bottom_boundary_condition not in valid_boundary:
@@ -142,28 +142,28 @@ class EnvironmentConfig:
             raise ValueError(f"Invalid surface_boundary_condition: {self.surface_boundary_condition}. "
                            f"Must be one of: {sorted(valid_boundary)}")
 
-    def _validate_grid_types(self):
+    def _validate_grid_types(self) -> None:
         """Validate grid type options."""
         valid_grid = set(_Maps.grid_rev.keys())
         if self.grid not in valid_grid:
             raise ValueError(f"Invalid grid: {self.grid}. "
                            f"Must be one of: {sorted(valid_grid)}")
 
-    def _validate_beam_types(self):
+    def _validate_beam_types(self) -> None:
         """Validate beam type options."""
         valid_beam = set(_Maps.beam_rev.keys())
         if self.beam_type not in valid_beam:
             raise ValueError(f"Invalid beam_type: {self.beam_type}. "
                            f"Must be one of: {sorted(valid_beam)}")
 
-    def _validate_attenuation_options(self):
+    def _validate_attenuation_options(self) -> None:
         """Validate attenuation unit options."""
         valid_attunits = set(_Maps.attunits_rev.keys())
         if self.attenuation_units not in valid_attunits:
             raise ValueError(f"Invalid attenuation_units: {self.attenuation_units}. "
                            f"Must be one of: {sorted(valid_attunits)}")
 
-    def _validate_volume_attenuation(self):
+    def _validate_volume_attenuation(self) -> None:
         """Validate volume attenuation options."""
         valid_volatt = set(_Maps.volatt_rev.keys())
         if self.volume_attenuation not in valid_volatt:

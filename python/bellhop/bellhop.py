@@ -21,6 +21,7 @@ import subprocess as _proc
 
 from tempfile import mkstemp as _mkstemp
 from struct import unpack as _unpack
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as _np
 from scipy import interpolate as _interp
@@ -39,13 +40,13 @@ from bellhop.readers import read_sbp as read_sbp
 from bellhop.readers import read_refl_coeff as read_refl_coeff
 
 # models (in order of preference)
-_models = []
+_models: List[Any] = []
 
-def _float(x,scale=1):
+def _float(x: Optional[float], scale: float = 1) -> Optional[float]:
     """Permissive floatenator"""
     return None if x is None else float(x) * scale
 
-def create_env2d(**kv):
+def create_env2d(**kv: Any) -> Dict[str, Any]:
     """Create a new 2D underwater environment with automatic validation.
 
     Parameters
@@ -128,7 +129,7 @@ def create_env2d(**kv):
 
 
 
-def _validate_options_with_dataclass(env):
+def _validate_options_with_dataclass(env: Dict[str, Any]) -> Dict[str, Any]:
     """Validate environment options using dataclass validation.
 
     This function validates all option fields using the dataclass,
@@ -142,7 +143,7 @@ def _validate_options_with_dataclass(env):
         raise ValueError(str(e))
 
 
-def check_env2d(env):
+def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
     """Check the validity of a 2D underwater environment definition.
 
     This function is automatically executed before any of the compute_ functions,
@@ -232,7 +233,7 @@ def check_env2d(env):
     except AssertionError as e:
         raise ValueError(str(e))
 
-def _finalise_environment(env):
+def _finalise_environment(env: Dict[str, Any]) -> Dict[str, Any]:
     """Reviews the data within an environment and updates settings for consistency.
 
     This function is run as the first step of check_env2d().
@@ -269,7 +270,7 @@ def _finalise_environment(env):
 
     return env
 
-def print_env(env):
+def print_env(env: Dict[str, Any]) -> None:
     """Display the environment in a human readable form.
 
     :param env: environment definition
@@ -279,7 +280,8 @@ def print_env(env):
     >>> bh.print_env(env)
     """
     env = check_env2d(env)
-    keys = ['name'] + sorted(list(env.keys()-['name']))
+    keys_set = set(env.keys()) - {'name'}
+    keys: List[str] = ['name'] + sorted(list(keys_set))
     for k in keys:
         v = str(env[k])
         if '\n' in v:
@@ -290,7 +292,7 @@ def print_env(env):
         else:
             print('%20s : '%(k) + v)
 
-def compute_arrivals(env, model=None, debug=False, fname_base=None):
+def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute arrivals between each transmitter and receiver.
 
     :param env: environment definition
@@ -308,7 +310,7 @@ def compute_arrivals(env, model=None, debug=False, fname_base=None):
     model = _select_model(env, _Strings.arrivals, model, debug)
     return model.run(env, _Strings.arrivals, debug, fname_base)
 
-def compute_eigenrays(env, source_depth_ndx=0, receiver_depth_ndx=0, receiver_range_ndx=0, model=None, debug=False, fname_base=None):
+def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute eigenrays between a given transmitter and receiver.
 
     :param env: environment definition
@@ -336,7 +338,7 @@ def compute_eigenrays(env, source_depth_ndx=0, receiver_depth_ndx=0, receiver_ra
     model = _select_model(env, _Strings.eigenrays, model, debug)
     return model.run(env, _Strings.eigenrays, debug, fname_base)
 
-def compute_rays(env, source_depth_ndx=0, model=None, debug=False, fname_base=None):
+def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute rays from a given transmitter.
 
     :param env: environment definition
@@ -358,7 +360,7 @@ def compute_rays(env, source_depth_ndx=0, model=None, debug=False, fname_base=No
     model = _select_model(env, _Strings.rays, model, debug)
     return model.run(env, _Strings.rays, debug, fname_base)
 
-def compute_transmission_loss(env, source_depth_ndx=0, mode=_Strings.coherent, model=None, source_type="default", debug=False, fname_base=None):
+def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mode: str = _Strings.coherent, model: Optional[Any] = None, source_type: str = "default", debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute transmission loss from a given transmitter to all receviers.
 
     :param env: environment definition
@@ -390,7 +392,7 @@ def compute_transmission_loss(env, source_depth_ndx=0, mode=_Strings.coherent, m
     model = _select_model(env, mode, model, debug)
     return model.run(env, mode, debug, fname_base)
 
-def arrivals_to_impulse_response(arrivals, fs, abs_time=False):
+def arrivals_to_impulse_response(arrivals: Any, fs: float, abs_time: bool = False) -> Any:
     """Convert arrival times and coefficients to an impulse response.
 
     :param arrivals: arrivals times (s) and coefficients
@@ -422,7 +424,7 @@ def _quoted_opt(*args: str) -> str:
     return f"'{combined}'"
 
 
-def models(env=None, task=None):
+def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> List[str]:
     """List available models.
 
     :param env: environment to model
@@ -440,13 +442,13 @@ def models(env=None, task=None):
         env = check_env2d(env)
     if (env is None and task is not None) or (env is not None and task is None):
         raise ValueError('env and task should be both specified together')
-    rv = []
+    rv: List[str] = []
     for m in _models:
         if m[1]().supports(env, task):
             rv.append(m[0])
     return rv
 
-def _select_model(env, task, model, debug):
+def _select_model(env: Dict[str, Any], task: str, model: Optional[str], debug: bool) -> Any:
     if model is not None:
         for m in _models:
             if m[0] == model:
@@ -462,7 +464,7 @@ def _select_model(env, task, model, debug):
             return mm
     raise ValueError('No suitable propagation model available')
 
-def load_shd(fname_base):
+def load_shd(fname_base: str) -> _pd.DataFrame:
     with open(fname_base+'.shd', 'rb') as f:
         recl, = _unpack('i', f.read(4))
         # _title = str(f.read(80))
