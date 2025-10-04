@@ -103,7 +103,7 @@ def _process_canvas(figures: List[Any]) -> None:
     import IPython.display as _ipyd
     _ipyd.display(_ipyd.Javascript(js))
 
-def _show_static_images(f):
+def _show_static_images(f: Any) -> None:
     fh, fname = _mkstemp(suffix='.png')
     _os.close(fh)
     with _warnings.catch_warnings():      # to avoid displaying deprecation warning
@@ -113,7 +113,7 @@ def _show_static_images(f):
     _ipyd.display(_ipyd.Image(filename=fname, embed=True))
     _os.unlink(fname)
 
-def _show(f):
+def _show(f: Any) -> None:
     if _figures is None:
         if _static_images:
             _show_static_images(f)
@@ -124,7 +124,7 @@ def _show(f):
     else:
         _figures[-1].append(f)
 
-def _hold_enable(enable):
+def _hold_enable(enable: bool) -> bool:
     global _hold, _figure
     ohold = _hold
     _hold = enable
@@ -133,7 +133,7 @@ def _hold_enable(enable):
         _figure = None
     return ohold
 
-def theme(name):
+def theme(name: str) -> None:
     """Set color theme.
 
     :param name: name of theme
@@ -149,7 +149,7 @@ def theme(name):
         set_colors(light_palette)
     _bio.curdoc().theme = name
 
-def figsize(x, y):
+def figsize(x: int, y: int) -> None:
     """Set the default figure size in pixels.
 
     :param x: figure width
@@ -158,7 +158,7 @@ def figsize(x, y):
     global _figsize
     _figsize = (x, y)
 
-def interactive(b):
+def interactive(b: bool) -> None:
     """Set default interactivity for plots.
 
     :param b: True to enable interactivity, False to disable it
@@ -166,7 +166,7 @@ def interactive(b):
     global _interactive
     _interactive = b
 
-def enable_javascript(b):
+def enable_javascript(b: bool) -> None:
     """Enable/disable Javascript.
 
     :param b: True to use Javacript, False to avoid use of Javascript
@@ -179,7 +179,7 @@ def enable_javascript(b):
     global _disable_js
     _disable_js = not b
 
-def use_static_images(b=True):
+def use_static_images(b: bool = True) -> None:
     """Use static images instead of dynamic HTML/Javascript in Jupyter notebook.
 
     :param b: True to use static images, False to use HTML/Javascript
@@ -201,7 +201,7 @@ def use_static_images(b=True):
     _interactive = False
     _static_images = True
 
-def hold(enable=True):
+def hold(enable: bool = True) -> Optional[bool]:
     """Combine multiple plots into one.
 
     :param enable: True to hold plot, False to release hold

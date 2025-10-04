@@ -210,7 +210,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
             opt = topopt[4]
             env["_altimetry"] = _Maps.surface.get(opt) or _invalid_option("Altimetry",opt)
             if env["_altimetry"] == _Strings.from_file:
-                env["surface"], env["surface_interp"] = bellhop.read_ati(fname_base)
+                env["surface"], env["surface_interp"] = read_ati(fname_base)
 
         # Single beam
         if len(topopt) > 5:
@@ -240,8 +240,8 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
         # SSP depth specification (format: npts sigma_z max_depth)
         ssp_spec_line = _read_next_valid_line(f)
-        ssp_parts = _parse_line(ssp_spec_line) + [None] * 3
-        env['depth_npts'] = int(ssp_parts[0])
+        ssp_parts = _parse_line(ssp_spec_line) + [None] * 3  # type: ignore
+        env['depth_npts'] = int(ssp_parts[0] or 0)
         env['depth_sigmaz'] = _float(ssp_parts[1])
         env['depth_max'] = _float(ssp_parts[2])
         env['depth'] = _float(ssp_parts[2])
@@ -268,7 +268,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
             opt = botopt[1]
             env["_bathymetry"] = _Maps.bottom.get(opt) or _invalid_option("Bathymetry",opt)
             if env["_bathymetry"] == _Strings.from_file:
-                bty,interp_bty = bellhop.read_bty(fname_base)
+                bty,interp_bty = read_bty(fname_base)
                 env["depth"] = bty
                 env["bottom_interp"] = interp_bty
 
@@ -318,12 +318,12 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
         # Check for source directionality (indicated by * in task code)
         if env["_sbp_file"] == _Strings.from_file:
-            env["source_directionality"] = bellhop.read_sbp(fname_base)
+            env["source_directionality"] = read_sbp(fname_base)
 
         # Number of beams
         beam_num_line = _read_next_valid_line(f)
-        beam_num_parts = _parse_line(beam_num_line) + [None] * 1
-        env['beam_num'] = int(beam_num_parts[0])
+        beam_num_parts = _parse_line(beam_num_line) + [None] * 1  # type: ignore
+        env['beam_num'] = int(beam_num_parts[0] or 0)
         env['single_beam_index'] = _int(beam_num_parts[1])
 
         # Beam angles (beam_angle_min, beam_angle_max)
