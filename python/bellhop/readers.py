@@ -115,7 +115,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
         valout = _np.array(val) if len(val) > 1 else val[0]
         return valout, linecount
 
-    def _read_ssp_points(f: Any) -> Optional[Any]:
+    def _read_ssp_points(f: Any) -> _np.ndarray:
         """Read sound speed profile points until we find the bottom boundary line"""
         ssp_points: list[list[float]] = []
 
@@ -161,7 +161,10 @@ def read_env2d(fname: str) -> Dict[str, Any]:
                 f.seek(f.tell() - len(line.encode()) - 1)
                 break
 
-        return _np.array(ssp_points) if ssp_points else None
+        if ssp_points is None:
+            raise(ValueError,"No SSP points were found in the env file.")
+
+        return _np.array(ssp_points)
 
     def _invalid_option(name: str, opt: str) -> Any:
         raise ValueError(f"{name} option {opt!r} not available")
@@ -257,7 +260,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
                 env['soundspeed'] = ssp_points
         if env["soundspeed_interp"] == _Strings.quadrilateral:
             depths = ssp_points[:,0]
-            env['soundspeed'] = bellhop.read_ssp(fname_base,depths)
+            env['soundspeed'] = read_ssp(fname_base,depths)
 
         # Bottom boundary options
         bottom_line = _read_next_valid_line(f)
@@ -343,7 +346,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
     return env
 
-def read_ssp(fname: str, depths: Optional[Union[List, _np.array]] = None) -> Union[Any, _pd.DataFrame]:
+def read_ssp(fname: str, depths: Optional[Union[List[float], _np.ndarray]] = None) -> Union[Any, _pd.DataFrame]:
     """Read a 2D sound speed profile (.ssp) file used by BELLHOP.
 
     This function reads BELLHOP's .ssp files which contain range-dependent
