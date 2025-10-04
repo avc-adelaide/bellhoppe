@@ -38,7 +38,7 @@ def test_malformed_sbp_count_mismatch():
         bh.read_sbp("tests/malformed_files/bad_count_sbp.sbp")
 
 def test_malformed_sbp_insufficient_data():
-    """Test SBP file where a line has too few data points"""  
+    """Test SBP file where a line has too few data points"""
     with pytest.raises((ValueError, IndexError)):
         bh.read_sbp("tests/malformed_files/insufficient_data_sbp.sbp")
 

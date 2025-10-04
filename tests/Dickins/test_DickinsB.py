@@ -61,6 +61,19 @@ def test_DickensB_one_ssp():
         env2 = bh.read_env2d("tests/Dickins/DickinsB_one_ssp.env")
 
 
+def test_DickensB_no_ssp():
+    """Artificial scenario to test if are no points in the SSP profile"""
+    with pytest.raises(ValueError, match="No SSP points were found in the env file"):
+        env2 = bh.read_env2d("tests/Dickins/DickinsB_no_ssp.env")
+
+
+def test_DickensB_mal_ssp():
+    """This is a valid env file!"""
+    env2 = bh.read_env2d("tests/Dickins/DickinsB_mal_ssp.env")
+    tl = bh.compute_transmission_loss(env2,fname_base="tests/Dickins/DickinsB_mal_output",debug=True)
+    #print(env2["soundspeed"])
+
+
 def test_DickensB_one_beam():
     """Artificial scenario to test if one beam"""
     env3 = bh.read_env2d("tests/Dickins/DickinsB_one_beam.env")

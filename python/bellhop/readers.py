@@ -117,6 +117,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
     def _read_ssp_points(f: Any) -> _np.ndarray:
         """Read sound speed profile points until we find the bottom boundary line"""
+
         ssp_points: list[list[float]] = []
 
         # according to "EnvironmentalFile.htm":
@@ -162,10 +163,9 @@ def read_env2d(fname: str) -> Dict[str, Any]:
                 f.seek(f.tell() - len(line.encode()) - 1)
                 break
 
-        if ssp_points is None:
+        if len(ssp_points) == 0:
             raise ValueError("No SSP points were found in the env file.")
-
-        if len(ssp_points) == 1:
+        elif len(ssp_points) == 1:
             raise ValueError("Only one SSP point found but at least two required (top and bottom)")
 
         return _np.array(ssp_points)
