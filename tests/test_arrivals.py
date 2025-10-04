@@ -209,3 +209,11 @@ def test_bathy():
     a_test = arrival_times - t_arr_exp < 1e-6
     assert( a_test.all() )
 
+
+def test_impulse_response():
+    env = bh.create_env2d()
+    arr = bh.compute_arrivals(env)
+    ir = bh.arrivals_to_impulse_response(arr, fs=19200)
+    assert ir is not None
+
+
