@@ -154,8 +154,8 @@ def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs
         y = _np.abs(row.arrival_amplitude)
         if dB:
             y = max(20*_np.log10(_fi.epsilon+y), min_y)
-        _plt.plot([t, t], [min_y, y], xlabel='Arrival time (s)', ylabel=ylabel, ylim=[min_y, min_y+70], color=color, **kwargs)
-    _plt.hold(oh)
+        _plt.plot([t, t], [min_y, y], xlabel='Arrival time (s)', ylabel=ylabel, ylim=(min_y, min_y+70), color=color, **kwargs)
+    _plt.hold(oh if oh is not None else False)
 
 def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bool = False, **kwargs: Any) -> None:
     """Plots ray paths.
@@ -195,7 +195,7 @@ def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bo
         _plt.plot(row.ray[:,0]/divisor, -row.ray[:,1], color=c, xlabel=xlabel, ylabel='Depth (m)', **kwargs)
     if env is not None:
         plot_env(env)
-    _plt.hold(oh)
+    _plt.hold(oh if oh is not None else False)
 
 def plot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
     """Plots transmission loss.
@@ -229,10 +229,10 @@ def plot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, **k
     _plt.image(20*_np.log10(_fi.epsilon+_np.abs(_np.flipud(_np.array(tloss)))), x=xr, y=yr, xlabel=xlabel, ylabel='Depth (m)', xlim=xr, ylim=yr, **kwargs)
     if env is not None:
         plot_env(env, receiver_plot=False)
-    _plt.hold(oh)
+    _plt.hold(oh if oh is not None else False)
 
 def pyplot_env(env: Dict[str, Any], surface_color: str = 'dodgerblue', bottom_color: str = 'peru', source_color: str = 'orangered', receiver_color: str = 'midnightblue',
-               receiver_plot=None, **kwargs):
+               receiver_plot: Optional[bool] = None, **kwargs: Any) -> None:
     """Plots a visual representation of the environment with matplotlib.
 
     :param env: environment description
