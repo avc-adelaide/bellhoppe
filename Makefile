@@ -237,10 +237,15 @@ gitclean:
 	@if [ -z "$$(git clean -nx)" ]; then \
 	    true; \
 	else \
-	    git clean -nx; \
-	    echo "Git repository not clean. Run:"; \
-	    echo "    git clean -fx"; \
-	    false; \
+		if [ -f "._GIT_CLEAN_CHECK" ]; then \
+			git clean -fx; \
+		else \
+			git clean -nx; \
+			echo "" > ._GIT_CLEAN_CHECK; \
+			echo "Git repository not clean. Re-run this command to automatically execute:"; \
+			echo "    git clean -fx"; \
+			false; \
+		fi \
 	fi
 
 
