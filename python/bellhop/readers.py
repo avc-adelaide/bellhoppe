@@ -24,11 +24,11 @@ def _parse_line(line: str) -> list[str]:
     line = line.split("!", 1)[0].split('/', 1)[0].strip()
     return line.split()
 
-def _float(x: Optional[float], scale: float = 1) -> Optional[float]:
+def _float(x: Any, scale: float = 1) -> Optional[float]:
     """Permissive floatenator"""
     return None if x is None else float(x) * scale
 
-def _int(x: Optional[int]) -> Optional[int]:
+def _int(x: Any) -> Optional[int]:
     """Permissive floatenator"""
     return None if x is None else int(x)
 
@@ -163,7 +163,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
         return _np.array(ssp_points) if ssp_points else None
 
-    def _invalid_option(name: str, opt: str) -> None:
+    def _invalid_option(name: str, opt: str) -> Any:
         raise ValueError(f"{name} option {opt!r} not available")
 
     # the proper start to the function:
