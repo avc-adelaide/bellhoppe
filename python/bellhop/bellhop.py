@@ -617,12 +617,6 @@ class _Bellhop:
 
         fh, fname_base = self._open_env_file(fname_base)
 
-        def _print_env_line(data: Any, comment: str = "") -> None:
-            self._print_env_line(fh, data, comment)
-
-        def _print_array(a: Any, label: str = "", nn: Optional[int] = None) -> None:
-            self._print_array(fh, a, label, nn)
-
         def _array2str(values: List[Any]) -> str:
             """Format list into space-separated string, trimmed at first None, ending with '/'."""
             try:
@@ -634,11 +628,11 @@ class _Bellhop:
                 for v in values
             ) + " /"
 
-        _print_env_line("")
-        _print_env_line("'"+env['name']+"'","Bellhop environment name/description")
-        _print_env_line(env['frequency'],"Frequency (Hz)")
-        _print_env_line(1,"NMedia -- always =1 for Bellhop")
-        _print_env_line("")
+        self._print_env_line(fh,"")
+        self._print_env_line(fh,"'"+env['name']+"'","Bellhop environment name/description")
+        self._print_env_line(fh,env['frequency'],"Frequency (Hz)")
+        self._print_env_line(fh,1,"NMedia -- always =1 for Bellhop")
+        self._print_env_line(fh,"")
 
         svp = env['soundspeed']
         svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
@@ -650,11 +644,11 @@ class _Bellhop:
 
         comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
         topopt = _quoted_opt(svp_interp, svp_boundcond, svp_attunits, svp_volatt, svp_alti, svp_singlebeam)
-        _print_env_line(f"{topopt}",comment)
+        self._print_env_line(fh,f"{topopt}",comment)
 
         if env['volume_attenuation'] == _Strings.francois_garrison:
             comment = "Francois-Garrison volume attenuation parameters (sal, temp, pH, depth)"
-            _print_env_line(f"{env['fg_salinity']} {env['fg_temperature']} {env['fg_pH']} {env['fg_depth']}",comment)
+            self._print_env_line(fh,f"{env['fg_salinity']} {env['fg_temperature']} {env['fg_pH']} {env['fg_depth']}",comment)
 
         if env['surface_boundary_condition'] == _Strings.acousto_elastic:
             comment = "DEPTH_Top (m)  TOP_SoundSpeed (m/s)  TOP_SoundSpeed_Shear (m/s)  TOP_Density (g/cm^3)  [ TOP_Absorp [ TOP_Absorp_Shear ] ]"
@@ -666,7 +660,7 @@ class _Bellhop:
               env['surface_absorption'],
               env['surface_absorption_shear']
             ])
-            _print_env_line(array_str,comment)
+            self._print_env_line(fh,array_str,comment)
 
         elif env['surface_boundary_condition'] == "from-file":
             self._create_refl_coeff_file(fname_base+".trc", env['surface_reflection_coefficient'])
@@ -675,29 +669,29 @@ class _Bellhop:
             self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
 
         comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
-        _print_env_line(f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}",comment)
+        self._print_env_line(fh,f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}",comment)
 
         if isinstance(svp, _pd.DataFrame) and len(svp.columns) == 1:
             svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
         if _np.size(svp) == 1:
             debug and print("One SSP point only")
-            _print_env_line(_array2str([0.0, svp]),"Min_Depth SSP_Const")
-            _print_env_line(_array2str([env['depth_max'], svp]),"Max_Depth SSP_Const")
+            self._print_env_line(fh,_array2str([0.0, svp]),"Min_Depth SSP_Const")
+            self._print_env_line(fh,_array2str([env['depth_max'], svp]),"Max_Depth SSP_Const")
         elif svp_interp == "Q":
             debug and print("SSP: Q interpolation")
             for j in range(svp.shape[0]):
-                _print_env_line(_array2str([svp.index[j], svp.iloc[j,0]]),f"ssp_{j}")
+                self._print_env_line(fh,_array2str([svp.index[j], svp.iloc[j,0]]),f"ssp_{j}")
             self._create_ssp_quad_file(fname_base+'.ssp', svp)
         else:
             debug and print(f"SSP: standard 2xN array of depths and sound speeds -- interpolation: {svp_interp}")
             for j in range(svp.shape[0]):
-                _print_env_line(_array2str([svp[j,0], svp[j,1]]),f"ssp_{j}")
+                self._print_env_line(fh,_array2str([svp[j,0], svp[j,1]]),f"ssp_{j}")
 
-        _print_env_line("")
+        self._print_env_line(fh,"")
         bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
         dp_flag = _Maps.bottom_rev[env['_bathymetry']]
         comment = "BOT_Boundary_cond / BOT_Roughness"
-        _print_env_line(f"{_quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}",comment)
+        self._print_env_line(fh,f"{_quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}",comment)
 
         if _np.size(env['depth']) > 1:
             self._create_bty_ati_file(fname_base+'.bty', env['depth'], env['depth_interp'])
@@ -712,16 +706,16 @@ class _Bellhop:
               env['bottom_absorption'],
               env['bottom_absorption_shear']
             ])
-            _print_env_line(array_str,comment)
+            self._print_env_line(fh,array_str,comment)
 
         if env['bottom_boundary_condition'] == "from-file":
             self._create_refl_coeff_file(fname_base+".brc", env['bottom_reflection_coefficient'])
 
-        _print_env_line("")
+        self._print_env_line(fh,"")
         self._print_array(fh, env['source_depth'], nn=env['source_ndepth'], label="Source depth (m)")
         self._print_array(fh, env['receiver_depth'], nn=env['receiver_ndepth'], label="Receiver depth (m)")
         self._print_array(fh, env['receiver_range']/1000, nn=env['receiver_nrange'], label="Receiver range (km)")
-        _print_env_line("")
+        self._print_env_line(fh,"")
 
         beamtype = _Maps.beam_rev[env['beam_type']]
         beampattern = " "
@@ -731,11 +725,11 @@ class _Bellhop:
             beampattern = "*"
             self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
         runtype_str = _quoted_opt(taskcode, beamtype, beampattern, txtype, gridtype)
-        _print_env_line(f"{runtype_str}","RUN TYPE")
-        _print_env_line(_array2str([env['beam_num'], env['single_beam_index']]),"Num_Beams [ Single_Beam_Index ]")
-        _print_env_line(f"{env['beam_angle_min']} {env['beam_angle_max']} /","ALPHA1,2 (degrees)")
-        _print_env_line(f"{env['step_size']} {env['box_depth']} {env['box_range'] / 1000}","Step_Size (m), ZBOX (m), RBOX (km)")
-        _print_env_line("","End of Bellhop environment file")
+        self._print_env_line(fh,f"{runtype_str}","RUN TYPE")
+        self._print_env_line(fh,_array2str([env['beam_num'], env['single_beam_index']]),"Num_Beams [ Single_Beam_Index ]")
+        self._print_env_line(fh,f"{env['beam_angle_min']} {env['beam_angle_max']} /","ALPHA1,2 (degrees)")
+        self._print_env_line(fh,f"{env['step_size']} {env['box_depth']} {env['box_range'] / 1000}","Step_Size (m), ZBOX (m), RBOX (km)")
+        self._print_env_line(fh,"","End of Bellhop environment file")
         _os.close(fh)
         return fname_base
 
