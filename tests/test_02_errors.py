@@ -1,5 +1,6 @@
 import pytest
 import bellhop as bh
+import pandas as pd
 
 
 def test_missing_key_error():
@@ -26,8 +27,8 @@ def test_variable_soundspeed_error():
 
     # Create environment with variable sound speed profile
     with pytest.raises(ValueError, match=r"Soundspeed array must be strictly monotonic in depth"):
-    	env = bh.create_env2d(soundspeed=ssp, depth=30)
-    	env = bh.check_env2d(env)
+        env = bh.create_env2d(soundspeed=ssp, depth=30)
+        env = bh.check_env2d(env)
 
 
 
@@ -37,3 +38,12 @@ def test_error_type():
     with pytest.raises(ValueError, match=r"Not a 2D environment"):
         env = bh.create_env2d(type="4D")
         bh.check_env2d(env)
+
+
+def test_ssp_spline_points():
+    ssp = pd.DataFrame({'speed': [1540,1530,1535]},index=[0,15,30])
+    env = bh.create_env2d(soundspeed=ssp,depth=30,soundspeed_interp="spline")
+
+    with pytest.raises(ValueError, match=r"soundspeed profile must have at least 4 points for spline interpolation"):
+        bh.check_env2d(env)
+

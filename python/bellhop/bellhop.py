@@ -252,6 +252,9 @@ def _finalise_environment(env: Dict[str, Any]) -> Dict[str, Any]:
     if env['depth_max'] is None:
         env['depth_max'] = _np.max(env['depth'])
 
+    if isinstance(env["soundspeed"],_pd.DataFrame) and "depth" in env["soundspeed"].columns:
+        env["soundspeed"] = env["soundspeed"].set_index("depth")
+
     # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
     if env['beam_angle_min'] is None:
         if _np.min(env['receiver_range']) < 0:
@@ -802,11 +805,11 @@ class _Bellhop:
                 receiver_range_count = receiver_range_info[0]
                 receiver_range = receiver_range_info[1:]
                 assert receiver_range_count == len(receiver_range)
-            else:
-                freq, source_depth_count, receiver_depth_count, receiver_range_count = self._readf(hdr, (float, int, int, int))
-                source_depth = self._readf(f, (float,)*source_depth_count)
-                receiver_depth = self._readf(f, (float,)*receiver_depth_count)
-                receiver_range = self._readf(f, (float,)*receiver_range_count)
+#             else: # worry about 3D later
+#                 freq, source_depth_count, receiver_depth_count, receiver_range_count = self._readf(hdr, (float, int, int, int))
+#                 source_depth = self._readf(f, (float,)*source_depth_count)
+#                 receiver_depth = self._readf(f, (float,)*receiver_depth_count)
+#                 receiver_range = self._readf(f, (float,)*receiver_range_count)
             arrivals: List[_pd.DataFrame] = []
             for j in range(source_depth_count):
                 f.readline()
