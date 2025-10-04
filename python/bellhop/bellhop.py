@@ -283,14 +283,14 @@ def print_env(env: Dict[str, Any]) -> None:
     keys_set = set(env.keys()) - {'name'}
     keys: List[str] = ['name'] + sorted(list(keys_set))
     for k in keys:
-        v = str(env[k])
-        if '\n' in v:
-            v = v.split('\n')
-            print('%20s : '%(k) + v[0])
-            for v1 in v[1:]:
+        v_str = str(env[k])
+        if '\n' in v_str:
+            v_list = v_str.split('\n')
+            print('%20s : '%(k) + v_list[0])
+            for v1 in v_list[1:]:
                 print('%20s   '%('') + v1)
         else:
-            print('%20s : '%(k) + v)
+            print('%20s : '%(k) + v_str)
 
 def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute arrivals between each transmitter and receiver.
@@ -519,7 +519,7 @@ class _Bellhop:
         self._unlink(fname_base+'.shd')
 
     def run(self, env: Dict[str, Any], task: str, debug: bool = False, fname_base: Optional[str] = None) -> Any:
-        taskmap = {
+        taskmap: Dict[Any, List[Any]] = {
             _Strings.arrivals:     ['A', self._load_arrivals],
             _Strings.eigenrays:    ['E', self._load_rays],
             _Strings.rays:         ['R', self._load_rays],
@@ -535,7 +535,7 @@ class _Bellhop:
             print('[CUSTOM FILES] Deleting prior working files: '+fname_base+'.*')
             self._rm_files(fname_base)
 
-        fname_base = self._create_env_file(env, taskmap[task][0], fname_base)
+        fname_base = self._create_env_file(env, taskmap[task][0], fname_base)  # type: ignore
 
         results = None
         if self._bellhop(fname_base):
@@ -544,7 +544,7 @@ class _Bellhop:
                 print(err)
             else:
                 try:
-                    results = taskmap[task][1](fname_base)
+                    results = taskmap[task][1](fname_base)  # type: ignore
                 except FileNotFoundError:
                     print('[WARN] Bellhop did not generate expected output file')
 
@@ -744,7 +744,7 @@ class _Bellhop:
 
     def _create_bty_ati_file(self, filename: str, depth: Any, interp: str) -> None:
         with open(filename, 'wt') as f:
-            f.write(f"'{_Maps.bty_interp_rev[interp]}'\n")
+            f.write(f"'{_Maps.bty_interp_rev[interp]}'\n")  # type: ignore
             f.write(str(depth.shape[0])+"\n")
             for j in range(depth.shape[0]):
                 f.write(f"{depth[j,0]/1000} {depth[j,1]}\n")
@@ -817,7 +817,7 @@ class _Bellhop:
                 source_depth = self._readf(f, (float,)*source_depth_count)
                 receiver_depth = self._readf(f, (float,)*receiver_depth_count)
                 receiver_range = self._readf(f, (float,)*receiver_range_count)
-            arrivals = []
+            arrivals: List[_pd.DataFrame] = []
             for j in range(source_depth_count):
                 f.readline()
                 for k in range(receiver_depth_count):

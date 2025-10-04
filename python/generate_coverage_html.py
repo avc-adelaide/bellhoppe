@@ -84,7 +84,7 @@ def parse_gcov_file(gcov_path: str) -> Tuple[List[Dict[str, Any]], List[Dict[str
 
     return coverage_data, branch_data, call_data, summary_info
 
-def generate_html_report(gcov_file: str, output_dir: str) -> Dict[str, float]:
+def generate_html_report(gcov_file: str, output_dir: str) -> Tuple[str, Dict[str, float]]:
     """Generate an HTML report for a single .gcov file."""
     coverage_data, branch_data, call_data, summary_info = parse_gcov_file(gcov_file)
     filename = os.path.basename(gcov_file)
