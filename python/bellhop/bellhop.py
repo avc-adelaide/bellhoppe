@@ -492,10 +492,10 @@ def load_shd(fname_base: str) -> _pd.DataFrame:
 
 class _Bellhop:
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def supports(self, env=None, task=None):
+    def supports(self, env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> bool:
         if env is not None and env['type'] != '2D':
             return False
         fh, fname = _mkstemp(suffix='.env')
@@ -507,7 +507,7 @@ class _Bellhop:
         self._unlink(fname_base+'.log')
         return rv
 
-    def _rm_files(self,fname_base):
+    def _rm_files(self, fname_base: str) -> None:
         self._unlink(fname_base+'.bty')
         self._unlink(fname_base+'.ssp')
         self._unlink(fname_base+'.ati')
@@ -518,7 +518,7 @@ class _Bellhop:
         self._unlink(fname_base+'.ray')
         self._unlink(fname_base+'.shd')
 
-    def run(self, env, task, debug=False, fname_base=None):
+    def run(self, env: Dict[str, Any], task: str, debug: bool = False, fname_base: Optional[str] = None) -> Any:
         taskmap = {
             _Strings.arrivals:     ['A', self._load_arrivals],
             _Strings.eigenrays:    ['E', self._load_rays],
@@ -557,7 +557,7 @@ class _Bellhop:
 
         return results
 
-    def _bellhop(self,*args):
+    def _bellhop(self, *args: str) -> bool:
         try:
             runcmd = f'bellhop.exe {" ".join(list(args))}'
             #print(f"RUNNING {runcmd}")
@@ -577,12 +577,12 @@ class _Bellhop:
         except FileNotFoundError:
             pass
 
-    def _print(self, fh, s, newline=True):
+    def _print(self, fh: int, s: str, newline: bool = True) -> None:
         _os.write(fh, (s+'\n' if newline else s).encode())
 
     COMMENT_PAD = 50
 
-    def _print_env_line(self, fh, data, comment = ""):
+    def _print_env_line(self, fh: int, data: Any, comment: str = "") -> None:
         data_str = data if isinstance(data,str) else f"{data}"
         comment_str = comment if isinstance(comment,str) else f"{comment}"
         line_str = (data_str + " " * self.COMMENT_PAD)[0:max(len(data_str),self.COMMENT_PAD)]
@@ -590,7 +590,7 @@ class _Bellhop:
             line_str = line_str + " ! " + comment_str
         self._print(fh,line_str)
 
-    def _print_array(self, fh, a, label="", nn=None):
+    def _print_array(self, fh: int, a: Any, label: str = "", nn: Optional[int] = None) -> None:
         na = _np.size(a)
         if nn is None:
             nn = na
@@ -603,7 +603,7 @@ class _Bellhop:
                 self._print(fh, f"{j} ", newline=False)
             self._print(fh, " /")
 
-    def _open_env_file(self,fname_base):
+    def _open_env_file(self, fname_base: Optional[str]) -> Tuple[int, str]:
         if fname_base is not None:
             fname = fname_base+'.env'
             fh = _os.open(_os.path.abspath(fname), _os.O_WRONLY | _os.O_CREAT | _os.O_TRUNC)
@@ -612,7 +612,7 @@ class _Bellhop:
             fname_base = fname[:-4]
         return fh, fname_base
 
-    def _create_env_file(self, env, taskcode, fname_base=None):
+    def _create_env_file(self, env: Dict[str, Any], taskcode: str, fname_base: Optional[str] = None) -> str:
 
         fh, fname_base = self._open_env_file(fname_base)
 
@@ -742,26 +742,26 @@ class _Bellhop:
         _os.close(fh)
         return fname_base
 
-    def _create_bty_ati_file(self, filename, depth, interp):
+    def _create_bty_ati_file(self, filename: str, depth: Any, interp: str) -> None:
         with open(filename, 'wt') as f:
             f.write(f"'{_Maps.bty_interp_rev[interp]}'\n")
             f.write(str(depth.shape[0])+"\n")
             for j in range(depth.shape[0]):
                 f.write(f"{depth[j,0]/1000} {depth[j,1]}\n")
 
-    def _create_sbp_file(self, filename, dir):
+    def _create_sbp_file(self, filename: str, dir: Any) -> None:
         with open(filename, 'wt') as f:
             f.write(str(dir.shape[0])+"\n")
             for j in range(dir.shape[0]):
                 f.write(f"{dir[j,0]}  {dir[j,1]}\n")
 
-    def _create_refl_coeff_file(self, filename, rc):
+    def _create_refl_coeff_file(self, filename: str, rc: Any) -> None:
         with open(filename, 'wt') as f:
             f.write(str(rc.shape[0])+"\n")
             for j in range(rc.shape[0]):
                 f.write(f"{rc[j,0]}  {rc[j,1]}  {rc[j,2]}\n")
 
-    def _create_ssp_file(self, filename, svp):
+    def _create_ssp_file(self, filename: str, svp: Any) -> None:
         with open(filename, 'wt') as f:
             f.write(str(svp.shape[1])+"\n")
             for j in range(svp.shape[1]):
@@ -770,7 +770,7 @@ class _Bellhop:
                 for j in range(svp.shape[1]):
                     f.write("%0.6f%c" % (svp.iloc[k,j], '\n' if j == svp.shape[1]-1 else ' '))
 
-    def _readf(self, f, types, dtype=str):
+    def _readf(self, f: Any, types: Tuple[Any, ...], dtype: type = str) -> Tuple[Any, ...]:
         if type(f) is str:
             p = _re.split(r' +', f.strip())
         else:
@@ -782,7 +782,7 @@ class _Bellhop:
                 p[j] = dtype(p[j])
         return tuple(p)
 
-    def _check_error(self, fname_base: str):
+    def _check_error(self, fname_base: str) -> Optional[str]:
         err = None
         try:
             with open(fname_base+'.prt', 'rt') as f:
@@ -795,7 +795,7 @@ class _Bellhop:
             pass
         return err
 
-    def _load_arrivals(self, fname_base):
+    def _load_arrivals(self, fname_base: str) -> _pd.DataFrame:
         with open(fname_base+'.arr', 'rt') as f:
             hdr = f.readline()
             if hdr.find('2D') >= 0:
@@ -844,10 +844,10 @@ class _Bellhop:
                             }, index=[len(arrivals)+1]))
         return _pd.concat(arrivals)
 
-    def _load_shd(self, fname_base):
+    def _load_shd(self, fname_base: str) -> _pd.DataFrame:
         return load_shd(fname_base)
 
-    def _load_rays(self, fname_base):
+    def _load_rays(self, fname_base: str) -> _pd.DataFrame:
         with open(fname_base+'.ray', 'rt') as f:
             f.readline()
             f.readline()
