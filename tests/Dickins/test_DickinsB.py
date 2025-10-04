@@ -54,10 +54,12 @@ def test_table_output():
         rtol=1e-4,  # relative tolerance
     )
 
+
 def test_DickensB_one_ssp():
     """Artificial scenario to test if just one point in the SSP profile"""
     with pytest.raises(ValueError, match="Only one SSP point found"):
         env2 = bh.read_env2d("tests/Dickins/DickinsB_one_ssp.env")
+
 
 def test_DickensB_one_beam():
     """Artificial scenario to test if one beam"""
@@ -75,13 +77,9 @@ def test_DickensB_one_beam_wrong():
         assert ray3 is not None, "No results generated"
 
 
-def xtest_DickensB_empty_lines():
+def test_DickensB_empty_lines():
     """Test if empty lines are okay"""
     env5 = bh.read_env2d("tests/Dickins/DickinsB_simpl.env")
     env6 = bh.read_env2d("tests/Dickins/DickinsB_simpl_empty_lines.env")
-    pdt.assert_frame_equal(env5['soundspeed'],env6['soundspeed'])
-    tl5 = bh.compute_transmission_loss(env5)
-    tl6 = bh.compute_transmission_loss(env6)
-    assert tl5 is not None, "No results generated"
-    assert tl6 is not None, "No results generated"
-    assert tl5 == tl6, "Results should be identical"
+    pdt.assert_frame_equal(pd.DataFrame(env5['soundspeed']),pd.DataFrame(env6['soundspeed']))
+

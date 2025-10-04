@@ -125,6 +125,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
         prev_density = 1000.0
         prev_att = 0.0
         prev_att_shear = 0.0
+
         while True:
             line = f.readline().strip()
             if not line:
