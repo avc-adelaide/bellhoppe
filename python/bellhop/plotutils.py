@@ -10,6 +10,7 @@
 
 """Easy-to-use plotting utilities based on `Bokeh <http://bokeh.pydata.org>`_."""
 
+from typing import Any, Optional, List, Tuple, Union
 import numpy as _np
 import os as _os
 import warnings as _warnings
@@ -48,14 +49,14 @@ if get_ipython is not None:
         _bplt.output_notebook(resources=_bres.INLINE, hide_banner=True)
         _notebook = True
 
-def _new_figure(title, width, height, xlabel, ylabel, xlim, ylim, xtype, ytype, interactive):
+def _new_figure(title: Optional[str], width: Optional[int], height: Optional[int], xlabel: Optional[str], ylabel: Optional[str], xlim: Optional[Tuple[float, float]], ylim: Optional[Tuple[float, float]], xtype: Optional[str], ytype: Optional[str], interactive: Optional[bool]) -> Any:
     global _color
     if width is None:
         width = _figsize[0]
     if height is None:
         height = _figsize[1]
     _color = 0
-    tools = []
+    tools: Union[List[str], str] = []
     if interactive is None:
         interactive = _interactive
     if interactive:
@@ -65,7 +66,7 @@ def _new_figure(title, width, height, xlabel, ylabel, xlim, ylim, xtype, ytype, 
     f.toolbar.logo = None
     return f
 
-def _process_canvas(figures):
+def _process_canvas(figures: List[Any]) -> None:
     global _using_js
     if _disable_js:
         return

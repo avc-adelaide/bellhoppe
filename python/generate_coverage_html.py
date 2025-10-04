@@ -5,13 +5,14 @@ This script converts .gcov files into browsable HTML reports that will be access
 through the FORD documentation system as media files.
 """
 
+from typing import Dict, List, Tuple, Any
 import os
 import sys
 import glob
 import re
 from html import escape
 
-def parse_gcov_file(gcov_path):
+def parse_gcov_file(gcov_path: str) -> Tuple[List[Dict[str, Any]], List[Dict[str, int]], List[Dict[str, int]], Dict[str, float]]:
     """
     Parse a Fortran .gcov file and extract line, branch, and call coverage.
     """
@@ -83,7 +84,7 @@ def parse_gcov_file(gcov_path):
 
     return coverage_data, branch_data, call_data, summary_info
 
-def generate_html_report(gcov_file, output_dir):
+def generate_html_report(gcov_file: str, output_dir: str) -> Dict[str, float]:
     """Generate an HTML report for a single .gcov file."""
     coverage_data, branch_data, call_data, summary_info = parse_gcov_file(gcov_file)
     filename = os.path.basename(gcov_file)
@@ -241,7 +242,7 @@ def generate_html_report(gcov_file, output_dir):
 
     return html_filename, summary_info
 
-def generate_index_html(coverage_reports, output_dir):
+def generate_index_html(coverage_reports: List[Tuple[str, Dict[str, float]]], output_dir: str) -> None:
     """Generate an index HTML file listing all coverage reports."""
     index_path = os.path.join(output_dir, 'coverage-index.html')
 
@@ -361,7 +362,7 @@ def generate_index_html(coverage_reports, output_dir):
     with open(index_path, 'w') as f:
         f.write(html_content)
 
-def main():
+def main() -> None:
     """Main function to generate HTML coverage reports."""
     if len(sys.argv) != 2:
         print("Usage: python3 generate_coverage_html.py <output_directory>")

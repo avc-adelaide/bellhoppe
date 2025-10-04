@@ -11,6 +11,7 @@
 """Plotting functions for the underwater acoustic propagation modeling toolbox.
 """
 
+from typing import Any, Dict, Optional
 from sys import float_info as _fi
 
 import numpy as _np
@@ -25,7 +26,7 @@ from bellhop.constants import _Strings
 import bellhop.plotutils as _plt
 
 
-def plot_env(env, surface_color='dodgerblue', bottom_color='peru', source_color='orangered', receiver_color='midnightblue', receiver_plot=None, **kwargs):
+def plot_env(env: Dict[str, Any], surface_color: str = 'dodgerblue', bottom_color: str = 'peru', source_color: str = 'orangered', receiver_color: str = 'midnightblue', receiver_plot: Optional[bool] = None, **kwargs: Any) -> None:
     """Plots a visual representation of the environment.
 
     :param env: environment description
@@ -92,7 +93,7 @@ def plot_env(env, surface_color='dodgerblue', bottom_color='peru', source_color=
             _plt.plot([r/divisor]*_np.size(rxd), -rxd, marker='o', style=None, color=receiver_color)
     _plt.hold(oh)
 
-def plot_ssp(env, **kwargs):
+def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
     """Plots the sound speed profile.
 
     :param env: environment description
@@ -124,7 +125,7 @@ def plot_ssp(env, **kwargs):
     else:
         _plt.plot(svp[:,1], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
 
-def plot_arrivals(arrivals, dB=False, color='blue', **kwargs):
+def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs: Any) -> None:
     """Plots the arrival times and amplitudes.
 
     :param arrivals: arrivals times (s) and coefficients
@@ -156,7 +157,7 @@ def plot_arrivals(arrivals, dB=False, color='blue', **kwargs):
         _plt.plot([t, t], [min_y, y], xlabel='Arrival time (s)', ylabel=ylabel, ylim=[min_y, min_y+70], color=color, **kwargs)
     _plt.hold(oh)
 
-def plot_rays(rays, env=None, invert_colors=False, **kwargs):
+def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bool = False, **kwargs: Any) -> None:
     """Plots ray paths.
 
     :param rays: ray paths
@@ -196,7 +197,7 @@ def plot_rays(rays, env=None, invert_colors=False, **kwargs):
         plot_env(env)
     _plt.hold(oh)
 
-def plot_transmission_loss(tloss, env=None, **kwargs):
+def plot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
     """Plots transmission loss.
 
     :param tloss: complex transmission loss
@@ -230,7 +231,7 @@ def plot_transmission_loss(tloss, env=None, **kwargs):
         plot_env(env, receiver_plot=False)
     _plt.hold(oh)
 
-def pyplot_env(env, surface_color='dodgerblue', bottom_color='peru', source_color='orangered', receiver_color='midnightblue',
+def pyplot_env(env: Dict[str, Any], surface_color: str = 'dodgerblue', bottom_color: str = 'peru', source_color: str = 'orangered', receiver_color: str = 'midnightblue',
                receiver_plot=None, **kwargs):
     """Plots a visual representation of the environment with matplotlib.
 
@@ -309,7 +310,7 @@ def pyplot_env(env, surface_color='dodgerblue', bottom_color='peru', source_colo
             rxd = env['receiver_depth']
             _pyplt.plot([r / divisor] * _np.size(rxd), -rxd, marker='o', color=receiver_color, **kwargs)
 
-def pyplot_ssp(env, **kwargs):
+def pyplot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
     """Plots the sound speed profile with matplotlib.
 
     :param env: environment description
@@ -347,7 +348,7 @@ def pyplot_ssp(env, **kwargs):
         _pyplt.xlabel('Soundspeed (m/s)')
         _pyplt.ylabel('Depth (m)')
 
-def pyplot_arrivals(arrivals, dB=False, color='blue', **kwargs):
+def pyplot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs: Any) -> None:
     """Plots the arrival times and amplitudes with matplotlib.
 
     :param arrivals: arrivals times (s) and coefficients
@@ -381,7 +382,7 @@ def pyplot_arrivals(arrivals, dB=False, color='blue', **kwargs):
         _pyplt.xlabel('Arrival time (s)')
         _pyplt.ylabel(ylabel)
 
-def pyplot_rays(rays, env=None, invert_colors=False, **kwargs):
+def pyplot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bool = False, **kwargs: Any) -> None:
     """Plots ray paths with matplotlib
 
     :param rays: ray paths
@@ -424,7 +425,7 @@ def pyplot_rays(rays, env=None, invert_colors=False, **kwargs):
     if env is not None:
         pyplot_env(env)
 
-def pyplot_transmission_loss(tloss, env=None, **kwargs):
+def pyplot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
     """Plots transmission loss with matplotlib.
 
     :param tloss: complex transmission loss

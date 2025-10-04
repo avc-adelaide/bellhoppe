@@ -616,13 +616,13 @@ class _Bellhop:
 
         fh, fname_base = self._open_env_file(fname_base)
 
-        def _print_env_line(data,comment=""):
+        def _print_env_line(data: Any, comment: str = "") -> None:
             self._print_env_line(fh, data, comment)
 
-        def _print_array(a, label="", nn=None):
+        def _print_array(a: Any, label: str = "", nn: Optional[int] = None) -> None:
             self._print_array(fh, a, label, nn)
 
-        def _array2str(values: list) -> str:
+        def _array2str(values: List[Any]) -> str:
             """Format list into space-separated string, trimmed at first None, ending with '/'."""
             try:
                 values = values[:values.index(None)]
