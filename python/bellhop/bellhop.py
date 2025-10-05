@@ -560,7 +560,12 @@ class _Bellhop:
 
         return results
 
-    def _run_exe(self, fname_base: str, args: str = "", debug: bool = False, testrun: bool = False) -> bool:
+    def _run_exe(self, fname_base: str,
+                       args: str = "",
+                       debug: bool = False,
+                       testrun: bool = False,
+                       exe: str = "bellhop.exe"
+                ) -> bool:
         """Run the executable and evaluate the return code
 
         This function has dual purposes: the first is to first execute in dummy mode ("testrun")
@@ -571,7 +576,7 @@ class _Bellhop:
         greater than zero indicate errors.
         """
         try:
-            runcmd = f'bellhop.exe {fname_base} {args}'
+            runcmd = f'{exe} {fname_base} {args}'
             debug and print(f"RUNNING {runcmd}")
             result = _proc.run(runcmd, stderr=_proc.STDOUT, stdout=_proc.PIPE, shell=True)
             debug and print(f"RETURN CODE: {result.returncode}")

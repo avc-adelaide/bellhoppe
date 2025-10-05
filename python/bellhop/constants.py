@@ -7,6 +7,8 @@ class _Strings(str, Enum):
     This helps prevent typos and permits autocomplete (if your editor is smart enough).
     """
 
+    exe = "bellhop.exe"
+
     default = "default"
     none = "none"
 
