@@ -505,7 +505,7 @@ class _Bellhop:
         _os.close(fh)
         fname_base = fname[:-4]
         self._unlink(fname_base+'.env')
-        rv = self._bellhop(fname_base)
+        rv = self._run_exe(fname_base, testrun=True, debug=True)
         self._unlink(fname_base+'.prt')
         self._unlink(fname_base+'.log')
         return rv
@@ -541,7 +541,7 @@ class _Bellhop:
         fname_base = self._create_env_file(env, taskmap[task][0], fname_base, debug)
 
         results = None
-        if self._bellhop(fname_base):
+        if self._run_exe(fname_base):
             err = self._check_error(fname_base)
             if err is not None:
                 print(err)
@@ -560,15 +560,24 @@ class _Bellhop:
 
         return results
 
-    def _bellhop(self, *args: str) -> bool:
+    def _run_exe(self, fname_base: str, args: str = "", debug: bool = False, testrun: bool = False) -> bool:
+        """Run the executable and evaluate the return code
+
+        This function has dual purposes: the first is to first execute in dummy mode ("testrun")
+        and just check the executable is found -- if not, the exit code will be 127 and
+        only for this specific error will the function returns false.
+
+        The second purpose is to run the executable for real, in which case all exit codes
+        greater than zero indicate errors.
+        """
         try:
-            runcmd = f'bellhop.exe {" ".join(list(args))}'
-            #print(f"RUNNING {runcmd}")
-            result = _proc.run(runcmd,
-                        stderr=_proc.STDOUT, stdout=_proc.PIPE,
-                        shell=True)
-            #print(f"RETURN CODE: {result.returncode}")
-            if result.returncode == 127:
+            runcmd = f'bellhop.exe {fname_base} {args}'
+            debug and print(f"RUNNING {runcmd}")
+            result = _proc.run(runcmd, stderr=_proc.STDOUT, stdout=_proc.PIPE, shell=True)
+            debug and print(f"RETURN CODE: {result.returncode}")
+            if testrun and result.returncode == 127:
+                return False
+            elif not testrun and result.returncode > 0:
                 return False
         except OSError:
             return False

@@ -47,8 +47,3 @@ def test_ssp_spline_points():
     with pytest.raises(ValueError, match=r"soundspeed profile must have at least 4 points for spline interpolation"):
         bh.check_env2d(env)
 
-
-def test_ssp_spline_points(): # not an error but anyway
-    ssp = pd.DataFrame({ 'depth':[0,10,20,30], 'speed':[1540,1530,1520,1525]})
-    env = bh.create_env2d(soundspeed=ssp,depth=30,soundspeed_interp="spline")
-    env = bh.check_env2d(env)
