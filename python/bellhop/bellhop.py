@@ -226,6 +226,7 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
             assert env['source_directionality'].shape[1] == 2, 'source_directionality must be an Nx2 array'
             assert _np.all(env['source_directionality'][:,0] >= -180) and _np.all(env['source_directionality'][:,0] <= 180), 'source_directionality angles must be in (-180, 180]'
 
+        validate_source_type(env['source_type'])
         if env['_single_beam'] == _Strings.single_beam:
             assert env['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
 
@@ -363,14 +364,13 @@ def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional
     model = _select_model(env, _Strings.rays, model, debug)
     return model.run(env, _Strings.rays, debug, fname_base)
 
-def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mode: str = _Strings.coherent, model: Optional[Any] = None, source_type: str = "default", debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mode: str = _Strings.coherent, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute transmission loss from a given transmitter to all receviers.
 
     :param env: environment definition
     :param source_depth_ndx: transmitter depth index
     :param mode: coherent, incoherent or semicoherent
     :param model: propagation model to use (None to auto-select)
-    :param source_type: point or line
     :param debug: generate debug information for propagation model
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
     :returns: complex transmission loss at each receiver depth and range
@@ -383,12 +383,6 @@ def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mo
     env = check_env2d(env)
     # Use dataclass validation for option checking
     validate_transmission_loss_mode(mode)
-    validate_source_type(source_type)
-    if env['source_type'] == 'default':
-        env['source_type'] = source_type
-    else:
-        if not(source_type == 'default') and not(env['source_type'] == source_type):
-            raise ValueError('ENV file defines source type "'+env['source_type']+'" inconsistent with Python argument source_type="'+source_type+'"')
     if _np.size(env['source_depth']) > 1:
         env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]
