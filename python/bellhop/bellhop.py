@@ -19,10 +19,11 @@ import os as _os
 import re as _re
 import subprocess as _proc
 import warnings
+import shutil
 
 from tempfile import mkstemp as _mkstemp
 from struct import unpack as _unpack
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, IO
 
 import numpy as _np
 import pandas as _pd
@@ -498,17 +499,23 @@ class _Bellhop:
     def __init__(self) -> None:
         pass
 
-    def supports(self, env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> bool:
-        if env is not None and env['type'] != '2D':
+    _exe = "bellhop.exe"
+
+    def supports(self,
+                       env: Optional[Dict[str, Any]] = None,
+                       task: Optional[str] = None,
+                       exe: Optional[str] = None,
+                ) -> bool:
+        """Check whether the model supports the task.
+
+           This function is supposed to diagnose whether this combination of environment
+           and task is supported by the model, but really it just checks that the binary
+           can be found."""
+
+        if env and env['type'] != '2D':
             return False
-        fh, fname = _mkstemp(suffix='.env')
-        _os.close(fh)
-        fname_base = fname[:-4]
-        self._unlink(fname_base+'.env')
-        rv = self._run_exe(fname_base, testrun=True, debug=True)
-        self._unlink(fname_base+'.prt')
-        self._unlink(fname_base+'.log')
-        return rv
+
+        return shutil.which(exe or self._exe) is not None
 
     def _rm_files(self, fname_base: str) -> None:
         self._unlink(fname_base+'.bty')
@@ -541,15 +548,15 @@ class _Bellhop:
         fname_base = self._create_env_file(env, taskmap[task][0], fname_base, debug)
 
         results = None
-        if self._run_exe(fname_base):
-            err = self._check_error(fname_base)
-            if err is not None:
-                print(err)
-            else:
-                try:
-                    results = taskmap[task][1](fname_base)
-                except FileNotFoundError:
-                    print('[WARN] Bellhop did not generate expected output file')
+        self._run_exe(fname_base)
+        err = self._check_error(fname_base)
+        if err is not None:
+            print(err)
+        else:
+            try:
+                results = taskmap[task][1](fname_base)
+            except FileNotFoundError:
+                print(f'[WARN] Bellhop did not generate expected output file ({task})')
 
         if debug:
             print('[DEBUG] Bellhop working files: '+fname_base+'.*')
@@ -563,30 +570,28 @@ class _Bellhop:
     def _run_exe(self, fname_base: str,
                        args: str = "",
                        debug: bool = False,
-                       testrun: bool = False,
-                       exe: str = "bellhop.exe"
-                ) -> bool:
-        """Run the executable and evaluate the return code
+                       exe: str = _exe
+                ) -> None:
+        """Run the executable and raise exceptions if there are errors."""
 
-        This function has dual purposes: the first is to first execute in dummy mode ("testrun")
-        and just check the executable is found -- if not, the exit code will be 127 and
-        only for this specific error will the function returns false.
+        exe_path = shutil.which(exe)
+        if exe_path is None:
+            raise FileNotFoundError(f"Executable ({exe}) not found in PATH.")
 
-        The second purpose is to run the executable for real, in which case all exit codes
-        greater than zero indicate errors.
-        """
-        try:
-            runcmd = f'{exe} {fname_base} {args}'
-            debug and print(f"RUNNING {runcmd}")
-            result = _proc.run(runcmd, stderr=_proc.STDOUT, stdout=_proc.PIPE, shell=True)
-            debug and print(f"RETURN CODE: {result.returncode}")
-            if testrun and result.returncode == 127:
-                return False
-            elif not testrun and result.returncode > 0:
-                return False
-        except OSError:
-            return False
-        return True
+        runcmd = [exe_path, fname_base] + args.split()
+        if debug:
+            print("RUNNING:", " ".join(runcmd))
+        result = _proc.run(runcmd, stderr=_proc.STDOUT, stdout=_proc.PIPE, text=True)
+
+        if debug and result.stdout:
+            print(result.stdout.strip())
+        if result.returncode != 0:
+            raise RuntimeError(
+                f"Execution of '{exe}' failed with return code {result.returncode}.\n"
+                f"Command: {' '.join(runcmd)}\n"
+                f"Output:\n{result.stdout.strip()}"
+            )
+
 
     def _unlink(self, f: str) -> None:
         try:
@@ -777,11 +782,8 @@ class _Bellhop:
                 for j in range(svp.shape[1]):
                     f.write("%0.6f%c" % (svp.iloc[k,j], '\n' if j == svp.shape[1]-1 else ' '))
 
-    def _readf(self, f: Any, types: Tuple[Any, ...], dtype: type = str) -> Tuple[Any, ...]:
-        if type(f) is str:
-            p = _re.split(r' +', f.strip())
-        else:
-            p = _re.split(r' +', f.readline().strip())
+    def _readf(self, f: IO[str], types: Tuple[Any, ...], dtype: type = str) -> Tuple[Any, ...]:
+        p = _re.split(r' +', f.readline().strip())
         for j in range(len(p)):
             if len(types) > j:
                 p[j] = types[j](p[j])

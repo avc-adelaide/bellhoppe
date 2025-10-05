@@ -4,17 +4,15 @@ import pandas as pd
 
 
 def test_exe_pass():
-    status = bh.bellhop._Bellhop._run_exe(bh,"tests/Munk_SSP/MunkB_ray_rot", debug=True)
-    assert status
+    bh.bellhop._Bellhop._run_exe(bh,"tests/Munk_SSP/MunkB_ray_rot", debug=True)
+    # no error => test passes
 
 def test_exe_fail():
-    status = bh.bellhop._Bellhop._run_exe(bh,"tests/malformed_env/eof_ssp", debug=True)
-    assert not status
+    with pytest.raises(RuntimeError, match=r"Execution of '.*' failed with return code"):
+        bh.bellhop._Bellhop._run_exe(bh,"tests/malformed_env/eof_ssp", debug=True)
 
-def test_exe_testrun_pass():
-    status = bh.bellhop._Bellhop._run_exe(bh,"tests/malformed_env/eof_ssp", debug=True, testrun=True, exe="bellhop.exe")
-    assert status
+def test_exe_not_found():
+    with pytest.raises(FileNotFoundError, match=r"Executable (.*) not found in PATH."):
+        bh.bellhop._Bellhop._run_exe(bh,"tests/malformed_env/eof_ssp", debug=True, exe="bellhop_not_found.exe")
+    # note that bellhop.py would give a better error message when reading that .env file
 
-def test_exe_testrun_fail():
-    status = bh.bellhop._Bellhop._run_exe(bh,"tests/malformed_env/eof_ssp", debug=True, testrun=True, exe="does_not_exist.exe")
-    assert not status
