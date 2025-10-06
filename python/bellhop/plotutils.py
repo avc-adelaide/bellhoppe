@@ -51,14 +51,11 @@ if get_ipython is not None:
 
 def _new_figure(title: Optional[str], width: Optional[int], height: Optional[int], xlabel: Optional[str], ylabel: Optional[str], xlim: Optional[Tuple[float, float]], ylim: Optional[Tuple[float, float]], xtype: Optional[str], ytype: Optional[str], interactive: Optional[bool]) -> Any:
     global _color
-    if width is None:
-        width = _figsize[0]
-    if height is None:
-        height = _figsize[1]
+    width = width or _figsize[0]
+    height = height or _figsize[1]
     _color = 0
     tools: Union[List[str], str] = []
-    if interactive is None:
-        interactive = _interactive
+    interactive = interactive or _interactive
     if interactive:
         tools = 'pan,box_zoom,wheel_zoom,reset,save'
     args = dict(title=title, width=width, height=height, x_range=xlim, y_range=ylim, x_axis_label=xlabel, y_axis_label=ylabel, x_axis_type=xtype, y_axis_type=ytype, tools=tools)
@@ -322,7 +319,31 @@ def gcf() -> Any:
     """
     return _figure
 
-def plot(x: Any, y: Any = None, fs: Optional[float] = None, maxpts: int = 10000, pooling: Optional[str] = None, color: Optional[str] = None, style: str = 'solid', thickness: int = 1, marker: Optional[str] = None, filled: bool = False, size: int = 6, mskip: int = 0, title: Optional[str] = None, xlabel: Optional[str] = None, ylabel: Optional[str] = None, xlim: Optional[Tuple[float, float]] = None, ylim: Optional[Tuple[float, float]] = None, xtype: str = 'auto', ytype: str = 'auto', width: Optional[int] = None, height: Optional[int] = None, legend: Optional[str] = None, hold: bool = False, interactive: Optional[bool] = None) -> None:
+def plot(x: Any,
+         y: Any = None,
+         fs: Optional[float] = None,
+         maxpts: int = 10000,
+         pooling: Optional[str] = None,
+         color: Optional[str] = None,
+         style: str = 'solid',
+         thickness: int = 1,
+         marker: Optional[str] = None,
+         filled: bool = False,
+         size: int = 6,
+         mskip: int = 0,
+         title: Optional[str] = None,
+         xlabel: Optional[str] = None,
+         ylabel: Optional[str] = None,
+         xlim: Optional[Tuple[float, float]] = None,
+         ylim: Optional[Tuple[float, float]] = None,
+         xtype: str = 'auto',
+         ytype: str = 'auto',
+         width: Optional[int] = None,
+         height: Optional[int] = None,
+         legend: Optional[str] = None,
+         interactive: Optional[bool] = None,
+         hold: bool = False,
+        ) -> Any:
     """Plot a line graph or time series.
 
     :param x: x data or time series data (if y is None)
@@ -413,6 +434,7 @@ def plot(x: Any, y: Any = None, fs: Optional[float] = None, maxpts: int = 10000,
     if not hold and not _hold:
         _show(_figure)
         _figure = None
+    return _figure
 
 def scatter(x: Any, y: Any, marker: str = '.', filled: bool = False, size: int = 6, color: Optional[str] = None, title: Optional[str] = None, xlabel: Optional[str] = None, ylabel: Optional[str] = None, xlim: Optional[Tuple[float, float]] = None, ylim: Optional[Tuple[float, float]] = None, xtype: str = 'auto', ytype: str = 'auto', width: Optional[int] = None, height: Optional[int] = None, legend: Optional[str] = None, hold: bool = False, interactive: Optional[bool] = None) -> None:
     """Plot a scatter plot.

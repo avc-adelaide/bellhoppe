@@ -23,9 +23,16 @@ import matplotlib.colors as _mplc
 
 from bellhop.constants import _Strings
 import bellhop.plotutils as _plt
+from bellhop.plotutils import figure as figure
 
-
-def plot_env(env: Dict[str, Any], surface_color: str = 'dodgerblue', bottom_color: str = 'peru', source_color: str = 'orangered', receiver_color: str = 'midnightblue', receiver_plot: Optional[bool] = None, **kwargs: Any) -> None:
+def plot_env(env: Dict[str, Any],
+             surface_color: str = 'dodgerblue',
+             bottom_color: str = 'peru',
+             source_color: str = 'orangered',
+             receiver_color: str = 'midnightblue',
+             receiver_plot: Optional[bool] = None,
+             **kwargs: Any
+            ) -> None:
     """Plots a visual representation of the environment.
 
     :param env: environment description
@@ -66,21 +73,31 @@ def plot_env(env: Dict[str, Any], surface_color: str = 'dodgerblue', bottom_colo
         max_y = env['depth']
     mgn_x = 0.01*(max_x-min_x)
     mgn_y = 0.1*(max_y-min_y)
+
     oh = _plt.hold()
     if env['surface'] is None:
-        _plt.plot([min_x, max_x], [0, 0], xlabel=xlabel, ylabel='Depth (m)', xlim=(min_x-mgn_x, max_x+mgn_x), ylim=(-max_y-mgn_y, -min_y+mgn_y), color=surface_color, **kwargs)
+        xx = [min_x, max_x]
+        yy = [0, 0]
     else:
         # linear and curvilinear options use the same altimetry, just with different normals
         s = env['surface']
-        _plt.plot(s[:,0]/divisor, -s[:,1], xlabel=xlabel, ylabel='Depth (m)', xlim=(min_x-mgn_x, max_x+mgn_x), ylim=(-max_y-mgn_y, -min_y+mgn_y), color=surface_color, **kwargs)
+        xx = s[:,0]/divisor
+        yy = -s[:,1]
+    _figure = _plt.plot(xx, yy, xlabel=xlabel, ylabel='Depth (m)', xlim=(min_x-mgn_x, max_x+mgn_x), ylim=(-max_y-mgn_y, -min_y+mgn_y), color=surface_color, **kwargs)
+
     if _np.size(env['depth']) == 1:
-        _plt.plot([min_x, max_x], [-env['depth'], -env['depth']], color=bottom_color)
+        xx = [min_x, max_x]
+        yy = [-env['depth'], -env['depth']]
     else:
         # linear and curvilinear options use the same bathymetry, just with different normals
         s = env['depth']
-        _plt.plot(s[:,0]/divisor, -s[:,1], color=bottom_color)
+        xx = s[:,0]/divisor
+        yy = -s[:,1]
+    _plt.plot(xx, yy, color=bottom_color)
+
     txd = env['source_depth']
     _plt.plot([0]*_np.size(txd), -txd, marker='*', style='solid', color=source_color)
+
     if receiver_plot is None:
         receiver_plot = _np.size(env['receiver_depth'])*_np.size(env['receiver_range']) < 2000
     if receiver_plot:
@@ -90,6 +107,7 @@ def plot_env(env: Dict[str, Any], surface_color: str = 'dodgerblue', bottom_colo
         for r in _np.array(rxr):
             rxd = env['receiver_depth']
             _plt.plot([r/divisor]*_np.size(rxd), -rxd, marker='o', style='solid', color=receiver_color)
+
     _plt.hold(oh if oh is not None else False)
 
 def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
@@ -114,15 +132,15 @@ def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
             max_y = _np.max(env['depth'][:,1])
         else:
             max_y = env['depth']
-        _plt.plot([svp, svp], [0, -max_y], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
+        _figure = _plt.plot([svp, svp], [0, -max_y], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
     elif env['soundspeed_interp'] == _Strings.spline:
         ynew = _np.linspace(_np.min(svp[:,0]), _np.max(svp[:,0]), 100)
         tck = _interp.splrep(svp[:,0], svp[:,1], s=0)
         xnew = _interp.splev(ynew, tck, der=0)
-        _plt.plot(xnew, -ynew, xlabel='Soundspeed (m/s)', ylabel='Depth (m)', hold=True, **kwargs)
+        _figure = _plt.plot(xnew, -ynew, xlabel='Soundspeed (m/s)', ylabel='Depth (m)', hold=True, **kwargs)
         _plt.plot(svp[:,1], -svp[:,0], marker='.', style='solid', **kwargs)
     else:
-        _plt.plot(svp[:,1], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
+        _figure = _plt.plot(svp[:,1], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
 
 def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs: Any) -> None:
     """Plots the arrival times and amplitudes.
