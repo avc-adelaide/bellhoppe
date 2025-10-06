@@ -1,6 +1,6 @@
 import pytest
 import bellhop as bh
-import bellhop.plot as bhp
+import bellhop.pyplot as bhp
 import numpy as np
 
 def test_pyplot_env():
