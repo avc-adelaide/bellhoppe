@@ -50,7 +50,8 @@ if get_ipython is not None:
         _notebook = True
 
 def _new_figure(title: Optional[str], width: Optional[int], height: Optional[int], xlabel: Optional[str], ylabel: Optional[str], xlim: Optional[Tuple[float, float]], ylim: Optional[Tuple[float, float]], xtype: Optional[str], ytype: Optional[str], interactive: Optional[bool]) -> Any:
-    global _color
+    global _color, _figure
+
     width = width or _figsize[0]
     height = height or _figsize[1]
     _color = 0
@@ -59,8 +60,28 @@ def _new_figure(title: Optional[str], width: Optional[int], height: Optional[int
     if interactive:
         tools = 'pan,box_zoom,wheel_zoom,reset,save'
     args = dict(title=title, width=width, height=height, x_range=xlim, y_range=ylim, x_axis_label=xlabel, y_axis_label=ylabel, x_axis_type=xtype, y_axis_type=ytype, tools=tools)
+
+    if _figure is not None:
+        f = _figure
+        if title:
+            f.title.text = title
+        if width:
+            f.width = width
+        if height:
+            f.height = height
+        if xlabel and f.xaxis:
+            f.xaxis[0].axis_label = xlabel
+        if ylabel and f.yaxis:
+            f.yaxis[0].axis_label = ylabel
+        if xlim and hasattr(f, "x_range"):
+            f.x_range.start, f.x_range.end = xlim
+        if ylim and hasattr(f, "y_range"):
+            f.y_range.start, f.y_range.end = ylim
+        return f
+
     f = _bplt.figure(**{k:v for (k,v) in args.items() if v is not None})
     f.toolbar.logo = None
+    _figure = f
     return f
 
 def _process_canvas(figures: List[Any]) -> None:
@@ -343,7 +364,7 @@ def plot(x: Any,
          legend: Optional[str] = None,
          interactive: Optional[bool] = None,
          hold: bool = False,
-        ) -> Any:
+        ) -> None:
     """Plot a line graph or time series.
 
     :param x: x data or time series data (if y is None)
@@ -395,8 +416,7 @@ def plot(x: Any,
     if y.ndim == 0:  # 0-dimensional array (scalar)
         y = _np.array([y])
 
-    if _figure is None:
-        _figure = _new_figure(title, width, height, xlabel, ylabel, xlim, ylim, xtype, ytype, interactive)
+    _figure = _new_figure(title, width, height, xlabel, ylabel, xlim, ylim, xtype, ytype, interactive)
     if color is None:
         color = _colors[_color % len(_colors)]
         _color += 1
@@ -434,7 +454,6 @@ def plot(x: Any,
     if not hold and not _hold:
         _show(_figure)
         _figure = None
-    return _figure
 
 def scatter(x: Any, y: Any, marker: str = '.', filled: bool = False, size: int = 6, color: Optional[str] = None, title: Optional[str] = None, xlabel: Optional[str] = None, ylabel: Optional[str] = None, xlim: Optional[Tuple[float, float]] = None, ylim: Optional[Tuple[float, float]] = None, xtype: str = 'auto', ytype: str = 'auto', width: Optional[int] = None, height: Optional[int] = None, legend: Optional[str] = None, hold: bool = False, interactive: Optional[bool] = None) -> None:
     """Plot a scatter plot.

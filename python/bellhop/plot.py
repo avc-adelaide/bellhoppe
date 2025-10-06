@@ -83,7 +83,7 @@ def plot_env(env: Dict[str, Any],
         s = env['surface']
         xx = s[:,0]/divisor
         yy = -s[:,1]
-    _figure = _plt.plot(xx, yy, xlabel=xlabel, ylabel='Depth (m)', xlim=(min_x-mgn_x, max_x+mgn_x), ylim=(-max_y-mgn_y, -min_y+mgn_y), color=surface_color, **kwargs)
+    _plt.plot(xx, yy, xlabel=xlabel, ylabel='Depth (m)', xlim=(min_x-mgn_x, max_x+mgn_x), ylim=(-max_y-mgn_y, -min_y+mgn_y), color=surface_color, **kwargs)
 
     if _np.size(env['depth']) == 1:
         xx = [min_x, max_x]
@@ -132,15 +132,15 @@ def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
             max_y = _np.max(env['depth'][:,1])
         else:
             max_y = env['depth']
-        _figure = _plt.plot([svp, svp], [0, -max_y], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
+        _plt.plot([svp, svp], [0, -max_y], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
     elif env['soundspeed_interp'] == _Strings.spline:
         ynew = _np.linspace(_np.min(svp[:,0]), _np.max(svp[:,0]), 100)
         tck = _interp.splrep(svp[:,0], svp[:,1], s=0)
         xnew = _interp.splev(ynew, tck, der=0)
-        _figure = _plt.plot(xnew, -ynew, xlabel='Soundspeed (m/s)', ylabel='Depth (m)', hold=True, **kwargs)
+        _plt.plot(xnew, -ynew, xlabel='Soundspeed (m/s)', ylabel='Depth (m)', hold=True, **kwargs)
         _plt.plot(svp[:,1], -svp[:,0], marker='.', style='solid', **kwargs)
     else:
-        _figure = _plt.plot(svp[:,1], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
+        _plt.plot(svp[:,1], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
 
 def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs: Any) -> None:
     """Plots the arrival times and amplitudes.

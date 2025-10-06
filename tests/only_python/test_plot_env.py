@@ -16,6 +16,15 @@ def no_bokeh_show(monkeypatch):
     monkeypatch.setattr(bokeh.plotting, "show", lambda *a, **k: None)
 
 
+def test_plot_env_range():
+
+    env = bh.create_env2d(receiver_range=20000)
+    with bhp.figure() as f:
+        bhp.plot_env(env)
+        bokeh.plotting.output_file(output_dir+"env_long.html")
+        bokeh.plotting.save(f)
+
+
 def test_plot_env():
     """Test plot_env function with complex environment. Just check that there are no execution errors.
     """
@@ -29,5 +38,5 @@ def test_plot_env():
     with bhp.figure() as f:
         bhp.plot_env(env)
         bhp.plot_rays(erays)
-        bokeh.plotting.output_file(output_dir+"plot.html")
+        bokeh.plotting.output_file(output_dir+"env_complex.html")
         bokeh.plotting.save(f)
