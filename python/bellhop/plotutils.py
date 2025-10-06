@@ -479,31 +479,34 @@ def scatter(x: Any, y: Any, marker: str = '.', filled: bool = False, size: int =
     if color is None:
         color = _colors[_color % len(_colors)]
         _color += 1
+    # Build kwargs for marker rendering
     kwargs = {'size': size, 'line_color': color}
     if filled:
         kwargs['fill_color'] = color
     if legend is not None:
         kwargs['legend_label'] = legend
-    if marker == '.':
-        kwargs['size'] = kwargs['size']/2
-        kwargs['fill_color'] = color
-        _figure.scatter(x, y, **kwargs)
-    elif marker == 'o':
-        _figure.scatter(x, y, **kwargs)
-    elif marker == 's':
-        _figure.square(x, y, **kwargs)
-    elif marker == '*':
-        _figure.scatter(x, y, marker="*", **kwargs)
-    elif marker == 'x':
-        _figure.x(x, y, **kwargs)
-    elif marker == '+':
-        _figure.cross(x, y, **kwargs)
-    elif marker == 'd':
-        _figure.diamond(x, y, **kwargs)
-    elif marker == '^':
-        _figure.triangle(x, y, **kwargs)
+    
+    # Map marker types to Bokeh scatter marker names (using modern Bokeh 3.4+ API)
+    marker_map = {
+        '.': 'circle',
+        'o': 'circle',
+        's': 'square',
+        '*': 'star',
+        'x': 'x',
+        '+': 'cross',
+        'd': 'diamond',
+        '^': 'triangle',
+    }
+    
+    if marker in marker_map:
+        bokeh_marker = marker_map[marker]
+        # Small dots use smaller size and always filled
+        if marker == '.':
+            _figure.scatter(x, y, marker=bokeh_marker, **{**kwargs, 'size': size/2, 'fill_color': color})
+        else:
+            _figure.scatter(x, y, marker=bokeh_marker, **kwargs)
     elif marker is not None:
-        _warnings.warn('Bad marker type: '+marker)
+        _warnings.warn(f'Bad marker type: {marker}')
     if not hold and not _hold:
         _show(_figure)
         _figure = None
@@ -694,10 +697,16 @@ def specgram(x: Any, fs: float = 2, nfft: Optional[int] = None, noverlap: Option
     >>> arlpy.plot.specgram(np.random.normal(size=(10000)), fs=10000, clim=30)
     """
     f, t, Sxx = _sig.spectrogram(x, fs=fs, nperseg=nfft, noverlap=noverlap)
-    Sxx = 10*_np.log10(Sxx+_np.finfo(float).eps)
-    if isinstance(clim, float) or isinstance(clim, int):
-        clim = (_np.max(Sxx)-clim, _np.max(Sxx))
-    image(Sxx, x=(t[0], t[-1]), y=(f[0], f[-1]), title=title, colormap=colormap, clim=clim, clabel=clabel, xlabel=xlabel, ylabel=ylabel, xlim=xlim, ylim=ylim, width=width, height=height, hold=hold, interactive=interactive)
+    Sxx = 10 * _np.log10(Sxx + _np.finfo(float).eps)
+    
+    # Convert scalar clim to range (for dynamic range specification)
+    if isinstance(clim, (int, float)):
+        max_val = _np.max(Sxx)
+        clim = (max_val - clim, max_val)
+    
+    image(Sxx, x=(t[0], t[-1]), y=(f[0], f[-1]), title=title, colormap=colormap, 
+          clim=clim, clabel=clabel, xlabel=xlabel, ylabel=ylabel, xlim=xlim, 
+          ylim=ylim, width=width, height=height, hold=hold, interactive=interactive)
 
 def psd(x: Any, fs: float = 2, nfft: int = 512, noverlap: Optional[int] = None, window: str = 'hann', color: Optional[str] = None, style: str = 'solid', thickness: int = 1, marker: Optional[str] = None, filled: bool = False, size: int = 6, title: Optional[str] = None, xlabel: str = 'Frequency (Hz)', ylabel: str = 'Power spectral density (dB/Hz)', xlim: Optional[Tuple[float, float]] = None, ylim: Optional[Tuple[float, float]] = None, width: Optional[int] = None, height: Optional[int] = None, legend: Optional[str] = None, hold: bool = False, interactive: Optional[bool] = None) -> None:
     """Plot power spectral density of a given time series signal.
@@ -729,12 +738,18 @@ def psd(x: Any, fs: float = 2, nfft: int = 512, noverlap: Optional[int] = None, 
     >>> arlpy.plot.psd(np.random.normal(size=(10000)), fs=10000)
     """
     f, Pxx = _sig.welch(x, fs=fs, nperseg=nfft, noverlap=noverlap, window=window)
-    Pxx = 10*_np.log10(Pxx+_np.finfo(float).eps)
-    if xlim is None:
-        xlim = (0, fs/2)
+    Pxx = 10 * _np.log10(Pxx + _np.finfo(float).eps)
+    
+    # Set default axis limits if not specified
+    xlim = xlim or (0, fs / 2)
     if ylim is None:
-        ylim = (_np.max(Pxx)-50, _np.max(Pxx)+10)
-    plot(f, Pxx, color=color, style=style, thickness=thickness, marker=marker, filled=filled, size=size, title=title, xlabel=xlabel, ylabel=ylabel, xlim=xlim, ylim=ylim, maxpts=len(f), width=width, height=height, hold=hold, legend=legend, interactive=interactive)
+        max_pxx = _np.max(Pxx)
+        ylim = (max_pxx - 50, max_pxx + 10)
+    
+    plot(f, Pxx, color=color, style=style, thickness=thickness, marker=marker, 
+         filled=filled, size=size, title=title, xlabel=xlabel, ylabel=ylabel, 
+         xlim=xlim, ylim=ylim, maxpts=len(f), width=width, height=height, 
+         hold=hold, legend=legend, interactive=interactive)
 
 def iqplot(data: Any, marker: str = '.', color: Optional[str] = None, labels: Optional[Any] = None, filled: bool = False, size: Optional[int] = None, title: Optional[str] = None, xlabel: Optional[str] = None, ylabel: Optional[str] = None, xlim: List[float] = [-2, 2], ylim: List[float] = [-2, 2], width: Optional[int] = None, height: Optional[int] = None, hold: bool = False, interactive: Optional[bool] = None) -> None:
     """Plot signal points.
