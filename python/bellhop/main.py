@@ -434,17 +434,19 @@ def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> 
             rv.append(m[0])
     return rv
 
-def _select_model(env: Dict[str, Any], task: str, model: Optional[Any], debug: bool = False) -> Any:
+def _select_model(env: Dict[str, Any], task: str, model: Optional[Any] = None, debug: bool = False) -> Any:
+    print(f"{model = }")
     if model is not None:
         for m in _models:
             if m[0] == model:
                 _debug_print(debug, 'Model: '+m[0])
                 return m[1]()
         raise ValueError(f"Unknown model: '{model}'")
+    _debug_print(debug, "Searching for propagation model:")
     for m in _models:
         mm = m[1]()
         if mm.supports(env, task):
-            _debug_print(debug, 'Model: '+m[0])
+            _debug_print(debug, 'Model found: '+m[0])
             return mm
     raise ValueError('No suitable propagation model available')
 

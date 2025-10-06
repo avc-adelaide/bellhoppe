@@ -11,13 +11,27 @@ def test_arrivals():
     arr = bh.compute_arrivals(env, model="bellhop")
     #print(arr)
 
-def test_arrivals():
+def test_arrivals_bad_model():
     """Test with default settings to calculate arrival times. Catch error for unknown model.
     """
 
     with pytest.raises(ValueError, match=r"Unknown model"):
         env = bh.create_env2d()
         arr = bh.compute_arrivals(env, model="bellhop_not_found")
+
+
+def test_arrivals_no_model():
+    """Test with default settings to calculate arrival times. Catch error for no model found.
+    """
+
+    saved_models = bh.main._models.copy()  # snapshot
+    try:
+        bh.main._models.clear()
+        with pytest.raises(ValueError, match=r"No suitable propagation model"):
+            env = bh.create_env2d()
+            arr = bh.compute_arrivals(env, debug=True)
+    finally:
+        bh.main._models[:] = saved_models  # restore contents in place
 
 
 
