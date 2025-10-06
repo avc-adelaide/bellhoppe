@@ -880,8 +880,7 @@ class _Bellhop:
 
 _models.append(('bellhop', _Bellhop))
 
+
 __all__ = [
-    name
-    for name in globals()
-    if not name.startswith("_")  # ignore private names
+    name for name in globals() if not name.startswith("_")  # ignore private names
 ]

@@ -19,7 +19,7 @@ Environment definition
 Core Functions
 --------------
 
-.. automodule:: bellhop.bellhop
+.. automodule:: bellhop.main
    :members:
 
 Plotting Utilities

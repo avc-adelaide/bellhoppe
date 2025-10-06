@@ -10,7 +10,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
-from bellhop.bellhop import _Bellhop
+from bellhop.main import _Bellhop
 
 
 def test_check_error_integration_with_actual_bellhop():

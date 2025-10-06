@@ -1,14 +1,17 @@
 
-# Import everything from bellhop module to package level
+# Import everything to package level
 
-from . import bellhop
+from . import main
 
-__all__ = bellhop.__all__
-globals().update({name: getattr(bellhop, name) for name in __all__})
+__all__ = main.__all__
+globals().update({name: getattr(main, name) for name in __all__})
 
 # Was:
 #    from .bellhop import *
-# but keeps Ruff happy
-
-
-
+# but this approach keeps Ruff happy
+#
+# NB in main.py:
+#
+#     __all__ = [
+#         name for name in globals() if not name.startswith("_")  # ignore private names
+#     ]
