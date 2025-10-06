@@ -8,3 +8,9 @@ def test_ssp_spline_points(): # not an error but anyway
     env = bh.create_env2d(soundspeed=ssp,depth=30,soundspeed_interp="spline")
     env = bh.check_env2d(env)
     arr = bh.compute_arrivals(env,debug=True)
+
+
+def test_ssp_neg():
+    env = bh.read_env2d("tests/simple/simple_neg_ssp")
+    with pytest.raises(RuntimeError):
+        tl = bh.compute_transmission_loss(env)

@@ -435,7 +435,6 @@ def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> 
     return rv
 
 def _select_model(env: Dict[str, Any], task: str, model: Optional[Any] = None, debug: bool = False) -> Any:
-    print(f"{model = }")
     if model is not None:
         for m in _models:
             if m[0] == model:

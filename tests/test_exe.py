@@ -9,10 +9,10 @@ def test_exe_pass():
 
 def test_exe_fail():
     with pytest.raises(RuntimeError, match=r"Execution of '.*' failed with return code"):
-        bh.main._Bellhop._run_exe(bh,"tests/malformed_env/eof_ssp", debug=True)
+        bh.main._Bellhop()._run_exe("tests/malformed_env/eof_ssp", debug=True)
 
 def test_exe_not_found():
     with pytest.raises(FileNotFoundError, match=r"Executable (.*) not found in PATH."):
-        bh.main._Bellhop._run_exe(bh,"tests/malformed_env/eof_ssp", debug=True, exe="bellhop_not_found.exe")
+        bh.main._Bellhop()._run_exe("tests/malformed_env/eof_ssp", debug=True, exe="bellhop_not_found.exe")
     # note that bellhop.py would give a better error message when reading that .env file
 

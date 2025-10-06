@@ -67,14 +67,10 @@ class _Bellhop:
 
         results = None
         self._run_exe(fname_base)
-        err = self._check_error(fname_base)
-        if err is not None:
-            print(err)
-        else:
-            try:
-                results = taskmap[task][1](fname_base)
-            except FileNotFoundError:
-                print(f'[WARN] Bellhop did not generate expected output file ({task})')
+        try:
+            results = taskmap[task][1](fname_base)
+        except FileNotFoundError:
+            print(f'[WARN] Bellhop did not generate expected output file ({task})')
 
         if debug:
             print('[DEBUG] Bellhop working files: '+fname_base+'.*')
@@ -103,13 +99,29 @@ class _Bellhop:
 
         if debug and result.stdout:
             print(result.stdout.strip())
+
         if result.returncode != 0:
+            err = self._check_error(fname_base)
             raise RuntimeError(
                 f"Execution of '{exe}' failed with return code {result.returncode}.\n"
-                f"Command: {' '.join(runcmd)}\n"
-                f"Output:\n{result.stdout.strip()}"
+                f"\nCommand: {' '.join(runcmd)}\n"
+                f"\nOutput:\n{result.stdout.strip()}\n"
+                f"\nExtract from PRT file:\n{err}"
             )
 
+    def _check_error(self, fname_base: str) -> Optional[str]:
+        try:
+            err = ""
+            fatal = False
+            with open(fname_base+'.prt', 'rt') as f:
+                for s in f:
+                    if fatal and len(s.strip()) > 0:
+                        err += '[FATAL] ' + s.strip() + '\n'
+                    if '*** FATAL ERROR ***' in s:
+                        fatal = True
+        except FileNotFoundError:
+            pass
+        return err if err != "" else None
 
     def _unlink(self, f: str) -> None:
         try:
@@ -308,19 +320,6 @@ class _Bellhop:
             else:
                 p[j] = dtype(p[j])
         return tuple(p)
-
-    def _check_error(self, fname_base: str) -> Optional[str]:
-        err = None
-        try:
-            with open(fname_base+'.prt', 'rt') as f:
-                for s in f:
-                    if err is not None:
-                        err += '[BELLHOP] ' + s
-                    elif '*** FATAL ERROR ***' in s:
-                        err = '\n[BELLHOP] ' + s
-        except FileNotFoundError:
-            pass
-        return err
 
     def _load_arrivals(self, fname_base: str) -> _pd.DataFrame:
         with open(fname_base+'.arr', 'rt') as f:
