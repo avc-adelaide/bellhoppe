@@ -43,9 +43,9 @@ from bellhop.readers import read_refl_coeff as read_refl_coeff
 # models (in order of preference)
 _models: List[Any] = []
 
-def _float(x: Optional[float], scale: float = 1) -> Optional[float]:
-    """Permissive floatenator"""
-    return None if x is None else float(x) * scale
+def _debug_print(debug: bool, msg: str):
+    if debug:
+        print("[DEBUG]", msg)
 
 def create_env2d(**kv: Any) -> Dict[str, Any]:
     """Create a new 2D underwater environment with automatic validation.
@@ -296,7 +296,7 @@ def print_env(env: Dict[str, Any]) -> None:
         else:
             print('%20s : '%(k) + v_str)
 
-def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_arrivals(env: Dict[str, Any], model: Optional[str] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute arrivals between each transmitter and receiver.
 
     :param env: environment definition
@@ -314,7 +314,7 @@ def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bo
     model = _select_model(env, _Strings.arrivals, model, debug)
     return model.run(env, _Strings.arrivals, debug, fname_base)
 
-def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Optional[str] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute eigenrays between a given transmitter and receiver.
 
     :param env: environment definition
@@ -342,7 +342,7 @@ def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_d
     model = _select_model(env, _Strings.eigenrays, model, debug)
     return model.run(env, _Strings.eigenrays, debug, fname_base)
 
-def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional[str] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute rays from a given transmitter.
 
     :param env: environment definition
@@ -364,7 +364,7 @@ def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional
     model = _select_model(env, _Strings.rays, model, debug)
     return model.run(env, _Strings.rays, debug, fname_base)
 
-def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mode: str = _Strings.coherent, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mode: str = _Strings.coherent, model: Optional[str] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute transmission loss from a given transmitter to all receviers.
 
     :param env: environment definition
@@ -438,19 +438,17 @@ def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> 
             rv.append(m[0])
     return rv
 
-def _select_model(env: Dict[str, Any], task: str, model: Optional[str], debug: bool) -> Any:
+def _select_model(env: Dict[str, Any], task: str, model: Optional[str], debug: Optional[bool]) -> Any:
     if model is not None:
         for m in _models:
             if m[0] == model:
-                if debug:
-                    print('[DEBUG] Model: '+m[0])
+                _debug_print(debug, 'Model: '+m[0])
                 return m[1]()
-        raise ValueError('Unknown model: '+model)
+        raise ValueError(f"Unknown model: '{model}'")
     for m in _models:
         mm = m[1]()
         if mm.supports(env, task):
-            if debug:
-                print('[DEBUG] Model: '+m[0])
+            _debug_print(debug, 'Model: '+m[0])
             return mm
     raise ValueError('No suitable propagation model available')
 
@@ -479,11 +477,6 @@ def load_shd(fname_base: str) -> _pd.DataFrame:
     return _pd.DataFrame(pressure, index=pos_r_depth, columns=pos_r_range)
 
 
-def _quoted_opt(*args: str) -> str:
-    """Concatenate N input _Strings. strip whitespace, surround with single quotes
-    """
-    combined = "".join(args).strip()
-    return f"'{combined}'"
 
 
 ### Bellhop propagation model ###
@@ -505,9 +498,6 @@ class _Bellhop:
            This function is supposed to diagnose whether this combination of environment
            and task is supported by the model, but really it just checks that the binary
            can be found."""
-
-        if env and env['type'] != '2D':
-            return False
 
         return shutil.which(exe or self._exe) is not None
 
@@ -658,7 +648,7 @@ class _Bellhop:
         svp_singlebeam = _Maps.single_beam_rev[env['_single_beam']]
 
         comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
-        topopt = _quoted_opt(svp_interp, svp_boundcond, svp_attunits, svp_volatt, svp_alti, svp_singlebeam)
+        topopt = self._quoted_opt(svp_interp, svp_boundcond, svp_attunits, svp_volatt, svp_alti, svp_singlebeam)
         self._print_env_line(fh,f"{topopt}",comment)
 
         if env['volume_attenuation'] == _Strings.francois_garrison:
@@ -671,7 +661,7 @@ class _Bellhop:
               env['depth_max'],
               env['surface_soundspeed'],
               env['surface_soundspeed_shear'],
-              _float(env['surface_density'],scale=1/1000),
+              self._float(env['surface_density'],scale=1/1000),
               env['surface_absorption'],
               env['surface_absorption_shear']
             ])
@@ -706,7 +696,7 @@ class _Bellhop:
         bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
         dp_flag = _Maps.bottom_rev[env['_bathymetry']]
         comment = "BOT_Boundary_cond / BOT_Roughness"
-        self._print_env_line(fh,f"{_quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}",comment)
+        self._print_env_line(fh,f"{self._quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}",comment)
 
         if _np.size(env['depth']) > 1:
             self._create_bty_ati_file(fname_base+'.bty', env['depth'], env['depth_interp'])
@@ -717,7 +707,7 @@ class _Bellhop:
               env['depth_max'],
               env['bottom_soundspeed'],
               env['bottom_soundspeed_shear'],
-              _float(env['bottom_density'],scale=1/1000),
+              self._float(env['bottom_density'],scale=1/1000),
               env['bottom_absorption'],
               env['bottom_absorption_shear']
             ])
@@ -739,7 +729,7 @@ class _Bellhop:
         if env['source_directionality'] is not None:
             beampattern = "*"
             self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
-        runtype_str = _quoted_opt(taskcode, beamtype, beampattern, txtype, gridtype)
+        runtype_str = self._quoted_opt(taskcode, beamtype, beampattern, txtype, gridtype)
         self._print_env_line(fh,f"{runtype_str}","RUN TYPE")
         self._print_env_line(fh,_array2str([env['beam_num'], env['single_beam_index']]),"Num_Beams [ Single_Beam_Index ]")
         self._print_env_line(fh,f"{env['beam_angle_min']} {env['beam_angle_max']} /","ALPHA1,2 (degrees)")
@@ -877,6 +867,15 @@ class _Bellhop:
                 }))
         return _pd.concat(rays)
 
+    def _quoted_opt(self, *args: str) -> str:
+        """Concatenate N input _Strings. strip whitespace, surround with single quotes
+        """
+        combined = "".join(args).strip()
+        return f"'{combined}'"
+
+    def _float(self, x: Optional[float], scale: float = 1) -> Optional[float]:
+        """Permissive floatenator"""
+        return None if x is None else float(x) * scale
 
 
 _models.append(('bellhop', _Bellhop))
