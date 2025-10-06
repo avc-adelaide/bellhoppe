@@ -37,71 +37,86 @@ _interactive = True
 _static_images = False
 _colors = light_palette
 
+# Detect Jupyter notebook environment
 try:
     from IPython import get_ipython
-except ImportError:
-    get_ipython = None
-
-_notebook = False
-if get_ipython is not None:
-    shell = get_ipython().__class__.__name__
-    if "ZMQInteractiveShell" in shell:  # IPython Jupyter shell
+    ipython = get_ipython()
+    _notebook = ipython is not None and "ZMQInteractiveShell" in ipython.__class__.__name__
+    if _notebook:
         _bplt.output_notebook(resources=_bres.INLINE, hide_banner=True)
-        _notebook = True
+except (ImportError, AttributeError):
+    _notebook = False
 
 def _new_figure(title: Optional[str], width: Optional[int], height: Optional[int], xlabel: Optional[str], ylabel: Optional[str], xlim: Optional[Tuple[float, float]], ylim: Optional[Tuple[float, float]], xtype: Optional[str], ytype: Optional[str], interactive: Optional[bool]) -> Any:
     global _color
-    if width is None:
-        width = _figsize[0]
-    if height is None:
-        height = _figsize[1]
     _color = 0
-    tools: Union[List[str], str] = []
-    if interactive is None:
-        interactive = _interactive
-    if interactive:
-        tools = 'pan,box_zoom,wheel_zoom,reset,save'
-    args = dict(title=title, width=width, height=height, x_range=xlim, y_range=ylim, x_axis_label=xlabel, y_axis_label=ylabel, x_axis_type=xtype, y_axis_type=ytype, tools=tools)
-    f = _bplt.figure(**{k:v for (k,v) in args.items() if v is not None})
+    
+    # Use default figure size if not specified
+    width = width or _figsize[0]
+    height = height or _figsize[1]
+    
+    # Determine interactivity and tools
+    is_interactive = interactive if interactive is not None else _interactive
+    tools = 'pan,box_zoom,wheel_zoom,reset,save' if is_interactive else []
+    
+    # Create figure with only non-None arguments
+    kwargs = {
+        'title': title,
+        'width': width,
+        'height': height,
+        'x_range': xlim,
+        'y_range': ylim,
+        'x_axis_label': xlabel,
+        'y_axis_label': ylabel,
+        'x_axis_type': xtype,
+        'y_axis_type': ytype,
+        'tools': tools
+    }
+    f = _bplt.figure(**{k: v for k, v in kwargs.items() if v is not None})
     f.toolbar.logo = None
     return f
 
 def _process_canvas(figures: List[Any]) -> None:
+    """Replace non-interactive Bokeh canvases with static images in Jupyter notebooks.
+    
+    This optimization converts non-interactive plots to static images to reduce
+    JavaScript overhead in notebooks. Only runs if JavaScript is enabled and there
+    are figures without interactive tools.
+    """
     global _using_js
-    if _disable_js:
+    
+    if _disable_js or (not figures and _using_js):
         return
-    if _using_js and len(figures) == 0:
+    
+    # Find indices of non-interactive figures
+    disable_indices = [i + 1 for i, f in enumerate(figures) if f is not None and not f.tools]
+    
+    if not disable_indices and not _using_js:
         return
-    disable = []
-    i = 0
-    for f in figures:
-        i += 1
-        if f is not None and f.tools == []:
-            disable.append(i)
-        else:
-            pass
-    if not _using_js and len(disable) == 0:
-        return
+    
     _using_js = True
-    js = 'var disable = '+str(disable)
-    js += """
+    
+    # JavaScript to convert non-interactive canvases to static images
+    js_code = f"""
+    var disable = {disable_indices};
     var clist = document.getElementsByClassName('bk-canvas');
     var j = 0;
-    for (var i = 0; i < clist.length; i++) {
-        if (clist[i].id == '') {
+    for (var i = 0; i < clist.length; i++) {{
+        if (clist[i].id == '') {{
             j++;
-            clist[i].id = 'bkc-'+String(i)+'-'+String(+new Date());
-            if (disable.indexOf(j) >= 0) {
-                var png = clist[i].toDataURL()
-                var img = document.createElement('img')
-                img.src = png
-                clist[i].parentNode.replaceChild(img, clist[i])
-            }
-        }
-    }
+            clist[i].id = 'bkc-' + String(i) + '-' + String(+new Date());
+            if (disable.indexOf(j) >= 0) {{
+                var png = clist[i].toDataURL();
+                var img = document.createElement('img');
+                img.src = png;
+                clist[i].parentNode.replaceChild(img, clist[i]);
+            }}
+        }}
+    }}
     """
+    
     import IPython.display as _ipyd
-    _ipyd.display(_ipyd.Javascript(js))
+    _ipyd.display(_ipyd.Javascript(js_code))
 
 def _show_static_images(f: Any) -> None:
     fh, fname = _mkstemp(suffix='.png')
@@ -280,28 +295,33 @@ class many_figures:
     >>>     arlpy.plot.plot([0,10], [0,10])
     """
 
-    def __init__(self, figsize=None):
+    def __init__(self, figsize: Optional[Tuple[int, int]] = None):
         self.figsize = figsize
+        self.old_figsize: Optional[Tuple[int, int]] = None
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         global _figures, _figsize
         _figures = [[]]
-        self.ofigsize = _figsize
+        self.old_figsize = _figsize
         if self.figsize is not None:
             _figsize = self.figsize
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         global _figures, _figsize
-        if len(_figures) > 1 or len(_figures[0]) > 0:
-            f = _bplt.gridplot(_figures, merge_tools=False)
+        if _figures and (len(_figures) > 1 or _figures[0]):
+            # Flatten nested list to get all figures
+            all_figures = [fig for row in _figures for fig in row if fig is not None]
+            gridplot = _bplt.gridplot(_figures, merge_tools=False)
+            
             if _static_images:
-                _show_static_images(f)
+                _show_static_images(gridplot)
             else:
                 _process_canvas([])
-                _bplt.show(f)
-                _process_canvas([item for sublist in _figures for item in sublist])
+                _bplt.show(gridplot)
+                _process_canvas(all_figures)
+        
         _figures = None
-        _figsize = self.ofigsize
+        _figsize = self.old_figsize
 
 def next_row() -> None:
     """Move to the next row in a grid of many figures."""
@@ -380,29 +400,40 @@ def plot(x: Any, y: Any = None, fs: Optional[float] = None, maxpts: int = 10000,
         color = _colors[_color % len(_colors)]
         _color += 1
     if x.size > maxpts:
-        n = int(_np.ceil(x.size/maxpts))
+        n = int(_np.ceil(x.size / maxpts))
         x = x[::n]
-        desc = 'Downsampled by '+str(n)
+        desc = f'Downsampled by {n}'
+        
+        # Apply pooling to reduce data
         if pooling is None:
             y = y[::n]
-        elif pooling == 'max':
-            desc += ', '+pooling+' pooled'
-            y = _np.amax(_np.reshape(y[:n*(y.size//n)], (-1, n)), axis=1)
-        elif pooling == 'min':
-            desc += ', '+pooling+' pooled'
-            y = _np.amin(_np.reshape(y[:n*(y.size//n)], (-1, n)), axis=1)
-        elif pooling == 'mean':
-            desc += ', '+pooling+' pooled'
-            y = _np.mean(_np.reshape(y[:n*(y.size//n)], (-1, n)), axis=1)
-        elif pooling == 'median':
-            desc += ', '+pooling+' pooled'
-            y = _np.mean(_np.reshape(y[:n*(y.size//n)], (-1, n)), axis=1)
         else:
-            _warnings.warn('Unknown pooling: '+pooling)
-            y = y[::n]
+            # Trim data to fit evenly into bins
+            trimmed_size = n * (y.size // n)
+            y_trimmed = y[:trimmed_size].reshape(-1, n)
+            
+            pooling_funcs = {
+                'max': _np.amax,
+                'min': _np.amin,
+                'mean': _np.mean,
+                'median': _np.median
+            }
+            
+            if pooling in pooling_funcs:
+                y = pooling_funcs[pooling](y_trimmed, axis=1)
+                desc += f', {pooling} pooled'
+            else:
+                _warnings.warn(f'Unknown pooling: {pooling}')
+                y = y[::n]
+        
+        # Ensure x and y have the same length
         if len(x) > len(y):
             x = x[:len(y)]
-        _figure.add_layout(_bmodels.Label(x=5, y=5, x_units='screen', y_units='screen', text=desc, text_font_size="8pt", text_alpha=0.5))
+        
+        _figure.add_layout(_bmodels.Label(
+            x=5, y=5, x_units='screen', y_units='screen',
+            text=desc, text_font_size="8pt", text_alpha=0.5
+        ))
     if style is not None:
         if legend is None:
             _figure.line(x, y, line_color=color, line_dash=style, line_width=thickness)
@@ -615,7 +646,7 @@ def box(left: Optional[float] = None, right: Optional[float] = None, top: Option
         _show(_figure)
         _figure = None
 
-def color(n):
+def color(n: int) -> str:
     """Get a numbered color to cycle over a set of colors.
 
     >>> import arlpy.plot
@@ -627,7 +658,7 @@ def color(n):
     """
     return _colors[n % len(_colors)]
 
-def set_colors(c):
+def set_colors(c: List[str]) -> None:
     """Provide a list of named colors to cycle over.
 
     >>> import arlpy.plot
