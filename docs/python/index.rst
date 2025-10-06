@@ -22,10 +22,16 @@ Core Functions
 .. automodule:: bellhop.main
    :members:
 
-Plotting Utilities
+Plotting Utilities (bokeh)
 ------------------
 
 .. automodule:: bellhop.plot
+   :members:
+
+Plotting Utilities (matplotlib)
+------------------
+
+.. automodule:: bellhop.pyplot
    :members:
 
 Internal Constants (bellhop/constants.py)
