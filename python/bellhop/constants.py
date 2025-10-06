@@ -1,6 +1,15 @@
 
 from enum import Enum
 
+class _File_Ext:
+    """Strings to define file extensions"""
+
+    arr = ".arr"
+    shd = ".shd"
+    prt = ".prt"
+    ray = ".ray"
+
+
 class _Strings(str, Enum):
     """String definitions to avoid hard-coding magic strings in the source code
 

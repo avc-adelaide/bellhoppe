@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Optional, Tuple, IO
 import numpy as _np
 import pandas as _pd
 
-from .constants import _Strings, _Maps
+from .constants import _Strings, _Maps, _File_Ext
 
 ### Bellhop propagation model ###
 
@@ -48,12 +48,12 @@ class _Bellhop:
 
     def run(self, env: Dict[str, Any], task: str, debug: bool = False, fname_base: Optional[str] = None) -> Any:
         taskmap: Dict[Any, List[Any]] = {
-            _Strings.arrivals:     ['A', self._load_arrivals],
-            _Strings.eigenrays:    ['E', self._load_rays],
-            _Strings.rays:         ['R', self._load_rays],
-            _Strings.coherent:     ['C', self._load_shd],
-            _Strings.incoherent:   ['I', self._load_shd],
-            _Strings.semicoherent: ['S', self._load_shd]
+            _Strings.arrivals:     ['A', self._load_arrivals, _File_Ext.arr],
+            _Strings.eigenrays:    ['E', self._load_rays, _File_Ext.ray],
+            _Strings.rays:         ['R', self._load_rays, _File_Ext.ray],
+            _Strings.coherent:     ['C', self._load_shd, _File_Ext.shd],
+            _Strings.incoherent:   ['I', self._load_shd, _File_Ext.shd],
+            _Strings.semicoherent: ['S', self._load_shd, _File_Ext.shd]
         }
         fname_flag=False
         if fname_base is not None:
@@ -68,9 +68,10 @@ class _Bellhop:
         results = None
         self._run_exe(fname_base)
         try:
-            results = taskmap[task][1](fname_base)
+            ext = taskmap[task][2]
+            results = taskmap[task][1](fname_base, ext)
         except FileNotFoundError:
-            print(f'[WARN] Bellhop did not generate expected output file ({task})')
+            raise RuntimeError(f'Bellhop did not generate expected output file ({task})')
 
         if debug:
             print('[DEBUG] Bellhop working files: '+fname_base+'.*')
@@ -321,8 +322,8 @@ class _Bellhop:
                 p[j] = dtype(p[j])
         return tuple(p)
 
-    def _load_arrivals(self, fname_base: str) -> _pd.DataFrame:
-        with open(fname_base+'.arr', 'rt') as f:
+    def _load_arrivals(self, fname_base: str, ext: str) -> _pd.DataFrame:
+        with open(fname_base+ext, 'rt') as f:
             hdr = f.readline()
             if hdr.find('2D') >= 0:
                 freq = self._readf(f, (float,))
@@ -371,8 +372,8 @@ class _Bellhop:
         return _pd.concat(arrivals)
 
 
-    def _load_shd(self, fname_base: str) -> _pd.DataFrame:
-        with open(fname_base+'.shd', 'rb') as f:
+    def _load_shd(self, fname_base: str, ext: str) -> _pd.DataFrame:
+        with open(fname_base+ext, 'rb') as f:
             recl, = _unpack('i', f.read(4))
             # _title = str(f.read(80))
             f.seek(4*recl, 0)
@@ -396,8 +397,8 @@ class _Bellhop:
         return _pd.DataFrame(pressure, index=pos_r_depth, columns=pos_r_range)
 
 
-    def _load_rays(self, fname_base: str) -> _pd.DataFrame:
-        with open(fname_base+'.ray', 'rt') as f:
+    def _load_rays(self, fname_base: str, ext: str) -> _pd.DataFrame:
+        with open(fname_base+ext, 'rt') as f:
             f.readline()
             f.readline()
             f.readline()
