@@ -130,6 +130,8 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
 
     try:
         assert env['type'] == '2D', 'Not a 2D environment'
+        assert env["_num_media"] == 1, f"BELLHOP only supports 1 medium, found {env['_num_media']}"
+
         max_range = _np.max(env['receiver_range'])
         if env['surface'] is not None:
             assert _np.size(env['surface']) > 1, 'surface must be an Nx2 array'

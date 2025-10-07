@@ -30,6 +30,7 @@ class EnvironmentConfig:
     name: str = 'bellhop/python default'
     type: str = '2D'
     frequency: float = 25000.0  # Hz
+    _num_media: int = 1
 
     # Sound speed parameters
     soundspeed: Union[float, Any] = 1500.0  # m/s - Any allows for np.ndarray, pd.DataFrame
