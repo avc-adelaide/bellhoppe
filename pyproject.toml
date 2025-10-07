@@ -128,6 +128,8 @@ dev = [
     "ruff",
     "coverage",
     "mypy",
+    "jupyter",
+    "nbformat",
 ]
 
 [tool.hatch.envs.default]
@@ -161,7 +163,10 @@ debug = [
     "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import bellhop; print(\"bellhop:\", bellhop.__file__)'"
 ]
 docf = "cd docs; ford index.md" # config set in fpm.toml
-docp = "sphinx-build docs/python docs/_build/media/python"
+docp = [
+    "mkdir -p docs/_build/html/quarto; quarto render docs/quarto --to html",
+    "sphinx-build docs/python docs/_build/media/python",
+    ]
 lintf = "fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003"
 lintp = "ruff check python/"
 typep = ["install-dev", "mypy python/"]

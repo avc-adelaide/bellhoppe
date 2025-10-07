@@ -93,3 +93,6 @@ test_debug*.*
 test_*range.*
 simple_test.*
 *_tmp*
+
+# quarto
+.quarto*

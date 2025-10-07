@@ -1,0 +1,13 @@
+project:
+  type: website
+  output-dir: ../_build/media/quarto
+
+website:
+  title: "Bellhop Tutorials"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: intro.qmd
+        text: Intro
+

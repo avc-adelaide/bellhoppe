@@ -21,8 +21,9 @@ The BELLHOP code base includes extensive historic documentation from the origina
 Acoustics Toolbox project and subsequent development efforts:
 
 ### User guides
-- **[Getting started](page/index.html)** - New intro guides for both Fortran and (mostly) Python interfaces
-- **[Python documentation](media/python/index.html)** - Detailed API interface to Bellhop using Python
+- **[Getting started](page/index.html)** - Overview of both Fortran and Python interfaces
+- **[bellhop.py tutorials](media/quarto/index.html)** — Detailed "howto" documentation for `bellhop.py`
+- **[bellhop.py API reference](media/python/index.html)** - API interface to Bellhop using Python
 - **[BELLHOP User Guide](media/bellhop.htm)** - Original guide for 2D acoustic modeling
 - **[BELLHOP3D User Guide](media/bellhop3d.htm)** - Original guide for 3D acoustic modeling with azimuthal coupling
 
