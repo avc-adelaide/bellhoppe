@@ -112,7 +112,7 @@ import matplotlib.pyplot as plt
 lat1 = lat.reshape((360, 180), order="F") * 0.1
 lon1 = lon.reshape((360, 180), order="F") * 0.1
 
-depth_idx = 11  
+depth_idx = 11
 ssp1 = 1000 + (ssp[:, depth_idx].reshape((360, 180), order="F") / 100.0)
 
 # Plot
@@ -226,11 +226,11 @@ env = bh.create_env2d(
 bhp.plot_ssp(env)
 ```
 
-Based on the environment defined, we can now compute the eigenrays.
+Based on the environment defined, we can now compute the eigenrays (@fig-ssp-quad-eigen).
 Over such a large distance and with realistic sound speed profiles, we see some interesting nonlinear behaviour.
 
 ```{python}
-#| label: fig-ssp-quad
+#| label: fig-ssp-quad-eigen
 #| fig-cap: "Eigenrays calculated with a 2D sound speed profile."
 
 erays = bh.compute_eigenrays(env)
