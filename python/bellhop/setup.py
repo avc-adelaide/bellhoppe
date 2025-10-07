@@ -7,7 +7,7 @@ import pandas as _pd
 
 from bellhop.constants import _Strings
 import bellhop.environment as _env
-from bellhop.environment import EnvironmentConfig, validate_source_type
+from bellhop.environment import EnvironmentConfig, _validate_source_type
 
 
 def create_env2d(**kv: Any) -> Dict[str, Any]:
@@ -191,7 +191,7 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
             assert env['source_directionality'].shape[1] == 2, 'source_directionality must be an Nx2 array'
             assert _np.all(env['source_directionality'][:,0] >= -180) and _np.all(env['source_directionality'][:,0] <= 180), 'source_directionality angles must be in (-180, 180]'
 
-        validate_source_type(env['source_type'])
+        _validate_source_type(env['source_type'])
         if env['_single_beam'] == _Strings.single_beam:
             assert env['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
 

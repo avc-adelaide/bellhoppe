@@ -202,7 +202,7 @@ def new() -> Dict[str, Any]:
     return config.to_dict()
 
 
-def validate_transmission_loss_mode(mode: str) -> None:
+def _validate_transmission_loss_mode(mode: str) -> None:
     """Validate transmission loss mode using predefined options.
 
     Parameters
@@ -221,7 +221,7 @@ def validate_transmission_loss_mode(mode: str) -> None:
                         f'Must be one of: {sorted(valid_modes)}')
 
 
-def validate_source_type(source_type: str) -> None:
+def _validate_source_type(source_type: str) -> None:
     """Validate source type using predefined options.
 
     Parameters

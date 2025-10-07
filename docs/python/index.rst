@@ -1,44 +1,21 @@
 BELLHOP Python API Documentation
-=================================
+=========================================
 
 This is the Python API documentation for BELLHOP, an underwater acoustic propagation modeling toolbox.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
-API Reference
-=============
+   getting_started
+   code
+   setup
+   readers
+   environment
+   const
+   plot
+   api
 
-Environment definition
-----------------------
-
-.. automodule:: bellhop.environment
-   :members:
-
-Core Functions
---------------
-
-.. automodule:: bellhop.main
-   :members:
-
-Plotting Utilities (bokeh)
-------------------
-
-.. automodule:: bellhop.plot
-   :members:
-
-Plotting Utilities (matplotlib)
-------------------
-
-.. automodule:: bellhop.pyplot
-   :members:
-
-Internal Constants (bellhop/constants.py)
------------------------------------------
-
-.. automodule:: bellhop.constants
-   :private-members:
 
 Indices and tables
 ==================

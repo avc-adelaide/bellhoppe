@@ -11,7 +11,7 @@
 """Underwater acoustic propagation modeling toolbox.
 
 This toolbox uses the Bellhop acoustic propagation model. For this model
-to work, the conplete bellhop-hub package must be built and installed
+to work, the complete bellhop.py package must be built and installed
 and `bellhop.exe` should be in your PATH.
 """
 
@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional
 import numpy as _np
 
 from bellhop.constants import _Strings
-from bellhop.environment import validate_transmission_loss_mode
+from bellhop.environment import _validate_transmission_loss_mode
 
 # this format to explicitly mark the functions as public:
 from bellhop.setup import create_env2d as create_env2d
@@ -130,7 +130,7 @@ def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mo
     """
     env = check_env2d(env)
     # Use dataclass validation for option checking
-    validate_transmission_loss_mode(mode)
+    _validate_transmission_loss_mode(mode)
     if _np.size(env['source_depth']) > 1:
         env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]
