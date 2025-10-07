@@ -79,6 +79,8 @@ Bellhop.py option     Fortran char  Dimension
 
 ## Depth- and range-dependence (2D SSP)
 
+### Loading NOAA data
+
 Rather than cobble together artifical examples, we use the [data extracted from the NOAA World Ocean Atlas by Brian Dushaw](https://staff.washington.edu/dushaw/WOA/).
 The data has been included in the bellhop.py repository (it is not too large), and the code below adapted from Brian's Matlab examples.
 
@@ -169,12 +171,11 @@ Finally, convert into a Pandas DataFrame and visualise one last time in this for
 import pandas as pd
 
 # Choose a constant longitude (e.g., 150°E)
-target_lon = 200.0
+target_lon = 200.5 # must match exactly!
 lat_min, lat_max = -40, -20
 
 # Mask points
-tol = 1  # tolerance in degrees
-lon_mask = np.abs(lon - target_lon) < tol
+lon_mask = np.abs(lon - target_lon) < 0.1
 lat_mask = (lat >= lat_min) & (lat <= lat_max)
 mask = lon_mask & lat_mask
 ssp_subset = ssp[mask, :]
@@ -189,7 +190,6 @@ ssp_sorted = ssp_subset[sorted_idx, :]
 distance_km = (lat_sorted - lat_sorted[0]) * 111
 svp = pd.DataFrame(ssp_sorted.T, columns=distance_km)
 svp.index = depth  # distance_km from your latitude slice
-
 plt.figure(figsize=(6,8))
 plt.contourf(svp.columns, svp.index, svp, 50, cmap="viridis")
 plt.gca().invert_yaxis()  # depth increases downward
@@ -200,4 +200,40 @@ plt.title(f"Sound speed along longitude {target_lon}°E")
 plt.show()
 ```
 
+### 2D SSP in bellhop
+
+We are now ready to take the DataFrame created above and insert it into an appropriate environment.
+For a final check, plot families of SSP against range using the in-built plotting function.
+
+```{python}
+#| label: fig-ssp-quad
+#| fig-cap: "Sound profile visualisation in 2D."
+
+import bellhop as bh
+import bellhop.plot as bhp
+
+svp.columns = distance_km * 1000.0
+env = bh.create_env2d(
+  depth=5500,
+  soundspeed=svp, # see above for this 2D DataFrame definition
+  soundspeed_interp="quadrilateral", # implied
+  source_depth=2000,
+  receiver_range=40_000,
+  receiver_depth=1000,
+  beam_angle_min=-89,
+  beam_angle_max=89,
+)
+bhp.plot_ssp(env)
+```
+
+Based on the environment defined, we can now compute the eigenrays.
+Over such a large distance and with realistic sound speed profiles, we see some interesting nonlinear behaviour.
+
+```{python}
+#| label: fig-ssp-quad
+#| fig-cap: "Eigenrays calculated with a 2D sound speed profile."
+
+erays = bh.compute_eigenrays(env)
+bhp.plot_rays(erays, env=env)
+```
 

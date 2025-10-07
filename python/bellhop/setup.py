@@ -156,7 +156,7 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
             else:
                 assert len(env['soundspeed']) > 1, 'soundspeed profile must have at least 2 points'
             assert env['soundspeed'].index[0] <= 0, 'First depth in soundspeed array must be 0 m'
-            assert env['soundspeed'].index[-1] >= env['depth_max'], 'Last depth in soundspeed array must be beyond water depth: '+str(env['depth_max'])+' m'
+            assert env['soundspeed'].index[-1] == env['depth_max'], 'Final entry in soundspeed array must be at the maximum water depth: '+str(env['depth_max'])+' m'
             assert _np.all(_np.diff(env['soundspeed'].index) > 0), 'Soundspeed array must be strictly monotonic in depth'
             # TODO: check soundspeed range limits
         elif _np.size(env['soundspeed']) > 1:
@@ -168,7 +168,7 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
             else:
                 assert env['soundspeed'].shape[0] > 1, 'soundspeed profile must have at least 2 points'
             assert env['soundspeed'][0,0] <= 0, 'First depth in soundspeed array must be 0 m'
-            assert env['soundspeed'][-1,0] >= env['depth_max'], 'Last depth in soundspeed array must be beyond water depth: '+str(env['depth_max'])+' m'
+            assert env['soundspeed'][-1,0] == env['depth_max'], 'Final entry in soundspeed array must be at the maximum water de: '+str(env['depth_max'])+' m'
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
             if env['depth_max'] not in env['soundspeed'][:,0]:
                 indlarger = _np.argwhere(env['soundspeed'][:,0]>env['depth_max'])[0][0]
@@ -213,6 +213,10 @@ def _finalise_environment(env: Dict[str, Any]) -> Dict[str, Any]:
         env["bottom_boundary_condition"] = _Strings.from_file
     if env["surface_reflection_coefficient"] is not None:
         env["surface_boundary_condition"] = _Strings.from_file
+
+    if isinstance(env['soundspeed'], _pd.DataFrame):
+        if len(env['soundspeed'].columns) > 1:
+            env['soundspeed_interp'] == _Strings.quadrilateral
 
     # this is a weird one, sometimes "depth_max" is defined as 0 in the env file and the simulation breaks if not
     # so we only set depth_max to be the maximum depth iff it hasn't been pre-set

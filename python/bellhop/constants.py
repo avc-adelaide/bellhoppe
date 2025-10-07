@@ -24,10 +24,10 @@ class _Strings(str, Enum):
     # interpolation
     linear = "linear"
     spline = "spline"
-    quadrilateral = "quadrilateral"
     pchip = "pchip"
-    hexahedral = "hexahedral"
     nlinear = "nlinear"
+    quadrilateral = "quadrilateral"
+    hexahedral = "hexahedral"
 
     # ati/bty interpolation
     curvilinear = "curvilinear"

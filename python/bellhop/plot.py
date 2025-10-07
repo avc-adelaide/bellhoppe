@@ -131,6 +131,7 @@ def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
     if env is not None:
         env = check_env2d(env)
 
+    oh = _plt.hold()
     svp = env['soundspeed']
     if isinstance(svp, _pd.DataFrame):
         svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
@@ -143,7 +144,9 @@ def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
         _plt.plot(xnew, -ynew, xlabel='Soundspeed (m/s)', ylabel='Depth (m)', hold=True, **kwargs)
         _plt.scatter(svp[:,1], -svp[:,0], **kwargs)
     else:
-        _plt.plot(svp[:,1], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
+        for rr in range(1,svp.shape[1]):
+            _plt.plot(svp[:,rr], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', legend=f'Range {rr}', **kwargs)
+    _plt.hold(oh if oh is not None else False)
 
 def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs: Any) -> None:
     """Plots the arrival times and amplitudes.
