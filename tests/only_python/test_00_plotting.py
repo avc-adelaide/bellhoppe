@@ -36,7 +36,7 @@ def test_plot_ssp():
 def test_plot_ssp_complex():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors.
     """
-    env = bh.create_env2d(soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    env = bh.create_env2d(depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
     bhp.plot_ssp(env)
 
 

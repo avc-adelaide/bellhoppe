@@ -155,8 +155,9 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
                 assert len(env['soundspeed']) > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
             else:
                 assert len(env['soundspeed']) > 1, 'soundspeed profile must have at least 2 points'
-            assert env['soundspeed'].index[0] <= 0, 'First depth in soundspeed array must be 0 m'
+            assert env['soundspeed'].index[0] == 0.0, 'First depth in soundspeed array must be 0 m'
             assert env['soundspeed'].index[-1] == env['depth_max'], 'Final entry in soundspeed array must be at the maximum water depth: '+str(env['depth_max'])+' m'
+            # TODO: generalise interpolation trimming from np approach below
             assert _np.all(_np.diff(env['soundspeed'].index) > 0), 'Soundspeed array must be strictly monotonic in depth'
             # TODO: check soundspeed range limits
         elif _np.size(env['soundspeed']) > 1:
@@ -167,11 +168,11 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
                 assert env['soundspeed'].shape[0] > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
             else:
                 assert env['soundspeed'].shape[0] > 1, 'soundspeed profile must have at least 2 points'
-            assert env['soundspeed'][0,0] <= 0, 'First depth in soundspeed array must be 0 m'
-            assert env['soundspeed'][-1,0] == env['depth_max'], 'Final entry in soundspeed array must be at the maximum water de: '+str(env['depth_max'])+' m'
+            assert env['soundspeed'][0,0] == 0.0, 'First depth in soundspeed array must be 0 m'
             assert _np.all(_np.diff(env['soundspeed'][:,0]) > 0), 'Soundspeed array must be strictly monotonic in depth'
+            assert env['soundspeed'][-1,0] >= env['depth_max'], 'Final entry in soundspeed array must be at least the maximum water depth: '+str(env['depth_max'])+' m'
             if env['depth_max'] not in env['soundspeed'][:,0]:
-                indlarger = _np.argwhere(env['soundspeed'][:,0]>env['depth_max'])[0][0]
+                indlarger = _np.argwhere(env['soundspeed'][:,0] > env['depth_max'])[0][0]
                 insert_ss_val = _np.interp(env['depth_max'], env['soundspeed'][:,0], env['soundspeed'][:,1])
                 env['soundspeed'] = _np.insert(env['soundspeed'],indlarger,[env['depth_max'],insert_ss_val],axis = 0)
                 env['soundspeed'] = env['soundspeed'][:indlarger+1,:]

@@ -19,7 +19,7 @@ def no_bokeh_show(monkeypatch):
 
 def test_plot_ssp_linear():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors."""
-    env = bh.create_env2d(soundspeed_interp="linear",soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    env = bh.create_env2d(soundspeed_interp="linear",depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
 
     with bhp.figure() as f:
         bhp.plot_ssp(env)
@@ -28,7 +28,7 @@ def test_plot_ssp_linear():
 
 def test_plot_ssp_spline():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors."""
-    env = bh.create_env2d(soundspeed_interp="spline",soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    env = bh.create_env2d(soundspeed_interp="spline",depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
 
     with bhp.figure() as f:
         bhp.plot_ssp(env)
