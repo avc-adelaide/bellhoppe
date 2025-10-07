@@ -6,4 +6,14 @@ format:
 jupyter: python3
 ---
 
-This is a collection of tutorials for `bellhop.py`.
+## Tutorials
+
+- [Introduction](intro.qmd) — basics of creating an environment and plotting results
+- [Sound speed profiles](ssp.qmd) — defining depth-dependent SSPs and setting interpolation options; using NOAA data to define a 2D sound speed profile that varies with range and depth.
+
+
+## Other Bellhop documentation
+
+- [Main Bellhop documentation](https://avc-adelaide.github.io/bellhop/)
+- [Python API documentation](https://avc-adelaide.github.io/bellhop/media/python/)
+- [Github repository link](https://github.com/avc-adelaide/bellhop)
