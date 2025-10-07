@@ -37,17 +37,15 @@ _interactive = True
 _static_images = False
 _colors = light_palette
 
+# Detect Jupyter notebook environment
 try:
     from IPython import get_ipython
-except ImportError:
-    get_ipython = None
-
-_notebook = False
-if get_ipython is not None:
-    shell = get_ipython().__class__.__name__
-    if "ZMQInteractiveShell" in shell:  # IPython Jupyter shell
+    ipython = get_ipython()
+    _notebook = ipython is not None and "ZMQInteractiveShell" in ipython.__class__.__name__
+    if _notebook:
         _bplt.output_notebook(resources=_bres.INLINE, hide_banner=True)
-        _notebook = True
+except (ImportError, AttributeError):
+    _notebook = False
 
 def _new_figure(title: Optional[str], width: Optional[int], height: Optional[int], xlabel: Optional[str], ylabel: Optional[str], xlim: Optional[Tuple[float, float]], ylim: Optional[Tuple[float, float]], xtype: Optional[str], ytype: Optional[str], interactive: Optional[bool]) -> Any:
     global _color, _figure
@@ -85,41 +83,46 @@ def _new_figure(title: Optional[str], width: Optional[int], height: Optional[int
     return f
 
 def _process_canvas(figures: List[Any]) -> None:
+    """Replace non-interactive Bokeh canvases with static images in Jupyter notebooks.
+    
+    This optimization converts non-interactive plots to static images to reduce
+    JavaScript overhead in notebooks. Only runs if JavaScript is enabled and there
+    are figures without interactive tools.
+    """
     global _using_js
-    if _disable_js:
+    
+    if _disable_js or (not figures and _using_js):
         return
-    if _using_js and len(figures) == 0:
+    
+    # Find indices of non-interactive figures
+    disable_indices = [i + 1 for i, f in enumerate(figures) if f is not None and not f.tools]
+    
+    if not disable_indices and not _using_js:
         return
-    disable = []
-    i = 0
-    for f in figures:
-        i += 1
-        if f is not None and f.tools == []:
-            disable.append(i)
-        else:
-            pass
-    if not _using_js and len(disable) == 0:
-        return
+    
     _using_js = True
-    js = 'var disable = '+str(disable)
-    js += """
+    
+    # JavaScript to convert non-interactive canvases to static images
+    js_code = f"""
+    var disable = {disable_indices};
     var clist = document.getElementsByClassName('bk-canvas');
     var j = 0;
-    for (var i = 0; i < clist.length; i++) {
-        if (clist[i].id == '') {
+    for (var i = 0; i < clist.length; i++) {{
+        if (clist[i].id == '') {{
             j++;
-            clist[i].id = 'bkc-'+String(i)+'-'+String(+new Date());
-            if (disable.indexOf(j) >= 0) {
-                var png = clist[i].toDataURL()
-                var img = document.createElement('img')
-                img.src = png
-                clist[i].parentNode.replaceChild(img, clist[i])
-            }
-        }
-    }
+            clist[i].id = 'bkc-' + String(i) + '-' + String(+new Date());
+            if (disable.indexOf(j) >= 0) {{
+                var png = clist[i].toDataURL();
+                var img = document.createElement('img');
+                img.src = png;
+                clist[i].parentNode.replaceChild(img, clist[i]);
+            }}
+        }}
+    }}
     """
+    
     import IPython.display as _ipyd
-    _ipyd.display(_ipyd.Javascript(js))
+    _ipyd.display(_ipyd.Javascript(js_code))
 
 def _show_static_images(f: Any) -> None:
     fh, fname = _mkstemp(suffix='.png')
@@ -298,28 +301,33 @@ class many_figures:
     >>>     arlpy.plot.plot([0,10], [0,10])
     """
 
-    def __init__(self, figsize=None):
+    def __init__(self, figsize: Optional[Tuple[int, int]] = None):
         self.figsize = figsize
+        self.old_figsize: Optional[Tuple[int, int]] = None
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         global _figures, _figsize
         _figures = [[]]
-        self.ofigsize = _figsize
+        self.old_figsize = _figsize
         if self.figsize is not None:
             _figsize = self.figsize
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         global _figures, _figsize
-        if len(_figures) > 1 or len(_figures[0]) > 0:
-            f = _bplt.gridplot(_figures, merge_tools=False)
+        if _figures and (len(_figures) > 1 or _figures[0]):
+            # Flatten nested list to get all figures
+            all_figures = [fig for row in _figures for fig in row if fig is not None]
+            gridplot = _bplt.gridplot(_figures, merge_tools=False)
+            
             if _static_images:
-                _show_static_images(f)
+                _show_static_images(gridplot)
             else:
                 _process_canvas([])
-                _bplt.show(f)
-                _process_canvas([item for sublist in _figures for item in sublist])
+                _bplt.show(gridplot)
+                _process_canvas(all_figures)
+        
         _figures = None
-        _figsize = self.ofigsize
+        _figsize = self.old_figsize
 
 def next_row() -> None:
     """Move to the next row in a grid of many figures."""
@@ -421,29 +429,40 @@ def plot(x: Any,
         color = _colors[_color % len(_colors)]
         _color += 1
     if x.size > maxpts:
-        n = int(_np.ceil(x.size/maxpts))
+        n = int(_np.ceil(x.size / maxpts))
         x = x[::n]
-        desc = 'Downsampled by '+str(n)
+        desc = f'Downsampled by {n}'
+        
+        # Apply pooling to reduce data
         if pooling is None:
             y = y[::n]
-        elif pooling == 'max':
-            desc += ', '+pooling+' pooled'
-            y = _np.amax(_np.reshape(y[:n*(y.size//n)], (-1, n)), axis=1)
-        elif pooling == 'min':
-            desc += ', '+pooling+' pooled'
-            y = _np.amin(_np.reshape(y[:n*(y.size//n)], (-1, n)), axis=1)
-        elif pooling == 'mean':
-            desc += ', '+pooling+' pooled'
-            y = _np.mean(_np.reshape(y[:n*(y.size//n)], (-1, n)), axis=1)
-        elif pooling == 'median':
-            desc += ', '+pooling+' pooled'
-            y = _np.mean(_np.reshape(y[:n*(y.size//n)], (-1, n)), axis=1)
         else:
-            _warnings.warn('Unknown pooling: '+pooling)
-            y = y[::n]
+            # Trim data to fit evenly into bins
+            trimmed_size = n * (y.size // n)
+            y_trimmed = y[:trimmed_size].reshape(-1, n)
+            
+            pooling_funcs = {
+                'max': _np.amax,
+                'min': _np.amin,
+                'mean': _np.mean,
+                'median': _np.median
+            }
+            
+            if pooling in pooling_funcs:
+                y = pooling_funcs[pooling](y_trimmed, axis=1)
+                desc += f', {pooling} pooled'
+            else:
+                _warnings.warn(f'Unknown pooling: {pooling}')
+                y = y[::n]
+        
+        # Ensure x and y have the same length
         if len(x) > len(y):
             x = x[:len(y)]
-        _figure.add_layout(_bmodels.Label(x=5, y=5, x_units='screen', y_units='screen', text=desc, text_font_size="8pt", text_alpha=0.5))
+        
+        _figure.add_layout(_bmodels.Label(
+            x=5, y=5, x_units='screen', y_units='screen',
+            text=desc, text_font_size="8pt", text_alpha=0.5
+        ))
     if style is not None:
         if legend is None:
             _figure.line(x, y, line_color=color, line_dash=style, line_width=thickness)
@@ -489,31 +508,34 @@ def scatter(x: Any, y: Any, marker: str = '.', filled: bool = False, size: int =
     if color is None:
         color = _colors[_color % len(_colors)]
         _color += 1
+    # Build kwargs for marker rendering
     kwargs = {'size': size, 'line_color': color}
     if filled:
         kwargs['fill_color'] = color
     if legend is not None:
         kwargs['legend_label'] = legend
-    if marker == '.':
-        kwargs['size'] = kwargs['size']/2
-        kwargs['fill_color'] = color
-        _figure.scatter(x, y, **kwargs)
-    elif marker == 'o':
-        _figure.scatter(x, y, **kwargs)
-    elif marker == 's':
-        _figure.square(x, y, **kwargs)
-    elif marker == '*':
-        _figure.scatter(x, y, marker="*", **kwargs)
-    elif marker == 'x':
-        _figure.x(x, y, **kwargs)
-    elif marker == '+':
-        _figure.cross(x, y, **kwargs)
-    elif marker == 'd':
-        _figure.diamond(x, y, **kwargs)
-    elif marker == '^':
-        _figure.triangle(x, y, **kwargs)
+    
+    # Map marker types to Bokeh scatter marker names (using modern Bokeh 3.4+ API)
+    marker_map = {
+        '.': 'circle',
+        'o': 'circle',
+        's': 'square',
+        '*': 'star',
+        'x': 'x',
+        '+': 'cross',
+        'd': 'diamond',
+        '^': 'triangle',
+    }
+    
+    if marker in marker_map:
+        bokeh_marker = marker_map[marker]
+        # Small dots use smaller size and always filled
+        if marker == '.':
+            _figure.scatter(x, y, marker=bokeh_marker, **{**kwargs, 'size': size/2, 'fill_color': color})
+        else:
+            _figure.scatter(x, y, marker=bokeh_marker, **kwargs)
     elif marker is not None:
-        _warnings.warn('Bad marker type: '+marker)
+        _warnings.warn(f'Bad marker type: {marker}')
     if not hold and not _hold:
         _show(_figure)
         _figure = None
@@ -656,7 +678,7 @@ def box(left: Optional[float] = None, right: Optional[float] = None, top: Option
         _show(_figure)
         _figure = None
 
-def color(n):
+def color(n: int) -> str:
     """Get a numbered color to cycle over a set of colors.
 
     >>> import arlpy.plot
@@ -668,7 +690,7 @@ def color(n):
     """
     return _colors[n % len(_colors)]
 
-def set_colors(c):
+def set_colors(c: List[str]) -> None:
     """Provide a list of named colors to cycle over.
 
     >>> import arlpy.plot
@@ -704,10 +726,16 @@ def specgram(x: Any, fs: float = 2, nfft: Optional[int] = None, noverlap: Option
     >>> arlpy.plot.specgram(np.random.normal(size=(10000)), fs=10000, clim=30)
     """
     f, t, Sxx = _sig.spectrogram(x, fs=fs, nperseg=nfft, noverlap=noverlap)
-    Sxx = 10*_np.log10(Sxx+_np.finfo(float).eps)
-    if isinstance(clim, float) or isinstance(clim, int):
-        clim = (_np.max(Sxx)-clim, _np.max(Sxx))
-    image(Sxx, x=(t[0], t[-1]), y=(f[0], f[-1]), title=title, colormap=colormap, clim=clim, clabel=clabel, xlabel=xlabel, ylabel=ylabel, xlim=xlim, ylim=ylim, width=width, height=height, hold=hold, interactive=interactive)
+    Sxx = 10 * _np.log10(Sxx + _np.finfo(float).eps)
+    
+    # Convert scalar clim to range (for dynamic range specification)
+    if isinstance(clim, (int, float)):
+        max_val = _np.max(Sxx)
+        clim = (max_val - clim, max_val)
+    
+    image(Sxx, x=(t[0], t[-1]), y=(f[0], f[-1]), title=title, colormap=colormap, 
+          clim=clim, clabel=clabel, xlabel=xlabel, ylabel=ylabel, xlim=xlim, 
+          ylim=ylim, width=width, height=height, hold=hold, interactive=interactive)
 
 def psd(x: Any, fs: float = 2, nfft: int = 512, noverlap: Optional[int] = None, window: str = 'hann', color: Optional[str] = None, style: str = 'solid', thickness: int = 1, marker: Optional[str] = None, filled: bool = False, size: int = 6, title: Optional[str] = None, xlabel: str = 'Frequency (Hz)', ylabel: str = 'Power spectral density (dB/Hz)', xlim: Optional[Tuple[float, float]] = None, ylim: Optional[Tuple[float, float]] = None, width: Optional[int] = None, height: Optional[int] = None, legend: Optional[str] = None, hold: bool = False, interactive: Optional[bool] = None) -> None:
     """Plot power spectral density of a given time series signal.
@@ -739,12 +767,18 @@ def psd(x: Any, fs: float = 2, nfft: int = 512, noverlap: Optional[int] = None, 
     >>> arlpy.plot.psd(np.random.normal(size=(10000)), fs=10000)
     """
     f, Pxx = _sig.welch(x, fs=fs, nperseg=nfft, noverlap=noverlap, window=window)
-    Pxx = 10*_np.log10(Pxx+_np.finfo(float).eps)
-    if xlim is None:
-        xlim = (0, fs/2)
+    Pxx = 10 * _np.log10(Pxx + _np.finfo(float).eps)
+    
+    # Set default axis limits if not specified
+    xlim = xlim or (0, fs / 2)
     if ylim is None:
-        ylim = (_np.max(Pxx)-50, _np.max(Pxx)+10)
-    plot(f, Pxx, color=color, style=style, thickness=thickness, marker=marker, filled=filled, size=size, title=title, xlabel=xlabel, ylabel=ylabel, xlim=xlim, ylim=ylim, maxpts=len(f), width=width, height=height, hold=hold, legend=legend, interactive=interactive)
+        max_pxx = _np.max(Pxx)
+        ylim = (max_pxx - 50, max_pxx + 10)
+    
+    plot(f, Pxx, color=color, style=style, thickness=thickness, marker=marker, 
+         filled=filled, size=size, title=title, xlabel=xlabel, ylabel=ylabel, 
+         xlim=xlim, ylim=ylim, maxpts=len(f), width=width, height=height, 
+         hold=hold, legend=legend, interactive=interactive)
 
 def iqplot(data: Any, marker: str = '.', color: Optional[str] = None, labels: Optional[Any] = None, filled: bool = False, size: Optional[int] = None, title: Optional[str] = None, xlabel: Optional[str] = None, ylabel: Optional[str] = None, xlim: List[float] = [-2, 2], ylim: List[float] = [-2, 2], width: Optional[int] = None, height: Optional[int] = None, hold: bool = False, interactive: Optional[bool] = None) -> None:
     """Plot signal points.
