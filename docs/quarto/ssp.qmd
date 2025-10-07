@@ -6,7 +6,7 @@ format:
 jupyter: python3
 ---
 
-## Depth-dependent sound speed profiles
+## Depth-dependent sound speed profiles (1D)
 
 An important consideration in underwater acoustics is the variable sound speed, which causes refraction of acoustic rays. The sound speed typically varies with depth due to changes in temperature, salinity, and pressure.
 
@@ -58,3 +58,146 @@ env = bh.create_env2d(
 )
 bhp.plot_ssp(env)
 ```
+
+## Interpolation types
+
+The examples above showed `soundspeed_interp="linear"` and `="spline"` interpolation options.
+The full set of options are listed in @tbl-ssp-interp.
+Some description of these is provided in the [environment file documentation](../EnvironmentFile.htm).
+Note that the `A`, for "analytic", option is not provided, as this requires Fortran source code modification to function correctly.
+
+Bellhop.py option     Fortran char  Dimension
+-----------------     ------------  ---------
+"spline"               `S`          1D
+"linear"               `C`          1D
+"pchip"                `P`          1D
+"nlinear"              `N`          1D
+"quadrilateral"        `Q`          2D — depth & range
+"hexahedral"           `H`          3D — bellhop3D only
+
+: Bellhop sound speed interpolation options for option `soundspeed_interp=`. The Fortran char refers to the first digit of the "topopt" string (line 4) of the .env file. {#tbl-ssp-interp}
+
+## Depth- and range-dependence (2D SSP)
+
+Rather than cobble together artifical examples, we use the [data extracted from the NOAA World Ocean Atlas by Brian Dushaw](https://staff.washington.edu/dushaw/WOA/).
+The data has been included in the bellhop.py repository (it is not too large), and the code below adapted from Brian's Matlab examples.
+
+First of all load the data:
+
+```{python}
+#| label: fig-ssp-2d-load
+#| fig-cap: "Worldwide sound speed profile for constant depth (NOAA World Ocean Atlas)."
+
+from scipy.io import loadmat
+
+raw = loadmat("lev_ann.mat")
+llz = loadmat("lev_latlonZ.mat")
+
+ssp = 1000.0 + raw["c"] / 100.0
+lat = 0.1 * llz["lat"].squeeze()
+lon = 0.1 * llz["lon"].squeeze()
+depth = llz["z"].squeeze()
+```
+
+Now take a lat-long slice at constant depth to visualise:
+
+```{python}
+#| label: fig-ssp-2d-depth
+#| fig-cap: "Worldwide sound speed profile for constant depth (NOAA World Ocean Atlas)."
+
+import matplotlib.pyplot as plt
+
+lat1 = lat.reshape((360, 180), order="F") * 0.1
+lon1 = lon.reshape((360, 180), order="F") * 0.1
+
+depth_idx = 11  
+ssp1 = 1000 + (ssp[:, depth_idx].reshape((360, 180), order="F") / 100.0)
+
+# Plot
+plt.figure(figsize=(8, 4))
+plt.pcolormesh(lon1, lat1, ssp1, shading="auto")
+plt.colorbar(label="Sound Speed (m/s)")
+plt.xlabel("Longitude (deg)")
+plt.ylabel("Latitude (deg)")
+plt.title(f"Sound Speed at depth ~{depth[depth_idx]} m")
+plt.gca().set_aspect("equal")
+plt.show()
+```
+
+Now take a depth-lat slice to visualise at constant longitude:
+
+```{python}
+#| label: fig-ssp-2d-long
+#| fig-cap: "Worldwide sound speed profile for constant longitude (NOAA World Ocean Atlas)."
+
+import numpy as np
+
+# Choose a constant longitude (e.g., 150°E)
+target_lon = 200.0
+lat_min, lat_max = -40, -20
+
+# Mask points
+tol = 1  # tolerance in degrees
+lon_mask = np.abs(lon - target_lon) < tol
+lat_mask = (lat >= lat_min) & (lat <= lat_max)
+mask = lon_mask & lat_mask
+ssp_subset = ssp[mask, :]
+lat_subset = lat[mask]
+
+# Sort by latitude for plotting
+sorted_idx = np.argsort(lat_subset)
+lat_sorted = lat_subset[sorted_idx]
+ssp_sorted = ssp_subset[sorted_idx, :]
+
+# Plot as depth vs latitude
+plt.figure(figsize=(6,8))
+plt.contourf(lat_sorted, depth, ssp_sorted.T, 50, cmap="viridis")
+plt.gca().invert_yaxis()  # depth increases downward
+plt.colorbar(label="Sound speed (m/s)")
+plt.xlabel("Latitude (°)")
+plt.ylabel("Depth (m)")
+plt.title(f"Sound speed along longitude {target_lon}°E")
+plt.show()
+```
+
+Finally, convert into a Pandas DataFrame and visualise one last time in this format:
+
+```{python}
+#| label: fig-ssp-2d-quad
+#| fig-cap: "Worldwide sound speed profile for constant longitude (NOAA World Ocean Atlas) — converted to distance for use by `bellhop.py`."
+
+import pandas as pd
+
+# Choose a constant longitude (e.g., 150°E)
+target_lon = 200.0
+lat_min, lat_max = -40, -20
+
+# Mask points
+tol = 1  # tolerance in degrees
+lon_mask = np.abs(lon - target_lon) < tol
+lat_mask = (lat >= lat_min) & (lat <= lat_max)
+mask = lon_mask & lat_mask
+ssp_subset = ssp[mask, :]
+lat_subset = lat[mask]
+
+# Sort by latitude for plotting
+sorted_idx = np.argsort(lat_subset)
+lat_sorted = lat_subset[sorted_idx]
+ssp_sorted = ssp_subset[sorted_idx, :]
+
+# 1 degree latitude ≈ 111 km
+distance_km = (lat_sorted - lat_sorted[0]) * 111
+svp = pd.DataFrame(ssp_sorted.T, columns=distance_km)
+svp.index = depth  # distance_km from your latitude slice
+
+plt.figure(figsize=(6,8))
+plt.contourf(svp.columns, svp.index, svp, 50, cmap="viridis")
+plt.gca().invert_yaxis()  # depth increases downward
+plt.colorbar(label="Sound speed (m/s)")
+plt.xlabel("Approx. distance (km)")
+plt.ylabel("Depth (m)")
+plt.title(f"Sound speed along longitude {target_lon}°E")
+plt.show()
+```
+
+

@@ -24,11 +24,13 @@ class _Strings(str, Enum):
     # interpolation
     linear = "linear"
     spline = "spline"
-    curvilinear = "curvilinear"
     quadrilateral = "quadrilateral"
     pchip = "pchip"
     hexahedral = "hexahedral"
     nlinear = "nlinear"
+
+    # ati/bty interpolation
+    curvilinear = "curvilinear"
 
     # tasks
     eigenrays = "eigenrays"
