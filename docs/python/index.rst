@@ -7,7 +7,6 @@ This is the Python API documentation for BELLHOP, an underwater acoustic propaga
    :maxdepth: 3
    :caption: Contents:
 
-   getting_started
    code
    setup
    readers

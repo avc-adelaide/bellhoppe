@@ -1,0 +1,60 @@
+---
+title: "Bellhop.py sound speed profiles"
+format:
+  html:
+    code-fold: true
+jupyter: python3
+---
+
+## Depth-dependent sound speed profiles
+
+An important consideration in underwater acoustics is the variable sound speed, which causes refraction of acoustic rays. The sound speed typically varies with depth due to changes in temperature, salinity, and pressure.
+
+Bellhop (the executable) provides a number of interpolation routines for interpreting discretised sound speed data; some care should be used in ensuring that an appropriate interpolation is used.
+
+Sound speed profiles can be represented in several formats.
+A 2xN array with the first column depths and the second column sound speeds (in m/s) is shown in @fig-basic-ssp.
+This example shows linear interpolation.
+It is important to note that sound speed data is required for all depth values, so the entries must space from zero to the maximum depth of the bathymetry.
+In this example, a constant depth is specified (although not used until Bellhop computation occurs).
+
+```{python}
+#| label: fig-basic-ssp
+#| fig-cap: "Sound speed profile versus depth."
+
+import bellhop as bh
+import bellhop.plot as bhp
+
+ssp = [[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]]
+env = bh.create_env2d(
+    soundspeed_interp="linear",
+    soundspeed=ssp,
+    depth=30,
+)
+bhp.plot_ssp(env)
+```
+
+In the second example (@fig-dataframe-spline), a Pandas DataFrame is used to create a more structured sound speed profile.
+This format is often more useful to construct or manipulate using Pandas tools.
+Spline interpolation is used here.
+Note that the visualisation of the sound speeds shown below is performed independently in Python and further work to validate its accuracy against the Fortran code should be undertaken.
+
+```{python}
+#| label: fig-dataframe-spline
+#| fig-cap: "Sound speed profile versus depth."
+
+import pandas as pd
+import bellhop as bh
+import bellhop.plot as bhp
+
+ssp = pd.DataFrame({
+        'depth':[0, 10, 20, 30],
+        'speed':[1540, 1530, 1532, 1535],
+  })
+env = bh.create_env2d(
+    soundspeed_interp="spline",
+    soundspeed=ssp,
+    depth=30,
+)
+bhp.plot_ssp(env)
+```

@@ -141,7 +141,7 @@ def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
         tck = _interp.splrep(svp[:,0], svp[:,1], s=0)
         xnew = _interp.splev(ynew, tck, der=0)
         _plt.plot(xnew, -ynew, xlabel='Soundspeed (m/s)', ylabel='Depth (m)', hold=True, **kwargs)
-        _plt.plot(svp[:,1], -svp[:,0], marker='.', style='solid', **kwargs)
+        _plt.scatter(svp[:,1], -svp[:,0], **kwargs)
     else:
         _plt.plot(svp[:,1], -svp[:,0], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
 

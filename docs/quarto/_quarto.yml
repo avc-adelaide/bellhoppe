@@ -10,6 +10,8 @@ website:
         text: Home
       - href: intro.qmd
         text: Intro
+      - href: ssp.qmd
+        text: SSP
 
 format:
   html:
