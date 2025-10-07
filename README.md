@@ -3,6 +3,7 @@
 ## Documentation
 
 - [Main Bellhop documentation](https://avc-adelaide.github.io/bellhop/)
+- [bellhop.py tutorials](https://avc-adelaide.github.io/bellhop/media/quarto/index.html)
 - [Python API documentation](https://avc-adelaide.github.io/bellhop/media/python/)
 - [Fortran Test Coverage](https://avc-adelaide.github.io/bellhop/media/coverage/_coverage/coverage-index.html)
 - [Python Test Coverage](https://avc-adelaide.github.io/bellhop/media/coverage/_coverage_python/index.html)
@@ -170,9 +171,16 @@ hatch run docp
 ```
 The generated documentation will be in the `doc/media/python/` subdirectory.
 
+### Quarto tutorials
+
+```bash
+brew install --cask quarto # Mac
+hatch run docq
+```
+
 ### Make interface
 
-These two steps are combined together with:
+These steps are combined together with:
 ```bash
 make doc
 ```

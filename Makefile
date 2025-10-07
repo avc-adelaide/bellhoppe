@@ -125,6 +125,8 @@ docs:
 	$(HATCH) docf
 	@echo "Generating Python/Sphinx documentation..."
 	$(HATCH) docp
+	@echo "Generating Python/Quarto tutorials..."
+	$(HATCH) docq
 	@echo "Documentation generated in ./doc/ directory"
 	@echo "Open ./doc/index.html in a web browser to view"
 

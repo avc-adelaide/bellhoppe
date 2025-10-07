@@ -11,3 +11,10 @@ website:
       - href: intro.qmd
         text: Intro
 
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-title: "Contents"
+    toc-location: left
+    number-sections: true
