@@ -6,22 +6,66 @@ format:
 jupyter: python3
 ---
 
-For a demonstration of a line plot on a polar axis, see @fig-polar.
+Bellhop is an underwater acoustics propagation model that uses ray-tracing to calculate eigenrays between points, their respective arrival properties, and transmission loss throughout a medium.
+This introduction shows examples of each of these using the `bellhop.plot` module, which provides a high-level interface to the Bokeh interactive plotting library.
+
+## Eigenrays
+
+A simple example of the so-called eigenrays between a source and receiver is shown in @fig-basic-rays.
+The source is shown on the left (red marker), the receiver on the right (blue marker), with a flat vacuum-reflective surface at depth $z=0~\mathrm{m}$, and flat seabed at depth $z=25~\mathrm{m}$.
+The rays are coloured according to their total number of bounces to give a visual indication of arrival amplitude (assuming there is absorption for every reflection).
+
 
 ```{python}
-#| label: fig-polar
-#| fig-cap: "A line plot on a polar axis"
+#| label: fig-basic-rays
+#| fig-cap: "A ray plot from an underwater sound source (constant depth and speed of sound)."
+
+import bellhop as bh
+import bellhop.plot as bhp
+
+env = bh.create_env2d()
+erays = bh.compute_eigenrays(env)
+bhp.plot_rays(erays,env=env)
+```
+
+## Arrivals
+
+From the eigenrays between the source and receiver, arrival information can be calculated to identify the contributions from each ray and their respective time delays.
+An example of these are shown in @fig-basic-arr.
+
+```{python}
+#| label: fig-basic-arr
+#| fig-cap: "Arrivals plot from an underwater sound source (constant depth and speed of sound)."
+
+import bellhop as bh
+import bellhop.plot as bhp
+
+env = bh.create_env2d()
+arr = bh.compute_arrivals(env)
+bhp.plot_arrivals(arr)
+```
+
+
+## Transmission loss
+
+The examples of eigenrays and arrival times were for a fixed reciever point.
+If we consider an array of receiver points across the entire underwater domain, we can calculate the corresponding transmission loss plot shown in @fig-basic-tl.
+The default settings are to calculate transmission loss assuming coherent interference, which explains the interference patterns seen. 
+(Note these patterns are also likely aliased due to the fairly coarse grid used here for efficiency.)
+
+```{python}
+#| label: fig-basic-tl
+#| fig-cap: "A transmission loss plot from a 1000 Hz underwater sound source (constant depth and speed of sound)."
 
 import numpy as np
-import matplotlib.pyplot as plt
+import bellhop as bh
+import bellhop.plot as bhp
 
-r = np.arange(0, 2, 0.01)
-theta = 2 * np.pi * r
-fig, ax = plt.subplots(
-  subplot_kw = {'projection': 'polar'}
+env = bh.create_env2d(
+    frequency=1000,
+    receiver_range=np.linspace(1,25,200),
+    receiver_depth=np.linspace(0,25,200),
 )
-ax.plot(theta, r)
-ax.set_rticks([0.5, 1, 1.5, 2])
-ax.grid(True)
-plt.show()
+tl = bh.compute_transmission_loss(env)
+bhp.plot_transmission_loss(tl,env=env)
 ```

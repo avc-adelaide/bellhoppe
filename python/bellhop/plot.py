@@ -168,14 +168,14 @@ def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs
         ylabel = 'Amplitude (dB)'
     else:
         ylabel = 'Amplitude'
-        _plt.plot([t0, t1], [0, 0], xlabel='Arrival time (s)', ylabel=ylabel, color=color, **kwargs)
         min_y = 0
+    _plt.plot([t0, t1], [min_y, min_y], xlabel='Arrival time (s)', ylabel=ylabel, color=color, **kwargs)
     for _, row in arrivals.iterrows():
         t = row.time_of_arrival.real
         y = _np.abs(row.arrival_amplitude)
         if dB:
             y = max(20*_np.log10(_fi.epsilon+y), min_y)
-        _plt.plot([t, t], [min_y, y], xlabel='Arrival time (s)', ylabel=ylabel, ylim=(min_y, min_y+70), color=color, **kwargs)
+        _plt.plot([t, t], [min_y, y], color=color, **kwargs)
     _plt.hold(oh if oh is not None else False)
 
 def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bool = False, **kwargs: Any) -> None:
@@ -219,7 +219,7 @@ def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bo
         col_str = _mplc.to_hex(cmap(c))
         _plt.plot(row.ray[:,0]/divisor, -row.ray[:,1], color=col_str, xlabel=xlabel, ylabel='Depth (m)', **kwargs)
     if env is not None:
-        plot_env(env)
+        plot_env(env,title=None)
     _plt.hold(oh if oh is not None else False)
 
 def plot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
@@ -254,7 +254,7 @@ def plot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, **k
     oh = _plt.hold()
     _plt.image(20*_np.log10(_fi.epsilon+_np.abs(_np.flipud(_np.array(tloss)))), x=xr, y=yr, xlabel=xlabel, ylabel='Depth (m)', xlim=xr, ylim=yr, **kwargs)
     if env is not None:
-        plot_env(env, receiver_plot=False)
+        plot_env(env, receiver_plot=False, title=None)
     _plt.hold(oh if oh is not None else False)
 
 
