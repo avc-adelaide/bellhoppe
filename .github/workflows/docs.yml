@@ -48,6 +48,9 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
 
+    - name: Set up Quarto
+      uses: quarto-dev/quarto-actions/setup@v2
+
     - name: Cache Python packages
       uses: actions/cache@v4
       with:
