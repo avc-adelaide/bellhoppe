@@ -202,8 +202,8 @@ def read_env2d(fname: str) -> Dict[str, Any]:
             env['surface_soundspeed']       = _float(surface_props[1])
             env['surface_soundspeed_shear'] = _float(surface_props[2])
             env['surface_density']          = _float(surface_props[3], scale=1000)  # convert from g/cm³ to kg/m³
-            env['surface_absorption']       = _float(surface_props[4])
-            env['surface_absorption_shear'] = _float(surface_props[5])
+            env['surface_attenuation']       = _float(surface_props[4])
+            env['surface_attenuation_shear'] = _float(surface_props[5])
 
         # SSP depth specification (format: npts sigma_z max_depth)
         ssp_spec_line = _read_next_valid_line(f)
@@ -237,8 +237,8 @@ def read_env2d(fname: str) -> Dict[str, Any]:
             env['bottom_soundspeed'] = _float(bottom_props[1])
             env['bottom_soundspeed_shear'] = _float(bottom_props[2])
             env['bottom_density'] = _float(bottom_props[3], 1000)  # convert from g/cm³ to kg/m³
-            env['bottom_absorption'] = _float(bottom_props[4])
-            env['bottom_absorption_shear'] = _float(bottom_props[5])
+            env['bottom_attenuation'] = _float(bottom_props[4])
+            env['bottom_attenuation_shear'] = _float(bottom_props[5])
 
         # Source & receiver depths
         env['source_depth'],   env['source_ndepth']   = _parse_vector(f)

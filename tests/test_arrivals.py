@@ -6,7 +6,7 @@ def test_simple():
     env = bh.create_env2d()
     # print(env)
 
-    assert(env["bottom_absorption"]  == None)
+    assert(env["bottom_attenuation"]  == None)
     assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)

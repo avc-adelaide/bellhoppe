@@ -209,8 +209,8 @@ class _Bellhop:
               env['surface_soundspeed'],
               env['surface_soundspeed_shear'],
               self._float(env['surface_density'],scale=1/1000),
-              env['surface_absorption'],
-              env['surface_absorption_shear']
+              env['surface_attenuation'],
+              env['surface_attenuation_shear']
             ])
             self._print_env_line(fh,array_str,comment)
 
@@ -255,8 +255,8 @@ class _Bellhop:
               env['bottom_soundspeed'],
               env['bottom_soundspeed_shear'],
               self._float(env['bottom_density'],scale=1/1000),
-              env['bottom_absorption'],
-              env['bottom_absorption_shear']
+              env['bottom_attenuation'],
+              env['bottom_attenuation_shear']
             ])
             self._print_env_line(fh,array_str,comment)
 

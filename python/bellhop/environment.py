@@ -40,8 +40,8 @@ class EnvironmentConfig:
     bottom_soundspeed: float = 1600.0  # m/s
     bottom_soundspeed_shear: float = 0.0  # m/s
     bottom_density: float = 1600  # kg/m^3  # this value doesn't seem right but is copied from ARLpy
-    bottom_absorption: Optional[float] = None  # dB/wavelength
-    bottom_absorption_shear: Optional[float] = None  # dB/wavelength
+    bottom_attenuation: Optional[float] = None  # dB/wavelength
+    bottom_attenuation_shear: Optional[float] = None  # dB/wavelength
     bottom_roughness: float = 0.0  # m (rms)
     bottom_beta: Optional[float] = None
     bottom_transition_freq: Optional[float] = None  # Hz
@@ -58,8 +58,8 @@ class EnvironmentConfig:
     surface_soundspeed: float = 1600.0  # m/s
     surface_soundspeed_shear: float = 0.0  # m/s
     surface_density: float = 1000.0  # kg/m^3
-    surface_absorption: Optional[float] = None  # dB/wavelength
-    surface_absorption_shear: Optional[float] = None  # dB/wavelength
+    surface_attenuation: Optional[float] = None  # dB/wavelength
+    surface_attenuation_shear: Optional[float] = None  # dB/wavelength
     _altimetry: str = _Strings.flat  # set to "from-file" if multiple surface heights
 
     # Source parameters
