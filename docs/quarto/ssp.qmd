@@ -109,11 +109,11 @@ Now take a lat-long slice at constant depth to visualise:
 
 import matplotlib.pyplot as plt
 
-lat1 = lat.reshape((360, 180), order="F") * 0.1
-lon1 = lon.reshape((360, 180), order="F") * 0.1
+lat1 = lat.reshape((360, 180), order="F")
+lon1 = lon.reshape((360, 180), order="F")
 
 depth_idx = 11
-ssp1 = 1000 + (ssp[:, depth_idx].reshape((360, 180), order="F") / 100.0)
+ssp1 = ssp[:, depth_idx].reshape((360, 180), order="F")
 
 # Plot
 plt.figure(figsize=(8, 4))
