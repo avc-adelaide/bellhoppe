@@ -24,7 +24,7 @@ import matplotlib.colors as _mplc
 from bellhop.constants import _Strings
 import bellhop.plotutils as _plt
 from bellhop.plotutils import figure as figure
-from bellhop.setup import check_env2d as check_env2d
+from bellhop.create import check_env2d as check_env2d
 
 def plot_env(env: Dict[str, Any],
              surface_color: str = 'dodgerblue',

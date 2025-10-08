@@ -23,9 +23,9 @@ from bellhop.constants import _Strings
 from bellhop.environment import _validate_transmission_loss_mode
 
 # this format to explicitly mark the functions as public:
-from bellhop.setup import create_env2d as create_env2d
-from bellhop.setup import check_env2d as check_env2d
-from bellhop.setup import print_env as print_env
+from bellhop.create import create_env2d as create_env2d
+from bellhop.create import check_env2d as check_env2d
+from bellhop.create import print_env as print_env
 
 from bellhop.readers import read_env2d as read_env2d
 from bellhop.readers import read_ssp as read_ssp
