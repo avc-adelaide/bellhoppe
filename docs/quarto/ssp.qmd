@@ -63,7 +63,7 @@ bhp.plot_ssp(env)
 
 The examples above showed `soundspeed_interp="linear"` and `="spline"` interpolation options.
 The full set of options are listed in @tbl-ssp-interp.
-Some description of these is provided in the [environment file documentation](../EnvironmentFile.htm).
+Some description of these is provided in the [environmental file documentation](../EnvironmentalFile.htm).
 Note that the `A`, for "analytic", option is not provided, as this requires Fortran source code modification to function correctly.
 
 Bellhop.py option     Fortran char  Dimension

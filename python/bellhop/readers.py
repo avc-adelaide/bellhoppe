@@ -161,9 +161,6 @@ def read_env2d(fname: str) -> Dict[str, Any]:
             raise ValueError(f"{name} option {opt!r} not available")
         return opt_str
 
-    def _invalid_option(name: str, opt: str) -> Any:
-        raise ValueError(f"{name} option {opt!r} not available")
-
     # the proper start to the function:
     with open(fname, 'r') as f:
         # Line 1: Title

@@ -135,9 +135,7 @@ def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
     svp = env['soundspeed']
     if isinstance(svp, _pd.DataFrame):
         svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
-    if _np.size(svp) == 1:
-        _plt.plot([svp, svp], [0, -env['depth_max']], xlabel='Soundspeed (m/s)', ylabel='Depth (m)', **kwargs)
-    elif env['soundspeed_interp'] == _Strings.spline:
+    if env['soundspeed_interp'] == _Strings.spline:
         ynew = _np.linspace(_np.min(svp[:,0]), _np.max(svp[:,0]), 100)
         tck = _interp.splrep(svp[:,0], svp[:,1], s=0)
         xnew = _interp.splev(ynew, tck, der=0)
