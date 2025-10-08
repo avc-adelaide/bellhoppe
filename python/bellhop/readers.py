@@ -115,12 +115,13 @@ def read_env2d(fname: str) -> Dict[str, Any]:
         valout = _np.array(val) if len(val) > 1 else val[0]
         return valout, linecount
 
-    def _read_ssp_points(f: Any) -> _np.ndarray:
+    def _read_ssp_points(f: Any) -> _pd.DataFrame:
         """Read sound speed profile points until we find the bottom boundary line
 
            Default values are according to 'EnvironmentalFile.htm'."""
 
-        ssp_points: list[list[float]] = []
+        ssp_depth: list[float] = []
+        ssp_speed: list[float] = []
         ssp = dict(depth=0.0, speed=1500.0, speed_shear=0.0, density=1000.0, att=0.0, att_shear=0.0)
 
         while True:
@@ -128,7 +129,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
             if not line:
                 raise EOFError("File ended during env file reading of SSP points.")
             line = line.strip()
-            if not line:   # empty line
+            if not line: # completely empty line
                 continue
             if line.startswith("'"): # Check if this is a bottom boundary line (starts with quote)
                 # This is the bottom boundary line, put it back
@@ -136,20 +137,23 @@ def read_env2d(fname: str) -> Dict[str, Any]:
                 break
 
             parts = (_parse_line(line) + [None] * 6)[0:6]
-            if parts[0] is None:
-                continue # skip empty lines
+            if parts[0] is None: # empty line after stripping comments
+                continue
             ssp.update({
                 k: float(v) if v is not None else ssp[k] for k, v in zip(ssp.keys(), parts)
             })
-            ssp_points.append([ssp["depth"], ssp["speed"]])
+            ssp_depth.append(ssp["depth"])
+            ssp_speed.append(ssp["speed"])
             # TODO: add extra terms (but this needs adjustments elsewhere)
 
-        if len(ssp_points) == 0:
+        if len(ssp_speed) == 0:
             raise ValueError("No SSP points were found in the env file.")
-        elif len(ssp_points) == 1:
+        elif len(ssp_speed) == 1:
             raise ValueError("Only one SSP point found but at least two required (top and bottom)")
 
-        return _np.array(ssp_points)
+        df = _pd.DataFrame(ssp_speed,index=ssp_depth,columns=["speed"])
+        df.index.name = "depth"
+        return df
 
     def _opt_lookup(name: str, opt: str, _map: dict[str, _Strings]) -> Optional[str]:
         opt_str = _map.get(opt)
@@ -215,7 +219,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
         # Read SSP points
         env['soundspeed'] = _read_ssp_points(f)
         if env["soundspeed_interp"] == _Strings.quadrilateral:
-            env['soundspeed'] = read_ssp(fname_base, env['soundspeed'][:,0])
+            env['soundspeed'] = read_ssp(fname_base, env['soundspeed'].index)
 
         # Bottom boundary options
         bottom_line = _read_next_valid_line(f)
@@ -281,7 +285,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
     return env
 
-def read_ssp(fname: str, depths: Optional[Union[List[float], _np.ndarray]] = None) -> Union[Any, _pd.DataFrame]:
+def read_ssp(fname: str, depths: Optional[Union[List[float], _np.ndarray, _pd.DataFrame]] = None) -> Union[Any, _pd.DataFrame]:
     """Read a 2D sound speed profile (.ssp) file used by BELLHOP.
 
     This function reads BELLHOP's .ssp files which contain range-dependent
@@ -389,7 +393,9 @@ def read_ssp(fname: str, depths: Optional[Union[List[float], _np.ndarray]] = Non
 
             # Create DataFrame with ranges as columns and depths as index
             # ssp_array is [ndepths, nprofiles] which is the correct orientation
-            return _pd.DataFrame(ssp_array, index=depths, columns=ranges_m)
+            df = _pd.DataFrame(ssp_array, index=depths, columns=ranges_m)
+            df.index.name = "depth"
+            return df
 
 def read_bty(fname: str) -> Tuple[Any, str]:
     """Read a bathymetry file used by Bellhop."""

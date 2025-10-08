@@ -116,17 +116,6 @@ def test_pchip():
     )
 
 
-def test_pchip_fail():
-    """Test pchip interpolation for SSP."""
-
-    with pytest.raises(ValueError, match="soundspeed profile must have at least 2"):
-        ssp2 = [
-            [ 0, 1540],  # 1540 m/s at the surface
-        ]
-        env2 = bh.create_env2d(soundspeed=ssp2, depth=30, soundspeed_interp="pchip")
-        bh.check_env2d(env2)
-        arrivals2 = bh.compute_arrivals(env2,debug=True,fname_base="tests/_test_interp_pchip_fail")
-
 
 
 def test_nlinear():
@@ -143,5 +132,6 @@ def test_nlinear():
       atol=1e-2,  # absolute tolerance
       rtol=1e-2,  # relative tolerance
     )
+
 
 

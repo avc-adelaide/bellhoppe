@@ -225,7 +225,7 @@ class _Bellhop:
 
         if isinstance(svp, _pd.DataFrame) and len(svp.columns) == 1:
             svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
-        if _np.size(svp) == 1:
+        if svp.size == 1:
             debug and print("One SSP point only")
             self._print_env_line(fh,_array2str([0.0, svp]),"Min_Depth SSP_Const")
             self._print_env_line(fh,_array2str([env['depth_max'], svp]),"Max_Depth SSP_Const")

@@ -2,6 +2,7 @@ import pytest
 import bellhop as bh
 import numpy as np
 import pandas as pd
+import pandas.testing as pdt
 import tempfile
 import os
 
@@ -85,8 +86,7 @@ def test_read_env2d_round_trip():
         assert env_read['beam_num'] == env_orig['beam_num']
 
         # Sound speed gets converted to profile format
-        if isinstance(env_read['soundspeed'], np.ndarray):
-            assert env_read['soundspeed'][0, 1] == env_orig['soundspeed']
+        pdt.assert_frame_equal(env_read['soundspeed'], env_orig['soundspeed'])
 
         # Arrays should match
         np.testing.assert_array_equal(env_read['source_depth'], env_orig['source_depth'])

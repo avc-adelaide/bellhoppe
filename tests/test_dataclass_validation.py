@@ -169,7 +169,7 @@ class TestDataclassIntegration:
         env = bh.create_env2d(depth=40, soundspeed=1540)
         env = bh.check_env2d(env)
         assert env['depth'] == 40
-        assert env['soundspeed'] == 1540
+        assert env['soundspeed'].iloc[0,0] == 1540
 
 
 class TestTransmissionLossValidation:

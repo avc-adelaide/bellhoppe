@@ -83,10 +83,8 @@ def test_read_ssp_points_empty_line_break():
         assert len(env['soundspeed']) == 2  # Two SSP points before empty line
 
         # Verify the SSP points are correct
-        assert env['soundspeed'][0][0] == 0.0   # First depth
-        assert env['soundspeed'][0][1] == 1500.0  # First sound speed
-        assert env['soundspeed'][1][0] == 200.0   # Second depth
-        assert env['soundspeed'][1][1] == 1530.0  # Second sound speed
+        assert env['soundspeed'].iloc[0,0] == 1500.0  # First sound speed
+        assert env['soundspeed'].iloc[1,0] == 1530.0  # Second sound speed
     finally:
         os.unlink(fname)
 

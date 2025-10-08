@@ -8,7 +8,7 @@ def test_arrivals():
     """
 
     env = bh.create_env2d()
-    arr = bh.compute_arrivals(env)
+    arr = bh.compute_arrivals(env,debug=True,fname_base="tmp")
     #print(arr)
 
 

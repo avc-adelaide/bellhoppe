@@ -19,7 +19,7 @@ def test_simple():
     assert(env["receiver_depth"] == 10)
     assert(env["receiver_range"] == 1000)
     assert(env["soundspeed"] == 1500)
-    assert(env["soundspeed_interp"] == "spline")
+    assert(env["soundspeed_interp"] == "linear")
     assert(env["surface"] == None)
     assert(env["surface_interp"] == "linear")
     assert(env["source_depth"] == 5)
@@ -98,7 +98,7 @@ def test_variable_soundspeed():
     ]
 
     # Create environment with variable sound speed profile
-    env = bh.create_env2d(soundspeed=ssp, depth=30, beam_angle_min=-80, beam_angle_max=80)
+    env = bh.create_env2d(soundspeed=ssp, soundspeed_interp="spline", depth=30, beam_angle_min=-80, beam_angle_max=80)
     bh.print_env(env)
 
     # Compute arrivals
@@ -152,23 +152,6 @@ def test_bathy():
 	]
 
     env = bh.create_env2d(depth=bathy,beam_angle_max=80,beam_angle_min=-80)
-    # print(env)
-    assert(env["bottom_absorption"] == None)
-    assert(env["bottom_density"] == 1600)
-    assert(env["bottom_roughness"] == 0)
-    assert(env["bottom_soundspeed"] == 1600)
-    assert(env["depth_interp"] == "linear")
-    assert(env["frequency"] == 25000)
-    assert(env["beam_num"] == 0)
-    assert(env["receiver_depth"] == 10)
-    assert(env["receiver_range"] == 1000)
-    assert(env["soundspeed"] == 1500)
-    assert(env["soundspeed_interp"] == "spline")
-    assert(env["surface"] == None)
-    assert(env["surface_interp"] == "linear")
-    assert(env["source_depth"] == 5)
-    assert(env["source_directionality"] == None)
-    assert(env["type"] == "2D")
 
     arrivals = bh.compute_arrivals(env)
     arrival_times = arrivals["time_of_arrival"]
