@@ -25,7 +25,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -72,12 +72,8 @@ jobs:
     - name: Move coverage reports to documentation
       run: |
         mkdir -p ./docs/static/coverage
-        if [ -d "_coverage/" ]; then
-          cp -r _coverage/ ./docs/static/coverage/
-        fi
-        if [ -d "_coverage_python/" ]; then
-          cp -r _coverage_python/ ./docs/static/coverage/
-        fi
+        cp -r _coverage/        ./docs/static/coverage/
+        cp -r _coverage_python/ ./docs/static/coverage/
 
     - name: Generate documentation
       run: |

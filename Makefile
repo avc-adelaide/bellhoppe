@@ -110,7 +110,7 @@ help:
 
 ###### HATCH ######
 
-HATCH := hatch env run # was "hatch run" but Github workflows started failing (??)
+HATCH := hatch run
 
 cleantest: clean all install test
 

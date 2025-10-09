@@ -27,4 +27,4 @@ jobs:
     - name: make
       run: make && make install
     - name: Test with pytest
-      run: make test
+      run:  hatch run test
