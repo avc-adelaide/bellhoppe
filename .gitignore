@@ -54,6 +54,7 @@ dist/
 *~
 .DS_Store
 ._GIT_CLEAN_CHECK
+tmp.*
 
 # Compiled MATLAB code
 *.asv
