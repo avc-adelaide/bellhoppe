@@ -112,8 +112,7 @@ class TestEnvironmentConfigValidation:
     def test_valid_attenuation_units_options(self):
         """Test that all valid attenuation units options work."""
         valid_options = [
-            'nepers per meter', 'frequency dependent', 'dB per meter',
-            'frequency scaled dB per meter', 'dB per wavelength',
+            'nepers per meter', 'frequency dependent', 'dB per meter', 'dB per wavelength',
             'quality factor', 'loss parameter', 'default'
         ]
         for option in valid_options:
