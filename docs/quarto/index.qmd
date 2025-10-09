@@ -8,9 +8,14 @@ jupyter: python3
 
 ## Tutorials
 
-- [Introduction](intro.qmd) — basics of creating an environment and plotting results
-- [Sound speed profiles](ssp.qmd) — defining depth-dependent SSPs and setting interpolation options; using NOAA data to define a 2D sound speed profile that varies with range and depth.
-
+- [Introduction](intro.qmd)
+    - basics of creating an environment and plotting results
+- [Sound speed profiles](ssp.qmd)
+    - defining depth-dependent SSPs and setting interpolation options
+    - example using NOAA data to define a 2D sound speed profile that varies with range and depth
+- [Surface properties](surface.qmd)
+    - defining surface properties and range-dependent surface profiles
+    - examples of a JONSWAP sea state distribution, and underwater sea ice
 
 ## Other Bellhop documentation
 

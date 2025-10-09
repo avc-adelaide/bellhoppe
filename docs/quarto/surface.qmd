@@ -20,13 +20,12 @@ Option                            Description
 
 The `surface_boundary_condition` takes the following options:
 
-Bellhop char  Bellhop.py option string
-------------  ------------------------
+Bellhop char  `surface_boundary_condition=` option
+------------  ------------------------------------
 `V`           `"vacuum"`
 `A`           `"acousto-elastic"`
 `R`           `"rigid"`
 `F`           `"from-file"`
-` `           `"default"`
 
 If `surface_reflection_coefficient` is set, `surface_boundary_condition="from-file"` is assumed. Description of the surface reflection coefficients are documented in the [TRC/BRC file documentation](../ReflectionCoefficientFile.htm).
 
@@ -51,7 +50,6 @@ Bellhop char  Bellhop.py option string
 `W`           `"db per wavelength"`
 `Q`           `"quality factor"`
 `L`           `"loss parameter"`
-` `           `"default"`
 
 
 ## Flat surface
@@ -172,7 +170,7 @@ bhp.plot_rays(erays,env=env)
 
 The data in this example is taken from the following open access dataset (@fig-sea-ice).
 
-> National Snow and Ice Data Center (comp.). 1998, updated 2006. Submarine Upward Looking Sonar Ice Draft Profile Data and Statistics, Version 1. [2000a series]. Boulder, Colorado USA. NSIDC: National Snow and Ice Data Center. https://doi.org/10.7265/N54Q7RWK. [Date accessed: 2025-10-09].
+> National Snow and Ice Data Center. 1998, updated 2006. Submarine Upward Looking Sonar Ice Draft Profile Data and Statistics, Version 1. Boulder, Colorado USA. NSIDC: National Snow and Ice Data Center. https://doi.org/10.7265/N54Q7RWK. [Date accessed: 2025-10-09]
 
 ```{python}
 #| label: fig-sea-ice
@@ -212,9 +210,10 @@ ax.text(1,0,"ICE",ha="center",color="white")
 ax.text(1,-12,"WATER",ha="center",color="white")
 ```
 
-This profile can be used to set the altimetry data in Bellhop using the `surface` option. For efficiency only 50 rays are shown (@fig-ice-rays). The uneven surface profile creates a complex series of reflections. A simple acousto-elastic surface boundary condition can be set up using parameters from: 
+This profile can be used to set the altimetry data in Bellhop using the `surface` option. For efficiency only 50 rays are shown (@fig-ice-rays). The uneven surface profile creates a complex series of reflections. A simple acousto-elastic surface boundary condition can be set up using parameters from:
 
 > Alexander, Polly and Duncan, Alec and Bose, Neil and Smith, Daniel. 2013. Modelling acoustic transmission loss due to sea ice cover. Acoustics Australia. 41 (1): pp. 79-89.
+> https://www.acoustics.asn.au/journal/2013/2013_41_1_Alexander.pdf
 
 Tabulated reflection coefficient data isn't used in this example but would further increase the accuracy of the model.
 

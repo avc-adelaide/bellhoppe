@@ -11,7 +11,9 @@ website:
       - href: intro.qmd
         text: Intro
       - href: ssp.qmd
-        text: SSP
+        text: Soundspeed
+      - href: surface.qmd
+        text: Surface
 
 format:
   html:
