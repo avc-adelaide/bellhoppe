@@ -128,7 +128,6 @@ class _Maps:
         "N": _Strings.nepers_per_meter,
         "F": _Strings.frequency_dependent,
         "M": _Strings.db_per_meter,
-        "m": _Strings.frequency_scaled_db_per_meter,
         "W": _Strings.db_per_wavelength,
         "Q": _Strings.quality_factor,
         "L": _Strings.loss_parameter,
