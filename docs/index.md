@@ -36,9 +36,6 @@ Acoustics Toolbox project and subsequent development efforts:
 ### Original Acoustics Toolbox documentation
 - **[Original Repository Information](media/doc_index.htm)** - General information about the Acoustics Toolbox project structure
 - **[Acoustics Toolbox Index](media/at_index.htm)** - Overview of the complete Acoustics Toolbox suite
-- **[Field Documentation](media/fields.htm)** - General field computation methods
-- **[Field Processing](media/field.htm)** - Field output processing and analysis
-- **[3D Field Methods](media/field3d.htm)** - Three-dimensional field computation approaches
 
 ### PDF documentation
 - **[BELLHOP3D User Guide (PDF)](media/Bellhop3D%20User%20Guide%202016_7_25.pdf)** - Comprehensive PDF guide for 3D modeling
