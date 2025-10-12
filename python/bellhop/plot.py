@@ -259,8 +259,8 @@ def plot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, **k
     _plt.hold(oh if oh is not None else False)
 
 
+### Export module names for auto-importing in __init__.py
+
 __all__ = [
-    name
-    for name in globals()
-    if not name.startswith("_")  # ignore private names
+    name for name in globals() if not name.startswith("_")  # ignore private names
 ]

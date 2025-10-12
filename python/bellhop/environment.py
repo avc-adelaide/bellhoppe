@@ -14,6 +14,7 @@ from .constants import _Strings, _Maps
 
 @dataclass(frozen=True)
 class Defaults:
+    """Dataclass of magic numbers in case it makes sense to parameterise them later."""
     beam_angle_halfspace: float = 90
     beam_angle_fullspace: float = 180
 

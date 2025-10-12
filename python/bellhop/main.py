@@ -202,6 +202,8 @@ def _select_model(env: Dict[str, Any], task: str, model: Optional[Any] = None, d
     raise ValueError('No suitable propagation model available')
 
 
+### Export module names for auto-importing in __init__.py
+
 __all__ = [
     name for name in globals() if not name.startswith("_")  # ignore private names
 ]

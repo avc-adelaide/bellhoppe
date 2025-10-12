@@ -264,9 +264,8 @@ def pyplot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, *
         pyplot_env(env, receiver_plot=False)
 
 
+### Export module names for auto-importing in __init__.py
 
 __all__ = [
-    name
-    for name in globals()
-    if not name.startswith("_")  # ignore private names
+    name for name in globals() if not name.startswith("_")  # ignore private names
 ]
