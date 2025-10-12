@@ -36,7 +36,7 @@ class _Bellhop:
         return shutil.which(exe or self._exe) is not None
 
     def _rm_files(self, fname_base: str) -> None:
-    """Remove files that would be constructed as bellhop inputs or created as bellhop outputs."""
+        """Remove files that would be constructed as bellhop inputs or created as bellhop outputs."""
         self._unlink(fname_base+'.bty')
         self._unlink(fname_base+'.ssp')
         self._unlink(fname_base+'.ati')
@@ -434,3 +434,4 @@ class _Bellhop:
     def _float(self, x: Optional[float], scale: float = 1) -> Optional[float]:
         """Permissive floatenator"""
         return None if x is None else float(x) * scale
+
