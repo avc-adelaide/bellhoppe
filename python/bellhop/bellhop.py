@@ -40,7 +40,7 @@ class _Bellhop:
            and task is supported by the model, but really it just checks that the binary
            can be found."""
 
-        return shutil.which(exe or self._exe) is not None
+        return shutil.which(exe or self.exe) is not None
 
     def _rm_files(self, fname_base: str) -> None:
         """Remove files that would be constructed as bellhop inputs or created as bellhop outputs."""
@@ -93,11 +93,11 @@ class _Bellhop:
     def _run_exe(self, fname_base: str,
                        args: str = "",
                        debug: bool = False,
-                       exe: str = _exe
+                       exe: str = None,
                 ) -> None:
         """Run the executable and raise exceptions if there are errors."""
 
-        exe_path = shutil.which(exe)
+        exe_path = shutil.which(exe or self.exe)
         if exe_path is None:
             raise FileNotFoundError(f"Executable ({exe}) not found in PATH.")
 
