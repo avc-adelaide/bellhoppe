@@ -11,16 +11,23 @@ from typing import Any, Dict, List, Optional, Tuple, IO
 import numpy as _np
 import pandas as _pd
 
-from .constants import _Strings, _Maps, _File_Ext
-
-### Bellhop propagation model ###
+from .constants import Defaults, _Strings, _Maps, _File_Ext
 
 class _Bellhop:
+    """
+    Interface to the Bellhop 2D underwater acoustics ray tracing propagation model
+    
+    Parameters
+    ----------
+    exe : str
+        Filename of executable to call Bellhop with
+    """
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self,
+                      exe: Optional[str] = Defaults.exe
+                ) -> None:
+        self._exe = exe
 
-    _exe = "bellhop.exe"
 
     def supports(self,
                        env: Optional[Dict[str, Any]] = None,

@@ -9,14 +9,7 @@ replacing manual option checking with field validators.
 from dataclasses import dataclass, fields
 from typing import Optional, Union, Any, Dict
 
-from .constants import _Strings, _Maps
-
-
-@dataclass(frozen=True)
-class Defaults:
-    """Dataclass of magic numbers in case it makes sense to parameterise them later."""
-    beam_angle_halfspace: float = 90
-    beam_angle_fullspace: float = 180
+from .constants import Defaults, _Strings, _Maps
 
 
 @dataclass

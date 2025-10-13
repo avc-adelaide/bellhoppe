@@ -1,5 +1,14 @@
-
+from dataclasses import dataclass, field
 from enum import Enum
+
+
+@dataclass(frozen=True)
+class Defaults:
+    """Dataclass of hard-coded defaults used throughout the Bellhop interface."""
+    beam_angle_halfspace: float = field(default=90.0, metadata={"units": "deg"})
+    beam_angle_fullspace: float = field(default=180.0, metadata={"units": "deg"})
+    exe: str = field(default="bellhop.exe", metadata={"desc": "Executable name"})
+
 
 class _File_Ext:
     """Strings to define file extensions"""
