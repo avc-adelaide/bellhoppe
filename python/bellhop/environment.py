@@ -9,7 +9,7 @@ replacing manual option checking with field validators.
 from dataclasses import dataclass, fields
 from typing import Optional, Union, Any, Dict
 
-from .constants import Defaults, _Strings, _Maps
+from .constants import _Strings, _Maps
 
 
 @dataclass

@@ -26,7 +26,7 @@ class _Bellhop:
     def __init__(self,
                       exe: Optional[str] = Defaults.exe
                 ) -> None:
-        self._exe = exe
+        self.exe = exe
 
 
     def supports(self,
