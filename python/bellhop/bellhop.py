@@ -27,16 +27,21 @@ class _Bellhop:
         Filename of executable to call Bellhop with
     """
 
-    def __init__(self,
-                      exe: str = Defaults.exe,
-                      env_comment_pad: int = Defaults.env_comment_pad,
+    def __init__(self, exe: str = Defaults.exe,
+                       env_comment_pad: int = Defaults.env_comment_pad,
                 ) -> None:
         self.exe: str = exe
         self.env_comment_pad: int = env_comment_pad
+        self.taskmap: Dict[Any, List[Any]] = {
+                _Strings.arrivals:     ['A', self._load_arrivals, _File_Ext.arr],
+                _Strings.eigenrays:    ['E', self._load_rays, _File_Ext.ray],
+                _Strings.rays:         ['R', self._load_rays, _File_Ext.ray],
+                _Strings.coherent:     ['C', self._load_shd, _File_Ext.shd],
+                _Strings.incoherent:   ['I', self._load_shd, _File_Ext.shd],
+                _Strings.semicoherent: ['S', self._load_shd, _File_Ext.shd]
+            }
 
-
-    def supports(self,
-                       env: Optional[Dict[str, Any]] = None,
+    def supports(self, env: Optional[Dict[str, Any]] = None,
                        task: Optional[str] = None,
                        exe: Optional[str] = None,
                 ) -> bool:
@@ -48,11 +53,10 @@ class _Bellhop:
 
         return shutil.which(exe or self.exe) is not None
 
-    def run(self, 
-            env: Dict[str, Any],
-            task: str,
-            debug: bool = False,
-            fname_base: Optional[str] = None,
+    def run(self, env: Dict[str, Any],
+                  task: str,
+                  debug: bool = False,
+                  fname_base: Optional[str] = None,
            ) -> Any:
         """
         High-level interface function which runs the model.
@@ -90,15 +94,6 @@ class _Bellhop:
             self._rm_files(fname_base)
 
         return results
-
-    taskmap: Dict[Any, List[Any]] = {
-            _Strings.arrivals:     ['A', self._load_arrivals, _File_Ext.arr],
-            _Strings.eigenrays:    ['E', self._load_rays, _File_Ext.ray],
-            _Strings.rays:         ['R', self._load_rays, _File_Ext.ray],
-            _Strings.coherent:     ['C', self._load_shd, _File_Ext.shd],
-            _Strings.incoherent:   ['I', self._load_shd, _File_Ext.shd],
-            _Strings.semicoherent: ['S', self._load_shd, _File_Ext.shd]
-        }
 
     def _rm_files(self, fname_base: str) -> None:
         """Remove files that would be constructed as bellhop inputs or created as bellhop outputs."""
