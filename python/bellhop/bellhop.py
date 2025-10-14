@@ -79,6 +79,7 @@ class _Bellhop:
 
         fname_base = self._create_env_file(env, self.taskmap[task][0], fname_base, debug)
 
+        results = None
         self._run_exe(fname_base)
         try:
             ext = self.taskmap[task][2]
