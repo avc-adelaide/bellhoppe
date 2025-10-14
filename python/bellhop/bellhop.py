@@ -32,14 +32,7 @@ class _Bellhop:
                 ) -> None:
         self.exe: str = exe
         self.env_comment_pad: int = env_comment_pad
-        self.taskmap: Dict[Any, List[Any]] = {
-                _Strings.arrivals:     ['A', self._load_arrivals, _File_Ext.arr],
-                _Strings.eigenrays:    ['E', self._load_rays, _File_Ext.ray],
-                _Strings.rays:         ['R', self._load_rays, _File_Ext.ray],
-                _Strings.coherent:     ['C', self._load_shd, _File_Ext.shd],
-                _Strings.incoherent:   ['I', self._load_shd, _File_Ext.shd],
-                _Strings.semicoherent: ['S', self._load_shd, _File_Ext.shd]
-            }
+  
 
     def supports(self, env: Optional[Dict[str, Any]] = None,
                        task: Optional[str] = None,
@@ -79,7 +72,6 @@ class _Bellhop:
 
         fname_base = self._create_env_file(env, self.taskmap[task][0], fname_base, debug)
 
-        results = None
         self._run_exe(fname_base)
         try:
             ext = self.taskmap[task][2]
@@ -95,6 +87,17 @@ class _Bellhop:
             self._rm_files(fname_base)
 
         return results
+
+    @property
+    def taskmap(self) -> Dict[Any, List[Any]]:
+        return {
+            _Strings.arrivals:     ['A', self._load_arrivals, _File_Ext.arr],
+            _Strings.eigenrays:    ['E', self._load_rays, _File_Ext.ray],
+            _Strings.rays:         ['R', self._load_rays, _File_Ext.ray],
+            _Strings.coherent:     ['C', self._load_shd, _File_Ext.shd],
+            _Strings.incoherent:   ['I', self._load_shd, _File_Ext.shd],
+            _Strings.semicoherent: ['S', self._load_shd, _File_Ext.shd]
+        }
 
     def _rm_files(self, fname_base: str) -> None:
         """Remove files that would be constructed as bellhop inputs or created as bellhop outputs."""
