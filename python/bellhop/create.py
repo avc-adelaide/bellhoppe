@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 import numpy as _np
 import pandas as _pd
 
-from bellhop.constants import _Strings
+from bellhop.constants import Defaults, _Strings
 import bellhop.environment as _env
 from bellhop.environment import EnvironmentConfig, _validate_source_type
 
@@ -247,14 +247,14 @@ def _finalise_environment(env: Dict[str, Any]) -> Dict[str, Any]:
     # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
     if env['beam_angle_min'] is None:
         if _np.min(env['receiver_range']) < 0:
-            env['beam_angle_min'] = -_env.Defaults.beam_angle_fullspace
+            env['beam_angle_min'] = - Defaults.beam_angle_fullspace
         else:
-            env['beam_angle_min'] = -_env.Defaults.beam_angle_halfspace
+            env['beam_angle_min'] = - Defaults.beam_angle_halfspace
     if env['beam_angle_max'] is None:
         if _np.min(env['receiver_range']) < 0:
-            env['beam_angle_max'] = _env.Defaults.beam_angle_fullspace
+            env['beam_angle_max'] =  Defaults.beam_angle_fullspace
         else:
-            env['beam_angle_max'] = _env.Defaults.beam_angle_halfspace
+            env['beam_angle_max'] = Defaults.beam_angle_halfspace
 
     env['box_depth'] = env['box_depth'] or 1.01 * env['depth_max']
     env['box_range'] = env['box_range'] or 1.01 * (_np.max(env['receiver_range']) - min(0,_np.min(env['receiver_range'])))

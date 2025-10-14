@@ -16,7 +16,7 @@ from .constants import Defaults, _Strings, _Maps, _File_Ext
 class _Bellhop:
     """
     Interface to the Bellhop 2D underwater acoustics ray tracing propagation model
-    
+
     Parameters
     ----------
     exe : str
@@ -24,9 +24,11 @@ class _Bellhop:
     """
 
     def __init__(self,
-                      exe: Optional[str] = Defaults.exe
+                      exe: str = Defaults.exe,
+                      env_comment_pad: int = Defaults.env_comment_pad,
                 ) -> None:
-        self.exe = exe
+        self.exe: str = exe
+        self.env_comment_pad: int = env_comment_pad
 
 
     def supports(self,
@@ -93,7 +95,7 @@ class _Bellhop:
     def _run_exe(self, fname_base: str,
                        args: str = "",
                        debug: bool = False,
-                       exe: str = None,
+                       exe: Optional[str] = None,
                 ) -> None:
         """Run the executable and raise exceptions if there are errors."""
 
@@ -141,12 +143,10 @@ class _Bellhop:
     def _print(self, fh: int, s: str, newline: bool = True) -> None:
         _os.write(fh, (s+'\n' if newline else s).encode())
 
-    COMMENT_PAD = 50
-
     def _print_env_line(self, fh: int, data: Any, comment: str = "") -> None:
         data_str = data if isinstance(data,str) else f"{data}"
         comment_str = comment if isinstance(comment,str) else f"{comment}"
-        line_str = (data_str + " " * self.COMMENT_PAD)[0:max(len(data_str),self.COMMENT_PAD)]
+        line_str = (data_str + " " * self.env_comment_pad)[0:max(len(data_str),self.env_comment_pad)]
         if comment_str != "":
             line_str = line_str + " ! " + comment_str
         self._print(fh,line_str)

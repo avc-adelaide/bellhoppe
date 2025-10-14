@@ -1,5 +1,7 @@
 
 from typing import Any, Dict, Optional, Tuple, Union, TextIO, List, cast
+from numpy.typing import NDArray
+
 import numpy as _np
 import pandas as _pd
 from bellhop.constants import _Strings, _Maps
@@ -282,7 +284,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
     return env
 
-def read_ssp(fname: str, depths: Optional[Union[List[float], _np.ndarray, _pd.DataFrame]] = None) -> Union[Any, _pd.DataFrame]:
+def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64], _pd.DataFrame]] = None) -> Union[Any, _pd.DataFrame]:
     """Read a 2D sound speed profile (.ssp) file used by BELLHOP.
 
     This function reads BELLHOP's .ssp files which contain range-dependent

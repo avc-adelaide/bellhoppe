@@ -8,6 +8,7 @@ class Defaults:
     beam_angle_halfspace: float = field(default=90.0, metadata={"units": "deg"})
     beam_angle_fullspace: float = field(default=180.0, metadata={"units": "deg"})
     exe: str = field(default="bellhop.exe", metadata={"desc": "Executable name"})
+    env_comment_pad: int = field(default=50, metadata={"desc": "Number of characters used before the comment in the constructed .env files."})
 
 
 class _File_Ext:
