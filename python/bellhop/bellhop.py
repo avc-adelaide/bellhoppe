@@ -15,7 +15,11 @@ from .constants import Defaults, _Strings, _Maps, _File_Ext
 
 class _Bellhop:
     """
-    Interface to the Bellhop 2D underwater acoustics ray tracing propagation model
+    Interface to the Bellhop 2D underwater acoustics ray tracing propagation model.
+    
+    Two public methods are defined: `supports()` and `run()`.
+    Both take arguments of environment and task, and respectively
+    report whether the executable can perform the task, and to do so.
 
     Parameters
     ----------
@@ -44,27 +48,23 @@ class _Bellhop:
 
         return shutil.which(exe or self.exe) is not None
 
-    def _rm_files(self, fname_base: str) -> None:
-        """Remove files that would be constructed as bellhop inputs or created as bellhop outputs."""
-        self._unlink(fname_base+'.bty')
-        self._unlink(fname_base+'.ssp')
-        self._unlink(fname_base+'.ati')
-        self._unlink(fname_base+'.sbp')
-        self._unlink(fname_base+'.prt')
-        self._unlink(fname_base+'.log')
-        self._unlink(fname_base+'.arr')
-        self._unlink(fname_base+'.ray')
-        self._unlink(fname_base+'.shd')
+    def run(self, 
+            env: Dict[str, Any],
+            task: str,
+            debug: bool = False,
+            fname_base: Optional[str] = None,
+           ) -> Any:
+        """
+        High-level interface function which runs the model.
+        
+        The function definition performs setup and cleanup tasks
+        and passes the execution off to an auxiliary function.
+        
+        Uses the `taskmap` data structure to relate input flags to
+        processng stages, in particular how to select specific "tasks"
+        to be executed.
+        """
 
-    def run(self, env: Dict[str, Any], task: str, debug: bool = False, fname_base: Optional[str] = None) -> Any:
-        taskmap: Dict[Any, List[Any]] = {
-            _Strings.arrivals:     ['A', self._load_arrivals, _File_Ext.arr],
-            _Strings.eigenrays:    ['E', self._load_rays, _File_Ext.ray],
-            _Strings.rays:         ['R', self._load_rays, _File_Ext.ray],
-            _Strings.coherent:     ['C', self._load_shd, _File_Ext.shd],
-            _Strings.incoherent:   ['I', self._load_shd, _File_Ext.shd],
-            _Strings.semicoherent: ['S', self._load_shd, _File_Ext.shd]
-        }
         fname_flag=False
         if fname_base is not None:
             fname_flag = True
@@ -73,13 +73,12 @@ class _Bellhop:
             print('[CUSTOM FILES] Deleting prior working files: '+fname_base+'.*')
             self._rm_files(fname_base)
 
-        fname_base = self._create_env_file(env, taskmap[task][0], fname_base, debug)
+        fname_base = self._create_env_file(env, self.taskmap[task][0], fname_base, debug)
 
-        results = None
         self._run_exe(fname_base)
         try:
-            ext = taskmap[task][2]
-            results = taskmap[task][1](fname_base, ext)
+            ext = self.taskmap[task][2]
+            results = self.taskmap[task][1](fname_base, ext)
         except FileNotFoundError:
             raise RuntimeError(f'Bellhop did not generate expected output file ({task})')
 
@@ -91,6 +90,27 @@ class _Bellhop:
             self._rm_files(fname_base)
 
         return results
+
+    taskmap: Dict[Any, List[Any]] = {
+            _Strings.arrivals:     ['A', self._load_arrivals, _File_Ext.arr],
+            _Strings.eigenrays:    ['E', self._load_rays, _File_Ext.ray],
+            _Strings.rays:         ['R', self._load_rays, _File_Ext.ray],
+            _Strings.coherent:     ['C', self._load_shd, _File_Ext.shd],
+            _Strings.incoherent:   ['I', self._load_shd, _File_Ext.shd],
+            _Strings.semicoherent: ['S', self._load_shd, _File_Ext.shd]
+        }
+
+    def _rm_files(self, fname_base: str) -> None:
+        """Remove files that would be constructed as bellhop inputs or created as bellhop outputs."""
+        self._unlink(fname_base+'.bty')
+        self._unlink(fname_base+'.ssp')
+        self._unlink(fname_base+'.ati')
+        self._unlink(fname_base+'.sbp')
+        self._unlink(fname_base+'.prt')
+        self._unlink(fname_base+'.log')
+        self._unlink(fname_base+'.arr')
+        self._unlink(fname_base+'.ray')
+        self._unlink(fname_base+'.shd')
 
     def _run_exe(self, fname_base: str,
                        args: str = "",
