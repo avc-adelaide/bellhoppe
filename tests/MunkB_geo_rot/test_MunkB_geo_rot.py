@@ -13,7 +13,7 @@ skip_if_coverage = pytest.mark.skipif(
 env = bh.read_env2d("tests/MunkB_geo_rot/MunkB_geo_rot.env")
 
 tl = bh.compute_transmission_loss(env,fname_base="tests/MunkB_geo_rot/MunkB_output",debug=True)
-tl_exp = bh.main._Bellhop._load_shd(None,"tests/MunkB_geo_rot/MunkB_geo_rot",".shd")
+tl_exp = bh.main.Bellhop._load_shd(None,"tests/MunkB_geo_rot/MunkB_geo_rot",".shd")
 
 def test_MunkB_geo_rot_A():
     """Test using a Bellhop example that ENV file parameters are being picked up properly.

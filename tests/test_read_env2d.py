@@ -68,8 +68,8 @@ def test_read_env2d_round_trip():
         fname_base = os.path.join(temp_dir, "test_env")
 
         # Create the Bellhop model and generate the env file
-        from bellhop.main import _Bellhop
-        model = _Bellhop()
+        from bellhop.main import Bellhop
+        model = Bellhop()
         fname_base = model._create_env_file(env_orig, 'R', fname_base)
         env_file = fname_base + '.env'
 

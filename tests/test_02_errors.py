@@ -50,7 +50,7 @@ def test_ssp_spline_points():
 
 
 def test_missing_output_triggers_warning(capsys):
-    bellhop = bh.bellhop._Bellhop()
+    bellhop = bh.bellhop.Bellhop()
     env = bh.create_env2d()
     env = bh.check_env2d(env)
     task = bh.bellhop._Strings.arrivals

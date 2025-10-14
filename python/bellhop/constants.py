@@ -18,6 +18,8 @@ class _File_Ext:
     shd = ".shd"
     prt = ".prt"
     ray = ".ray"
+    env = ".env"
+    ssp = ".ssp"
 
 
 class _Strings(str, Enum):
@@ -81,7 +83,6 @@ class _Strings(str, Enum):
     nepers_per_meter = "nepers per meter"
     frequency_dependent = "frequency dependent"
     db_per_meter = "dB per meter"
-    frequency_scaled_db_per_meter = "frequency scaled dB per meter"
     db_per_wavelength = "dB per wavelength"
     quality_factor = "quality factor"
     loss_parameter = "loss parameter"

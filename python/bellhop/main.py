@@ -34,11 +34,11 @@ from bellhop.readers import read_bty as read_bty
 from bellhop.readers import read_sbp as read_sbp
 from bellhop.readers import read_refl_coeff as read_refl_coeff
 
-from bellhop.bellhop import _Bellhop
+from bellhop.bellhop import Bellhop
 
 # models (in order of preference)
 _models: List[Any] = []
-_models.append(('bellhop', _Bellhop))
+_models.append(('bellhop', Bellhop))
 
 def _debug_print(debug: bool, msg: str) -> None:
     if debug:
@@ -129,7 +129,6 @@ def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mo
     >>> bh.plot_transmission_loss(tloss, width=1000)
     """
     env = check_env2d(env)
-    # Use dataclass validation for option checking
     _validate_transmission_loss_mode(mode)
     if _np.size(env['source_depth']) > 1:
         env = env.copy()
@@ -186,7 +185,26 @@ def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> 
             rv.append(m[0])
     return rv
 
-def _select_model(env: Dict[str, Any], task: str, model: Optional[Any] = None, debug: bool = False) -> Any:
+def _select_model(env: Dict[str, Any],
+                  task: str,
+                  model: Optional[Any] = None,
+                  debug: bool = False
+                 ) -> Any:
+    """Finds a model to use, or if a model is requested validate it.
+
+    :param env: the environment dictionary
+    :param task: the task to be computed
+    :param model: specified model to use
+    :param debug: whether to print diagnostics
+
+    :returns: the model function to evaluate its `.run()` method
+
+    The intention of this function is to allow multiple models to be "loaded" and the
+    first appropriate model found is used for the computation.
+
+    This is likely to be more useful once we extend the code to handle things like 3D
+    bellhop models, GPU bellhop models, and so on.
+    """
     if model is not None:
         for m in _models:
             if m[0] == model:

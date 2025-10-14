@@ -4,7 +4,7 @@ from numpy.typing import NDArray
 
 import numpy as _np
 import pandas as _pd
-from bellhop.constants import _Strings, _Maps
+from bellhop.constants import _Strings, _Maps, _File_Ext
 import bellhop.environment
 
 def _read_next_valid_line(f: TextIO) -> str:
@@ -80,11 +80,11 @@ def read_env2d(fname: str) -> Dict[str, Any]:
     import re
 
     # Add .env extension if not present
-    if fname.endswith('.env'):
+    if fname.endswith(_File_Ext.env):
         fname_base = fname[:-4]
     else:
         fname_base = fname
-        fname = fname + '.env'
+        fname = fname + _File_Ext.env
 
     if not os.path.exists(fname):
         raise FileNotFoundError(f"Environment file not found: {fname}")
@@ -339,9 +339,8 @@ def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64
     """
     import os
 
-    # Add .ssp extension if not present
-    if not fname.endswith('.ssp'):
-        fname = fname + '.ssp'
+    if not fname.endswith(_File_Ext.ssp):
+        fname = fname + _File_Ext.ssp
 
     if not os.path.exists(fname):
         raise FileNotFoundError(f"SSP file not found: {fname}")

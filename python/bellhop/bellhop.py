@@ -13,10 +13,10 @@ import pandas as _pd
 
 from .constants import Defaults, _Strings, _Maps, _File_Ext
 
-class _Bellhop:
+class Bellhop:
     """
     Interface to the Bellhop 2D underwater acoustics ray tracing propagation model.
-    
+
     Two public methods are defined: `supports()` and `run()`.
     Both take arguments of environment and task, and respectively
     report whether the executable can perform the task, and to do so.
@@ -32,7 +32,7 @@ class _Bellhop:
                 ) -> None:
         self.exe: str = exe
         self.env_comment_pad: int = env_comment_pad
-  
+
 
     def supports(self, env: Optional[Dict[str, Any]] = None,
                        task: Optional[str] = None,
@@ -53,10 +53,10 @@ class _Bellhop:
            ) -> Any:
         """
         High-level interface function which runs the model.
-        
+
         The function definition performs setup and cleanup tasks
         and passes the execution off to an auxiliary function.
-        
+
         Uses the `taskmap` data structure to relate input flags to
         processng stages, in particular how to select specific "tasks"
         to be executed.
@@ -143,7 +143,7 @@ class _Bellhop:
         try:
             err = ""
             fatal = False
-            with open(fname_base+'.prt', 'rt') as f:
+            with open(fname_base + _File_Ext.prt, 'rt') as f:
                 for s in f:
                     if fatal and len(s.strip()) > 0:
                         err += '[FATAL] ' + s.strip() + '\n'
@@ -185,10 +185,10 @@ class _Bellhop:
 
     def _open_env_file(self, fname_base: Optional[str]) -> Tuple[int, str]:
         if fname_base is not None:
-            fname = fname_base+'.env'
+            fname = fname_base + _File_Ext.env
             fh = _os.open(_os.path.abspath(fname), _os.O_WRONLY | _os.O_CREAT | _os.O_TRUNC)
         else:
-            fh, fname = _mkstemp(suffix='.env')
+            fh, fname = _mkstemp(suffix = _File_Ext.env)
             fname_base = fname[:-4]
         return fh, fname_base
 
