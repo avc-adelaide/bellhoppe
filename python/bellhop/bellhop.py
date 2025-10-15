@@ -90,6 +90,7 @@ class Bellhop:
 
     @property
     def taskmap(self) -> Dict[Any, List[Any]]:
+        """Dictionary which maps tasks to execution functions and their parameters"""
         return {
             _Strings.arrivals:     ['A', self._load_arrivals, _File_Ext.arr],
             _Strings.eigenrays:    ['E', self._load_rays, _File_Ext.ray],
@@ -140,6 +141,7 @@ class Bellhop:
             )
 
     def _check_error(self, fname_base: str) -> Optional[str]:
+        """Extracts Bellhop error text from the .prt file"""
         try:
             err = ""
             fatal = False
@@ -154,15 +156,21 @@ class Bellhop:
         return err if err != "" else None
 
     def _unlink(self, f: str) -> None:
+        """Delete file only if it exists"""
         try:
             _os.unlink(f)
         except FileNotFoundError:
             pass
 
     def _print(self, fh: int, s: str, newline: bool = True) -> None:
+        """Write a line of text with or w/o a newline char to the output file"""
         _os.write(fh, (s+'\n' if newline else s).encode())
 
     def _print_env_line(self, fh: int, data: Any, comment: str = "") -> None:
+        """Write a complete line to the .env file with a descriptive comment
+        
+        We do some char counting (well, padding and stripping) to ensure the code comments all start from the same char.
+        """
         data_str = data if isinstance(data,str) else f"{data}"
         comment_str = comment if isinstance(comment,str) else f"{comment}"
         line_str = (data_str + " " * self.env_comment_pad)[0:max(len(data_str),self.env_comment_pad)]
@@ -171,6 +179,7 @@ class Bellhop:
         self._print(fh,line_str)
 
     def _print_array(self, fh: int, a: Any, label: str = "", nn: Optional[int] = None) -> None:
+        """Print a 1D array to the .env file, prefixed by a count of the array length"""
         na = _np.size(a)
         if nn is None:
             nn = na
@@ -199,6 +208,14 @@ class Bellhop:
         return fh, fname_base
 
     def _create_env_file(self, env: Dict[str, Any], taskcode: str, fname_base: Optional[str] = None, debug: bool = False) -> str:
+        """Writes a complete .env file for specifying a Bellhop simulation
+        
+        :param env: environment dict
+        :param taskcode: task string which defines the computation to run
+        :param fname_base: filename base (without extension)
+        :param debug: boolean to activate diagnostic printing
+        :returns fname_base: filename base (no extension) of written file
+        """
 
         fh, fname_base = self._open_env_file(fname_base)
 
@@ -326,18 +343,21 @@ class Bellhop:
                 f.write(f"{depth[j,0]/1000} {depth[j,1]}\n")
 
     def _create_sbp_file(self, filename: str, dir: Any) -> None:
+        """Write data to sbp file"""
         with open(filename, 'wt') as f:
             f.write(str(dir.shape[0])+"\n")
             for j in range(dir.shape[0]):
                 f.write(f"{dir[j,0]}  {dir[j,1]}\n")
 
     def _create_refl_coeff_file(self, filename: str, rc: Any) -> None:
+        """Write data to brc/trc file"""
         with open(filename, 'wt') as f:
             f.write(str(rc.shape[0])+"\n")
             for j in range(rc.shape[0]):
                 f.write(f"{rc[j,0]}  {rc[j,1]}  {rc[j,2]}\n")
 
     def _create_ssp_quad_file(self, filename: str, svp: _pd.DataFrame) -> None:
+        """Write 2D SSP data to file"""
         with open(filename, 'wt') as f:
             f.write(str(svp.shape[1])+"\n") # number of SSP points
             for j in range(svp.shape[1]):
@@ -347,6 +367,7 @@ class Bellhop:
                     f.write("%0.6f%c" % (svp.iloc[k,j], '\n' if j == svp.shape[1]-1 else ' '))
 
     def _readf(self, f: IO[str], types: Tuple[Any, ...], dtype: type = str) -> Tuple[Any, ...]:
+        """Wrapper around readline() to read in a 1D array of data"""
         p = _re.split(r' +', f.readline().strip())
         for j in range(len(p)):
             if len(types) > j:
@@ -356,6 +377,7 @@ class Bellhop:
         return tuple(p)
 
     def _load_arrivals(self, fname_base: str, ext: str) -> _pd.DataFrame:
+        """Read Bellhop arrivals file and parse data into a high level data structure"""
         with open(fname_base+ext, 'rt') as f:
             hdr = f.readline()
             if hdr.find('2D') >= 0:
@@ -406,6 +428,7 @@ class Bellhop:
 
 
     def _load_shd(self, fname_base: str, ext: str) -> _pd.DataFrame:
+        """Read Bellhop shd file and parse data into a high level data structure"""
         with open(fname_base+ext, 'rb') as f:
             recl, = _unpack('i', f.read(4))
             # _title = str(f.read(80))
@@ -431,6 +454,7 @@ class Bellhop:
 
 
     def _load_rays(self, fname_base: str, ext: str) -> _pd.DataFrame:
+        """Read Bellhop rays file and parse data into a high level data structure"""
         with open(fname_base+ext, 'rt') as f:
             f.readline()
             f.readline()
