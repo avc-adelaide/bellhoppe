@@ -184,6 +184,12 @@ class Bellhop:
             self._print(fh, " /")
 
     def _open_env_file(self, fname_base: Optional[str]) -> Tuple[int, str]:
+        """Opens a file for writing the .env file, in a temp location if necessary.
+        
+        :param fname_base: filename base (no extension) for writing -- if not specified a temporary file (and location) will be used instead
+        :returns fh: file descriptor (int)
+        :returns fname_base: filename base (str)
+        """
         if fname_base is not None:
             fname = fname_base + _File_Ext.env
             fh = _os.open(_os.path.abspath(fname), _os.O_WRONLY | _os.O_CREAT | _os.O_TRUNC)
