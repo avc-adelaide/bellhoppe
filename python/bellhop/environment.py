@@ -89,6 +89,7 @@ class EnvironmentConfig:
     box_depth: Optional[float] = None
     box_range: Optional[float] = None
     grid: str = 'default'
+    interference_mode: str = None
 
     # Attenuation parameters
     volume_attenuation: str = 'none'
@@ -108,6 +109,7 @@ class EnvironmentConfig:
         self._validate_beam_types()
         self._validate_attenuation_options()
         self._validate_volume_attenuation()
+        self._validate_interference_mode()
 
     def _validate_interpolation_types(self) -> None:
         """Validate interpolation type options."""
@@ -164,6 +166,13 @@ class EnvironmentConfig:
             raise ValueError(f"Invalid volume_attenuation: {self.volume_attenuation}. "
                            f"Must be one of: {sorted(valid_volatt)}")
 
+    def _validate_interference_mode(self) -> None:
+        """Validate transmission loss mode."""
+        valid_modes = set(_Maps.mode_rev.keys())
+        if self.interference_mode not in valid_modes:
+            raise ValueError(f'Invalid transmission loss mode: {self.interference_mode}. '
+                            f'Must be one of: {sorted(valid_modes)}')
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert dataclass to dictionary format for backward compatibility."""
         result = {}
@@ -194,25 +203,6 @@ def new() -> Dict[str, Any]:
     """
     config = EnvironmentConfig()
     return config.to_dict()
-
-
-def _validate_transmission_loss_mode(mode: str) -> None:
-    """Validate transmission loss mode using predefined options.
-
-    Parameters
-    ----------
-    mode : str
-        The transmission loss mode to validate.
-
-    Raises
-    ------
-    ValueError
-        If the mode is not valid.
-    """
-    valid_modes = {_Strings.coherent, _Strings.incoherent, _Strings.semicoherent}
-    if mode not in valid_modes:
-        raise ValueError(f'Invalid transmission loss mode: {mode}. '
-                        f'Must be one of: {sorted(valid_modes)}')
 
 
 def _validate_source_type(source_type: str) -> None:

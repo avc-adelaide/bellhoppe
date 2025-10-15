@@ -20,7 +20,6 @@ from typing import Any, Dict, List, Optional
 import numpy as _np
 
 from bellhop.constants import _Strings
-from bellhop.environment import _validate_transmission_loss_mode
 
 # this format to explicitly mark the functions as public:
 from bellhop.create import create_env2d as create_env2d
@@ -112,7 +111,7 @@ def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional
     model = _select_model(env, _Strings.rays, model, debug)
     return model.run(env, _Strings.rays, debug, fname_base)
 
-def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mode: str = _Strings.coherent, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mode: Optional[str] = None, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute transmission loss from a given transmitter to all receviers.
 
     :param env: environment definition
@@ -128,8 +127,8 @@ def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mo
     >>> tloss = bh.compute_transmission_loss(env, mode=bh.incoherent)
     >>> bh.plot_transmission_loss(tloss, width=1000)
     """
+    mode = env.interference_mode or _Strings.coherent
     env = check_env2d(env)
-    _validate_transmission_loss_mode(mode)
     if _np.size(env['source_depth']) > 1:
         env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]

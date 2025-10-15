@@ -2,14 +2,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 
-@dataclass(frozen=True)
-class Defaults:
-    """Dataclass of hard-coded defaults used throughout the Bellhop interface."""
-    beam_angle_halfspace: float = field(default=90.0, metadata={"units": "deg"})
-    beam_angle_fullspace: float = field(default=180.0, metadata={"units": "deg"})
-    exe: str = field(default="bellhop.exe", metadata={"desc": "Executable name"})
-    env_comment_pad: int = field(default=50, metadata={"desc": "Number of characters used before the comment in the constructed .env files."})
-
 
 class _File_Ext:
     """Strings to define file extensions"""
@@ -198,6 +190,11 @@ class _Maps:
         "I": _Strings.tl_incoherent,
         "S": _Strings.tl_semicoherent,
     }
+    mode = {
+        "C": _Strings.coherent,
+        "I": _Strings.incoherent,
+        "S": _Strings.semicoherent,
+    }
 
     # reverse maps
     interp_rev = {v: k for k, v in interp.items()}
@@ -212,3 +209,14 @@ class _Maps:
     beam_rev = {v: k for k, v in beam.items()}
     single_beam_rev = {v: k for k, v in single_beam.items()}
     task_rev = {v: k for k, v in task.items()}
+    mode_rev = {v: k for k, v in mode.items()}
+
+@dataclass(frozen=True)
+class Defaults:
+    """Dataclass of hard-coded defaults used throughout the Bellhop interface."""
+    beam_angle_halfspace: float = field(default=90.0, metadata={"units": "deg"})
+    beam_angle_fullspace: float = field(default=180.0, metadata={"units": "deg"})
+    exe: str = field(default="bellhop.exe", metadata={"desc": "Executable name"})
+    env_comment_pad: int = field(default=50, metadata={"desc": "Number of characters used before the comment in the constructed .env files."})
+    interference_mode: str = field(default=_Strings.coherent, metadata={"desc": "Mode of interference when calculating transmission loss"})
+
