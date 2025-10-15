@@ -14,6 +14,7 @@ This is the Python API documentation for BELLHOP, an underwater acoustic propaga
    readers
    plot
    api
+   internals
 
 
 Indices and tables
