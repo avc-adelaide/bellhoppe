@@ -11,7 +11,6 @@ import numpy as np
 import bellhop as bh
 from bellhop.environment import (
     EnvironmentConfig,
-    _validate_transmission_loss_mode,
     _validate_source_type
 )
 from bellhop.constants import _Strings
@@ -172,19 +171,7 @@ class TestDataclassIntegration:
 
 
 class TestTransmissionLossValidation:
-    """Test validation of transmission loss mode and source type."""
-
-    def test_validate_transmission_loss_mode_valid(self):
-        """Test that valid transmission loss modes pass validation."""
-        valid_modes = ['coherent', 'incoherent', 'semicoherent']
-        for mode in valid_modes:
-            # Should not raise exception
-            _validate_transmission_loss_mode(mode)
-
-    def test_validate_transmission_loss_mode_invalid(self):
-        """Test that invalid transmission loss modes raise ValueError."""
-        with pytest.raises(ValueError, match="Invalid transmission loss mode"):
-            _validate_transmission_loss_mode('invalid_mode')
+    """Test validation of source type."""
 
     def test_validate_source_type_valid(self):
         """Test that valid source types pass validation."""

@@ -127,7 +127,9 @@ def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mo
     >>> tloss = bh.compute_transmission_loss(env, mode=bh.incoherent)
     >>> bh.plot_transmission_loss(tloss, width=1000)
     """
-    mode = env.interference_mode or _Strings.coherent
+    mode = mode or env.get("interference_mode") or _Strings.coherent
+    if debug:
+        print(f"  {mode=}")
     env = check_env2d(env)
     if _np.size(env['source_depth']) > 1:
         env = env.copy()

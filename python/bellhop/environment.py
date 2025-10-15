@@ -89,7 +89,7 @@ class EnvironmentConfig:
     box_depth: Optional[float] = None
     box_range: Optional[float] = None
     grid: str = 'default'
-    interference_mode: str = None
+    interference_mode: Optional[str] = None
 
     # Attenuation parameters
     volume_attenuation: str = 'none'
