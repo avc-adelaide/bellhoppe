@@ -169,7 +169,7 @@ class EnvironmentConfig:
     def _validate_interference_mode(self) -> None:
         """Validate transmission loss mode."""
         valid_modes = set(_Maps.mode_rev.keys())
-        if self.interference_mode not in valid_modes:
+        if self.interference_mode and self.interference_mode not in valid_modes:
             raise ValueError(f'Invalid transmission loss mode: {self.interference_mode}. '
                             f'Must be one of: {sorted(valid_modes)}')
 
