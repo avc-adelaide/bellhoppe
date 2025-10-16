@@ -46,9 +46,11 @@ CONTAINS
     IF ( ThreeD ) THEN
        Title( 1 : 11 ) = 'BELLHOP3D- '
        READ(  ENVFile, * ) Title( 12 : 80 )
+       CALL StripCR( Title )
     ELSE
        Title( 1 :  9 ) = 'BELLHOP- '
        READ(  ENVFile, * ) Title( 10 : 80 )
+       CALL StripCR( Title )
     END IF
 
     WRITE( PRTFile, * ) Title
@@ -96,6 +98,7 @@ CONTAINS
     ! *** Bottom BC ***
     Bdry%Bot%HS%Opt = '  '   ! initialize to blanks
     READ(  ENVFile, * ) Bdry%Bot%HS%Opt, Sigma
+    CALL StripCR( Bdry%Bot%HS%Opt )
     WRITE( PRTFile, * )
     WRITE( PRTFile, FMT = "(33X, '( RMS roughness = ', G10.3, ' )' )" ) Sigma
 
@@ -199,6 +202,7 @@ CONTAINS
        CASE ( 'G', 'g' , '^', 'B', 'b', 'S' )   ! geometric hat beams, geometric Gaussian beams, or simple Gaussian beams
        CASE ( 'R', 'C' )   ! Cerveny Gaussian Beams; read extra lines to specify the beam options
           READ(  ENVFile, * ) Beam%Type( 2 : 3 ), Beam%epsMultiplier, Beam%rLoop
+          CALL StripCR( Beam%Type )
           WRITE( PRTFile, * )
           WRITE( PRTFile, * )
           WRITE( PRTFile, * ) 'Type of beam = ', Beam%Type( 1 : 1 )
@@ -224,6 +228,7 @@ CONTAINS
           Beam%iBeamWindow = 4
           Beam%Component = 'P'
           READ(  ENVFile, * ) Beam%Nimage, Beam%iBeamWindow, Beam%Component
+          CALL StripCR( Beam%Component )
           WRITE( PRTFile, * )
           WRITE( PRTFile, * ) 'Number of images, Nimage  = ', Beam%Nimage
           WRITE( PRTFile, * ) 'Beam windowing parameter  = ', Beam%iBeamWindow
@@ -250,6 +255,7 @@ CONTAINS
 
     TopOpt = '      '   ! initialize to blanks
     READ(  ENVFile, * ) TopOpt
+    CALL StripCR( TopOpt )
     WRITE( PRTFile, * )
 
     SSP%Type  = TopOpt( 1 : 1 )
@@ -366,6 +372,7 @@ CONTAINS
     CHARACTER (LEN=10), INTENT( OUT ) :: PlotType
 
     READ(  ENVFile, * ) RunType
+    CALL StripCR( RunType )
     WRITE( PRTFile, * )
 
     SELECT CASE ( RunType( 1 : 1 ) )
@@ -653,5 +660,25 @@ CONTAINS
     END SELECT
 
   END SUBROUTINE OpenOutputFiles
+
+  ! **********************************************************************!
+
+  SUBROUTINE StripCR( string )
+    !! Strips carriage return (CR) characters from strings
+    !! This handles files with Windows-style CRLF line endings
+    
+    CHARACTER(LEN=*), INTENT(INOUT) :: string
+    INTEGER :: i, length
+    
+    length = LEN(string)
+    
+    ! Replace carriage return (ASCII 13) with space
+    DO i = 1, length
+       IF ( ICHAR(string(i:i)) == 13 ) THEN
+          string(i:i) = ' '
+       END IF
+    END DO
+    
+  END SUBROUTINE StripCR
 
 END MODULE ReadEnvironmentBell

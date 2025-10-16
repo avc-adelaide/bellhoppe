@@ -71,6 +71,7 @@ CONTAINS
        END IF
 
        READ(  ATIFile, * ) atiType
+       CALL StripCR( atiType )
        SELECT CASE ( atiType )
        CASE ( 'R' )
           WRITE( PRTFile, * ) 'Regular grid for a 3D run'
@@ -211,6 +212,7 @@ CONTAINS
        END IF
 
        READ( BTYFile, * ) btyType
+       CALL StripCR( btyType )
 
        SELECT CASE ( btyType )
        CASE ( 'R' )
@@ -716,6 +718,26 @@ CONTAINS
 !!$    write( *, * ) Bdry( :, : )%kappa_yy
 
   END SUBROUTINE ComputeBdryTangentNormal
+
+  ! **********************************************************************!
+
+  SUBROUTINE StripCR( string )
+    !! Strips carriage return (CR) characters from strings
+    !! This handles files with Windows-style CRLF line endings
+    
+    CHARACTER(LEN=*), INTENT(INOUT) :: string
+    INTEGER :: i, length
+    
+    length = LEN(string)
+    
+    ! Replace carriage return (ASCII 13) with space
+    DO i = 1, length
+       IF ( ICHAR(string(i:i)) == 13 ) THEN
+          string(i:i) = ' '
+       END IF
+    END DO
+    
+  END SUBROUTINE StripCR
 
 END MODULE bdry3Dmod
 
