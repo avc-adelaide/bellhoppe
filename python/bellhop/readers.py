@@ -1,4 +1,7 @@
 
+import os
+import re
+
 from typing import Any, Dict, Optional, Tuple, Union, TextIO, List, cast
 from numpy.typing import NDArray
 
@@ -25,6 +28,77 @@ def _parse_line(line: str) -> list[str]:
     """Parse a line, removing comments, /, and whitespace, and return the parts in a list"""
     line = line.split("!", 1)[0].split('/', 1)[0].strip()
     return line.split()
+
+def _parse_quoted_string(line: str) -> str:
+    """Extract string from within quotes
+
+    Sometimes (why??) the leading quote was being stripped, so we also try to catch
+    this case with the regexp, stripping only a trailing '.
+    """
+    mtch = re.search(r"'([^']*)'", line)
+    mtch2 = re.search(r"([^']*)'$", line)
+    return mtch.group(1) if mtch else mtch2.group(1) if mtch2 else line.strip()
+
+def _parse_vector(f: Any, dtype: type = float) -> Tuple[Any, int]:
+    """Parse a vector that starts with count then values, ending with '/'"""
+    line = _read_next_valid_line(f)
+
+    # First line is the count
+    linecount = int(_parse_line(line)[0])
+
+    # Second line has the values
+    values_line = _read_next_valid_line(f)
+    parts = _parse_line(values_line)
+    val = [dtype(p) for p in parts]
+
+    valout = _np.array(val) if len(val) > 1 else val[0]
+    return valout, linecount
+
+def _read_ssp_points(f: Any) -> _pd.DataFrame:
+    """Read sound speed profile points until we find the bottom boundary line
+
+       Default values are according to 'EnvironmentalFile.htm'."""
+
+    ssp_depth: list[float] = []
+    ssp_speed: list[float] = []
+    ssp = dict(depth=0.0, speed=1500.0, speed_shear=0.0, density=1000.0, att=0.0, att_shear=0.0)
+
+    while True:
+        line = f.readline()
+        if not line:
+            raise EOFError("File ended during env file reading of SSP points.")
+        line = line.strip()
+        if not line: # completely empty line
+            continue
+        if line.startswith("'"): # Check if this is a bottom boundary line (starts with quote)
+            # This is the bottom boundary line, put it back
+            f.seek(f.tell() - len(line.encode()) - 1)
+            break
+
+        parts = (_parse_line(line) + [None] * 6)[0:6]
+        if parts[0] is None: # empty line after stripping comments
+            continue
+        ssp.update({
+            k: float(v) if v is not None else ssp[k] for k, v in zip(ssp.keys(), parts)
+        })
+        ssp_depth.append(ssp["depth"])
+        ssp_speed.append(ssp["speed"])
+        # TODO: add extra terms (but this needs adjustments elsewhere)
+
+    if len(ssp_speed) == 0:
+        raise ValueError("No SSP points were found in the env file.")
+    elif len(ssp_speed) == 1:
+        raise ValueError("Only one SSP point found but at least two required (top and bottom)")
+
+    df = _pd.DataFrame(ssp_speed,index=ssp_depth,columns=["speed"])
+    df.index.name = "depth"
+    return df
+
+def _opt_lookup(name: str, opt: str, _map: dict[str, _Strings]) -> Optional[str]:
+    opt_str = _map.get(opt)
+    if opt_str is None:
+        raise ValueError(f"{name} option {opt!r} not available")
+    return opt_str
 
 def _float(x: Any, scale: float = 1) -> Optional[float]:
     """Permissive float-enator"""
@@ -76,8 +150,6 @@ def read_env2d(fname: str) -> Dict[str, Any]:
     - Some advanced BELLHOP features may not be fully supported
     - Assumes standard 2D BELLHOP format (not BELLHOP3D)
     """
-    import os
-    import re
 
     # Add .env extension if not present
     if fname.endswith(_File_Ext.env):
@@ -91,77 +163,6 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
     # Initialize environment with default values
     env = bellhop.environment.new()
-
-    def _parse_quoted_string(line: str) -> str:
-        """Extract string from within quotes
-
-        Sometimes (why??) the leading quote was being stripped, so we also try to catch
-        this case with the regexp, stripping only a trailing '.
-        """
-        mtch = re.search(r"'([^']*)'", line)
-        mtch2 = re.search(r"([^']*)'$", line)
-        return mtch.group(1) if mtch else mtch2.group(1) if mtch2 else line.strip()
-
-    def _parse_vector(f: Any, dtype: type = float) -> Tuple[Any, int]:
-        """Parse a vector that starts with count then values, ending with '/'"""
-        line = _read_next_valid_line(f)
-
-        # First line is the count
-        linecount = int(_parse_line(line)[0])
-
-        # Second line has the values
-        values_line = _read_next_valid_line(f)
-        parts = _parse_line(values_line)
-        val = [dtype(p) for p in parts]
-
-        valout = _np.array(val) if len(val) > 1 else val[0]
-        return valout, linecount
-
-    def _read_ssp_points(f: Any) -> _pd.DataFrame:
-        """Read sound speed profile points until we find the bottom boundary line
-
-           Default values are according to 'EnvironmentalFile.htm'."""
-
-        ssp_depth: list[float] = []
-        ssp_speed: list[float] = []
-        ssp = dict(depth=0.0, speed=1500.0, speed_shear=0.0, density=1000.0, att=0.0, att_shear=0.0)
-
-        while True:
-            line = f.readline()
-            if not line:
-                raise EOFError("File ended during env file reading of SSP points.")
-            line = line.strip()
-            if not line: # completely empty line
-                continue
-            if line.startswith("'"): # Check if this is a bottom boundary line (starts with quote)
-                # This is the bottom boundary line, put it back
-                f.seek(f.tell() - len(line.encode()) - 1)
-                break
-
-            parts = (_parse_line(line) + [None] * 6)[0:6]
-            if parts[0] is None: # empty line after stripping comments
-                continue
-            ssp.update({
-                k: float(v) if v is not None else ssp[k] for k, v in zip(ssp.keys(), parts)
-            })
-            ssp_depth.append(ssp["depth"])
-            ssp_speed.append(ssp["speed"])
-            # TODO: add extra terms (but this needs adjustments elsewhere)
-
-        if len(ssp_speed) == 0:
-            raise ValueError("No SSP points were found in the env file.")
-        elif len(ssp_speed) == 1:
-            raise ValueError("Only one SSP point found but at least two required (top and bottom)")
-
-        df = _pd.DataFrame(ssp_speed,index=ssp_depth,columns=["speed"])
-        df.index.name = "depth"
-        return df
-
-    def _opt_lookup(name: str, opt: str, _map: dict[str, _Strings]) -> Optional[str]:
-        opt_str = _map.get(opt)
-        if opt_str is None:
-            raise ValueError(f"{name} option {opt!r} not available")
-        return opt_str
 
     # the proper start to the function:
     with open(fname, 'r') as f:
