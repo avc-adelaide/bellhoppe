@@ -7,6 +7,10 @@ class _File_Ext:
     """Strings to define file extensions"""
 
     arr = ".arr"
+    ati = ".ati"
+    bty = ".bty"
+    log = ".log"
+    sbp = ".sbp"
     shd = ".shd"
     prt = ".prt"
     ray = ".ray"

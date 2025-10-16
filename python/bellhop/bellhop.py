@@ -80,7 +80,7 @@ class Bellhop:
             raise RuntimeError(f'Bellhop did not generate expected output file ({task})')
 
         if debug:
-            print('[DEBUG] Bellhop working files: '+fname_base+'.*')
+            print('[DEBUG] Bellhop working files NOT deleted: '+fname_base+'.*')
         elif fname_flag:
             print('[CUSTOM FILES] Bellhop working files: '+fname_base+'.*')
         else:
@@ -102,15 +102,8 @@ class Bellhop:
 
     def _rm_files(self, fname_base: str) -> None:
         """Remove files that would be constructed as bellhop inputs or created as bellhop outputs."""
-        self._unlink(fname_base+'.bty')
-        self._unlink(fname_base+'.ssp')
-        self._unlink(fname_base+'.ati')
-        self._unlink(fname_base+'.sbp')
-        self._unlink(fname_base+'.prt')
-        self._unlink(fname_base+'.log')
-        self._unlink(fname_base+'.arr')
-        self._unlink(fname_base+'.ray')
-        self._unlink(fname_base+'.shd')
+        for ext in [v for k, v in vars(_File_Ext).items() if not k.startswith('_')]:
+            self._unlink(fname_base + ext)
 
     def _run_exe(self, fname_base: str,
                        args: str = "",
