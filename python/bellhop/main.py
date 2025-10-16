@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional
 
 import numpy as _np
 
-from bellhop.constants import _Strings
+from bellhop.constants import _Strings, Defaults
 
 # this format to explicitly mark the functions as public:
 from bellhop.create import create_env2d as create_env2d
@@ -127,7 +127,7 @@ def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mo
     >>> tloss = bh.compute_transmission_loss(env, mode=bh.incoherent)
     >>> bh.plot_transmission_loss(tloss, width=1000)
     """
-    mode = mode or env.get("interference_mode") or _Strings.coherent
+    mode = mode or env.get("interference_mode") or Defaults.interference_mode
     if debug:
         print(f"  {mode=}")
     env = check_env2d(env)

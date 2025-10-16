@@ -4,7 +4,12 @@ from enum import Enum
 
 
 class _File_Ext:
-    """Strings to define file extensions"""
+    """Strings to define file extensions.
+    
+    Using this class avoids typos in the source.
+    It is also used to loop through files to delete them
+    when needed before/after Bellhop execution.
+    """
 
     arr = ".arr"
     ati = ".ati"
