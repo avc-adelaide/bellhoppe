@@ -21,6 +21,8 @@ class _File_Ext:
     ray = ".ray"
     env = ".env"
     ssp = ".ssp"
+    brc = ".brc"
+    trc = ".trc"
 
 
 class _Strings(str, Enum):
