@@ -158,7 +158,7 @@ class EnvironmentReader:
             self.env["fg_depth"]       = float(fg_parts[3])
 
         # Line 4b: Boundary condition params
-        if env["surface_boundary_condition"] == _Strings.acousto_elastic:
+        if self.env["surface_boundary_condition"] == _Strings.acousto_elastic:
             surface_props_line = _read_next_valid_line(f)
             surface_props = _parse_line(surface_props_line) + [None] * 6
             self.env['surface_depth']             = _float(surface_props[0])
