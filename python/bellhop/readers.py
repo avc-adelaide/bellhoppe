@@ -108,6 +108,158 @@ def _int(x: Any) -> Optional[int]:
     """Permissive int-enator"""
     return None if x is None else int(x)
 
+class EnvironmentReader:
+    """Read and parse Bellhop environment files."""
+    
+    def __init__(self, fname: str):
+        """Initialize reader with filename.
+        
+        Args:
+            fname: Path to .env file (with or without extension)
+        """
+        self.fname_base, self.fname = _prepare_filename(fname, _File_Ext.env)
+        self.env: Dict[str, Any] = bellhop.environment.new()
+        self.f: Optional[TextIO] = None
+
+    def read(self):
+        """Do the reading..."""
+
+        env = self.env
+
+        # the proper start to the function:
+        with open(reader.fname, 'r') as f:
+            # Line 1: Title
+            title_line = _read_next_valid_line(f)
+            env['name'] = _parse_quoted_string(title_line)
+
+            # Line 2: Frequency
+            freq_line = _read_next_valid_line(f)
+            env['frequency'] = float(_parse_line(freq_line)[0])
+
+            # Line 3: NMedia (should be 1 for BELLHOP)
+            nmedia_line = _read_next_valid_line(f)
+            env["_num_media"] = int(_parse_line(nmedia_line)[0])
+
+            # Line 4: Top boundary options
+            topopt_line = _read_next_valid_line(f)
+            topopt = _parse_quoted_string(topopt_line) + "      "
+            env["soundspeed_interp"]          = _opt_lookup("Interpolation",          topopt[0], _Maps.interp)
+            env["surface_boundary_condition"] = _opt_lookup("Top boundary condition", topopt[1], _Maps.boundcond)
+            env["attenuation_units"]          = _opt_lookup("Attenuation units",      topopt[2], _Maps.attunits)
+            env["volume_attenuation"]         = _opt_lookup("Volume attenuation",     topopt[3], _Maps.volatt)
+            env["_altimetry"]                 = _opt_lookup("Altimetry",              topopt[4], _Maps.surface)
+            env["_single_beam"]               = _opt_lookup("Single beam",            topopt[5], _Maps.single_beam)
+            if env["_altimetry"] == _Strings.from_file:
+                env["surface"], env["surface_interp"] = read_ati(fname_base)
+
+            if env["volume_attenuation"] == _Strings.francois_garrison:
+                fg_spec_line = _read_next_valid_line(f)
+                fg_parts = _parse_line(fg_spec_line)
+                env["fg_salinity"]    = float(fg_parts[0])
+                env["fg_temperature"] = float(fg_parts[1])
+                env["fg_pH"]          = float(fg_parts[2])
+                env["fg_depth"]       = float(fg_parts[3])
+
+            if env["surface_boundary_condition"] == _Strings.acousto_elastic:
+                surface_props_line = _read_next_valid_line(f)
+                surface_props = _parse_line(surface_props_line) + [None] * 6
+                env['surface_depth']            = _float(surface_props[0])
+                env['surface_soundspeed']       = _float(surface_props[1])
+                env['surface_soundspeed_shear'] = _float(surface_props[2])
+                env['surface_density']          = _float(surface_props[3], scale=1000)  # convert from g/cm³ to kg/m³
+                env['surface_attenuation']       = _float(surface_props[4])
+                env['surface_attenuation_shear'] = _float(surface_props[5])
+
+            # SSP depth specification (format: npts sigma_z max_depth)
+            ssp_spec_line = _read_next_valid_line(f)
+            ssp_parts = _parse_line(ssp_spec_line) + [None] * 3
+            env['depth_npts']   = _int(ssp_parts[0])
+            env['depth_sigmaz'] = _float(ssp_parts[1])
+            env['depth_max']    = _float(ssp_parts[2])
+            env['depth'] = env['depth_max']
+
+            # Read SSP points
+            env['soundspeed'] = _read_ssp_points(f)
+            if env["soundspeed_interp"] == _Strings.quadrilateral:
+                env['soundspeed'] = read_ssp(fname_base, env['soundspeed'].index)
+
+            # Bottom boundary options
+            bottom_line = _read_next_valid_line(f)
+            bottom_parts = _parse_line(bottom_line) + [None] * 3
+            botopt = _parse_quoted_string(cast(str,bottom_parts[0])) + "  " # cast() => I promise this is a str :)
+            env["bottom_boundary_condition"] = _opt_lookup("Bottom boundary condition", botopt[0], _Maps.boundcond)
+            env["_bathymetry"]               = _opt_lookup("Bathymetry",                botopt[1], _Maps.bottom)
+            env['bottom_roughness']       = _float(bottom_parts[1])
+            env['bottom_beta']            = _float(bottom_parts[2])
+            env['bottom_transition_freq'] = _float(bottom_parts[3])
+            if env["_bathymetry"] == _Strings.from_file:
+                env["depth"], env["bottom_interp"] = read_bty(fname_base)
+
+            # Bottom properties (depth, sound_speed, density, absorption)
+            if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
+                bottom_props_line = _read_next_valid_line(f)
+                bottom_props = _parse_line(bottom_props_line) + [None] * 6
+                env['bottom_soundspeed'] = _float(bottom_props[1])
+                env['bottom_soundspeed_shear'] = _float(bottom_props[2])
+                env['bottom_density'] = _float(bottom_props[3], 1000)  # convert from g/cm³ to kg/m³
+                env['bottom_attenuation'] = _float(bottom_props[4])
+                env['bottom_attenuation_shear'] = _float(bottom_props[5])
+
+            # Source & receiver depths
+            env['source_depth'],   env['source_ndepth']   = _parse_vector(f)
+            env['receiver_depth'], env['receiver_ndepth'] = _parse_vector(f)
+
+            # Receiver ranges (in km, need to convert to m)
+            receiver_ranges, env['receiver_nrange'] = _parse_vector(f)
+            env['receiver_range'] = receiver_ranges * 1000  # convert km to m
+
+            # Task/run type (e.g., 'R', 'C', etc.)
+            task_line = _read_next_valid_line(f)
+            task_code = _parse_quoted_string(task_line) + "    "
+            env['task']        = _Maps.task.get(task_code[0])
+            env['beam_type']   = _Maps.beam.get(task_code[1])
+            env['_sbp_file']   = _Maps.sbp.get(task_code[2])
+            env['source_type'] = _Maps.source.get(task_code[3])
+            env['grid']        = _Maps.grid.get(task_code[4])
+
+            # Check for source directionality (indicated by * in task code)
+            if env["_sbp_file"] == _Strings.from_file:
+                env["source_directionality"] = read_sbp(fname_base)
+
+            # Number of beams
+            beam_num_line = _read_next_valid_line(f)
+            beam_num_parts = _parse_line(beam_num_line) + [None] * 1
+            env['beam_num'] = int(beam_num_parts[0] or 0)
+            env['single_beam_index'] = _int(beam_num_parts[1])
+
+            # Beam angles (beam_angle_min, beam_angle_max)
+            angles_line = _read_next_valid_line(f)
+            angle_parts = _parse_line(angles_line) + [None] * 2
+            env['beam_angle_min'] = _float(angle_parts[0])
+            env['beam_angle_max'] = _float(angle_parts[1])
+
+            # Ray tracing limits (step, max_depth, max_range) - last line
+            limits_line = _read_next_valid_line(f)
+            limits_parts = _parse_line(limits_line)
+            env['step_size'] = float(limits_parts[0])
+            env['box_depth'] = float(limits_parts[1])
+            env['box_range'] = float(limits_parts[2]) * 1000  # convert km to m
+
+        return env
+
+def _prepare_filename(fname: str, ext: str):
+    """Checks filename is present and file exists."""
+    if fname.endswith(ext):
+        nchar = len(ext)
+        fname_base = fname[:-nchar]
+    else:
+        fname_base = fname
+        fname = fname + ext
+
+    if not os.path.exists(fname):
+        raise FileNotFoundError(f"File not found: {fname}")
+
+
 def read_env2d(fname: str) -> Dict[str, Any]:
     """Read a 2D underwater environment from a BELLHOP .env file.
 
@@ -151,139 +303,11 @@ def read_env2d(fname: str) -> Dict[str, Any]:
     - Assumes standard 2D BELLHOP format (not BELLHOP3D)
     """
 
-    # Add .env extension if not present
-    if fname.endswith(_File_Ext.env):
-        fname_base = fname[:-4]
-    else:
-        fname_base = fname
-        fname = fname + _File_Ext.env
-
-    if not os.path.exists(fname):
-        raise FileNotFoundError(f"Environment file not found: {fname}")
-
-    # Initialize environment with default values
-    env = bellhop.environment.new()
-
-    # the proper start to the function:
-    with open(fname, 'r') as f:
-        # Line 1: Title
-        title_line = _read_next_valid_line(f)
-        env['name'] = _parse_quoted_string(title_line)
-
-        # Line 2: Frequency
-        freq_line = _read_next_valid_line(f)
-        env['frequency'] = float(_parse_line(freq_line)[0])
-
-        # Line 3: NMedia (should be 1 for BELLHOP)
-        nmedia_line = _read_next_valid_line(f)
-        env["_num_media"] = int(_parse_line(nmedia_line)[0])
-
-        # Line 4: Top boundary options
-        topopt_line = _read_next_valid_line(f)
-        topopt = _parse_quoted_string(topopt_line) + "      "
-        env["soundspeed_interp"]          = _opt_lookup("Interpolation",          topopt[0], _Maps.interp)
-        env["surface_boundary_condition"] = _opt_lookup("Top boundary condition", topopt[1], _Maps.boundcond)
-        env["attenuation_units"]          = _opt_lookup("Attenuation units",      topopt[2], _Maps.attunits)
-        env["volume_attenuation"]         = _opt_lookup("Volume attenuation",     topopt[3], _Maps.volatt)
-        env["_altimetry"]                 = _opt_lookup("Altimetry",              topopt[4], _Maps.surface)
-        env["_single_beam"]               = _opt_lookup("Single beam",            topopt[5], _Maps.single_beam)
-        if env["_altimetry"] == _Strings.from_file:
-            env["surface"], env["surface_interp"] = read_ati(fname_base)
-
-        if env["volume_attenuation"] == _Strings.francois_garrison:
-            fg_spec_line = _read_next_valid_line(f)
-            fg_parts = _parse_line(fg_spec_line)
-            env["fg_salinity"]    = float(fg_parts[0])
-            env["fg_temperature"] = float(fg_parts[1])
-            env["fg_pH"]          = float(fg_parts[2])
-            env["fg_depth"]       = float(fg_parts[3])
-
-        if env["surface_boundary_condition"] == _Strings.acousto_elastic:
-            surface_props_line = _read_next_valid_line(f)
-            surface_props = _parse_line(surface_props_line) + [None] * 6
-            env['surface_depth']            = _float(surface_props[0])
-            env['surface_soundspeed']       = _float(surface_props[1])
-            env['surface_soundspeed_shear'] = _float(surface_props[2])
-            env['surface_density']          = _float(surface_props[3], scale=1000)  # convert from g/cm³ to kg/m³
-            env['surface_attenuation']       = _float(surface_props[4])
-            env['surface_attenuation_shear'] = _float(surface_props[5])
-
-        # SSP depth specification (format: npts sigma_z max_depth)
-        ssp_spec_line = _read_next_valid_line(f)
-        ssp_parts = _parse_line(ssp_spec_line) + [None] * 3
-        env['depth_npts']   = _int(ssp_parts[0])
-        env['depth_sigmaz'] = _float(ssp_parts[1])
-        env['depth_max']    = _float(ssp_parts[2])
-        env['depth'] = env['depth_max']
-
-        # Read SSP points
-        env['soundspeed'] = _read_ssp_points(f)
-        if env["soundspeed_interp"] == _Strings.quadrilateral:
-            env['soundspeed'] = read_ssp(fname_base, env['soundspeed'].index)
-
-        # Bottom boundary options
-        bottom_line = _read_next_valid_line(f)
-        bottom_parts = _parse_line(bottom_line) + [None] * 3
-        botopt = _parse_quoted_string(cast(str,bottom_parts[0])) + "  " # cast() => I promise this is a str :)
-        env["bottom_boundary_condition"] = _opt_lookup("Bottom boundary condition", botopt[0], _Maps.boundcond)
-        env["_bathymetry"]               = _opt_lookup("Bathymetry",                botopt[1], _Maps.bottom)
-        env['bottom_roughness']       = _float(bottom_parts[1])
-        env['bottom_beta']            = _float(bottom_parts[2])
-        env['bottom_transition_freq'] = _float(bottom_parts[3])
-        if env["_bathymetry"] == _Strings.from_file:
-            env["depth"], env["bottom_interp"] = read_bty(fname_base)
-
-        # Bottom properties (depth, sound_speed, density, absorption)
-        if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
-            bottom_props_line = _read_next_valid_line(f)
-            bottom_props = _parse_line(bottom_props_line) + [None] * 6
-            env['bottom_soundspeed'] = _float(bottom_props[1])
-            env['bottom_soundspeed_shear'] = _float(bottom_props[2])
-            env['bottom_density'] = _float(bottom_props[3], 1000)  # convert from g/cm³ to kg/m³
-            env['bottom_attenuation'] = _float(bottom_props[4])
-            env['bottom_attenuation_shear'] = _float(bottom_props[5])
-
-        # Source & receiver depths
-        env['source_depth'],   env['source_ndepth']   = _parse_vector(f)
-        env['receiver_depth'], env['receiver_ndepth'] = _parse_vector(f)
-
-        # Receiver ranges (in km, need to convert to m)
-        receiver_ranges, env['receiver_nrange'] = _parse_vector(f)
-        env['receiver_range'] = receiver_ranges * 1000  # convert km to m
-
-        # Task/run type (e.g., 'R', 'C', etc.)
-        task_line = _read_next_valid_line(f)
-        task_code = _parse_quoted_string(task_line) + "    "
-        env['task']        = _Maps.task.get(task_code[0])
-        env['beam_type']   = _Maps.beam.get(task_code[1])
-        env['_sbp_file']   = _Maps.sbp.get(task_code[2])
-        env['source_type'] = _Maps.source.get(task_code[3])
-        env['grid']        = _Maps.grid.get(task_code[4])
-
-        # Check for source directionality (indicated by * in task code)
-        if env["_sbp_file"] == _Strings.from_file:
-            env["source_directionality"] = read_sbp(fname_base)
-
-        # Number of beams
-        beam_num_line = _read_next_valid_line(f)
-        beam_num_parts = _parse_line(beam_num_line) + [None] * 1
-        env['beam_num'] = int(beam_num_parts[0] or 0)
-        env['single_beam_index'] = _int(beam_num_parts[1])
-
-        # Beam angles (beam_angle_min, beam_angle_max)
-        angles_line = _read_next_valid_line(f)
-        angle_parts = _parse_line(angles_line) + [None] * 2
-        env['beam_angle_min'] = _float(angle_parts[0])
-        env['beam_angle_max'] = _float(angle_parts[1])
-
-        # Ray tracing limits (step, max_depth, max_range) - last line
-        limits_line = _read_next_valid_line(f)
-        limits_parts = _parse_line(limits_line)
-        env['step_size'] = float(limits_parts[0])
-        env['box_depth'] = float(limits_parts[1])
-        env['box_range'] = float(limits_parts[2]) * 1000  # convert km to m
-
+    reader = EnvironmentReader(fname)
+    env = reader.read()
     return env
+
+
 
 def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64], _pd.DataFrame]] = None) -> Union[Any, _pd.DataFrame]:
     """Read a 2D sound speed profile (.ssp) file used by BELLHOP.
