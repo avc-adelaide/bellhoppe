@@ -391,15 +391,13 @@ def read_ssp(fname: str,
     
     fname, _ = _prepare_filename(fname, _File_Ext.ssp, "SSP")
     with open(fname, 'r') as f:
-        # Read number of range profiles
-        nprofiles = int(_read_next_valid_line(f))
-
-        # Read range coordinates (in km)
+        nranges = int(_read_next_valid_line(f))
         range_line = _read_next_valid_line(f)
         ranges = _np.array([float(x) for x in _parse_line(range_line)])
+        ranges_m = ranges * 1000 # Convert ranges from km to meters (as expected by create_env2d)
 
-        if len(ranges) != nprofiles:
-            raise ValueError(f"Expected {nprofiles} range profiles, but found {len(ranges)} ranges")
+        if len(ranges) != nranges:
+            raise ValueError(f"Expected {nranges} ranges, but found {len(ranges)}")
 
         # Read sound speed data - read all remaining lines as a matrix
         ssp_data = []
@@ -409,36 +407,24 @@ def read_ssp(fname: str,
             line = line.strip()
             if line:  # Skip empty lines
                 values = [float(x) for x in line.split()]
-                if len(values) != nprofiles:
-                    raise ValueError(f"SSP line {line_num} has {len(values)} values, expected {nprofiles}")
+                if len(values) != nranges:
+                    raise ValueError(f"SSP line {line_num} has {len(values)} range values, expected {nranges}")
                 ssp_data.append(values)
 
         ssp_array = _np.array(ssp_data)
 
-        if ssp_array.size == 0:
-            raise ValueError("No sound speed data found in file")
-
-        if nprofiles == 1:
-            # Single profile - return as [depth, soundspeed] pairs for backward compatibility
-            # Create depth values - linearly spaced from 0 to number of depth points
+        # Create depth indices (actual depths would normally come from associated .env file)
+        if depths is None:
             ndepths = ssp_array.shape[0]
-            depths = _np.linspace(0, ndepths-1, ndepths, dtype=float)
-            return _np.column_stack([depths, ssp_array.flatten()])
-        else:
-            # Multiple ranges - return as pandas DataFrame for range-dependent modeling
-            # Convert ranges from km to meters (as expected by create_env2d)
-            ranges_m = ranges * 1000
+            depths = _np.arange(ndepths, dtype=float)
 
-            # Create depth indices (actual depths would come from associated .env file)
-            if depths is None:
-                ndepths = ssp_array.shape[0]
-                depths = _np.arange(ndepths, dtype=float)
+        if ssp_array.shape[0] != ndepths:
+            raise ValueError("Wrong number of depths found in sound speed data file"
+                             f" (expected {ndepths}, found {ssp_array.shape[0]})")
 
-            # Create DataFrame with ranges as columns and depths as index
-            # ssp_array is [ndepths, nprofiles] which is the correct orientation
-            df = _pd.DataFrame(ssp_array, index=depths, columns=ranges_m)
-            df.index.name = "depth"
-            return df
+        df = _pd.DataFrame(ssp_array, index=depths, columns=ranges_m)
+        df.index.name = "depth"
+        return df
 
 def read_bty(fname: str) -> Tuple[NDArray[_np.float64], str]:
     """Read a bathymetry file used by Bellhop."""
@@ -489,14 +475,9 @@ def read_ati_bty(fname: str) -> Tuple[NDArray[_np.float64], str]:
     with open(fname, 'r') as f:
         # Read interpolation type (usually 'L' or 'C')
         interp_type = _read_next_valid_line(f).strip("'\"")
-
-        # Read number of points
         npoints = int(_read_next_valid_line(f))
-
-        # Read range,depth pairs
         ranges = []
         depths = []
-
         for i in range(npoints):
             try:
                 line = _read_next_valid_line(f)
