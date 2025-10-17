@@ -127,7 +127,7 @@ class EnvironmentReader:
         env = self.env
 
         # the proper start to the function:
-        with open(reader.fname, 'r') as f:
+        with open(self.fname, 'r') as f:
             # Line 1: Title
             title_line = _read_next_valid_line(f)
             env['name'] = _parse_quoted_string(title_line)
@@ -150,7 +150,7 @@ class EnvironmentReader:
             env["_altimetry"]                 = _opt_lookup("Altimetry",              topopt[4], _Maps.surface)
             env["_single_beam"]               = _opt_lookup("Single beam",            topopt[5], _Maps.single_beam)
             if env["_altimetry"] == _Strings.from_file:
-                env["surface"], env["surface_interp"] = read_ati(fname_base)
+                env["surface"], env["surface_interp"] = read_ati(self.fname_base)
 
             if env["volume_attenuation"] == _Strings.francois_garrison:
                 fg_spec_line = _read_next_valid_line(f)
@@ -181,7 +181,7 @@ class EnvironmentReader:
             # Read SSP points
             env['soundspeed'] = _read_ssp_points(f)
             if env["soundspeed_interp"] == _Strings.quadrilateral:
-                env['soundspeed'] = read_ssp(fname_base, env['soundspeed'].index)
+                env['soundspeed'] = read_ssp(self.fname_base, env['soundspeed'].index)
 
             # Bottom boundary options
             bottom_line = _read_next_valid_line(f)
@@ -193,7 +193,7 @@ class EnvironmentReader:
             env['bottom_beta']            = _float(bottom_parts[2])
             env['bottom_transition_freq'] = _float(bottom_parts[3])
             if env["_bathymetry"] == _Strings.from_file:
-                env["depth"], env["bottom_interp"] = read_bty(fname_base)
+                env["depth"], env["bottom_interp"] = read_bty(self.fname_base)
 
             # Bottom properties (depth, sound_speed, density, absorption)
             if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
@@ -224,7 +224,7 @@ class EnvironmentReader:
 
             # Check for source directionality (indicated by * in task code)
             if env["_sbp_file"] == _Strings.from_file:
-                env["source_directionality"] = read_sbp(fname_base)
+                env["source_directionality"] = read_sbp(self.fname_base)
 
             # Number of beams
             beam_num_line = _read_next_valid_line(f)
