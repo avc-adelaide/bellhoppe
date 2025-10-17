@@ -117,11 +117,11 @@ class EnvironmentReader:
         Args:
             fname: Path to .env file (with or without extension)
         """
-        self.fname_base, self.fname = _prepare_filename(fname, _File_Ext.env)
+        self.fname, self.fname_base = _prepare_filename(fname, _File_Ext.env)
         self.env: Dict[str, Any] = bellhop.environment.new()
         self.f: Optional[TextIO] = None
 
-    def read(self):
+    def read(self) -> Dict[str, Any]:
         """Do the reading..."""
 
         env = self.env
@@ -247,7 +247,7 @@ class EnvironmentReader:
 
         return env
 
-def _prepare_filename(fname: str, ext: str):
+def _prepare_filename(fname: str, ext: str) -> Tuple[str,str]:
     """Checks filename is present and file exists."""
     if fname.endswith(ext):
         nchar = len(ext)
