@@ -412,13 +412,13 @@ def read_ssp(fname: str,
                 ssp_data.append(values)
 
         ssp_array = _np.array(ssp_data)
+        ndepths = ssp_array.shape[0]
 
         # Create depth indices (actual depths would normally come from associated .env file)
         if depths is None:
-            ndepths = ssp_array.shape[0]
             depths = _np.arange(ndepths, dtype=float)
 
-        if ssp_array.shape[0] != ndepths:
+        if len(depths) != ndepths:
             raise ValueError("Wrong number of depths found in sound speed data file"
                              f" (expected {ndepths}, found {ssp_array.shape[0]})")
 
