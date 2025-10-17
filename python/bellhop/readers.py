@@ -109,7 +109,15 @@ def _int(x: Any) -> Optional[int]:
     return None if x is None else int(x)
 
 class EnvironmentReader:
-    """Read and parse Bellhop environment files."""
+    """Read and parse Bellhop environment files.
+    
+    Although this class is only used for one task,
+    the use of a class provides the clearest code interface compared
+    to nested functions, which either implicitly set
+    dict parameters, or have many repeated and superfluous
+    arguments as dicts are passed in and returned at
+    each stage.
+    """
     
     def __init__(self, fname: str):
         """Initialize reader with filename.
@@ -120,8 +128,8 @@ class EnvironmentReader:
         self.fname, self.fname_base = _prepare_filename(fname, _File_Ext.env)
         self.env: Dict[str, Any] = bellhop.environment.new()
 
-    def _read_header(self, f) -> None:
-        """Read env header"""
+    def _read_header(self, f: TextIO) -> None:
+        """Read environment file header"""
 
         # Line 1: Title
         title_line = _read_next_valid_line(f)
@@ -133,8 +141,8 @@ class EnvironmentReader:
         nmedia_line = _read_next_valid_line(f)
         self.env["_num_media"] = int(_parse_line(nmedia_line)[0])
 
-    def _read_top_boundary(self, f) -> None:
-        """Read top boundary options (multiple lines)"""
+    def _read_top_boundary(self, f: TextIO) -> None:
+        """Read environment file top boundary options (multiple lines)"""
 
         # Line 4: Top boundary options
         topopt_line = _read_next_valid_line(f)
@@ -168,47 +176,55 @@ class EnvironmentReader:
             self.env['surface_attenuation']       = _float(surface_props[4])
             self.env['surface_attenuation_shear'] = _float(surface_props[5])
 
+    def _read_sound_speed_profile(self, f: TextIO) -> None:
+        """Read environment file sound speed profile"""
+
+        # SSP depth specification (format: npts sigma_z max_depth)
+        ssp_spec_line = _read_next_valid_line(f)
+        ssp_parts = _parse_line(ssp_spec_line) + [None] * 3
+        self.env['depth_npts']   = _int(ssp_parts[0])
+        self.env['depth_sigmaz'] = _float(ssp_parts[1])
+        self.env['depth_max']    = _float(ssp_parts[2])
+        self.env['depth'] = self.env['depth_max']
+
+        # Read SSP points
+        self.env['soundspeed'] = _read_ssp_points(f)
+        if self.env["soundspeed_interp"] == _Strings.quadrilateral:
+            self.env['soundspeed'] = read_ssp(self.fname_base, self.env['soundspeed'].index)
+
+    def _read_bottom_boundary(self, f: TextIO) -> None:
+        """Read environment file bottom boundary condition"""
+
+        # Bottom boundary options
+        bottom_line = _read_next_valid_line(f)
+        bottom_parts = _parse_line(bottom_line) + [None] * 3
+        botopt = _parse_quoted_string(cast(str,bottom_parts[0])) + "  " # cast() => I promise this is a str :)
+        self.env["bottom_boundary_condition"] = _opt_lookup("Bottom boundary condition", botopt[0], _Maps.boundcond)
+        self.env["_bathymetry"]               = _opt_lookup("Bathymetry",                botopt[1], _Maps.bottom)
+        self.env['bottom_roughness']       = _float(bottom_parts[1])
+        self.env['bottom_beta']            = _float(bottom_parts[2])
+        self.env['bottom_transition_freq'] = _float(bottom_parts[3])
+        if self.env["_bathymetry"] == _Strings.from_file:
+            self.env["depth"], self.env["bottom_interp"] = read_bty(self.fname_base)
+
+        # Bottom properties (depth, sound_speed, density, absorption)
+        if self.env["bottom_boundary_condition"] == _Strings.acousto_elastic:
+            bottom_props_line = _read_next_valid_line(f)
+            bottom_props = _parse_line(bottom_props_line) + [None] * 6
+            self.env['bottom_soundspeed'] = _float(bottom_props[1])
+            self.env['bottom_soundspeed_shear'] = _float(bottom_props[2])
+            self.env['bottom_density'] = _float(bottom_props[3], 1000)  # convert from g/cm³ to kg/m³
+            self.env['bottom_attenuation'] = _float(bottom_props[4])
+            self.env['bottom_attenuation_shear'] = _float(bottom_props[5])
+
     def read(self) -> Dict[str, Any]:
         """Do the reading..."""
         env = self.env
         with open(self.fname, 'r') as f:
             self._read_header(f)
             self._read_top_boundary(f)
-
-            # SSP depth specification (format: npts sigma_z max_depth)
-            ssp_spec_line = _read_next_valid_line(f)
-            ssp_parts = _parse_line(ssp_spec_line) + [None] * 3
-            env['depth_npts']   = _int(ssp_parts[0])
-            env['depth_sigmaz'] = _float(ssp_parts[1])
-            env['depth_max']    = _float(ssp_parts[2])
-            env['depth'] = env['depth_max']
-
-            # Read SSP points
-            env['soundspeed'] = _read_ssp_points(f)
-            if env["soundspeed_interp"] == _Strings.quadrilateral:
-                env['soundspeed'] = read_ssp(self.fname_base, env['soundspeed'].index)
-
-            # Bottom boundary options
-            bottom_line = _read_next_valid_line(f)
-            bottom_parts = _parse_line(bottom_line) + [None] * 3
-            botopt = _parse_quoted_string(cast(str,bottom_parts[0])) + "  " # cast() => I promise this is a str :)
-            env["bottom_boundary_condition"] = _opt_lookup("Bottom boundary condition", botopt[0], _Maps.boundcond)
-            env["_bathymetry"]               = _opt_lookup("Bathymetry",                botopt[1], _Maps.bottom)
-            env['bottom_roughness']       = _float(bottom_parts[1])
-            env['bottom_beta']            = _float(bottom_parts[2])
-            env['bottom_transition_freq'] = _float(bottom_parts[3])
-            if env["_bathymetry"] == _Strings.from_file:
-                env["depth"], env["bottom_interp"] = read_bty(self.fname_base)
-
-            # Bottom properties (depth, sound_speed, density, absorption)
-            if env["bottom_boundary_condition"] == _Strings.acousto_elastic:
-                bottom_props_line = _read_next_valid_line(f)
-                bottom_props = _parse_line(bottom_props_line) + [None] * 6
-                env['bottom_soundspeed'] = _float(bottom_props[1])
-                env['bottom_soundspeed_shear'] = _float(bottom_props[2])
-                env['bottom_density'] = _float(bottom_props[3], 1000)  # convert from g/cm³ to kg/m³
-                env['bottom_attenuation'] = _float(bottom_props[4])
-                env['bottom_attenuation_shear'] = _float(bottom_props[5])
+            self._read_sound_speed_profile(f)
+            self._read_bottom_boundary(f)
 
             # Source & receiver depths
             env['source_depth'],   env['source_ndepth']   = _parse_vector(f)
