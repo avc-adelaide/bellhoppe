@@ -121,6 +121,21 @@ class EnvironmentReader:
         self.env: Dict[str, Any] = bellhop.environment.new()
         self.f: Optional[TextIO] = None
 
+    def _read_header(self) -> None:
+        """Read env header"""
+
+        # Line 1: Title
+        title_line = _read_next_valid_line(self.f)
+        self.env['name'] = _parse_quoted_string(title_line)
+
+        # Line 2: Frequency
+        freq_line = _read_next_valid_line(self.f)
+        self.env['frequency'] = float(_parse_line(freq_line)[0])
+
+        # Line 3: NMedia (should be 1 for BELLHOP)
+        nmedia_line = _read_next_valid_line(self.f)
+        self.env["_num_media"] = int(_parse_line(nmedia_line)[0])
+
     def read(self) -> Dict[str, Any]:
         """Do the reading..."""
 
@@ -128,18 +143,9 @@ class EnvironmentReader:
 
         # the proper start to the function:
         with open(self.fname, 'r') as f:
-            # Line 1: Title
-            title_line = _read_next_valid_line(f)
-            env['name'] = _parse_quoted_string(title_line)
 
-            # Line 2: Frequency
-            freq_line = _read_next_valid_line(f)
-            env['frequency'] = float(_parse_line(freq_line)[0])
-
-            # Line 3: NMedia (should be 1 for BELLHOP)
-            nmedia_line = _read_next_valid_line(f)
-            env["_num_media"] = int(_parse_line(nmedia_line)[0])
-
+            self.f = f
+            self._read_header()
             # Line 4: Top boundary options
             topopt_line = _read_next_valid_line(f)
             topopt = _parse_quoted_string(topopt_line) + "      "
