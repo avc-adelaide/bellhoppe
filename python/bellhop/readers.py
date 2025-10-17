@@ -108,6 +108,47 @@ def _int(x: Any) -> Optional[int]:
     """Permissive int-enator"""
     return None if x is None else int(x)
 
+def read_env2d(fname: str) -> Dict[str, Any]:
+    """Read a 2D underwater environment from a BELLHOP .env file.
+
+    This function parses a BELLHOP .env file and returns a Python data structure
+    that is compatible with create_env2d(). This enables round-trip testing and
+    compatibility between file-based and programmatic environment definitions.
+
+    :param fname: path to .env file (with or without .env extension)
+
+    :returns: environment dictionary compatible with create_env2d()
+
+    **Unit conversions performed:**
+
+    - Receiver ranges: km → m
+    - Bottom density: g/cm³ → kg/m³
+    - All other units preserved as in ENV file
+
+    **Examples:**
+
+    >>> import bellhop as bh
+    >>> env = bh.read_env2d('examples/Munk/MunkB_ray.env')
+    >>> print(env['name'])
+    'Munk profile'
+    >>> print(env['frequency'])
+    50.0
+
+    >>> # Use with existing functions
+    >>> checked_env = bh.check_env2d(env)
+    >>> rays = bh.compute_rays(env)
+
+    >>> # Round-trip compatibility
+    >>> env_orig = bh.create_env2d(name="test", frequency=100)
+    >>> # ... write to file via BELLHOP ...
+    >>> env_read = bh.read_env2d("test.env")
+    >>> assert env_read['frequency'] == env_orig['frequency']
+
+    """
+
+    reader = EnvironmentReader(fname)
+    return reader.read()
+
 class EnvironmentReader:
     """Read and parse Bellhop environment files.
     
@@ -127,6 +168,17 @@ class EnvironmentReader:
         """
         self.fname, self.fname_base = _prepare_filename(fname, _File_Ext.env)
         self.env: Dict[str, Any] = bellhop.environment.new()
+
+    def read(self) -> Dict[str, Any]:
+        """Do the reading..."""
+        with open(self.fname, 'r') as f:
+            self._read_header(f)
+            self._read_top_boundary(f)
+            self._read_sound_speed_profile(f)
+            self._read_bottom_boundary(f)
+            self._read_sources_receivers_task(f)
+            self._read_beams_limits(f)
+        return self.env
 
     def _read_header(self, f: TextIO) -> None:
         """Read environment file header"""
@@ -179,7 +231,7 @@ class EnvironmentReader:
     def _read_sound_speed_profile(self, f: TextIO) -> None:
         """Read environment file sound speed profile"""
 
-        # SSP depth specification (format: npts sigma_z max_depth)
+        # SSP depth specification
         ssp_spec_line = _read_next_valid_line(f)
         ssp_parts = _parse_line(ssp_spec_line) + [None] * 3
         self.env['depth_npts']   = _int(ssp_parts[0])
@@ -187,7 +239,7 @@ class EnvironmentReader:
         self.env['depth_max']    = _float(ssp_parts[2])
         self.env['depth'] = self.env['depth_max']
 
-        # Read SSP points
+        # Read SSP points and from file if applicable
         self.env['soundspeed'] = _read_ssp_points(f)
         if self.env["soundspeed_interp"] == _Strings.quadrilateral:
             self.env['soundspeed'] = read_ssp(self.fname_base, self.env['soundspeed'].index)
@@ -217,56 +269,52 @@ class EnvironmentReader:
             self.env['bottom_attenuation'] = _float(bottom_props[4])
             self.env['bottom_attenuation_shear'] = _float(bottom_props[5])
 
-    def read(self) -> Dict[str, Any]:
-        """Do the reading..."""
-        env = self.env
-        with open(self.fname, 'r') as f:
-            self._read_header(f)
-            self._read_top_boundary(f)
-            self._read_sound_speed_profile(f)
-            self._read_bottom_boundary(f)
+    def _read_sources_receivers_task(self, f: TextIO) -> None:
+        """Read environment file sources, receivers, and task"""
+        
+        # Source & receiver depths
+        self.env['source_depth'],   self.env['source_ndepth']   = _parse_vector(f)
+        self.env['receiver_depth'], self.env['receiver_ndepth'] = _parse_vector(f)
 
-            # Source & receiver depths
-            env['source_depth'],   env['source_ndepth']   = _parse_vector(f)
-            env['receiver_depth'], env['receiver_ndepth'] = _parse_vector(f)
+        # Receiver ranges (in km, need to convert to m)
+        receiver_ranges, self.env['receiver_nrange'] = _parse_vector(f)
+        self.env['receiver_range'] = receiver_ranges * 1000  # convert km to m
 
-            # Receiver ranges (in km, need to convert to m)
-            receiver_ranges, env['receiver_nrange'] = _parse_vector(f)
-            env['receiver_range'] = receiver_ranges * 1000  # convert km to m
+        # Task/run type (e.g., 'R', 'C', etc.)
+        task_line = _read_next_valid_line(f)
+        task_code = _parse_quoted_string(task_line) + "    "
+        self.env['task']        = _Maps.task.get(task_code[0])
+        self.env['beam_type']   = _Maps.beam.get(task_code[1])
+        self.env['_sbp_file']   = _Maps.sbp.get(task_code[2])
+        self.env['source_type'] = _Maps.source.get(task_code[3])
+        self.env['grid']        = _Maps.grid.get(task_code[4])
 
-            # Task/run type (e.g., 'R', 'C', etc.)
-            task_line = _read_next_valid_line(f)
-            task_code = _parse_quoted_string(task_line) + "    "
-            env['task']        = _Maps.task.get(task_code[0])
-            env['beam_type']   = _Maps.beam.get(task_code[1])
-            env['_sbp_file']   = _Maps.sbp.get(task_code[2])
-            env['source_type'] = _Maps.source.get(task_code[3])
-            env['grid']        = _Maps.grid.get(task_code[4])
+        # Check for source directionality
+        if self.env["_sbp_file"] == _Strings.from_file:
+            self.env["source_directionality"] = read_sbp(self.fname_base)
 
-            # Check for source directionality (indicated by * in task code)
-            if env["_sbp_file"] == _Strings.from_file:
-                env["source_directionality"] = read_sbp(self.fname_base)
+    def _read_beams_limits(self, f: TextIO) -> None:
+        """Read environment file beams and limits"""
+        
+        # Number of beams
+        beam_num_line = _read_next_valid_line(f)
+        beam_num_parts = _parse_line(beam_num_line) + [None] * 1
+        self.env['beam_num'] = int(beam_num_parts[0] or 0)
+        self.env['single_beam_index'] = _int(beam_num_parts[1])
 
-            # Number of beams
-            beam_num_line = _read_next_valid_line(f)
-            beam_num_parts = _parse_line(beam_num_line) + [None] * 1
-            env['beam_num'] = int(beam_num_parts[0] or 0)
-            env['single_beam_index'] = _int(beam_num_parts[1])
+        # Beam angles (beam_angle_min, beam_angle_max)
+        angles_line = _read_next_valid_line(f)
+        angle_parts = _parse_line(angles_line) + [None] * 2
+        self.env['beam_angle_min'] = _float(angle_parts[0])
+        self.env['beam_angle_max'] = _float(angle_parts[1])
 
-            # Beam angles (beam_angle_min, beam_angle_max)
-            angles_line = _read_next_valid_line(f)
-            angle_parts = _parse_line(angles_line) + [None] * 2
-            env['beam_angle_min'] = _float(angle_parts[0])
-            env['beam_angle_max'] = _float(angle_parts[1])
+        # Ray tracing limits (step, max_depth, max_range) - last line
+        limits_line = _read_next_valid_line(f)
+        limits_parts = _parse_line(limits_line)
+        self.env['step_size'] = float(limits_parts[0])
+        self.env['box_depth'] = float(limits_parts[1])
+        self.env['box_range'] = float(limits_parts[2]) * 1000  # convert km to m
 
-            # Ray tracing limits (step, max_depth, max_range) - last line
-            limits_line = _read_next_valid_line(f)
-            limits_parts = _parse_line(limits_line)
-            env['step_size'] = float(limits_parts[0])
-            env['box_depth'] = float(limits_parts[1])
-            env['box_range'] = float(limits_parts[2]) * 1000  # convert km to m
-
-        return env
 
 def _prepare_filename(fname: str, ext: str) -> Tuple[str,str]:
     """Checks filename is present and file exists."""
@@ -282,53 +330,6 @@ def _prepare_filename(fname: str, ext: str) -> Tuple[str,str]:
     
     return fname, fname_base
 
-
-def read_env2d(fname: str) -> Dict[str, Any]:
-    """Read a 2D underwater environment from a BELLHOP .env file.
-
-    This function parses a BELLHOP .env file and returns a Python data structure
-    that is compatible with create_env2d(). This enables round-trip testing and
-    compatibility between file-based and programmatic environment definitions.
-
-    :param fname: path to .env file (with or without .env extension)
-
-    :returns: environment dictionary compatible with create_env2d()
-
-    **Unit conversions performed:**
-
-    - Receiver ranges: km → m
-    - Bottom density: g/cm³ → kg/m³
-    - All other units preserved as in ENV file
-
-    **Examples:**
-
-    >>> import bellhop as bh
-    >>> env = bh.read_env2d('examples/Munk/MunkB_ray.env')
-    >>> print(env['name'])
-    'Munk profile'
-    >>> print(env['frequency'])
-    50.0
-
-    >>> # Use with existing functions
-    >>> checked_env = bh.check_env2d(env)
-    >>> rays = bh.compute_rays(env)
-
-    >>> # Round-trip compatibility
-    >>> env_orig = bh.create_env2d(name="test", frequency=100)
-    >>> # ... write to file via BELLHOP ...
-    >>> env_read = bh.read_env2d("test.env")
-    >>> assert env_read['frequency'] == env_orig['frequency']
-
-    **Limitations:**
-
-    - External files (.ssp, .bty, .ati, .sbp) are noted but not automatically loaded
-    - Some advanced BELLHOP features may not be fully supported
-    - Assumes standard 2D BELLHOP format (not BELLHOP3D)
-    """
-
-    reader = EnvironmentReader(fname)
-    env = reader.read()
-    return env
 
 
 
