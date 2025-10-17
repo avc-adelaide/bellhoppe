@@ -108,6 +108,20 @@ def _int(x: Any) -> Optional[int]:
     """Permissive int-enator"""
     return None if x is None else int(x)
 
+def _prepare_filename(fname: str, ext: str, name: str) -> Tuple[str,str]:
+    """Checks filename is present and file exists."""
+    if fname.endswith(ext):
+        nchar = len(ext)
+        fname_base = fname[:-nchar]
+    else:
+        fname_base = fname
+        fname = fname + ext
+
+    if not os.path.exists(fname):
+        raise FileNotFoundError(f"{name} file not found: {fname}")
+    
+    return fname, fname_base
+
 def read_env2d(fname: str) -> Dict[str, Any]:
     """Read a 2D underwater environment from a BELLHOP .env file.
 
@@ -316,24 +330,12 @@ class EnvironmentReader:
         self.env['box_range'] = float(limits_parts[2]) * 1000  # convert km to m
 
 
-def _prepare_filename(fname: str, ext: str, name: str) -> Tuple[str,str]:
-    """Checks filename is present and file exists."""
-    if fname.endswith(ext):
-        nchar = len(ext)
-        fname_base = fname[:-nchar]
-    else:
-        fname_base = fname
-        fname = fname + ext
-
-    if not os.path.exists(fname):
-        raise FileNotFoundError(f"{name} file not found: {fname}")
-    
-    return fname, fname_base
-
-
-
-
-def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64], _pd.DataFrame]] = None) -> Union[Any, _pd.DataFrame]:
+def read_ssp(fname: str,
+             depths: Optional[Union[
+                        List[float],
+                        NDArray[_np.float64],
+                        _pd.DataFrame]] = None
+            ) -> Union[NDArray[_np.float64], _pd.DataFrame]:
     """Read a 2D sound speed profile (.ssp) file used by BELLHOP.
 
     This function reads BELLHOP's .ssp files which contain range-dependent
@@ -401,14 +403,14 @@ def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64
 
         # Read sound speed data - read all remaining lines as a matrix
         ssp_data = []
-        line_num = 2  # We've already read 2 lines (nprofiles and ranges)
+        line_num = 0
         for line in f:
             line_num += 1
             line = line.strip()
             if line:  # Skip empty lines
                 values = [float(x) for x in line.split()]
                 if len(values) != nprofiles:
-                    raise ValueError(f"Line {line_num} has {len(values)} values, expected {nprofiles}")
+                    raise ValueError(f"SSP line {line_num} has {len(values)} values, expected {nprofiles}")
                 ssp_data.append(values)
 
         ssp_array = _np.array(ssp_data)
@@ -438,17 +440,17 @@ def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64
             df.index.name = "depth"
             return df
 
-def read_bty(fname: str) -> Tuple[Any, str]:
+def read_bty(fname: str) -> Tuple[NDArray[_np.float64], str]:
     """Read a bathymetry file used by Bellhop."""
     fname, _ = _prepare_filename(fname, _File_Ext.bty, "BTY")
     return read_ati_bty(fname)
 
-def read_ati(fname: str) -> Tuple[Any, str]:
+def read_ati(fname: str) -> Tuple[NDArray[_np.float64], str]:
     """Read an altimetry file used by Bellhop."""
     fname, _ = _prepare_filename(fname, _File_Ext.ati, "ATI")
     return read_ati_bty(fname)
 
-def read_ati_bty(fname: str) -> Tuple[Any, str]:
+def read_ati_bty(fname: str) -> Tuple[NDArray[_np.float64], str]:
     """Read an altimetry (.ati) or bathymetry (.bty) file used by BELLHOP.
 
     This function reads BELLHOP's .bty files which define the bottom depth
@@ -515,7 +517,7 @@ def read_ati_bty(fname: str) -> Tuple[Any, str]:
         # Return as [range, depth] pairs
         return _np.column_stack([ranges_m, depths_array]), _Maps.bty_interp[interp_type]
 
-def read_sbp(fname: str) -> Any:
+def read_sbp(fname: str) -> NDArray[_np.float64]:
     """Read an source beam patterm (.sbp) file used by BELLHOP.
 
     The file format is:
@@ -552,17 +554,17 @@ def read_sbp(fname: str) -> Any:
         # Return as [range, depth] pairs
         return _np.column_stack([angles, powers])
 
-def read_brc(fname: str) -> Any:
+def read_brc(fname: str) -> NDArray[_np.float64]:
     """Read a BRC file and return array of reflection coefficients."""
     fname, _ = _prepare_filename(fname, _File_Ext.brc, "BRC")
     return read_refl_coeff(fname)
 
-def read_trc(fname: str) -> Any:
+def read_trc(fname: str) -> NDArray[_np.float64]:
     """Read a TRC file and return array of reflection coefficients."""
     fname, _ = _prepare_filename(fname, _File_Ext.trc, "TRC")
     return read_refl_coeff(fname)
 
-def read_refl_coeff(fname: str) -> Any:
+def read_refl_coeff(fname: str) -> NDArray[_np.float64]:
     """Read a reflection coefficient (.brc/.trc) file used by BELLHOP.
 
     This function reads BELLHOP's .brc files which define the reflection coefficient
