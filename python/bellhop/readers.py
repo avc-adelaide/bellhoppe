@@ -490,7 +490,6 @@ def read_ati_bty(fname: str) -> Tuple[Any, str]:
         30 3000
         100 3000
     """
-    import os
 
     if not os.path.exists(fname):
         raise FileNotFoundError(f"ATI/BTY file not found: {fname}")
@@ -536,8 +535,6 @@ def read_sbp(fname: str) -> Any:
     :param fname: path to .sbp file (with or without extension)
     :returns: numpy array with [angle, power] pairs
     """
-
-    import os
 
     if not fname.endswith('.sbp'):
         fname = fname + '.sbp'
@@ -605,7 +602,6 @@ def read_refl_coeff(fname: str) -> Any:
         45.0  0.95  175.0
         90.0  0.90  170.0
     """
-    import os
 
 
     if not os.path.exists(fname):
