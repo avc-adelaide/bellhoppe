@@ -166,7 +166,7 @@ class EnvironmentReader:
         Args:
             fname: Path to .env file (with or without extension)
         """
-        self.fname, self.fname_base = _prepare_filename(fname, _File_Ext.env)
+        self.fname, self.fname_base = _prepare_filename(fname, _File_Ext.env, "Environment")
         self.env: Dict[str, Any] = bellhop.environment.new()
 
     def read(self) -> Dict[str, Any]:
@@ -316,7 +316,7 @@ class EnvironmentReader:
         self.env['box_range'] = float(limits_parts[2]) * 1000  # convert km to m
 
 
-def _prepare_filename(fname: str, ext: str) -> Tuple[str,str]:
+def _prepare_filename(fname: str, ext: str, name: str) -> Tuple[str,str]:
     """Checks filename is present and file exists."""
     if fname.endswith(ext):
         nchar = len(ext)
@@ -326,7 +326,7 @@ def _prepare_filename(fname: str, ext: str) -> Tuple[str,str]:
         fname = fname + ext
 
     if not os.path.exists(fname):
-        raise FileNotFoundError(f"File not found: {fname}")
+        raise FileNotFoundError(f"{name} file not found: {fname}")
     
     return fname, fname_base
 
@@ -386,13 +386,8 @@ def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64
         1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
         1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
     """
-
-    if not fname.endswith(_File_Ext.ssp):
-        fname = fname + _File_Ext.ssp
-
-    if not os.path.exists(fname):
-        raise FileNotFoundError(f"SSP file not found: {fname}")
-
+    
+    fname = _prepare_filename(fname, _File_Ext.ssp, "SSP")
     with open(fname, 'r') as f:
         # Read number of range profiles
         nprofiles = int(_read_next_valid_line(f))
@@ -445,14 +440,12 @@ def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64
 
 def read_bty(fname: str) -> Tuple[Any, str]:
     """Read a bathymetry file used by Bellhop."""
-    if not fname.endswith('.bty'):
-        fname = fname + '.bty'
+    fname = _prepare_filename(fname, _File_Ext.bty, "BTY")
     return read_ati_bty(fname)
 
 def read_ati(fname: str) -> Tuple[Any, str]:
     """Read an altimetry file used by Bellhop."""
-    if not fname.endswith('.ati'):
-        fname = fname + '.ati'
+    fname = _prepare_filename(fname, _File_Ext.ati, "ATI")
     return read_ati_bty(fname)
 
 def read_ati_bty(fname: str) -> Tuple[Any, str]:
@@ -490,9 +483,6 @@ def read_ati_bty(fname: str) -> Tuple[Any, str]:
         30 3000
         100 3000
     """
-
-    if not os.path.exists(fname):
-        raise FileNotFoundError(f"ATI/BTY file not found: {fname}")
 
     with open(fname, 'r') as f:
         # Read interpolation type (usually 'L' or 'C')
@@ -536,12 +526,7 @@ def read_sbp(fname: str) -> Any:
     :returns: numpy array with [angle, power] pairs
     """
 
-    if not fname.endswith('.sbp'):
-        fname = fname + '.sbp'
-
-    if not os.path.exists(fname):
-        raise FileNotFoundError(f"SBP file not found: {fname}")
-
+    fname = _prepare_filename(fname, _File_Ext.sbp, "SBP")
     with open(fname, 'r') as f:
 
         # Read number of points
@@ -566,6 +551,16 @@ def read_sbp(fname: str) -> Any:
 
         # Return as [range, depth] pairs
         return _np.column_stack([angles, powers])
+
+def read_brc(fname: str) -> Any:
+    """Read a BRC file and return array of reflection coefficients."""
+    fname = _prepare_filename(fname, _File_Ext.brc, "BRC")
+    return read_refl_coeff(fname)
+
+def read_trc(fname: str) -> Any:
+    """Read a TRC file and return array of reflection coefficients."""
+    fname = _prepare_filename(fname, _File_Ext.trc, "TRC")
+    return read_refl_coeff(fname)
 
 def read_refl_coeff(fname: str) -> Any:
     """Read a reflection coefficient (.brc/.trc) file used by BELLHOP.
@@ -602,10 +597,6 @@ def read_refl_coeff(fname: str) -> Any:
         45.0  0.95  175.0
         90.0  0.90  170.0
     """
-
-
-    if not os.path.exists(fname):
-        raise FileNotFoundError(f"Reflection coefficient file not found: {fname}")
 
     with open(fname, 'r') as f:
 
