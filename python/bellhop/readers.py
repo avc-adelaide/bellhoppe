@@ -119,62 +119,61 @@ class EnvironmentReader:
         """
         self.fname, self.fname_base = _prepare_filename(fname, _File_Ext.env)
         self.env: Dict[str, Any] = bellhop.environment.new()
-        self.f: Optional[TextIO] = None
 
-    def _read_header(self) -> None:
+    def _read_header(self, f) -> None:
         """Read env header"""
 
         # Line 1: Title
-        title_line = _read_next_valid_line(self.f)
+        title_line = _read_next_valid_line(f)
         self.env['name'] = _parse_quoted_string(title_line)
-
         # Line 2: Frequency
-        freq_line = _read_next_valid_line(self.f)
+        freq_line = _read_next_valid_line(f)
         self.env['frequency'] = float(_parse_line(freq_line)[0])
-
         # Line 3: NMedia (should be 1 for BELLHOP)
-        nmedia_line = _read_next_valid_line(self.f)
+        nmedia_line = _read_next_valid_line(f)
         self.env["_num_media"] = int(_parse_line(nmedia_line)[0])
+
+    def _read_top_boundary(self, f) -> None:
+        """Read top boundary options (multiple lines)"""
+
+        # Line 4: Top boundary options
+        topopt_line = _read_next_valid_line(f)
+        topopt = _parse_quoted_string(topopt_line) + "      "
+        self.env["soundspeed_interp"]          = _opt_lookup("Interpolation",          topopt[0], _Maps.interp)
+        self.env["surface_boundary_condition"] = _opt_lookup("Top boundary condition", topopt[1], _Maps.boundcond)
+        self.env["attenuation_units"]          = _opt_lookup("Attenuation units",      topopt[2], _Maps.attunits)
+        self.env["volume_attenuation"]         = _opt_lookup("Volume attenuation",     topopt[3], _Maps.volatt)
+        self.env["_altimetry"]                 = _opt_lookup("Altimetry",              topopt[4], _Maps.surface)
+        self.env["_single_beam"]               = _opt_lookup("Single beam",            topopt[5], _Maps.single_beam)
+        if self.env["_altimetry"] == _Strings.from_file:
+            self.env["surface"], self.env["surface_interp"] = read_ati(self.fname_base)
+
+        # Line 4a: Volume attenuation params
+        if self.env["volume_attenuation"] == _Strings.francois_garrison:
+            fg_spec_line = _read_next_valid_line(f)
+            fg_parts = _parse_line(fg_spec_line)
+            self.env["fg_salinity"]    = float(fg_parts[0])
+            self.env["fg_temperature"] = float(fg_parts[1])
+            self.env["fg_pH"]          = float(fg_parts[2])
+            self.env["fg_depth"]       = float(fg_parts[3])
+
+        # Line 4b: Boundary condition params
+        if env["surface_boundary_condition"] == _Strings.acousto_elastic:
+            surface_props_line = _read_next_valid_line(f)
+            surface_props = _parse_line(surface_props_line) + [None] * 6
+            self.env['surface_depth']             = _float(surface_props[0])
+            self.env['surface_soundspeed']        = _float(surface_props[1])
+            self.env['surface_soundspeed_shear']  = _float(surface_props[2])
+            self.env['surface_density']           = _float(surface_props[3], scale=1000)  # convert from g/cm³ to kg/m³
+            self.env['surface_attenuation']       = _float(surface_props[4])
+            self.env['surface_attenuation_shear'] = _float(surface_props[5])
 
     def read(self) -> Dict[str, Any]:
         """Do the reading..."""
-
         env = self.env
-
-        # the proper start to the function:
         with open(self.fname, 'r') as f:
-
-            self.f = f
-            self._read_header()
-            # Line 4: Top boundary options
-            topopt_line = _read_next_valid_line(f)
-            topopt = _parse_quoted_string(topopt_line) + "      "
-            env["soundspeed_interp"]          = _opt_lookup("Interpolation",          topopt[0], _Maps.interp)
-            env["surface_boundary_condition"] = _opt_lookup("Top boundary condition", topopt[1], _Maps.boundcond)
-            env["attenuation_units"]          = _opt_lookup("Attenuation units",      topopt[2], _Maps.attunits)
-            env["volume_attenuation"]         = _opt_lookup("Volume attenuation",     topopt[3], _Maps.volatt)
-            env["_altimetry"]                 = _opt_lookup("Altimetry",              topopt[4], _Maps.surface)
-            env["_single_beam"]               = _opt_lookup("Single beam",            topopt[5], _Maps.single_beam)
-            if env["_altimetry"] == _Strings.from_file:
-                env["surface"], env["surface_interp"] = read_ati(self.fname_base)
-
-            if env["volume_attenuation"] == _Strings.francois_garrison:
-                fg_spec_line = _read_next_valid_line(f)
-                fg_parts = _parse_line(fg_spec_line)
-                env["fg_salinity"]    = float(fg_parts[0])
-                env["fg_temperature"] = float(fg_parts[1])
-                env["fg_pH"]          = float(fg_parts[2])
-                env["fg_depth"]       = float(fg_parts[3])
-
-            if env["surface_boundary_condition"] == _Strings.acousto_elastic:
-                surface_props_line = _read_next_valid_line(f)
-                surface_props = _parse_line(surface_props_line) + [None] * 6
-                env['surface_depth']            = _float(surface_props[0])
-                env['surface_soundspeed']       = _float(surface_props[1])
-                env['surface_soundspeed_shear'] = _float(surface_props[2])
-                env['surface_density']          = _float(surface_props[3], scale=1000)  # convert from g/cm³ to kg/m³
-                env['surface_attenuation']       = _float(surface_props[4])
-                env['surface_attenuation_shear'] = _float(surface_props[5])
+            self._read_header(f)
+            self._read_top_boundary(f)
 
             # SSP depth specification (format: npts sigma_z max_depth)
             ssp_spec_line = _read_next_valid_line(f)
