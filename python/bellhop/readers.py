@@ -387,7 +387,7 @@ def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64
         1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
     """
     
-    fname = _prepare_filename(fname, _File_Ext.ssp, "SSP")
+    fname, _ = _prepare_filename(fname, _File_Ext.ssp, "SSP")
     with open(fname, 'r') as f:
         # Read number of range profiles
         nprofiles = int(_read_next_valid_line(f))
@@ -440,12 +440,12 @@ def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64
 
 def read_bty(fname: str) -> Tuple[Any, str]:
     """Read a bathymetry file used by Bellhop."""
-    fname = _prepare_filename(fname, _File_Ext.bty, "BTY")
+    fname, _ = _prepare_filename(fname, _File_Ext.bty, "BTY")
     return read_ati_bty(fname)
 
 def read_ati(fname: str) -> Tuple[Any, str]:
     """Read an altimetry file used by Bellhop."""
-    fname = _prepare_filename(fname, _File_Ext.ati, "ATI")
+    fname, _ = _prepare_filename(fname, _File_Ext.ati, "ATI")
     return read_ati_bty(fname)
 
 def read_ati_bty(fname: str) -> Tuple[Any, str]:
@@ -526,7 +526,7 @@ def read_sbp(fname: str) -> Any:
     :returns: numpy array with [angle, power] pairs
     """
 
-    fname = _prepare_filename(fname, _File_Ext.sbp, "SBP")
+    fname, _ = _prepare_filename(fname, _File_Ext.sbp, "SBP")
     with open(fname, 'r') as f:
 
         # Read number of points
@@ -554,12 +554,12 @@ def read_sbp(fname: str) -> Any:
 
 def read_brc(fname: str) -> Any:
     """Read a BRC file and return array of reflection coefficients."""
-    fname = _prepare_filename(fname, _File_Ext.brc, "BRC")
+    fname, _ = _prepare_filename(fname, _File_Ext.brc, "BRC")
     return read_refl_coeff(fname)
 
 def read_trc(fname: str) -> Any:
     """Read a TRC file and return array of reflection coefficients."""
-    fname = _prepare_filename(fname, _File_Ext.trc, "TRC")
+    fname, _ = _prepare_filename(fname, _File_Ext.trc, "TRC")
     return read_refl_coeff(fname)
 
 def read_refl_coeff(fname: str) -> Any:
