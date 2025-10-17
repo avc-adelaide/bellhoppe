@@ -101,7 +101,7 @@ def _opt_lookup(name: str, opt: str, _map: dict[str, _Strings]) -> Optional[str]
     return opt_str
 
 def _float(x: Any, scale: float = 1) -> Optional[float]:
-    """Permissive float-enator"""
+    """Permissive float-enator with unit scaling"""
     return None if x is None else float(x) * scale
 
 def _int(x: Any) -> Optional[int]:
@@ -258,6 +258,8 @@ def _prepare_filename(fname: str, ext: str):
 
     if not os.path.exists(fname):
         raise FileNotFoundError(f"File not found: {fname}")
+    
+    return fname, fname_base
 
 
 def read_env2d(fname: str) -> Dict[str, Any]:
@@ -362,7 +364,6 @@ def read_ssp(fname: str, depths: Optional[Union[List[float], NDArray[_np.float64
         1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
         1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
     """
-    import os
 
     if not fname.endswith(_File_Ext.ssp):
         fname = fname + _File_Ext.ssp
