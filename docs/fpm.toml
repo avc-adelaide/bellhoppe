@@ -17,8 +17,8 @@ output_dir = "_build"
 page_dir = "pages"
 
 preprocessor = "gfortran -E"
-project_github = "https://github.com/AUMAG/bellhop"
-github = "https://github.com/AUMAG/bellhop"
+project_github = "https://github.com/avc-adelaide/bellhoppe"
+github = "https://github.com/avc-adelaide/bellhoppe"
 
 source = true
 graph = true

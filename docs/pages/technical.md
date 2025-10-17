@@ -20,11 +20,11 @@ The following are the major changes or additions:
 
     * Allow GitHub workflows to automatically test the repository for every code change. This allows refactoring and algorithm improvements without added risk of introducing bugs.
 
-* The base code compilation processes are based on Makefiles. These have been extended to support the code coverage tool. The [key Makefile](https://github.com/AUMAG/bellhop/blob/main/Makefile) is at the root of the repository.
+* The base code compilation processes are based on Makefiles. These have been extended to support the code coverage tool. The [key Makefile](https://github.com/avc-adelaide/bellhoppe/blob/main/Makefile) is at the root of the repository.
 
-* A modern build system using Hatch is also used for building documentation and running tests. These are configured using [pyproject.toml](https://github.com/AUMAG/bellhop/blob/main/pyproject.toml). This build system makes the GitHub CI processes quite straightforward to define.
+* A modern build system using Hatch is also used for building documentation and running tests. These are configured using [pyproject.toml](https://github.com/avc-adelaide/bellhoppe/blob/main/pyproject.toml). This build system makes the GitHub CI processes quite straightforward to define.
 
-* The documentation system uses FORD, configured using [fdm.toml](https://github.com/AUMAG/bellhop/blob/main/fpm.toml). Executing the documentation process is managed by Hatch with
+* The documentation system uses FORD, configured using [fdm.toml](https://github.com/avc-adelaide/bellhoppe/blob/main/fpm.toml). Executing the documentation process is managed by Hatch with
 
     hatch run doc
 
@@ -35,4 +35,4 @@ The following are the major changes or additions:
 
 * The code coverage system uses both GCC tool `gcov` for Fortran code and `coverage.py` for Python code. This is controlled via the Makefile, with results compiled into HTML files. The unified coverage dashboard provides access to both Fortran and Python coverage reports in a single interface.
 
-* There are two GitHub CI workflows: regression testing, and documentation build (which includes code coverage). They are set up using [check.yml](https://github.com/AUMAG/bellhop/blob/main/.github/workflows/check.yml) and [docs.yml](https://github.com/AUMAG/bellhop/blob/main/.github/workflows/docs.yml).
+* There are two GitHub CI workflows: regression testing, and documentation build (which includes code coverage). They are set up using [check.yml](github.com/avc-adelaide/bellhoppe/blob/main/.github/workflows/check.yml) and [docs.yml](github.com/avc-adelaide/bellhoppe/blob/main/.github/workflows/docs.yml).

@@ -19,6 +19,6 @@ jupyter: python3
 
 ## Other Bellhop documentation
 
-- [Main Bellhop documentation](https://avc-adelaide.github.io/bellhop/)
-- [Python API documentation](https://avc-adelaide.github.io/bellhop/media/python/)
-- [Github repository link](https://github.com/avc-adelaide/bellhop)
+- [Main Bellhop documentation](https://avc-adelaide.github.io/bellhoppe/)
+- [Python API documentation](https://avc-adelaide.github.io/bellhoppe/media/python/)
+- [Github repository link](https://github.com/avc-adelaide/bellhoppe)

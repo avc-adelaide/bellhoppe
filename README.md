@@ -2,15 +2,15 @@
 
 ## Documentation
 
-- [Main Bellhop documentation](https://avc-adelaide.github.io/bellhop/)
-- [bellhop.py tutorials](https://avc-adelaide.github.io/bellhop/media/quarto/index.html)
-- [Python API documentation](https://avc-adelaide.github.io/bellhop/media/python/)
-- [Fortran Test Coverage](https://avc-adelaide.github.io/bellhop/media/coverage/_coverage/coverage-index.html)
-- [Python Test Coverage](https://avc-adelaide.github.io/bellhop/media/coverage/_coverage_python/index.html)
-- [Github repository link](https://github.com/avc-adelaide/bellhop) (what you are reading now)
+- [Main Bellhop documentation](https://avc-adelaide.github.io/bellhoppe/)
+- [bellhop.py tutorials](https://avc-adelaide.github.io/bellhoppe/media/quarto/index.html)
+- [Python API documentation](https://avc-adelaide.github.io/bellhoppe/media/python/)
+- [Fortran Test Coverage](https://avc-adelaide.github.io/bellhoppe/media/coverage/_coverage/coverage-index.html)
+- [Python Test Coverage](https://avc-adelaide.github.io/bellhoppe/media/coverage/_coverage_python/index.html)
+- [Github repository link](https://github.com/avc-adelaide/bellhoppe) (what you are reading now)
 
-[![Test Suite](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml)
-[![Code Lint](https://github.com/avc-adelaide/bellhop/actions/workflows/lint.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/lint.yml)
+[![Test Suite](https://github.com/avc-adelaide/bellhoppe/actions/workflows/check.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml)
+[![Code Lint](https://github.com/avc-adelaide/bellhoppe/actions/workflows/lint.yml/badge.svg)](https://github.com/avc-adelaide/bellhoppe/actions/workflows/lint.yml)
 
 
 ## Background
@@ -201,7 +201,7 @@ The resulting coverage report is saved to `docs/coverage-index.html`.
 
 ## Running
 
-Now that you've got this far, head over the to the **[BELLHOP Documentation](https://avc-adelaide.github.io/bellhop/)** to find out more about what the code can do.
+Now that you've got this far, head over the to the **[BELLHOP Documentation](https://avc-adelaide.github.io/bellhoppe/)** to find out more about what the code can do.
 
 
 ## Impressum

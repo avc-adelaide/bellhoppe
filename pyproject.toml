@@ -45,11 +45,11 @@ classifiers = [
 
 
 [project.urls]
-Homepage = "https://github.com/AUMAG/bellhop"
-Documentation = "https://aumag.github.io/bellhop/"
-Repository = "https://github.com/AUMAG/bellhop.git"
-Issues = "https://github.com/AUMAG/bellhop/issues"
-Changelog = "https://github.com/AUMAG/bellhop/blob/master/CHANGES.md"
+Homepage = "https://github.com/avc-adelaide/bellhoppe"
+Documentation = "https://avc-adelaide.github.io/bellhoppe/"
+Repository = "https://github.com/avc-adelaide/bellhoppe.git"
+Issues = "https://github.com/avc-adelaide/bellhoppe/issues"
+Changelog = "https://github.com/avc-adelaide/bellhoppe/blob/master/CHANGES.md"
 
 ####### BUILD #######
 

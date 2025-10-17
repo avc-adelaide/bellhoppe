@@ -4,7 +4,7 @@ title: Usage
 
 ## Building
 
-See the main [README](https://github.com/avc-adelaide/bellhop#installation) for build and installation instructions.
+See the main [README](https://github.com/avc-adelaide/bellhoppe#installation) for build and installation instructions.
 
 ## Fortran
 
