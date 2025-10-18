@@ -213,8 +213,6 @@ def _finalise_environment(env: Dict[str, Any]) -> Dict[str, Any]:
     if env["surface_reflection_coefficient"] is not None:
         env["surface_boundary_condition"] = _Strings.from_file
 
-    # this is a weird one, sometimes "depth_max" is defined as 0 in the env file and the simulation breaks if not
-    # so we only set depth_max to be the maximum depth iff it hasn't been pre-set
     if env['depth_max'] is None:
         env['depth_max'] = _np.max(env['depth'])
 

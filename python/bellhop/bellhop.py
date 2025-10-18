@@ -176,6 +176,10 @@ class Bellhop:
         :param fh: file reference (already opened)
         :param fname_base: filename base (without extension)
         :returns fname_base: filename base (no extension) of written file
+
+        We liberally insert comments and empty lines for readability and take care to
+        ensure that comments are consistently aligned.
+        This doesn't make a difference to bellhop.exe, it just makes debugging far easier.
         """
 
         self._print_env_line(fh,"")
@@ -264,8 +268,9 @@ class Bellhop:
         """Writes bottom boundary lines of env file."""
         bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
         dp_flag = _Maps.bottom_rev[env['_bathymetry']]
+        bot_str = self._quoted_opt(bot_bc,dp_flag)
         comment = "BOT_Boundary_cond / BOT_Roughness"
-        self._print_env_line(fh,f"{self._quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}",comment)
+        self._print_env_line(fh,f"{bot_str} {env['bottom_roughness']}",comment)
         if env['bottom_boundary_condition'] == "acousto-elastic":
             comment = "Depth_Max  BOT_SoundSpeed  BOT_SS_Shear  BOT_Density  BOT_Absorp  BOT_Absorp Shear"
             array_str = self._array2str([

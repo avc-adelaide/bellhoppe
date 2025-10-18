@@ -11,7 +11,7 @@ def test_read_brc():
     if not os.path.exists(brc_file):
         pytest.skip(f"Test file not found: {brc_file}")
 
-    brc = bh.read_refl_coeff(brc_file)
+    brc = bh.read_brc(brc_file)
 
     # Should return [theta, rmag, rphase] triplets
     assert isinstance(brc, np.ndarray), "Should return numpy array"
@@ -37,7 +37,7 @@ def test_read_trc():
     if not os.path.exists(trc_file):
         pytest.skip(f"Test file not found: {trc_file}")
 
-    trc = bh.read_refl_coeff(trc_file)
+    trc = bh.read_trc(trc_file)
 
     # Should return [theta, rmag, rphase] triplets
     assert isinstance(trc, np.ndarray), "Should return numpy array"
@@ -60,11 +60,11 @@ def test_write_brc():
     """Test round-tripping .brc file"""
 
     env = bh.create_env2d()
-    brc1 = bh.read_refl_coeff("tests/refl_coeff/example.brc")
+    brc1 = bh.read_brc("tests/refl_coeff/example.brc")
     env["bottom_reflection_coefficient"] = brc1
 
     arr = bh.compute_arrivals(env,debug=True,fname_base="tests/refl_coeff/brc_debug")
-    brc2 = bh.read_refl_coeff("tests/refl_coeff/brc_debug.brc")
+    brc2 = bh.read_brc("tests/refl_coeff/brc_debug.brc")
 
     np.testing.assert_array_equal(brc1, brc2)
 
@@ -73,10 +73,10 @@ def test_write_trc():
     """Test round-tripping .trc file"""
 
     env = bh.create_env2d()
-    trc1 = bh.read_refl_coeff("tests/refl_coeff/example.trc")
+    trc1 = bh.read_trc("tests/refl_coeff/example.trc")
     env["surface_reflection_coefficient"] = trc1
 
     arr = bh.compute_arrivals(env,debug=True,fname_base="tests/refl_coeff/trc_debug")
-    trc2 = bh.read_refl_coeff("tests/refl_coeff/trc_debug.trc")
+    trc2 = bh.read_trc("tests/refl_coeff/trc_debug.trc")
 
     np.testing.assert_array_equal(trc1, trc2)

@@ -535,12 +535,16 @@ def read_sbp(fname: str) -> NDArray[_np.float64]:
         return _np.column_stack([angles, powers])
 
 def read_brc(fname: str) -> NDArray[_np.float64]:
-    """Read a BRC file and return array of reflection coefficients."""
+    """Read a BRC file and return array of reflection coefficients.
+
+    See `read_refl_coeff` for documentation, but use this function for extension checkking."""
     fname, _ = _prepare_filename(fname, _File_Ext.brc, "BRC")
     return read_refl_coeff(fname)
 
 def read_trc(fname: str) -> NDArray[_np.float64]:
-    """Read a TRC file and return array of reflection coefficients."""
+    """Read a TRC file and return array of reflection coefficients.
+
+    See `read_refl_coeff` for documentation, but use this function for extension checkking."""
     fname, _ = _prepare_filename(fname, _File_Ext.trc, "TRC")
     return read_refl_coeff(fname)
 

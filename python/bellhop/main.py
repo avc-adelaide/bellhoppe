@@ -31,7 +31,8 @@ from bellhop.readers import read_ssp as read_ssp
 from bellhop.readers import read_ati as read_ati
 from bellhop.readers import read_bty as read_bty
 from bellhop.readers import read_sbp as read_sbp
-from bellhop.readers import read_refl_coeff as read_refl_coeff
+from bellhop.readers import read_trc as read_trc
+from bellhop.readers import read_brc as read_brc
 
 from bellhop.bellhop import Bellhop
 bellhop_default = Bellhop()

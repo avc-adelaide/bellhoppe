@@ -61,9 +61,9 @@ def test_extra_data_sbp():
 def test_malformed_brc_count_mismatch():
     """Test BRC file where count doesn't match number of lines"""
     with pytest.raises(ValueError, match="Expected 4 reflection coefficient points, but found 2"):
-        bh.read_refl_coeff("tests/malformed_files/bad_count_brc.brc")
+        bh.read_brc("tests/malformed_files/bad_count_brc.brc")
 
 def test_malformed_brc_insufficient_data():
     """Test BRC file where a line has too few data points"""
     with pytest.raises(ValueError, match="Expected 3 reflection coefficient points, but found 2"):
-        bh.read_refl_coeff("tests/malformed_files/insufficient_data_brc.brc")
+        bh.read_brc("tests/malformed_files/insufficient_data_brc.brc")
