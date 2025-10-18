@@ -34,10 +34,11 @@ from bellhop.readers import read_sbp as read_sbp
 from bellhop.readers import read_refl_coeff as read_refl_coeff
 
 from bellhop.bellhop import Bellhop
+bellhop_default = Bellhop()
 
 # models (in order of preference)
 _models: List[Any] = []
-_models.append(('bellhop', Bellhop))
+_models.append(('bellhop', bellhop_default))
 
 def _debug_print(debug: bool, msg: str) -> None:
     if debug:
@@ -182,7 +183,7 @@ def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> 
         raise ValueError('env and task should be both specified together')
     rv: List[str] = []
     for m in _models:
-        if m[1]().supports(env, task):
+        if m[1].supports(env, task):
             rv.append(m[0])
     return rv
 
@@ -210,11 +211,11 @@ def _select_model(env: Dict[str, Any],
         for m in _models:
             if m[0] == model:
                 _debug_print(debug, 'Model: '+m[0])
-                return m[1]()
+                return m[1]
         raise ValueError(f"Unknown model: '{model}'")
     _debug_print(debug, "Searching for propagation model:")
     for m in _models:
-        mm = m[1]()
+        mm = m[1]
         if mm.supports(env, task):
             _debug_print(debug, 'Model found: '+m[0])
             return mm

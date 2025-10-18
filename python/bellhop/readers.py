@@ -1,6 +1,5 @@
 
 import os
-import re
 
 from typing import Any, Dict, Optional, Tuple, Union, TextIO, List, cast
 from numpy.typing import NDArray

@@ -1,12 +1,11 @@
 
 import os as _os
-import re as _re
 import subprocess as _proc
 import shutil
 
 from struct import unpack as _unpack
 from tempfile import mkstemp as _mkstemp
-from typing import Any, Dict, List, Optional, Tuple, IO
+from typing import Any, Dict, List, Optional, Tuple, IO, TextIO
 
 import numpy as _np
 import pandas as _pd
@@ -41,10 +40,12 @@ class Bellhop:
         """Check whether the model supports the task.
 
            This function is supposed to diagnose whether this combination of environment
-           and task is supported by the model, but really it just checks that the binary
-           can be found."""
+           and task is supported by the model."""
 
-        return shutil.which(exe or self.exe) is not None
+        which_bool = shutil.which(exe or self.exe) is not None
+        task_bool = task is None or task in self.taskmap
+
+        return (which_bool and task_bool)
 
     def run(self, env: Dict[str, Any],
                   task: str,
@@ -62,27 +63,20 @@ class Bellhop:
         to be executed.
         """
 
-        fname_flag=False
-        if fname_base is not None:
-            fname_flag = True
+        task_flag, load_task_data, ext = self.taskmap[task]
 
-        if fname_base:
-            print('[CUSTOM FILES] Deleting prior working files: '+fname_base+'.*')
-            self._rm_files(fname_base)
-
-        fname_base = self._create_env_file(env, self.taskmap[task][0], fname_base, debug)
+        fh_fd, fname_base = self._prepare_env_file(fname_base)
+        with _os.fdopen(fh_fd, "w") as fh:
+            self._create_env_file(env, task_flag, fh, fname_base, debug)
 
         self._run_exe(fname_base)
         try:
-            ext = self.taskmap[task][2]
-            results = self.taskmap[task][1](fname_base, ext)
+            results = load_task_data(fname_base, ext)
         except FileNotFoundError:
-            raise RuntimeError(f'Bellhop did not generate expected output file ({task})')
+            raise RuntimeError(f'Bellhop did not generate expected output file ({fname_base+ext})')
 
         if debug:
             print('[DEBUG] Bellhop working files NOT deleted: '+fname_base+'.*')
-        elif fname_flag:
-            print('[CUSTOM FILES] Bellhop working files: '+fname_base+'.*')
         else:
             self._rm_files(fname_base)
 
@@ -100,9 +94,28 @@ class Bellhop:
             _Strings.semicoherent: ['S', self._load_shd, _File_Ext.shd]
         }
 
-    def _rm_files(self, fname_base: str) -> None:
+    def _prepare_env_file(self, fname_base: Optional[str]) -> Tuple[int, str]:
+        """Opens a file for writing the .env file, in a temp location if necessary, and delete other files with same basename.
+
+        :param fname_base: filename base (no extension) for writing -- if not specified a temporary file (and location) will be used instead
+        :returns fh: file descriptor (int)
+        :returns fname_base: filename base (str)
+        """
+        if fname_base is not None:
+            fname = fname_base + _File_Ext.env
+            fh = _os.open(_os.path.abspath(fname), _os.O_WRONLY | _os.O_CREAT | _os.O_TRUNC)
+        else:
+            fh, fname = _mkstemp(suffix = _File_Ext.env)
+            fname_base = fname[:-len(_File_Ext.env)]
+        self._rm_files(fname_base, not_env=True) # delete all other files
+        return fh, fname_base
+
+    def _rm_files(self, fname_base: str, not_env: bool = False) -> None:
         """Remove files that would be constructed as bellhop inputs or created as bellhop outputs."""
-        for ext in [v for k, v in vars(_File_Ext).items() if not k.startswith('_')]:
+        all_ext = [v for k, v in vars(_File_Ext).items() if not k.startswith('_')]
+        if not_env:
+            all_ext.remove(_File_Ext.env)
+        for ext in all_ext:
             self._unlink(fname_base + ext)
 
     def _run_exe(self, fname_base: str,
@@ -114,7 +127,7 @@ class Bellhop:
 
         exe_path = shutil.which(exe or self.exe)
         if exe_path is None:
-            raise FileNotFoundError(f"Executable ({exe}) not found in PATH.")
+            raise FileNotFoundError(f"Executable ({exe_path}) not found in PATH.")
 
         runcmd = [exe_path, fname_base] + args.split()
         if debug:
@@ -127,7 +140,7 @@ class Bellhop:
         if result.returncode != 0:
             err = self._check_error(fname_base)
             raise RuntimeError(
-                f"Execution of '{exe}' failed with return code {result.returncode}.\n"
+                f"Execution of '{exe_path}' failed with return code {result.returncode}.\n"
                 f"\nCommand: {' '.join(runcmd)}\n"
                 f"\nOutput:\n{result.stdout.strip()}\n"
                 f"\nExtract from PRT file:\n{err}"
@@ -155,13 +168,13 @@ class Bellhop:
         except FileNotFoundError:
             pass
 
-    def _print(self, fh: int, s: str, newline: bool = True) -> None:
+    def _print(self, fh: TextIO, s: str, newline: bool = True) -> None:
         """Write a line of text with or w/o a newline char to the output file"""
-        _os.write(fh, (s+'\n' if newline else s).encode())
+        fh.write(s+'\n' if newline else s)
 
-    def _print_env_line(self, fh: int, data: Any, comment: str = "") -> None:
+    def _print_env_line(self, fh: TextIO, data: Any, comment: str = "") -> None:
         """Write a complete line to the .env file with a descriptive comment
-        
+
         We do some char counting (well, padding and stripping) to ensure the code comments all start from the same char.
         """
         data_str = data if isinstance(data,str) else f"{data}"
@@ -171,7 +184,7 @@ class Bellhop:
             line_str = line_str + " ! " + comment_str
         self._print(fh,line_str)
 
-    def _print_array(self, fh: int, a: Any, label: str = "", nn: Optional[int] = None) -> None:
+    def _print_array(self, fh: TextIO, a: Any, label: str = "", nn: Optional[int] = None) -> None:
         """Print a 1D array to the .env file, prefixed by a count of the array length"""
         na = _np.size(a)
         if nn is None:
@@ -185,32 +198,16 @@ class Bellhop:
                 self._print(fh, f"{j} ", newline=False)
             self._print(fh, " /")
 
-    def _open_env_file(self, fname_base: Optional[str]) -> Tuple[int, str]:
-        """Opens a file for writing the .env file, in a temp location if necessary.
-        
-        :param fname_base: filename base (no extension) for writing -- if not specified a temporary file (and location) will be used instead
-        :returns fh: file descriptor (int)
-        :returns fname_base: filename base (str)
-        """
-        if fname_base is not None:
-            fname = fname_base + _File_Ext.env
-            fh = _os.open(_os.path.abspath(fname), _os.O_WRONLY | _os.O_CREAT | _os.O_TRUNC)
-        else:
-            fh, fname = _mkstemp(suffix = _File_Ext.env)
-            fname_base = fname[:-4]
-        return fh, fname_base
-
-    def _create_env_file(self, env: Dict[str, Any], taskcode: str, fname_base: Optional[str] = None, debug: bool = False) -> str:
+    def _create_env_file(self, env: Dict[str, Any], taskcode: str, fh: TextIO, fname_base: str, debug: bool = False) -> None:
         """Writes a complete .env file for specifying a Bellhop simulation
-        
+
         :param env: environment dict
         :param taskcode: task string which defines the computation to run
+        :param fh: file reference (already opened)
         :param fname_base: filename base (without extension)
         :param debug: boolean to activate diagnostic printing
         :returns fname_base: filename base (no extension) of written file
         """
-
-        fh, fname_base = self._open_env_file(fname_base)
 
         def _array2str(values: List[Any]) -> str:
             """Format list into space-separated string, trimmed at first None, ending with '/'."""
@@ -325,8 +322,6 @@ class Bellhop:
         self._print_env_line(fh,f"{env['beam_angle_min']} {env['beam_angle_max']} /","ALPHA1,2 (degrees)")
         self._print_env_line(fh,f"{env['step_size']} {env['box_depth']} {env['box_range'] / 1000}","Step_Size (m), ZBOX (m), RBOX (km)")
         self._print_env_line(fh,"","End of Bellhop environment file")
-        _os.close(fh)
-        return fname_base
 
     def _create_bty_ati_file(self, filename: str, depth: Any, interp: _Strings) -> None:
         with open(filename, 'wt') as f:
@@ -361,7 +356,7 @@ class Bellhop:
 
     def _readf(self, f: IO[str], types: Tuple[Any, ...], dtype: type = str) -> Tuple[Any, ...]:
         """Wrapper around readline() to read in a 1D array of data"""
-        p = _re.split(r' +', f.readline().strip())
+        p = f.readline().split()
         for j in range(len(p)):
             if len(types) > j:
                 p[j] = types[j](p[j])
