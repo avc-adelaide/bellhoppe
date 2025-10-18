@@ -44,10 +44,11 @@ Acoustics Toolbox project and subsequent development efforts:
 ### Additional material
 - **[Fortran Coverage](media/coverage/_coverage/coverage-index.html)** - Code coverage analysis for Fortran acoustic simulation components
 - **[Python Coverage](media/coverage/_coverage_python/index.html)** - Code coverage analysis for Python API and utilities
-- **[University of California Changes](page/CHANGES.html)** - Detailed technical changes, bug fixes, and algorithmic improvements made by the UC San Diego team
-- **[Acoustics Toolbox Changes](page/at_changes.html)** - Historical change log from the original Acoustics Toolbox development
 
 ### Repository / development documentation
+- [Compilation and installation](page/installation.html)
 - [Technical information](page/technical.html)
 - [Coverage details](page/coverage.html)
-
+- [Compiler notes from original Makefile](page/compiler.html)
+- [University of California Changes](page/CHANGES.html)
+- [Acoustics Toolbox Changes](page/at_changes.html)

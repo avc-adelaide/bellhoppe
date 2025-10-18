@@ -2,9 +2,9 @@
 title: Usage
 ---
 
-## Building
+## Getting started
 
-See the main [README](https://github.com/avc-adelaide/bellhoppe#installation) for build and installation instructions.
+* [Installation instructions](page/installation.html)
 
 ## Fortran
 
@@ -22,73 +22,37 @@ Input files have an `.env` extension and specify:
 
 Additional text files can be provided to define tables of sound speed profile (.ssp), bathometry (.bty), and so on.
 
+Bellhop writes output files in either text or binary form (depending on the data), which
+can be post-processed and visualised using either Matlab or Python tools.
+
+Although this repository provides a comprehensive Python wrapper for running the Fortran
+executable, being able to use the binary directly is recommended for debugging purposes.
+
 ## Python
 
 A modern [Python interface](media/python/index.html) is provided in this package. Basic usage:
 ```
-    TODO
+import bellhop as bh
+import bellhop.plot as bhp
+
+env = bh.create_env2d() # create a default example environment
+arr = bh.compute_arrivals(env)
+bhp.plot_arrivals(arr,env=env)
 ```
-This allows reading and writing of bellhop-native input and output files, with a modern Python interface for specifying parameters and executing calculation tasks.
+This approach uses a modern Python interface for specifying parameters and executing calculation tasks, by writing bellhop-native input files to disk.
+
+The Python interface also allows reading input files directly:
+```
+import bellhop as bh
+import bellhop.plot as bhp
+
+env = bh.read_env2d("tests/MunkB_geo_rot/MunkB_geo_rot.env")
+tl = bh.compute_transmission_loss(env)
+bhp.plot_transmission_loss(tl,env=env)
+```
+Secondary files such as sound speed profiles (SSP), bathymetry (BTY), and others, are
+automatically written.
 
 The automated test suite for this repository is written using this Python `bellhop` module.
 
 This Python interface is extended from the [`arlpy` module `uwapm`](https://arlpy.readthedocs.io/en/latest/uwapm.html) by Mandar Chitre.
-
-## Documentation
-
-The BELLHOP code base includes extensive historic documentation from the original
-Acoustics Toolbox project and subsequent development efforts:
-
-### User guides
-- **[Python documentation](media/python/index.html)** - Interface to Bellhop using high-level Python approaches
-- **[BELLHOP User Guide](media/bellhop.htm)** - Original guide for 2D acoustic modeling
-- **[BELLHOP3D User Guide](media/bellhop3d.htm)** - Original guide for 3D acoustic modeling with azimuthal coupling
-
-### Text file formats
-- **[Environmental File Format](media/EnvironmentalFile.htm)** - Detailed specification of input environment file
-- **[Reflection Coefficient Files](media/ReflectionCoefficientFile.htm)** - Format for specifying boundary reflection properties
-- **[Range-Dependent Sound Speed Profiles](media/RangeDepSSPFile.htm)** - Sound speed profile specification
-- **[Bathymetry Files](media/ATI_BTY_File.htm)** - Bathymetry data format specification
-
-### Original Acoustics Toolbox documentation
-- **[Original Repository Information](media/doc_index.htm)** - General information about the Acoustics Toolbox project structure
-- **[Acoustics Toolbox Index](media/at_index.htm)** - Overview of the complete Acoustics Toolbox suite
-- **[Field Documentation](media/fields.htm)** - General field computation methods
-- **[Field Processing](media/field.htm)** - Field output processing and analysis
-- **[3D Field Methods](media/field3d.htm)** - Three-dimensional field computation approaches
-
-### PDF documentation
-- **[BELLHOP3D User Guide (PDF)](media/Bellhop3D%20User%20Guide%202016_7_25.pdf)** - Comprehensive PDF guide for 3D modeling
-- **[Technical Report HLS-2010-1](media/HLS-2010-1.pdf)** - Detailed technical documentation
-
-### Additional material
-- **[Fortran Coverage](media/coverage/_coverage/coverage-index.html)** - Code coverage analysis for Fortran acoustic simulation components
-- **[Python Coverage](media/coverage/_coverage_python/index.html)** - Code coverage analysis for Python API and utilities
-- **[University of California Changes](media/CHANGES.md)** - Detailed technical changes, bug fixes, and algorithmic improvements made by the UC San Diego team
-- **[Acoustics Toolbox Changes](media/at_changes.md)** - Historical change log from the original Acoustics Toolbox development
-
-
-
-## Repository architecture
-
-As a historic codebase, Bellhop is impressively portable and easy to compile.
-This repository serves as a largely untouched extraction of Bellhop from the broader Acoustics Toolbox code.
-
-### Repository contributions
-
-The following are the major changes or additions:
-
-* Remove non-Bellhop files entirely. If other components of the AT should be similarly modernised, in my view independent repositories should be used. The shared code is relatively small.
-
-* Improve Makefile to attempt to auto-configure compiler flags. This is mostly a stub as I have limited platforms and compilers to experiment with.
-
-* Alter the commenting style of the code to permit automatic documentation using FORD. This tool creates the current documentation you are reading.
-
-* Add a Python test suite. This has multiple purposes:
-
-    * Provide a fully documented and automated regression test suite that checks numerical outputs. The original Bellhop tests required manual checking that the output was valid.
-
-    * Integrate the tests with a code coverage tool that allows us to ensure that all possible code paths are tested (work in progress).
-
-    * Allow GitHub workflows to automatically test the repository for every code change. This allows refactoring and algorithm improvements without added risk of introducing bugs.
-
