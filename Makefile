@@ -252,7 +252,8 @@ gitclean:
 
 
 push: gitokay gitclean lint test
-	@echo "============================"
-	@echo "Testing okay, now pushing..."
-	@echo "============================"
+	@echo "========================================="
+	@echo "Testing okay, now cleaning and pushing..."
+	@echo "========================================="
+	git clean -fx
 	git pull && git push
