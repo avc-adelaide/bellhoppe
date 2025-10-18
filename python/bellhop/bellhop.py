@@ -67,7 +67,7 @@ class Bellhop:
 
         fh_fd, fname_base = self._prepare_env_file(fname_base)
         with _os.fdopen(fh_fd, "w") as fh:
-            self._create_env_file(env, task_flag, fh, fname_base, debug)
+            self._create_env_file(env, task_flag, fh, fname_base)
 
         self._run_exe(fname_base)
         try:
@@ -168,45 +168,50 @@ class Bellhop:
         except FileNotFoundError:
             pass
 
-    def _print(self, fh: TextIO, s: str, newline: bool = True) -> None:
-        """Write a line of text with or w/o a newline char to the output file"""
-        fh.write(s+'\n' if newline else s)
+    def _create_env_file(self, env: Dict[str, Any], taskcode: str, fh: TextIO, fname_base: str) -> None:
+        """Writes a complete .env file for specifying a Bellhop simulation
 
-    def _print_env_line(self, fh: TextIO, data: Any, comment: str = "") -> None:
-        """Write a complete line to the .env file with a descriptive comment
-
-        We do some char counting (well, padding and stripping) to ensure the code comments all start from the same char.
+        :param env: environment dict
+        :param taskcode: task string which defines the computation to run
+        :param fh: file reference (already opened)
+        :param fname_base: filename base (without extension)
+        :returns fname_base: filename base (no extension) of written file
         """
-        data_str = data if isinstance(data,str) else f"{data}"
-        comment_str = comment if isinstance(comment,str) else f"{comment}"
-        line_str = (data_str + " " * self.env_comment_pad)[0:max(len(data_str),self.env_comment_pad)]
-        if comment_str != "":
-            line_str = line_str + " ! " + comment_str
-        self._print(fh,line_str)
 
-    def _print_array(self, fh: TextIO, a: Any, label: str = "", nn: Optional[int] = None) -> None:
-        """Print a 1D array to the .env file, prefixed by a count of the array length"""
-        na = _np.size(a)
-        if nn is None:
-            nn = na
-        if nn == 1 or na == 1:
-            self._print_env_line(fh, 1, f"{label} (single value)")
-            self._print_env_line(fh, f"{a} /",f"{label} (single value)")
-        else:
-            self._print_env_line(fh, nn, f"{label}s ({nn} values)")
-            for j in a:
-                self._print(fh, f"{j} ", newline=False)
-            self._print(fh, " /")
+        self._print_env_line(fh,"")
+        self._write_env_header(fh, env)
+        self._print_env_line(fh,"")
+        self._write_env_surface_depth(fh, env)
+        self._write_env_sound_speed(fh, env)
+        self._print_env_line(fh,"")
+        self._write_env_bottom(fh, env)
+        self._print_env_line(fh,"")
+        self._write_env_source_receiver(fh, env)
+        self._print_env_line(fh,"")
+        self._write_env_task(fh, env, taskcode)
+        self._write_env_beam_footer(fh, env)
+        self._print_env_line(fh,"","End of Bellhop environment file")
+
+        if env['surface_boundary_condition'] == _Strings.from_file:
+            self._create_refl_coeff_file(fname_base+".trc", env['surface_reflection_coefficient'])
+        if env['surface'] is not None:
+            self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
+        if env['soundspeed_interp'] == _Strings.quadrilateral:
+            self._create_ssp_quad_file(fname_base+'.ssp', env['soundspeed'])
+        if _np.size(env['depth']) > 1:
+            self._create_bty_ati_file(fname_base+'.bty', env['depth'], env['depth_interp'])
+        if env['bottom_boundary_condition'] == _Strings.from_file:
+            self._create_refl_coeff_file(fname_base+".brc", env['bottom_reflection_coefficient'])
+        if env['source_directionality'] is not None:
+            self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
 
     def _write_env_header(self, fh: TextIO, env: Dict[str, Any]) -> None:
         """Writes header of env file."""
-        self._print_env_line(fh,"")
         self._print_env_line(fh,"'"+env['name']+"'","Bellhop environment name/description")
         self._print_env_line(fh,env['frequency'],"Frequency (Hz)")
         self._print_env_line(fh,1,"NMedia -- always =1 for Bellhop")
-        self._print_env_line(fh,"")
 
-    def _write_surface_depth(self, fh: TextIO, env: Dict[str, Any]) -> None:
+    def _write_env_surface_depth(self, fh: TextIO, env: Dict[str, Any]) -> None:
         """Writes surface boundary and depth lines of env file."""
 
         svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
@@ -239,7 +244,7 @@ class Bellhop:
         comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
         self._print_env_line(fh,f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}",comment)
 
-    def _write_sound_speed(self, fh: TextIO, env: Dict[str, Any]) -> None:
+    def _write_env_sound_speed(self, fh: TextIO, env: Dict[str, Any]) -> None:
         """Writes sound speed profile lines of env file."""
         svp = env['soundspeed']
         svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
@@ -255,37 +260,12 @@ class Bellhop:
             for j in range(svp.shape[0]):
                 self._print_env_line(fh,self._array2str([svp[j,0], svp[j,1]]),f"ssp_{j}")
 
-    def _create_env_file(self, env: Dict[str, Any], taskcode: str, fh: TextIO, fname_base: str, debug: bool = False) -> None:
-        """Writes a complete .env file for specifying a Bellhop simulation
-
-        :param env: environment dict
-        :param taskcode: task string which defines the computation to run
-        :param fh: file reference (already opened)
-        :param fname_base: filename base (without extension)
-        :param debug: boolean to activate diagnostic printing
-        :returns fname_base: filename base (no extension) of written file
-        """
-
-        self._write_env_header(fh, env)
-        self._write_surface_depth(fh, env)
-        self._write_sound_speed(fh, env)
-        self._print_env_line(fh,"")
-
-        if env['surface_boundary_condition'] == _Strings.from_file:
-            self._create_refl_coeff_file(fname_base+".trc", env['surface_reflection_coefficient'])
-        if env['surface'] is not None:
-            self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
-        if env['soundspeed_interp'] == _Strings.quadrilateral:
-            self._create_ssp_quad_file(fname_base+'.ssp', env['soundspeed'])
-
+    def _write_env_bottom(self, fh: TextIO, env: Dict[str, Any]) -> None:
+        """Writes bottom boundary lines of env file."""
         bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
         dp_flag = _Maps.bottom_rev[env['_bathymetry']]
         comment = "BOT_Boundary_cond / BOT_Roughness"
         self._print_env_line(fh,f"{self._quoted_opt(bot_bc,dp_flag)} {env['bottom_roughness']}",comment)
-
-        if _np.size(env['depth']) > 1:
-            self._create_bty_ati_file(fname_base+'.bty', env['depth'], env['depth_interp'])
-
         if env['bottom_boundary_condition'] == "acousto-elastic":
             comment = "Depth_Max  BOT_SoundSpeed  BOT_SS_Shear  BOT_Density  BOT_Absorp  BOT_Absorp Shear"
             array_str = self._array2str([
@@ -298,28 +278,56 @@ class Bellhop:
             ])
             self._print_env_line(fh,array_str,comment)
 
-        if env['bottom_boundary_condition'] == "from-file":
-            self._create_refl_coeff_file(fname_base+".brc", env['bottom_reflection_coefficient'])
-
-        self._print_env_line(fh,"")
+    def _write_env_source_receiver(self, fh: TextIO, env: Dict[str, Any]) -> None:
+        """Writes source and receiver lines of env file."""
         self._print_array(fh, env['source_depth'], nn=env['source_ndepth'], label="Source depth (m)")
         self._print_array(fh, env['receiver_depth'], nn=env['receiver_ndepth'], label="Receiver depth (m)")
         self._print_array(fh, env['receiver_range']/1000, nn=env['receiver_nrange'], label="Receiver range (km)")
-        self._print_env_line(fh,"")
 
+    def _write_env_task(self, fh: TextIO, env: Dict[str, Any], taskcode: str) -> None:
+        """Writes task lines of env file."""
         beamtype = _Maps.beam_rev[env['beam_type']]
-        beampattern = " "
+        beampattern = " " if env['source_directionality'] is None else "*"
         txtype = _Maps.source_rev[env['source_type']]
         gridtype = _Maps.grid_rev[env['grid']]
-        if env['source_directionality'] is not None:
-            beampattern = "*"
-            self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
         runtype_str = self._quoted_opt(taskcode, beamtype, beampattern, txtype, gridtype)
         self._print_env_line(fh,f"{runtype_str}","RUN TYPE")
+
+    def _write_env_beam_footer(self, fh: TextIO, env: Dict[str, Any]) -> None:
+        """Writes beam and footer lines of env file."""
         self._print_env_line(fh,self._array2str([env['beam_num'], env['single_beam_index']]),"Num_Beams [ Single_Beam_Index ]")
         self._print_env_line(fh,f"{env['beam_angle_min']} {env['beam_angle_max']} /","ALPHA1,2 (degrees)")
         self._print_env_line(fh,f"{env['step_size']} {env['box_depth']} {env['box_range'] / 1000}","Step_Size (m), ZBOX (m), RBOX (km)")
-        self._print_env_line(fh,"","End of Bellhop environment file")
+
+    def _print(self, fh: TextIO, s: str, newline: bool = True) -> None:
+        """Write a line of text with or w/o a newline char to the output file"""
+        fh.write(s+'\n' if newline else s)
+
+    def _print_env_line(self, fh: TextIO, data: Any, comment: str = "") -> None:
+        """Write a complete line to the .env file with a descriptive comment
+
+        We do some char counting (well, padding and stripping) to ensure the code comments all start from the same char.
+        """
+        data_str = data if isinstance(data,str) else f"{data}"
+        comment_str = comment if isinstance(comment,str) else f"{comment}"
+        line_str = (data_str + " " * self.env_comment_pad)[0:max(len(data_str),self.env_comment_pad)]
+        if comment_str != "":
+            line_str = line_str + " ! " + comment_str
+        self._print(fh,line_str)
+
+    def _print_array(self, fh: TextIO, a: Any, label: str = "", nn: Optional[int] = None) -> None:
+        """Print a 1D array to the .env file, prefixed by a count of the array length"""
+        na = _np.size(a)
+        if nn is None:
+            nn = na
+        if nn == 1 or na == 1:
+            self._print_env_line(fh, 1, f"{label} (single value)")
+            self._print_env_line(fh, f"{a} /",f"{label} (single value)")
+        else:
+            self._print_env_line(fh, nn, f"{label}s ({nn} values)")
+            for j in a:
+                self._print(fh, f"{j} ", newline=False)
+            self._print(fh, " /")
 
     def _array2str(self, values: List[Any]) -> str:
         """Format list into space-separated string, trimmed at first None, ending with '/'."""
