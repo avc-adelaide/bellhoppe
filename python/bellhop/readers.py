@@ -11,39 +11,39 @@ from bellhop.constants import _Strings, _Maps, _File_Ext
 import bellhop.environment
 
 def _read_next_valid_line(f: TextIO) -> str:
-    """Read the next valid text line of an input file, discarding invalid lines"""
+    """Read the next valid text line of an input file, discarding empty content.
+    
+    Args:
+        f: File handle to read from
+        
+    Returns:
+        Non-empty line with comments and whitespace removed
+        
+    Raises:
+        EOFError: If end of file reached without finding valid content
+    """
     while True:
-        line = f.readline()
-        if not line: # EOF
+        raw_line = f.readline()
+        if not raw_line: # EOF
             raise EOFError("End of file reached before finding a valid line")
-        line = line.strip()
-        if not line: # empty
-            continue
-        if '!' in line: # strip comments
-            line = line[:line.index('!')].strip()
+        line = raw_line.split('!', 1)[0].strip()
         if line:
-            return line.strip()
+            return line
 
 def _parse_line(line: str) -> list[str]:
     """Parse a line, removing comments, /, and whitespace, and return the parts in a list"""
     line = line.split("!", 1)[0].split('/', 1)[0].strip()
     return line.split()
 
-def _parse_quoted_string(line: str) -> str:
-    """Extract string from within quotes
+def _unquote_string(line: str) -> str:
+    """Extract string from within single quotes."""
+    return line.strip().strip("'")
 
-    Sometimes (why??) the leading quote was being stripped, so we also try to catch
-    this case with the regexp, stripping only a trailing '.
-    """
-    mtch = re.search(r"'([^']*)'", line)
-    mtch2 = re.search(r"([^']*)'$", line)
-    return mtch.group(1) if mtch else mtch2.group(1) if mtch2 else line.strip()
-
-def _parse_vector(f: Any, dtype: type = float) -> Tuple[Any, int]:
+def _parse_vector(f: TextIO, dtype: type = float) -> Tuple[NDArray[_np.float64], int]:
     """Parse a vector that starts with count then values, ending with '/'"""
-    line = _read_next_valid_line(f)
 
     # First line is the count
+    line = _read_next_valid_line(f)
     linecount = int(_parse_line(line)[0])
 
     # Second line has the values
@@ -54,7 +54,7 @@ def _parse_vector(f: Any, dtype: type = float) -> Tuple[Any, int]:
     valout = _np.array(val) if len(val) > 1 else val[0]
     return valout, linecount
 
-def _read_ssp_points(f: Any) -> _pd.DataFrame:
+def _read_ssp_points(f: TextIO) -> _pd.DataFrame:
     """Read sound speed profile points until we find the bottom boundary line
 
        Default values are according to 'EnvironmentalFile.htm'."""
@@ -199,7 +199,7 @@ class EnvironmentReader:
 
         # Line 1: Title
         title_line = _read_next_valid_line(f)
-        self.env['name'] = _parse_quoted_string(title_line)
+        self.env['name'] = _unquote_string(title_line)
         # Line 2: Frequency
         freq_line = _read_next_valid_line(f)
         self.env['frequency'] = float(_parse_line(freq_line)[0])
@@ -212,7 +212,7 @@ class EnvironmentReader:
 
         # Line 4: Top boundary options
         topopt_line = _read_next_valid_line(f)
-        topopt = _parse_quoted_string(topopt_line) + "      "
+        topopt = _unquote_string(topopt_line) + "      "
         self.env["soundspeed_interp"]          = _opt_lookup("Interpolation",          topopt[0], _Maps.interp)
         self.env["surface_boundary_condition"] = _opt_lookup("Top boundary condition", topopt[1], _Maps.boundcond)
         self.env["attenuation_units"]          = _opt_lookup("Attenuation units",      topopt[2], _Maps.attunits)
@@ -264,7 +264,7 @@ class EnvironmentReader:
         # Bottom boundary options
         bottom_line = _read_next_valid_line(f)
         bottom_parts = _parse_line(bottom_line) + [None] * 3
-        botopt = _parse_quoted_string(cast(str,bottom_parts[0])) + "  " # cast() => I promise this is a str :)
+        botopt = _unquote_string(cast(str,bottom_parts[0])) + "  " # cast() => I promise this is a str :)
         self.env["bottom_boundary_condition"] = _opt_lookup("Bottom boundary condition", botopt[0], _Maps.boundcond)
         self.env["_bathymetry"]               = _opt_lookup("Bathymetry",                botopt[1], _Maps.bottom)
         self.env['bottom_roughness']       = _float(bottom_parts[1])
@@ -296,7 +296,7 @@ class EnvironmentReader:
 
         # Task/run type (e.g., 'R', 'C', etc.)
         task_line = _read_next_valid_line(f)
-        task_code = _parse_quoted_string(task_line) + "    "
+        task_code = _unquote_string(task_line) + "    "
         self.env['task']        = _Maps.task.get(task_code[0])
         self.env['beam_type']   = _Maps.beam.get(task_code[1])
         self.env['_sbp_file']   = _Maps.sbp.get(task_code[2])
