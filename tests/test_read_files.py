@@ -52,18 +52,18 @@ def test_read_ssp_single_range():
         ssp = bh.read_ssp(test_file)
 
         # Single-range file should return [depth, soundspeed] pairs
-        assert isinstance(ssp, np.ndarray), "Should return numpy array"
+        assert isinstance(ssp, pd.DataFrame), "Should return Pandas DataFrame"
         assert ssp.ndim == 2, "Should be 2D array"
-        assert ssp.shape[1] == 2, "Should have 2 columns: [depth, soundspeed]"
         assert ssp.shape[0] == 3, "Should have 3 depth points"
+        assert ssp.shape[1] == 1, "Should have 1 column of data (depth is the index)"
 
         # Check depth values are sequential
         expected_depths = np.array([0., 1., 2.])
-        np.testing.assert_array_equal(ssp[:, 0], expected_depths)
+        np.testing.assert_array_equal(ssp.index.values, expected_depths)
 
         # Check sound speed values
-        expected_speeds = np.array([1500., 1520., 1540.])
-        np.testing.assert_array_equal(ssp[:, 1], expected_speeds)
+        expected_speeds = np.array([[1500.], [1520.], [1540.]])
+        np.testing.assert_array_equal(ssp.values, expected_speeds)
 
     finally:
         if os.path.exists(test_file):

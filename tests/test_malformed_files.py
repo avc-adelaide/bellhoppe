@@ -24,7 +24,7 @@ def test_malformed_bty_insufficient_data():
 
 def test_malformed_ssp_count_mismatch():
     """Test SSP file where count doesn't match number of ranges"""
-    with pytest.raises(ValueError, match="Expected 5 range profiles, but found 3 ranges"):
+    with pytest.raises(ValueError, match="Expected 5 ranges, but found 3"):
         bh.read_ssp("tests/malformed_files/bad_count_ssp.ssp")
 
 def test_malformed_ssp_insufficient_data():
@@ -49,7 +49,7 @@ def test_empty_ati_file():
 
 def test_missing_ssp_data():
     """Test SSP file with no sound speed data"""
-    with pytest.raises(ValueError, match="No sound speed data found in file"):
+    with pytest.raises(ValueError, match="Wrong number of depths found in sound speed data file"):
         bh.read_ssp("tests/malformed_files/missing_data_ssp.ssp")
 
 def test_extra_data_sbp():

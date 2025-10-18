@@ -119,7 +119,7 @@ def _prepare_filename(fname: str, ext: str, name: str) -> Tuple[str,str]:
 
     if not os.path.exists(fname):
         raise FileNotFoundError(f"{name} file not found: {fname}")
-    
+
     return fname, fname_base
 
 def read_env2d(fname: str) -> Dict[str, Any]:
@@ -165,7 +165,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
 
 class EnvironmentReader:
     """Read and parse Bellhop environment files.
-    
+
     Although this class is only used for one task,
     the use of a class provides the clearest code interface compared
     to nested functions, which either implicitly set
@@ -173,10 +173,10 @@ class EnvironmentReader:
     arguments as dicts are passed in and returned at
     each stage.
     """
-    
+
     def __init__(self, fname: str):
         """Initialize reader with filename.
-        
+
         Args:
             fname: Path to .env file (with or without extension)
         """
@@ -285,7 +285,7 @@ class EnvironmentReader:
 
     def _read_sources_receivers_task(self, f: TextIO) -> None:
         """Read environment file sources, receivers, and task"""
-        
+
         # Source & receiver depths
         self.env['source_depth'],   self.env['source_ndepth']   = _parse_vector(f)
         self.env['receiver_depth'], self.env['receiver_ndepth'] = _parse_vector(f)
@@ -309,7 +309,7 @@ class EnvironmentReader:
 
     def _read_beams_limits(self, f: TextIO) -> None:
         """Read environment file beams and limits"""
-        
+
         # Number of beams
         beam_num_line = _read_next_valid_line(f)
         beam_num_parts = _parse_line(beam_num_line) + [None] * 1
@@ -388,7 +388,7 @@ def read_ssp(fname: str,
         1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
         1500 1500 1548.52 1530.29 1526.69 1517.78 1509.49 1504.30 1501.38 1500.14 1500.12 1501.02 1502.57 1504.62 1507.02 1509.69 1512.55 1515.56 1518.67 1521.85 1525.10 1528.38 1531.70 1535.04 1538.39 1541.76 1545.14 1548.52 1551.91 1551.91
     """
-    
+
     fname, _ = _prepare_filename(fname, _File_Ext.ssp, "SSP")
     with open(fname, 'r') as f:
         nranges = int(_read_next_valid_line(f))
@@ -418,7 +418,7 @@ def read_ssp(fname: str,
         if depths is None:
             depths = _np.arange(ndepths, dtype=float)
 
-        if len(depths) != ndepths:
+        if ndepths == 0 or len(depths) != ndepths:
             raise ValueError("Wrong number of depths found in sound speed data file"
                              f" (expected {ndepths}, found {ssp_array.shape[0]})")
 
