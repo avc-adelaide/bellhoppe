@@ -198,35 +198,17 @@ class Bellhop:
                 self._print(fh, f"{j} ", newline=False)
             self._print(fh, " /")
 
-    def _create_env_file(self, env: Dict[str, Any], taskcode: str, fh: TextIO, fname_base: str, debug: bool = False) -> None:
-        """Writes a complete .env file for specifying a Bellhop simulation
-
-        :param env: environment dict
-        :param taskcode: task string which defines the computation to run
-        :param fh: file reference (already opened)
-        :param fname_base: filename base (without extension)
-        :param debug: boolean to activate diagnostic printing
-        :returns fname_base: filename base (no extension) of written file
-        """
-
-        def _array2str(values: List[Any]) -> str:
-            """Format list into space-separated string, trimmed at first None, ending with '/'."""
-            try:
-                values = values[:values.index(None)]
-            except ValueError:
-                pass
-            return " ".join(
-                f"{v}" if isinstance(v, (int, float)) else str(v)
-                for v in values
-            ) + " /"
-
+    def _write_env_header(self, fh: TextIO, env: Dict[str, Any]) -> None:
+        """Writes header of env file."""
         self._print_env_line(fh,"")
         self._print_env_line(fh,"'"+env['name']+"'","Bellhop environment name/description")
         self._print_env_line(fh,env['frequency'],"Frequency (Hz)")
         self._print_env_line(fh,1,"NMedia -- always =1 for Bellhop")
         self._print_env_line(fh,"")
 
-        svp = env['soundspeed']
+    def _write_surface_depth(self, fh: TextIO, env: Dict[str, Any]) -> None:
+        """Writes surface boundary and depth lines of env file."""
+
         svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
         svp_boundcond = _Maps.boundcond_rev[env['surface_boundary_condition']]
         svp_attunits = _Maps.attunits_rev[env['attenuation_units']]
@@ -244,7 +226,7 @@ class Bellhop:
 
         if env['surface_boundary_condition'] == _Strings.acousto_elastic:
             comment = "DEPTH_Top (m)  TOP_SoundSpeed (m/s)  TOP_SoundSpeed_Shear (m/s)  TOP_Density (g/cm^3)  [ TOP_Absorp [ TOP_Absorp_Shear ] ]"
-            array_str = _array2str([
+            array_str = self._array2str([
               env['depth_max'],
               env['surface_soundspeed'],
               env['surface_soundspeed_shear'],
@@ -254,32 +236,48 @@ class Bellhop:
             ])
             self._print_env_line(fh,array_str,comment)
 
-        elif env['surface_boundary_condition'] == "from-file":
-            self._create_refl_coeff_file(fname_base+".trc", env['surface_reflection_coefficient'])
-
-        if env['surface'] is not None:
-            self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
-
         comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
         self._print_env_line(fh,f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}",comment)
 
+    def _write_sound_speed(self, fh: TextIO, env: Dict[str, Any]) -> None:
+        """Writes sound speed profile lines of env file."""
+        svp = env['soundspeed']
+        svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
         if isinstance(svp, _pd.DataFrame) and len(svp.columns) == 1:
             svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
         if svp.size == 1:
-            debug and print("One SSP point only")
-            self._print_env_line(fh,_array2str([0.0, svp]),"Min_Depth SSP_Const")
-            self._print_env_line(fh,_array2str([env['depth_max'], svp]),"Max_Depth SSP_Const")
+            self._print_env_line(fh,self._array2str([0.0, svp]),"Min_Depth SSP_Const")
+            self._print_env_line(fh,self._array2str([env['depth_max'], svp]),"Max_Depth SSP_Const")
         elif svp_interp == "Q":
-            debug and print("SSP: Q interpolation")
             for j in range(svp.shape[0]):
-                self._print_env_line(fh,_array2str([svp.index[j], svp.iloc[j,0]]),f"ssp_{j}")
-            self._create_ssp_quad_file(fname_base+'.ssp', svp)
+                self._print_env_line(fh,self._array2str([svp.index[j], svp.iloc[j,0]]),f"ssp_{j}")
         else:
-            debug and print(f"SSP: standard 2xN array of depths and sound speeds -- interpolation: {svp_interp}")
             for j in range(svp.shape[0]):
-                self._print_env_line(fh,_array2str([svp[j,0], svp[j,1]]),f"ssp_{j}")
+                self._print_env_line(fh,self._array2str([svp[j,0], svp[j,1]]),f"ssp_{j}")
 
+    def _create_env_file(self, env: Dict[str, Any], taskcode: str, fh: TextIO, fname_base: str, debug: bool = False) -> None:
+        """Writes a complete .env file for specifying a Bellhop simulation
+
+        :param env: environment dict
+        :param taskcode: task string which defines the computation to run
+        :param fh: file reference (already opened)
+        :param fname_base: filename base (without extension)
+        :param debug: boolean to activate diagnostic printing
+        :returns fname_base: filename base (no extension) of written file
+        """
+
+        self._write_env_header(fh, env)
+        self._write_surface_depth(fh, env)
+        self._write_sound_speed(fh, env)
         self._print_env_line(fh,"")
+
+        if env['surface_boundary_condition'] == _Strings.from_file:
+            self._create_refl_coeff_file(fname_base+".trc", env['surface_reflection_coefficient'])
+        if env['surface'] is not None:
+            self._create_bty_ati_file(fname_base+'.ati', env['surface'], env['surface_interp'])
+        if env['soundspeed_interp'] == _Strings.quadrilateral:
+            self._create_ssp_quad_file(fname_base+'.ssp', env['soundspeed'])
+
         bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
         dp_flag = _Maps.bottom_rev[env['_bathymetry']]
         comment = "BOT_Boundary_cond / BOT_Roughness"
@@ -290,7 +288,7 @@ class Bellhop:
 
         if env['bottom_boundary_condition'] == "acousto-elastic":
             comment = "Depth_Max  BOT_SoundSpeed  BOT_SS_Shear  BOT_Density  BOT_Absorp  BOT_Absorp Shear"
-            array_str = _array2str([
+            array_str = self._array2str([
               env['depth_max'],
               env['bottom_soundspeed'],
               env['bottom_soundspeed_shear'],
@@ -318,10 +316,21 @@ class Bellhop:
             self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
         runtype_str = self._quoted_opt(taskcode, beamtype, beampattern, txtype, gridtype)
         self._print_env_line(fh,f"{runtype_str}","RUN TYPE")
-        self._print_env_line(fh,_array2str([env['beam_num'], env['single_beam_index']]),"Num_Beams [ Single_Beam_Index ]")
+        self._print_env_line(fh,self._array2str([env['beam_num'], env['single_beam_index']]),"Num_Beams [ Single_Beam_Index ]")
         self._print_env_line(fh,f"{env['beam_angle_min']} {env['beam_angle_max']} /","ALPHA1,2 (degrees)")
         self._print_env_line(fh,f"{env['step_size']} {env['box_depth']} {env['box_range'] / 1000}","Step_Size (m), ZBOX (m), RBOX (km)")
         self._print_env_line(fh,"","End of Bellhop environment file")
+
+    def _array2str(self, values: List[Any]) -> str:
+        """Format list into space-separated string, trimmed at first None, ending with '/'."""
+        try:
+            values = values[:values.index(None)]
+        except ValueError:
+            pass
+        return " ".join(
+            f"{v}" if isinstance(v, (int, float)) else str(v)
+            for v in values
+        ) + " /"
 
     def _create_bty_ati_file(self, filename: str, depth: Any, interp: _Strings) -> None:
         with open(filename, 'wt') as f:
