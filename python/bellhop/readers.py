@@ -12,13 +12,13 @@ import bellhop.environment
 
 def _read_next_valid_line(f: TextIO) -> str:
     """Read the next valid text line of an input file, discarding empty content.
-    
+
     Args:
         f: File handle to read from
-        
+
     Returns:
         Non-empty line with comments and whitespace removed
-        
+
     Raises:
         EOFError: If end of file reached without finding valid content
     """
@@ -36,8 +36,8 @@ def _parse_line(line: str) -> list[str]:
     return line.split()
 
 def _unquote_string(line: str) -> str:
-    """Extract string from within single quotes."""
-    return line.strip().strip("'")
+    """Extract string from within single quotes, possibly with commas too."""
+    return line.strip().strip(",'")
 
 def _parse_vector(f: TextIO, dtype: type = float) -> Tuple[NDArray[_np.float64], int]:
     """Parse a vector that starts with count then values, ending with '/'"""
