@@ -74,7 +74,7 @@ def new_model(name: str, **kwargs):
     _models.append(model)
     return model
 
-new_model()
+new_model(name=Defaults.model_name)
 
 def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> List[str]:
     """List available models.

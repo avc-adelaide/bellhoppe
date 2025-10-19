@@ -22,16 +22,18 @@ class Bellhop:
 
     Parameters
     ----------
+    name : str
+        User-fancing name for the model
     exe : str
-        Filename of executable to call Bellhop with
+        Filename of Bellhop executable
     """
 
-    def __init__(self, exe: str = Defaults.exe,
-                       name: str = Defaults.model_name,
+    def __init__(self, name: str = Defaults.name,
+                       exe: str = Defaults.exe,
                        env_comment_pad: int = Defaults.env_comment_pad,
                 ) -> None:
-        self.exe: str = exe
         self.name: str = name
+        self.exe: str = exe
         self.env_comment_pad: int = env_comment_pad
 
     def supports(self, env: Optional[Dict[str, Any]] = None,
