@@ -66,14 +66,14 @@ The full set of options are listed in @tbl-ssp-interp.
 Some description of these is provided in the [environmental file documentation](../EnvironmentalFile.htm).
 Note that the `A`, for "analytic", option is not provided, as this requires Fortran source code modification to function correctly.
 
-Bellhop.py option     Fortran char  Dimension
------------------     ------------  ---------
-"spline"               `S`          1D
-"linear"               `C`          1D
-"pchip"                `P`          1D
-"nlinear"              `N`          1D
-"quadrilateral"        `Q`          2D — depth & range
-"hexahedral"           `H`          3D — bellhop3D only
+`soundspeed_interp=`    Fortran char  Dimension
+--------------------    ------------  ---------
+`"spline"`               `S`          1D
+`"linear"`               `C`          1D
+`"pchip"`                `P`          1D
+`"nlinear"`              `N`          1D
+`"quadrilateral"`        `Q`          2D — depth & range
+`"hexahedral"`           `H`          3D — bellhop3D only
 
 : Bellhop sound speed interpolation options for option `soundspeed_interp=`. The Fortran char refers to the first digit of the "topopt" string (line 4) of the .env file. {#tbl-ssp-interp}
 

@@ -42,23 +42,23 @@ def new_model(name: str, **kwargs: Any) -> Bellhop:
 
     Creates a Bellhop instance with the specified parameters and
     adds it to the internal registry of models for later access.
-    
+
     Parameters
     ----------
     name : str
         Descriptive name for this model instance, must be unique
-    
+
     **kwargs
         Keyword arguments passed directly to the Bellhop constructor.
         Common parameters include:
         - exe : str
             Filename of the Bellhop executable
-    
+
     Returns
     -------
     Bellhop
         The newly created Bellhop model instance.
-    
+
     Examples
     --------
     >>> bh.models() # there is always a default model
@@ -129,8 +129,11 @@ def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
     tasks = task if isinstance(task, list) else [task]
     results: List[Any] = []
     for this_env in envs:
+        debug and print(f"Using environment: {this_env['name']}")
         for this_model in models:
+            debug and print(f"Using model: {'[None] (default)' if this_model is None else this_model.get('name')}")
             for this_task in tasks:
+                debug and print(f"Using task: {this_task}")
                 env_chk = check_env2d(this_env)
                 this_task = this_task or env_chk.get('task')
                 if this_task is None:
@@ -172,7 +175,7 @@ def _select_model(env: Dict[str, Any],
                 return m
         raise ValueError(f"Unknown model: '{model}'")
 
-    debug and print(debug, "Searching for propagation model:")
+    debug and print("Searching for propagation model:")
     for mm in _models:
         if mm.supports(env, task):
             debug and print(f'Model found: {mm.name}')
@@ -188,7 +191,7 @@ def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bo
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
     :returns: arrival times and coefficients for all transmitter-receiver combinations
 
-    
+
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> arrivals = bh.compute_arrivals(env)

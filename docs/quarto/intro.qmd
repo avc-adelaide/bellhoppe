@@ -69,3 +69,9 @@ env = bh.create_env2d(
 tl = bh.compute_transmission_loss(env)
 bhp.plot_transmission_loss(tl,env=env)
 ```
+
+
+## Generalised interface
+
+For complex simulations you may wish to run more than one type of computation, or compare the results of computations from varying the environment file.
+These types of workflows are enabled using the [generalised `compute()` interface](compute.qmd).

@@ -1,0 +1,105 @@
+---
+title: "Bellhop.py computation options"
+format:
+  html:
+    code-fold: true
+jupyter: python3
+---
+
+In the [introduction](intro.qmd), the four computation types were introduced: arrivals, rays, eigenrays, and transmission loss.
+When once-off simulations are being undertaken, the methods `compute_arrivals()`, `compute_rays`, etc., are convenient wrappers.
+More more complex scenarios, the generalise `compute()` method allows multiple tasks, environmentals, and even Bellhop executables to be run with a single command.
+
+## Compatibility with Fortran .env files
+
+One feature of the `compute()` function is to maintain interface compatibility with the original .env file Bellhop interface. Within a legacy .env file, the task to run is hard-coded and therefore
+```
+env = read_env2d('myenv.env')
+print(f"Running task {env['task']}")
+results = compute(env)
+```
+will return identical results to 
+```
+> bellhop.exe myenv
+```
+The Fortran results file is read into the Python variable `results` according to which task is specified.
+
+## Multiple tasks
+
+Pass the name of each desired task via the `task=["`*<task1>*`", "`*<task2>*`"]` option.
+The possible tasks are shown in @tbl-tasks.
+Note that Bellhop runs separately for each one of these computations — it does not provide
+a feature to re-use data from prior runs (which would seem like it should).
+
+`task=`
+----------------------
+`"rays"`
+`"eigenrays"`
+`"arrivals"`
+`"coherent"`
+`"incoherent"`
+`"semicoherent"`
+
+: Values allowed for `task=` option for `bellhop.compute`. {#tbl-tasks}
+
+When more than one task is provided as a list, the output data is provided as a list of dictionaries:
+
+```{python}
+import bellhop as bh 
+import bellhop.plot as bhp
+
+env = bh.create_env2d()
+output = bh.compute(env,task=["eigenrays","arrivals"])
+
+bhp.plot_rays(output[0]['results'])
+bhp.plot_arrivals(output[1]['results'])
+```
+
+Each dictionary has schema:
+
+* `name`: the name of the environment configuration (i.e., as produced by `env['name']`)
+* `task`: the name of the task (see @tbl-tasks)
+* `model`: model name used (matching `bellhop.models()`)
+* `results`: the data structure produced by Bellhop for this computation
+
+## Multiple environments
+
+When undertaking sensitivity studies it is very common to run multiple Bellhop simulations with varying environment parameters.
+The `compute()` function allows multiple environments to be passsed directly to do this automatically:
+
+```{python}
+import bellhop as bh 
+import bellhop.plot as bhp
+
+env1 = bh.create_env2d()
+env2 = env1.copy()
+env2['receiver_depth'] = 2 * env1['receiver_depth']
+output = bh.compute(env=[env1, env2],task="arrivals")
+
+bhp.plot_arrivals(output[0]['results'])
+bhp.plot_arrivals(output[1]['results'])
+```
+
+Where there are multiple tasks and multiple environments, every combination is calculated; for instance `env=[env1, env2]` and `task=["arrivals","eigenrays"]` would result in four outputs. (The order is likely implementation-dependent so shouldn't be relied upon.)
+
+## Multiple models
+
+For researchers developing new Bellhop variants (for instance, []`bellhopcuda`](https://github.com/A-New-BellHope/bellhopcuda)), it can be important for testing purposes to be able to run back-to-back simulations with different Bellhop implementations.
+
+This style of execution is harder to demonstrate in a minimal example, but would be constructed with an approach such as:
+
+```{python}
+import bellhop as bh 
+import pandas.testing as pdt
+
+if "bellhopcuda" not in bh.models():
+    bh.new_model(name="bellhopcuda",exe="bellhop.exe") # in reality you would of course have a separate binary
+
+env = bh.create_env2d()
+output = bh.compute(env,task="arrivals",model=["bellhop", "bellhopcuda"])
+
+pdt.assert_frame_equal(output[0]['results'], output[1]['results'])
+print("[no output to compare, both sets of results are identical]")
+```
+
+Once again, you can define multiple models, environments, and tasks, and `bellhop` will automatically execute each combination.
