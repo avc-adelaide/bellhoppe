@@ -37,7 +37,7 @@ from bellhop.readers import read_brc as read_brc
 from bellhop.bellhop import Bellhop
 _models: List[Bellhop] = []
 
-def new_model(name: str, **kwargs):
+def new_model(name: str, **kwargs) -> Bellhop:
     """Instantiate a new Bellhop model and add it to the list of models.
 
     Creates a Bellhop instance with the specified parameters and

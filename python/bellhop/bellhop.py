@@ -28,7 +28,7 @@ class Bellhop:
         Filename of Bellhop executable
     """
 
-    def __init__(self, name: str = Defaults.name,
+    def __init__(self, name: str = Defaults.model_name,
                        exe: str = Defaults.exe,
                        env_comment_pad: int = Defaults.env_comment_pad,
                 ) -> None:
