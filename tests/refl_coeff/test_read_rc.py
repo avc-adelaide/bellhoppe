@@ -59,7 +59,7 @@ def test_read_trc():
 def test_write_brc():
     """Test round-tripping .brc file"""
 
-    env = bh.create_env2d()
+    env = bh.create_env()
     brc1 = bh.read_brc("tests/refl_coeff/example.brc")
     env["bottom_reflection_coefficient"] = brc1
 
@@ -72,7 +72,7 @@ def test_write_brc():
 def test_write_trc():
     """Test round-tripping .trc file"""
 
-    env = bh.create_env2d()
+    env = bh.create_env()
     trc1 = bh.read_trc("tests/refl_coeff/example.trc")
     env["surface_reflection_coefficient"] = trc1
 

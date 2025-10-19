@@ -23,7 +23,7 @@ The rays are coloured according to their total number of bounces to give a visua
 import bellhop as bh
 import bellhop.plot as bhp
 
-env = bh.create_env2d()
+env = bh.create_env()
 erays = bh.compute_eigenrays(env)
 bhp.plot_rays(erays,env=env)
 ```
@@ -40,7 +40,7 @@ An example of these are shown in @fig-basic-arr.
 import bellhop as bh
 import bellhop.plot as bhp
 
-env = bh.create_env2d()
+env = bh.create_env()
 arr = bh.compute_arrivals(env)
 bhp.plot_arrivals(arr)
 ```
@@ -61,7 +61,7 @@ import numpy as np
 import bellhop as bh
 import bellhop.plot as bhp
 
-env = bh.create_env2d(
+env = bh.create_env(
     frequency=1000,
     receiver_range=np.linspace(1,25,200),
     receiver_depth=np.linspace(0,25,200),

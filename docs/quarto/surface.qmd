@@ -71,7 +71,7 @@ import bellhop as bh
 import bellhop.plot as bhp
 import numpy as np
 
-env = bh.create_env2d()
+env = bh.create_env()
 wave_amp = 0.5 # m
 wave_period = 100.0 # m
 npoints = 10 * env["receiver_range"] / wave_period # sample 10 points per wavelength
@@ -159,7 +159,7 @@ The distribution above can now be easily used in a Bellhop calculation:
 #| label: fig-bellhop-jonswap
 #| fig-cap: "Eigenrays calculated between a source and receiver with a JONSWAP sea surface profile."
 
-env = bh.create_env2d(receiver_range=200)
+env = bh.create_env(receiver_range=200)
 eta = eta - np.min(eta) # ensure highest point is zero
 env["surface"] = np.column_stack((x, eta))
 erays = bh.compute_eigenrays(env)
@@ -225,7 +225,7 @@ import bellhop as bh
 import bellhop.plot as bhp
 
 ice_data = np.column_stack((dist_m, alti_ice))
-env = bh.create_env2d(
+env = bh.create_env(
     source_depth=20,
     surface=ice_data,
     surface_boundary_condition="acousto-elastic",

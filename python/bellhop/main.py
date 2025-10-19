@@ -23,8 +23,8 @@ import pandas as _pd
 from bellhop.constants import _Strings, Defaults
 
 # this format to explicitly mark the functions as public:
-from bellhop.create import create_env2d as create_env2d
-from bellhop.create import check_env2d as check_env2d
+from bellhop.create import create_env as create_env
+from bellhop.create import check_env as check_env
 from bellhop.create import print_env as print_env
 
 from bellhop.readers import read_env2d as read_env2d
@@ -97,12 +97,12 @@ def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> 
     >>> import bellhop as bh
     >>> bh.models()
     ['bellhop']
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> bh.models(env, task="coherent")
     ['bellhop']
     """
     if env is not None:
-        env = check_env2d(env)
+        env = check_env(env)
     if (env is None and task is not None) or (env is not None and task is None):
         raise ValueError('env and task should be both specified together')
     rv: List[str] = []
@@ -161,7 +161,7 @@ def compute(
 
     Multiple tasks:
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> output, ind_df = bh.compute(env,task=["arrivals", "eigenrays"])
     >>> bh.plot_arrivals(output[0]['results'])
     """
@@ -175,7 +175,7 @@ def compute(
             debug and print(f"Using model: {'[None] (default)' if this_model is None else this_model.get('name')}")
             for this_task in tasks:
                 debug and print(f"Using task: {this_task}")
-                env_chk = check_env2d(this_env)
+                env_chk = check_env(this_env)
                 this_task = this_task or env_chk.get('task')
                 if this_task is None:
                     raise ValueError("Task must be specified in env or as parameter")
@@ -269,7 +269,7 @@ def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bo
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> arrivals = bh.compute_arrivals(env)
     >>> bh.plot_arrivals(arrivals)
     """
@@ -305,11 +305,11 @@ def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_d
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> rays = bh.compute_eigenrays(env)
     >>> bh.plot_rays(rays, width=1000)
     """
-    env = check_env2d(env)
+    env = check_env(env)
     env = env.copy()
     if _np.size(env['source_depth']) > 1:
         env['source_depth'] = env['source_depth'][source_depth_ndx]
@@ -345,11 +345,11 @@ def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> rays = bh.compute_rays(env)
     >>> bh.plot_rays(rays, width=1000)
     """
-    env = check_env2d(env)
+    env = check_env(env)
     if _np.size(env['source_depth']) > 1:
         env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]
@@ -383,13 +383,13 @@ def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mo
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> tloss = bh.compute_transmission_loss(env, mode=bh.incoherent)
     >>> bh.plot_transmission_loss(tloss, width=1000)
     """
     task = mode or env.get("interference_mode") or Defaults.interference_mode
     debug and print(f"  {mode=}")
-    env = check_env2d(env)
+    env = check_env(env)
     if _np.size(env['source_depth']) > 1:
         env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]
@@ -422,7 +422,7 @@ def arrivals_to_impulse_response(arrivals: Any, fs: float, abs_time: bool = Fals
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> arrivals = bh.compute_arrivals(env)
     >>> ir = bh.arrivals_to_impulse_response(arrivals, fs=192000)
     """

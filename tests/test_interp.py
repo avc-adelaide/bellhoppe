@@ -20,7 +20,7 @@ ssp = [
 ]
 
 # Create environment with variable sound speed profile
-env = bh.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="linear", beam_angle_min=-80, beam_angle_max=80)
+env = bh.create_env(soundspeed=ssp, depth=30, soundspeed_interp="linear", beam_angle_min=-80, beam_angle_max=80)
 
 # Compute arrivals
 arrivals = bh.compute_arrivals(env,debug=True,fname_base="tests/_test_interp")
@@ -74,7 +74,7 @@ def test_interp_linear():
 def test_spline():
     """Test spline interpolation for SSP. Changing interpolation changes the results so we only look for approximate matches."""
 
-    env2 = bh.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="spline")
+    env2 = bh.create_env(soundspeed=ssp, depth=30, soundspeed_interp="spline")
     arrivals2 = bh.compute_arrivals(env2,debug=True,fname_base="tests/_test_interp_spline")
     arrival_times2 = arrivals2["time_of_arrival"]
 
@@ -96,14 +96,14 @@ def test_spline_fail():
             [20, 1532],  # 1532 m/s at 20 m depth
             [30, 1535]   # 1535 m/s at the seabed
         ]
-        env2 = bh.create_env2d(soundspeed=ssp2, depth=30, soundspeed_interp="spline")
-        bh.check_env2d(env2)
+        env2 = bh.create_env(soundspeed=ssp2, depth=30, soundspeed_interp="spline")
+        bh.check_env(env2)
 
 
 def test_pchip():
     """Test pchip interpolation for SSP. Changing interpolation changes the results so we only look for approximate matches."""
 
-    env3 = bh.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="pchip")
+    env3 = bh.create_env(soundspeed=ssp, depth=30, soundspeed_interp="pchip")
     arrivals3 = bh.compute_arrivals(env3,debug=True,fname_base="tests/_test_interp_pchip")
     arrival_times3 = arrivals3["time_of_arrival"]
 
@@ -121,7 +121,7 @@ def test_pchip():
 def test_nlinear():
     """Test nlinear interpolation for SSP. Changing interpolation changes the results so we only look for approximate matches."""
 
-    env4 = bh.create_env2d(soundspeed=ssp, depth=30, soundspeed_interp="nlinear")
+    env4 = bh.create_env(soundspeed=ssp, depth=30, soundspeed_interp="nlinear")
     arrivals4 = bh.compute_arrivals(env4,debug=True,fname_base="tests/_test_interp_nlinear")
     arrival_times4 = arrivals4["time_of_arrival"]
 

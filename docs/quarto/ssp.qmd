@@ -26,7 +26,7 @@ import bellhop as bh
 import bellhop.plot as bhp
 
 ssp = [[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]]
-env = bh.create_env2d(
+env = bh.create_env(
     soundspeed_interp="linear",
     soundspeed=ssp,
     depth=30,
@@ -51,7 +51,7 @@ ssp = pd.DataFrame({
         'depth':[0, 10, 20, 30],
         'speed':[1540, 1530, 1532, 1535],
   })
-env = bh.create_env2d(
+env = bh.create_env(
     soundspeed_interp="spline",
     soundspeed=ssp,
     depth=30,
@@ -213,7 +213,7 @@ import bellhop as bh
 import bellhop.plot as bhp
 
 svp.columns = distance_km * 1000.0
-env = bh.create_env2d(
+env = bh.create_env(
   depth=5500,
   soundspeed=svp, # see above for this 2D DataFrame definition
   soundspeed_interp="quadrilateral", # implied

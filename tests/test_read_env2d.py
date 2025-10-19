@@ -23,7 +23,7 @@ def test_read_env2d_basic():
     assert env['beam_num'] == 41
 
     # Verify the environment is valid
-    checked_env = bh.check_env2d(env)
+    checked_env = bh.check_env(env)
     assert checked_env is not None
 
 
@@ -40,14 +40,14 @@ def test_read_env2d_free_space():
     assert env['beam_angle_max'] == 89.0
     assert env['beam_num'] == 500
 
-    # Note: This environment may not pass check_env2d due to minimal SSP profile
+    # Note: This environment may not pass check_env due to minimal SSP profile
     # but the parsing itself should work
 
 
 def test_read_env2d_round_trip():
     """Test creating an environment, writing it to ENV file, then reading it back."""
     # Create a test environment
-    env_orig = bh.create_env2d(
+    env_orig = bh.create_env(
         name="Round trip test",
         frequency=100.0,
         depth=30.0,
@@ -62,7 +62,7 @@ def test_read_env2d_round_trip():
         beam_angle_max=30.0,
         beam_num=31
     )
-    env_orig = bh.check_env2d(env_orig)
+    env_orig = bh.check_env(env_orig)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         fname_base = os.path.join(temp_dir, "test_env")
@@ -150,10 +150,10 @@ def test_read_env2d_vector_parsing():
 
 def test_read_env2e_dataframe():
 
-    env1 = bh.create_env2d(soundspeed=[[0,1540], [5,1535], [10,1535], [20,1530]])
+    env1 = bh.create_env(soundspeed=[[0,1540], [5,1535], [10,1535], [20,1530]])
 
     ssp2 = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")  # Returns DataFrame
-    env2 = bh.create_env2d(soundspeed=ssp2)
+    env2 = bh.create_env(soundspeed=ssp2)
 
     assert isinstance(env1['soundspeed'],np.ndarray), "Expect plain array => Numpy array"
     assert isinstance(env2['soundspeed'],pd.DataFrame), "Expect DataFrame => preserved"

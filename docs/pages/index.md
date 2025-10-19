@@ -35,7 +35,7 @@ A modern [Python interface](media/python/index.html) is provided in this package
 import bellhop as bh
 import bellhop.plot as bhp
 
-env = bh.create_env2d() # create a default example environment
+env = bh.create_env() # create a default example environment
 arr = bh.compute_arrivals(env)
 bhp.plot_arrivals(arr,env=env)
 ```

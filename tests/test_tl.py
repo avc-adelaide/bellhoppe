@@ -4,8 +4,8 @@ import bellhop as bh
 
 def test_tl_many_source():
 
-    env = bh.create_env2d()
-    env = bh.check_env2d(env)
+    env = bh.create_env()
+    env = bh.check_env(env)
     i1 =  5.0
     i2 = 10.0
     i3 = 15.0

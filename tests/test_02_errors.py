@@ -9,7 +9,7 @@ def test_missing_key_error():
 
     # Test that the specific KeyError is raised
     with pytest.raises(KeyError, match=r"Unknown key: missing_key"):
-	    env = bh.create_env2d(missing_key=7)
+	    env = bh.create_env(missing_key=7)
 
 
 
@@ -28,8 +28,8 @@ def test_variable_soundspeed_error():
 
     # Create environment with variable sound speed profile
     with pytest.raises(ValueError, match=r"Soundspeed array must be strictly monotonic in depth"):
-        env = bh.create_env2d(soundspeed=ssp, depth=30)
-        env = bh.check_env2d(env)
+        env = bh.create_env(soundspeed=ssp, depth=30)
+        env = bh.check_env(env)
 
 
 
@@ -37,22 +37,22 @@ def test_error_type():
     """Test that an error is raised for unknown model type."""
 
     with pytest.raises(ValueError, match=r"Not a 2D environment"):
-        env = bh.create_env2d(type="4D")
-        bh.check_env2d(env)
+        env = bh.create_env(type="4D")
+        bh.check_env(env)
 
 
 def test_ssp_spline_points():
     ssp = pd.DataFrame({'speed': [1540,1530,1535]},index=[0,15,30])
-    env = bh.create_env2d(soundspeed=ssp,depth=30,soundspeed_interp="spline")
+    env = bh.create_env(soundspeed=ssp,depth=30,soundspeed_interp="spline")
 
     with pytest.raises(ValueError, match=r"soundspeed profile must have at least 4 points for spline interpolation"):
-        bh.check_env2d(env)
+        bh.check_env(env)
 
 
 def test_missing_output_triggers_warning(capsys):
     bellhop = bh.bellhop.Bellhop()
-    env = bh.create_env2d()
-    env = bh.check_env2d(env)
+    env = bh.create_env()
+    env = bh.check_env(env)
     task = bh.bellhop._Strings.arrivals
 
     with pytest.raises(RuntimeError, match="Bellhop did not generate expected output file"):

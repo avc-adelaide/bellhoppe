@@ -9,9 +9,12 @@ from bellhop.constants import Defaults, _Strings
 import bellhop.environment as _env
 from bellhop.environment import EnvironmentConfig, _validate_source_type
 
-
 def create_env2d(**kv: Any) -> Dict[str, Any]:
-    """Create a new 2D underwater environment with automatic validation.
+    """Backwards compatibility for create_env"""
+    return create_env(**kv)
+
+def create_env(**kv: Any) -> Dict[str, Any]:
+    """Create a new underwater environment.
 
     Parameters
     ----------
@@ -21,7 +24,7 @@ def create_env2d(**kv: Any) -> Dict[str, Any]:
     Returns
     -------
     env : dict
-        A new 2D underwater environment dictionary.
+        A new underwater environment dictionary.
 
     Raises
     ------
@@ -34,14 +37,14 @@ def create_env2d(**kv: Any) -> Dict[str, Any]:
     To see all the parameters available and their default values:
 
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> bh.print_env(env)
 
     The environment parameters may be changed by passing keyword arguments
     or modified later using dictionary notation:
 
     >>> import bellhop as bh
-    >>> env = bh.create_env2d(depth=40, soundspeed=1540)
+    >>> env = bh.create_env(depth=40, soundspeed=1540)
     >>> bh.print_env(env)
     >>> env['depth'] = 25
     >>> env['bottom_soundspeed'] = 1800
@@ -51,7 +54,7 @@ def create_env2d(**kv: Any) -> Dict[str, Any]:
     A depth dependent sound speed profile be provided as a Nx2 array of (depth, sound speed):
 
     >>> import bellhop as bh
-    >>> env = bh.create_env2d(depth=20,
+    >>> env = bh.create_env(depth=20,
     >>>.        soundspeed=[[0,1540], [5,1535], [10,1535], [20,1530]])
 
     A range-and-depth dependent sound speed profile can be provided as a Pandas frame:
@@ -63,13 +66,13 @@ def create_env2d(**kv: Any) -> Dict[str, Any]:
             100: [1540, 1535, 1530, 1533],     # profile at 100 m range
             200: [1530, 1520, 1522, 1525] },   # profile at 200 m range
             index=[0, 10, 20, 30])             # depths of the profile entries in m
-    >>> env = bh.create_env2d(depth=20, soundspeed=ssp2)
+    >>> env = bh.create_env(depth=20, soundspeed=ssp2)
 
     The default environment has a constant water depth. A range dependent bathymetry
     can be provided as a Nx2 array of (range, water depth):
 
     >>> import bellhop as bh
-    >>> env = bh.create_env2d(depth=[[0,20], [300,10], [500,18], [1000,15]])
+    >>> env = bh.create_env(depth=[[0,20], [300,10], [500,18], [1000,15]])
     """
     env = _env.new()
 
@@ -106,9 +109,12 @@ def _validate_options_with_dataclass(env: Dict[str, Any]) -> Dict[str, Any]:
     except (ValueError, TypeError) as e:
         raise ValueError(str(e))
 
-
 def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
-    """Check the validity of a 2D underwater environment definition.
+    """Backwards compatibility for check_env"""
+    return check_env(env=env)
+
+def check_env(env: Dict[str, Any]) -> Dict[str, Any]:
+    """Check the validity of a underwater environment definition.
 
     This function is automatically executed before any of the compute_ functions,
     but must be called manually after setting environment parameters if you need to
@@ -132,8 +138,8 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
-    >>> env = check_env2d(env)
+    >>> env = bh.create_env()
+    >>> env = check_env(env)
     """
     env = _finalise_environment(env)
 
@@ -213,7 +219,7 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
 def _finalise_environment(env: Dict[str, Any]) -> Dict[str, Any]:
     """Reviews the data within an environment and updates settings for consistency.
 
-    This function is run as the first step of check_env2d().
+    This function is run as the first step of check_env().
     """
 
     if _np.size(env['depth']) > 1:
@@ -282,10 +288,10 @@ def print_env(env: Dict[str, Any]) -> None:
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d(depth=40, soundspeed=1540)
+    >>> env = bh.create_env(depth=40, soundspeed=1540)
     >>> bh.print_env(env)
     """
-    env = check_env2d(env)
+    env = check_env(env)
     keys_set = set(env.keys()) - {'name'}
     keys: List[str] = ['name'] + sorted(list(keys_set))
     for k in keys:

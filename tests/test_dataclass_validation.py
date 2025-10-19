@@ -134,9 +134,9 @@ class TestEnvironmentConfigValidation:
 class TestDataclassIntegration:
     """Test integration of dataclass validation with existing functions."""
 
-    def test_create_env2d_with_validation(self):
-        """Test that create_env2d works with valid options and validation."""
-        env = bh.create_env2d(
+    def test_create_env_with_validation(self):
+        """Test that create_env works with valid options and validation."""
+        env = bh.create_env(
             depth=40,
             soundspeed=1540,
             soundspeed_interp='linear'
@@ -146,26 +146,26 @@ class TestDataclassIntegration:
         assert env['soundspeed'] == 1540
         assert env['soundspeed_interp'] == 'linear'
 
-    def test_create_env2d_with_invalid_options(self):
-        """Test that create_env2d fails with invalid options."""
+    def test_create_env_with_invalid_options(self):
+        """Test that create_env fails with invalid options."""
         with pytest.raises(ValueError, match="Invalid soundspeed_interp"):
-            bh.create_env2d(soundspeed_interp='invalid_option')
+            bh.create_env(soundspeed_interp='invalid_option')
 
-    def test_check_env2d_with_dataclass_validation(self):
-        """Test that check_env2d uses dataclass validation."""
+    def test_check_env_with_dataclass_validation(self):
+        """Test that check_env uses dataclass validation."""
         # Create an environment with invalid option
-        env = bh.create_env2d()
+        env = bh.create_env()
         env['soundspeed_interp'] = 'invalid_option'
 
         # Should raise ValueError due to dataclass validation
         with pytest.raises(ValueError, match="Invalid soundspeed_interp"):
-            bh.check_env2d(env)
+            bh.check_env(env)
 
     def test_backward_compatibility_preserved(self):
         """Test that existing dictionary-based interface still works."""
         # This should work exactly as before
-        env = bh.create_env2d(depth=40, soundspeed=1540)
-        env = bh.check_env2d(env)
+        env = bh.create_env(depth=40, soundspeed=1540)
+        env = bh.check_env(env)
         assert env['depth'] == 40
         assert env['soundspeed'].iloc[0,0] == 1540
 

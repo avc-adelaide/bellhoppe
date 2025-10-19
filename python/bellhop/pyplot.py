@@ -53,7 +53,7 @@ def pyplot_env(env: Dict[str, Any], surface_color: str = 'dodgerblue', bottom_co
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
+    >>> env = bh.create_env(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
     >>> bh.plot_env(env)
     """
 
@@ -131,7 +131,7 @@ def pyplot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    >>> env = bh.create_env(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
     >>> bh.plot_ssp(env)
     """
 
@@ -176,7 +176,7 @@ def pyplot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwar
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> arrivals = bh.compute_arrivals(env)
     >>> bh.plot_arrivals(arrivals)
     """
@@ -222,7 +222,7 @@ def pyplot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: 
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> rays = bh.compute_eigenrays(env)
     >>> bh.plot_rays(rays, width=1000)
     """
@@ -274,7 +274,7 @@ def pyplot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, *
     --------
     >>> import bellhop as bh
     >>> import numpy as np
-    >>> env = bh.create_env2d(
+    >>> env = bh.create_env(
             receiver_depth=np.arange(0, 25),
             receiver_range=np.arange(0, 1000),
             beam_angle_min=-45,

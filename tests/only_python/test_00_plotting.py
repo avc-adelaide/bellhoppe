@@ -15,35 +15,35 @@ def no_bokeh_show(monkeypatch):
 def test_plot_env():
     """Test plot_env function with default environment. Just check that there are no execution errors.
     """
-    env = bh.create_env2d()
+    env = bh.create_env()
     bhp.plot_env(env)
 
 
 def test_plot_env_complex():
     """Test plot_env function with complex environment. Just check that there are no execution errors.
     """
-    env = bh.create_env2d(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000, 45]])
+    env = bh.create_env(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000, 45]])
     bhp.plot_env(env)
 
 
 def test_plot_ssp():
     """Test plot_ssp function with default environment. Just check that there are no execution errors.
     """
-    env = bh.create_env2d()
+    env = bh.create_env()
     bhp.plot_ssp(env)
 
 
 def test_plot_ssp_complex():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors.
     """
-    env = bh.create_env2d(depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    env = bh.create_env(depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
     bhp.plot_ssp(env)
 
 
 def test_plot_arrivals():
     """Test plot_arrivals function with computed arrivals. Just check that there are no execution errors.
     """
-    env = bh.create_env2d()
+    env = bh.create_env()
     arrivals = bh.compute_arrivals(env)
     bhp.plot_arrivals(arrivals)
 
@@ -51,7 +51,7 @@ def test_plot_arrivals():
 def test_plot_arrivals_db():
     """Test plot_arrivals function in dB scale. Just check that there are no execution errors.
     """
-    env = bh.create_env2d()
+    env = bh.create_env()
     arrivals = bh.compute_arrivals(env)
     bhp.plot_arrivals(arrivals, dB=True)
 
@@ -59,7 +59,7 @@ def test_plot_arrivals_db():
 def test_plot_rays():
     """Test plot_rays function with computed rays. Just check that there are no execution errors.
     """
-    env = bh.create_env2d()
+    env = bh.create_env()
     rays = bh.compute_rays(env)
     bhp.plot_rays(rays)
 
@@ -67,7 +67,7 @@ def test_plot_rays():
 def test_plot_rays_with_env():
     """Test plot_rays function with environment overlay. Just check that there are no execution errors.
     """
-    env = bh.create_env2d()
+    env = bh.create_env()
     rays = bh.compute_eigenrays(env)
     bhp.plot_rays(rays, env=env)
 
@@ -75,7 +75,7 @@ def test_plot_rays_with_env():
 def test_plot_rays_inverted():
     """Test plot_rays function with inverted colors. Just check that there are no execution errors.
     """
-    env = bh.create_env2d()
+    env = bh.create_env()
     rays = bh.compute_eigenrays(env)
     bhp.plot_rays(rays, invert_colors=True)
 
@@ -83,7 +83,7 @@ def test_plot_rays_inverted():
 def test_plot_transmission_loss():
     """Test plot_transmission_loss function with computed transmission loss. Just check that there are no execution errors.
     """
-    env = bh.create_env2d(
+    env = bh.create_env(
         receiver_depth=np.arange(0, 25),
         receiver_range=np.arange(0, 1000),
         beam_angle_min=-45,
@@ -96,7 +96,7 @@ def test_plot_transmission_loss():
 def test_plot_transmission_loss_with_env():
     """Test plot_transmission_loss function with environment overlay. Just check that there are no execution errors.
     """
-    env = bh.create_env2d(
+    env = bh.create_env(
         receiver_depth=np.arange(0, 25),
         receiver_range=np.arange(0, 1000),
         beam_angle_min=-45,

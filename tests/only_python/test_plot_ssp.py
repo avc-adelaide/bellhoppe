@@ -19,7 +19,7 @@ def no_bokeh_show(monkeypatch):
 
 def test_plot_ssp_linear():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors."""
-    env = bh.create_env2d(soundspeed_interp="linear",depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    env = bh.create_env(soundspeed_interp="linear",depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
 
     with bhp.figure() as f:
         bhp.plot_ssp(env)
@@ -28,7 +28,7 @@ def test_plot_ssp_linear():
 
 def test_plot_ssp_spline():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors."""
-    env = bh.create_env2d(soundspeed_interp="spline",depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    env = bh.create_env(soundspeed_interp="spline",depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
 
     with bhp.figure() as f:
         bhp.plot_ssp(env)
@@ -38,8 +38,8 @@ def test_plot_ssp_spline():
 def test_plot_ssp_dataframe():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors."""
     ssp = pd.DataFrame({ 'depth':[0,10,20,30], 'speed':[1540,1530,1532,1535]})
-    env = bh.create_env2d(soundspeed=ssp,depth=30,soundspeed_interp="spline")
-    env = bh.check_env2d(env)
+    env = bh.create_env(soundspeed=ssp,depth=30,soundspeed_interp="spline")
+    env = bh.check_env(env)
 
     with bhp.figure() as f:
         bhp.plot_ssp(env)
@@ -48,8 +48,8 @@ def test_plot_ssp_dataframe():
 
 def test_plot_ssp_const():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors."""
-    env = bh.create_env2d(soundspeed=1500,depth=30)
-    env = bh.check_env2d(env)
+    env = bh.create_env(soundspeed=1500,depth=30)
+    env = bh.check_env(env)
 
     with bhp.figure() as f:
         bhp.plot_ssp(env)
@@ -63,8 +63,8 @@ def test_plot_ssp_quad():
         'ssp2':[1545,1535,1535,1555],
         'ssp3':[1545,1550,1552,1545],
     }, index=[0,10,20,30])
-    env = bh.create_env2d(soundspeed=ssp,depth=30,soundspeed_interp="quadrilateral")
-    env = bh.check_env2d(env)
+    env = bh.create_env(soundspeed=ssp,depth=30,soundspeed_interp="quadrilateral")
+    env = bh.check_env(env)
 
     with bhp.figure() as f:
         bhp.plot_ssp(env)

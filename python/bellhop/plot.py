@@ -24,7 +24,7 @@ import matplotlib.colors as _mplc
 from bellhop.constants import _Strings
 import bellhop.plotutils as _plt
 from bellhop.plotutils import figure as figure
-from bellhop.create import check_env2d as check_env2d
+from bellhop.create import check_env as check_env
 
 def plot_env(env: Dict[str, Any],
              surface_color: str = 'dodgerblue',
@@ -62,12 +62,12 @@ def plot_env(env: Dict[str, Any],
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
+    >>> env = bh.create_env(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
     >>> bh.plot_env(env)
     """
 
     if env is not None:
-        env = check_env2d(env)
+        env = check_env(env)
 
     min_x = 0.0
     max_x = float(_np.max(env['receiver_range']))
@@ -143,12 +143,12 @@ def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    >>> env = bh.create_env(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
     >>> bh.plot_ssp(env)
     """
 
     if env is not None:
-        env = check_env2d(env)
+        env = check_env(env)
 
     oh = _plt.hold()
     svp = env['soundspeed']
@@ -182,7 +182,7 @@ def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> arrivals = bh.compute_arrivals(env)
     >>> bh.plot_arrivals(arrivals)
     """
@@ -227,7 +227,7 @@ def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bo
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> rays = bh.compute_eigenrays(env)
     >>> bh.plot_rays(rays, width=1000)
     """
@@ -279,7 +279,7 @@ def plot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, **k
     --------
     >>> import bellhop as bh
     >>> import numpy as np
-    >>> env = bh.create_env2d(
+    >>> env = bh.create_env(
             receiver_depth=np.arange(0, 25),
             receiver_range=np.arange(0, 1000),
             beam_angle_min=-45,

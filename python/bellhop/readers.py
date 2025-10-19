@@ -125,7 +125,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
     """Read a 2D underwater environment from a BELLHOP .env file.
 
     This function parses a BELLHOP .env file and returns a Python data structure
-    that is compatible with create_env2d(). This enables round-trip testing and
+    that is compatible with create_env(). This enables round-trip testing and
     compatibility between file-based and programmatic environment definitions.
 
     Parameters
@@ -136,7 +136,7 @@ def read_env2d(fname: str) -> Dict[str, Any]:
     Returns
     -------
     dict
-        Environment dictionary compatible with create_env2d()
+        Environment dictionary compatible with create_env()
 
     Notes
     -----
@@ -156,11 +156,11 @@ def read_env2d(fname: str) -> Dict[str, Any]:
     50.0
 
     >>> # Use with existing functions
-    >>> checked_env = bh.check_env2d(env)
+    >>> checked_env = bh.check_env(env)
     >>> rays = bh.compute_rays(env)
 
     >>> # Round-trip compatibility
-    >>> env_orig = bh.create_env2d(name="test", frequency=100)
+    >>> env_orig = bh.create_env(name="test", frequency=100)
     >>> # ... write to file via BELLHOP ...
     >>> env_read = bh.read_env2d("test.env")
     >>> assert env_read['frequency'] == env_orig['frequency']
@@ -367,7 +367,7 @@ def read_ssp(fname: str,
     **Return format:**
 
     - **Single-profile files (1 range)**: Returns a 2D numpy array with [depth, soundspeed] pairs,
-      compatible with create_env2d() soundspeed parameter.
+      compatible with create_env() soundspeed parameter.
 
     - **Multi-profile files (>1 ranges)**: Returns a pandas DataFrame where:
 
@@ -375,7 +375,7 @@ def read_ssp(fname: str,
       - **Index**: Depth indices (0, 1, 2, ... for each depth level in the file)
       - **Values**: Sound speeds (m/s)
 
-      This DataFrame can be directly assigned to create_env2d() soundspeed parameter
+      This DataFrame can be directly assigned to create_env() soundspeed parameter
       for range-dependent acoustic modeling.
 
     **Note on depths**: For multi-profile files, depth indices are used (0, 1, 2, ...)
@@ -387,12 +387,12 @@ def read_ssp(fname: str,
     >>> import bellhop as bh
     >>> # Single-profile file
     >>> ssp1 = bh.read_ssp("single_profile.ssp")  # Returns numpy array
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> env["soundspeed"] = ssp1
     >>>
     >>> # Multi-profile file
     >>> ssp2 = bh.read_ssp("tests/MunkB_geo_rot/MunkB_geo_rot.ssp")  # Returns DataFrame
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> env["soundspeed"] = ssp2  # Range-dependent sound speed
 
     **File format example:**
@@ -410,7 +410,7 @@ def read_ssp(fname: str,
         nranges = int(_read_next_valid_line(f))
         range_line = _read_next_valid_line(f)
         ranges = _np.array([float(x) for x in _parse_line(range_line)])
-        ranges_m = ranges * 1000 # Convert ranges from km to meters (as expected by create_env2d)
+        ranges_m = ranges * 1000 # Convert ranges from km to meters (as expected by create_env)
 
         if len(ranges) != nranges:
             raise ValueError(f"Expected {nranges} ranges, but found {len(ranges)}")
@@ -469,7 +469,7 @@ def read_ati_bty(fname: str) -> Tuple[NDArray[_np.float64], str]:
     Returns
     -------
     numpy.ndarray
-        Numpy array with [range, depth] pairs compatible with create_env2d()
+        Numpy array with [range, depth] pairs compatible with create_env()
 
     Notes
     -----
@@ -479,7 +479,7 @@ def read_ati_bty(fname: str) -> Tuple[NDArray[_np.float64], str]:
 
     >>> import bellhop as bh
     >>> bty,bty_interp = bh.read_bty("tests/MunkB_geo_rot/MunkB_geo_rot.bty")
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> env["depth"] = bty
     >>> env["depth_interp"] = bty_interp
     >>> arrivals = bh.calculate_arrivals(env)
@@ -602,7 +602,7 @@ def read_refl_coeff(fname: str) -> NDArray[_np.float64]:
     Returns
     -------
     numpy.ndarray
-        Numpy array with [theta, rmag, rphase] triplets compatible with create_env2d()
+        Numpy array with [theta, rmag, rphase] triplets compatible with create_env()
 
     Notes
     -----
@@ -612,7 +612,7 @@ def read_refl_coeff(fname: str) -> NDArray[_np.float64]:
     --------
     >>> import bellhop as bh
     >>> brc = bh.read_refl_coeff("tests/MunkB_geo_rot/MunkB_geo_rot.brc")
-    >>> env = bh.create_env2d()
+    >>> env = bh.create_env()
     >>> env["bottom_reflection_coefficient"] = brc
     >>> arrivals = bh.calculate_arrivals(env)
 

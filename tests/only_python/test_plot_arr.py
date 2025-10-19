@@ -23,7 +23,7 @@ def test_plot_arr():
     rr = np.linspace(0,1000,1001)
     sf = np.array([[r, 0.5+0.5*np.sin(2*np.pi*0.005*r)] for r in rr]) # must be 0 at highest point
 
-    env = bh.create_env2d(
+    env = bh.create_env(
             depth=dp,
             surface=sf,
             beam_num=100,
@@ -43,7 +43,7 @@ def test_plot_arr_db():
     rr = np.linspace(0,1000,1001)
     sf = np.array([[r, 0.5+0.5*np.sin(2*np.pi*0.005*r)] for r in rr]) # must be 0 at highest point
 
-    env = bh.create_env2d(
+    env = bh.create_env(
             depth=dp,
             surface=sf,
             beam_num=100,

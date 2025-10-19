@@ -17,7 +17,7 @@ tl_exp = bh.main.Bellhop._load_shd(None,"tests/VolAtt/free_FGB",".shd")
 
 
 def test_simple():
-    env2 = bh.create_env2d()
+    env2 = bh.create_env()
     env2["volume_attenuation"] = "francois-garrison"
     env2["fg_salinity"] = 19.3
     env2["fg_temperature"] = 33.5

@@ -4,7 +4,7 @@ import numpy as np
 
 def test_sqrt_bug():
 
-    env = bh.create_env2d(name="Test sqrt bug")
+    env = bh.create_env(name="Test sqrt bug")
 
     dp = env["depth"]
     env["depth"] = np.array([[-2000,dp],[2000,dp]])
@@ -14,7 +14,7 @@ def test_sqrt_bug():
 
     nn = len(env["receiver_range"])
 
-    bh.check_env2d(env)
+    bh.check_env(env)
 
     assert(env["depth"].ndim == 2)
     assert(env["depth"].size == 4)

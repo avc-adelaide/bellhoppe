@@ -48,7 +48,7 @@ When more than one task is provided, the output data is returned as a list of di
 import bellhop as bh 
 import bellhop.plot as bhp
 
-env = bh.create_env2d()
+env = bh.create_env()
 output, _ = bh.compute(env,task=["eigenrays","arrivals"])
 
 bhp.plot_rays(output[0]['results'])
@@ -72,7 +72,7 @@ The `compute()` function allows multiple environments to be passsed directly to 
 import bellhop as bh 
 import bellhop.plot as bhp
 
-env1 = bh.create_env2d()
+env1 = bh.create_env()
 env2 = env1.copy()
 env2['receiver_depth'] = 2 * env1['receiver_depth']
 output, _ = bh.compute(env=[env1, env2],task="arrivals")
@@ -96,7 +96,7 @@ import pandas.testing as pdt
 if "bellhopcuda" not in bh.models():
     bh.new_model(name="bellhopcuda",exe="bellhop.exe") # in reality you would of course have a separate binary
 
-env = bh.create_env2d()
+env = bh.create_env()
 output, _ = bh.compute(env,task="arrivals",model=["bellhop", "bellhopcuda"])
 
 pdt.assert_frame_equal(output[0]['results'], output[1]['results'])
@@ -113,7 +113,7 @@ also returns a DataFrame of result indices:
 ```{python}
 import bellhop as bh
 import bellhop.plot as bhp
-env = bh.create_env2d()
+env = bh.create_env()
 output, ind_df = bh.compute(env,task=["arrivals", "eigenrays"])
 print(ind_df)
 
