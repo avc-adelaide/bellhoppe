@@ -100,9 +100,17 @@ class Bellhop:
     def _prepare_env_file(self, fname_base: Optional[str]) -> Tuple[int, str]:
         """Opens a file for writing the .env file, in a temp location if necessary, and delete other files with same basename.
 
-        :param fname_base: filename base (no extension) for writing -- if not specified a temporary file (and location) will be used instead
-        :returns fh: file descriptor (int)
-        :returns fname_base: filename base (str)
+        Parameters
+        ----------
+        fname_base : str, optional
+            Filename base (no extension) for writing -- if not specified a temporary file (and location) will be used instead
+
+        Returns
+        -------
+        fh : int
+            File descriptor
+        fname_base : str
+            Filename base
         """
         if fname_base is not None:
             fname = fname_base + _File_Ext.env
@@ -174,10 +182,16 @@ class Bellhop:
     def _create_env_file(self, env: Dict[str, Any], taskcode: str, fh: TextIO, fname_base: str) -> None:
         """Writes a complete .env file for specifying a Bellhop simulation
 
-        :param env: environment dict
-        :param taskcode: task string which defines the computation to run
-        :param fh: file reference (already opened)
-        :param fname_base: filename base (without extension)
+        Parameters
+        ----------
+        env : dict
+            Environment dict
+        taskcode : str
+            Task string which defines the computation to run
+        fh : file object
+            File reference (already opened)
+        fname_base : str
+            Filename base (without extension)
         :returns fname_base: filename base (no extension) of written file
 
         We liberally insert comments and empty lines for readability and take care to
