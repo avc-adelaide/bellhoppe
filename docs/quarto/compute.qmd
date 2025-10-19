@@ -49,7 +49,7 @@ import bellhop as bh
 import bellhop.plot as bhp
 
 env = bh.create_env2d()
-output = bh.compute(env,task=["eigenrays","arrivals"])
+output, _ = bh.compute(env,task=["eigenrays","arrivals"])
 
 bhp.plot_rays(output[0]['results'])
 bhp.plot_arrivals(output[1]['results'])
@@ -75,7 +75,7 @@ import bellhop.plot as bhp
 env1 = bh.create_env2d()
 env2 = env1.copy()
 env2['receiver_depth'] = 2 * env1['receiver_depth']
-output = bh.compute(env=[env1, env2],task="arrivals")
+output, _ = bh.compute(env=[env1, env2],task="arrivals")
 
 bhp.plot_arrivals(output[0]['results'])
 bhp.plot_arrivals(output[1]['results'])
@@ -97,10 +97,30 @@ if "bellhopcuda" not in bh.models():
     bh.new_model(name="bellhopcuda",exe="bellhop.exe") # in reality you would of course have a separate binary
 
 env = bh.create_env2d()
-output = bh.compute(env,task="arrivals",model=["bellhop", "bellhopcuda"])
+output, _ = bh.compute(env,task="arrivals",model=["bellhop", "bellhopcuda"])
 
 pdt.assert_frame_equal(output[0]['results'], output[1]['results'])
 print("[no output to compare, both sets of results are identical]")
 ```
 
 Once again, you can define multiple models, environments, and tasks, and `bellhop` will automatically execute each combination.
+
+## Indexing multiple outputs
+
+Because the ordering is potentially uncertain, `compute`
+also returns a DataFrame of result indices:
+
+```{python}
+import bellhop as bh
+import bellhop.plot as bhp
+env = bh.create_env2d()
+output, ind_df = bh.compute(env,task=["arrivals", "eigenrays"])
+print(ind_df)
+
+arr = output[ind_df[ind_df["task"]=="arrivals"].index[0]]
+# [0] => first one only in this case
+bhp.plot_arrivals(arr['results'] )
+```
+
+This DataFrame can be queried, filtered, etc., to extract
+results of interest rather than hard-coding numerical outputs.

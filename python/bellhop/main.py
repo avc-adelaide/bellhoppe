@@ -15,9 +15,10 @@ to work, the complete bellhop.py package must be built and installed
 and `bellhop.exe` should be in your PATH.
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Tuple
 
 import numpy as _np
+import pandas as _pd
 
 from bellhop.constants import _Strings, Defaults
 
@@ -110,12 +111,16 @@ def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> 
             rv.append(m.name)
     return rv
 
-def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
+def compute(
+            env: Union[Dict[str, Any],List[Dict[str, Any]]],
             model: Optional[Any] = None,
             task: Optional[Any] = None,
             debug: bool = False,
             fname_base: Optional[str] = None
-           ) -> Union[Dict[str, Any],List[Dict[str, Any]]]:
+           ) -> Union[
+                        Dict[str, Any],
+                        Tuple[List[Dict[str, Any]], _pd.DataFrame]
+                     ]:
     """Compute Bellhop task(s) for given model(s) and environment(s).
 
     Parameters
@@ -133,21 +138,32 @@ def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
 
     Returns
     -------
-    dict or list of dict
-        Dictionary of results and metadata (model used, task executed, etc)
+    dict
+        Single run result (and associated metadata) if only one computation is performed.
+    tuple of (list of dict, pandas.DataFrame)
+        List of results and an index DataFrame if multiple computations are performed.
 
     Notes
     -----
     If any of env, model, and/or task are lists then multiple runs are performed
-    with a list of dictionary outputs returned.
+    with a list of dictionary outputs returned. The ordering is based on loop iteration
+    but might not be deterministic; use the index DataFrame to extract and filter the
+    output logically.
 
     Examples
     --------
+    Single task based on reading a complete `.env` file:
     >>> import bellhop as bh
     >>> env = bh.read_env2d("...")
     >>> output = bh.compute(env)
     >>> assert output['task'] == "arrivals"
     >>> bh.plot_arrivals(output['results'])
+
+    Multiple tasks:
+    >>> import bellhop as bh
+    >>> env = bh.create_env2d()
+    >>> output, ind_df = bh.compute(env,task=["arrivals", "eigenrays"])
+    >>> bh.plot_arrivals(output[0]['results'])
     """
     envs = env if isinstance(env, list) else [env]
     models = model if isinstance(model, list) else [model]
@@ -171,7 +187,20 @@ def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
                        "results": model_fn.run(env_chk, this_task, debug, fname_base),
                       })
     assert len(results) > 0, "No results generated"
-    return results if len(results) > 1 else results[0]
+    index_df = _pd.DataFrame([
+        {
+            "i": i,
+            "name": r["name"],
+            "model": getattr(r["model"], "name", str(r["model"])) if r["model"] is not None else None,
+            "task": r["task"],
+        }
+        for i, r in enumerate(results)
+    ])
+    index_df.set_index("i", inplace=True)
+    if len(results) > 1:
+        return results, index_df
+    else:
+        return results[0]
 
 def _select_model(env: Dict[str, Any],
                   task: str,
