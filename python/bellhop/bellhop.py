@@ -27,11 +27,12 @@ class Bellhop:
     """
 
     def __init__(self, exe: str = Defaults.exe,
+                       name: str = Defaults.model_name,
                        env_comment_pad: int = Defaults.env_comment_pad,
                 ) -> None:
         self.exe: str = exe
+        self.name: str = name
         self.env_comment_pad: int = env_comment_pad
-
 
     def supports(self, env: Optional[Dict[str, Any]] = None,
                        task: Optional[str] = None,

@@ -35,11 +35,46 @@ from bellhop.readers import read_trc as read_trc
 from bellhop.readers import read_brc as read_brc
 
 from bellhop.bellhop import Bellhop
-bellhop_default = Bellhop()
+_models: List[Bellhop] = []
 
-# models (in order of preference)
-_models: List[Any] = []
-_models.append(('bellhop', bellhop_default))
+def new_model(name: str, **kwargs):
+    """Instantiate a new Bellhop model and add it to the list of models.
+
+    Creates a Bellhop instance with the specified parameters and
+    adds it to the internal registry of models for later access.
+    
+    Parameters
+    ----------
+    name : str
+        Descriptive name for this model instance, must be unique
+    
+    **kwargs
+        Keyword arguments passed directly to the Bellhop constructor.
+        Common parameters include:
+        - exe : str
+            Filename of the Bellhop executable
+    
+    Returns
+    -------
+    Bellhop
+        The newly created Bellhop model instance.
+    
+    Examples
+    --------
+    >>> bh.models() # there is always a default model
+    ['Bellhop']
+    >>> bh.new_model(name="Bellhop AT", exe="bellhop_at.exe")
+    >>> bh.models()
+    ['Bellhop', 'Bellhop AT']
+    """
+    for m in _models:
+        if name == m.name:
+            raise ValueError(f"Bellhop model with this name ('{name}') already exists.")
+    model = Bellhop(name=name, **kwargs)
+    _models.append(model)
+    return model
+
+new_model()
 
 def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> List[str]:
     """List available models.
@@ -61,8 +96,8 @@ def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> 
         raise ValueError('env and task should be both specified together')
     rv: List[str] = []
     for m in _models:
-        if m[1].supports(env, task):
-            rv.append(m[0])
+        if m.supports(env, task):
+            rv.append(m.name)
     return rv
 
 def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
@@ -112,7 +147,7 @@ def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
 
 def _select_model(env: Dict[str, Any],
                   task: str,
-                  model: Optional[Any] = None,
+                  model: Optional[str] = None,
                   debug: bool = False
                  ) -> Any:
     """Finds a model to use, or if a model is requested validate it.
@@ -132,15 +167,15 @@ def _select_model(env: Dict[str, Any],
     """
     if model is not None:
         for m in _models:
-            if m[0] == model:
-                debug and print(debug, 'Model selected: '+m[0])
-                return m[1]
+            if m.name == model:
+                debug and print(f'Model selected: {m.name}')
+                return m
         raise ValueError(f"Unknown model: '{model}'")
+
     debug and print(debug, "Searching for propagation model:")
-    for m in _models:
-        mm = m[1]
+    for mm in _models:
         if mm.supports(env, task):
-            debug and print(debug, 'Model found: '+m[0])
+            debug and print(f'Model found: {mm.name}')
             return mm
     raise ValueError('No suitable propagation model available')
 

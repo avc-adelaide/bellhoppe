@@ -225,9 +225,11 @@ class _Maps:
 @dataclass(frozen=True)
 class Defaults:
     """Dataclass of hard-coded defaults used throughout the Bellhop interface."""
+    model_name: str = field(default="Bellhop", metadata={"desc": "Name of the class instance for the model"})
+    exe: str = field(default="bellhop.exe", metadata={"desc": "Executable name"})
     beam_angle_halfspace: float = field(default=90.0, metadata={"units": "deg"})
     beam_angle_fullspace: float = field(default=180.0, metadata={"units": "deg"})
-    exe: str = field(default="bellhop.exe", metadata={"desc": "Executable name"})
     env_comment_pad: int = field(default=50, metadata={"desc": "Number of characters used before the comment in the constructed .env files."})
     interference_mode: str = field(default=_Strings.coherent, metadata={"desc": "Mode of interference when calculating transmission loss"})
+
 
