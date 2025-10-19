@@ -169,7 +169,7 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
     """Backwards compatibility for check_env"""
     return check_env(env=env)
 
-def _check_env_surface(env: dict):
+def _check_env_surface(env: Dict[str, Any]) -> None:
     max_range = _np.max(env['receiver_range'])
     if env['surface'] is not None:
         assert _np.size(env['surface']) > 1, 'surface must be an Nx2 array'
@@ -179,7 +179,7 @@ def _check_env_surface(env: dict):
         assert env['surface'][-1,0] >= max_range, 'Last range in surface array must be beyond maximum range: '+str(max_range)+' m'
         assert _np.all(_np.diff(env['surface'][:,0]) > 0), 'surface array must be strictly monotonic in range'
 
-def _check_env_depth(env: dict):
+def _check_env_depth(env: Dict[str, Any]) -> None:
     max_range = _np.max(env['receiver_range'])
     if _np.size(env['depth']) > 1:
         assert env['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array'
@@ -189,7 +189,7 @@ def _check_env_depth(env: dict):
         assert _np.all(_np.diff(env['depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
         assert env["_bathymetry"] == _Strings.from_file, 'len(depth)>1 requires BTY file'
 
-def _check_env_ssp(env: dict):
+def _check_env_ssp(env: Dict[str, Any]) -> None:
     assert isinstance(env['soundspeed'], _pd.DataFrame), 'Soundspeed should always be a DataFrame by this point'
     assert env['soundspeed'].size > 1, "Soundspeed DataFrame should have been constructed internally to be two elements"
     if env['soundspeed'].size > 1:
@@ -219,7 +219,7 @@ def _check_env_ssp(env: dict):
                 print("ATTEMPTING TO FIX")
         # TODO: check soundspeed range limits
 
-def _check_env_sbp(env: dict):
+def _check_env_sbp(env: Dict[str, Any]) -> None:
     if env['source_directionality'] is not None:
         assert _np.size(env['source_directionality']) > 1, 'source_directionality must be an Nx2 array'
         assert env['source_directionality'].ndim == 2, 'source_directionality must be an Nx2 array'
