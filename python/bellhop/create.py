@@ -114,11 +114,23 @@ def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
     but must be called manually after setting environment parameters if you need to
     query against defaults that may be affected.
 
-    :param env: environment definition
-    :returns: updated environment definition
+    Parameters
+    ----------
+    env : dict
+        Environment definition
 
-    Exceptions are thrown with appropriate error messages if the environment is invalid.
+    Returns
+    -------
+    dict
+        Updated environment definition
 
+    Raises
+    ------
+    ValueError
+        If the environment is invalid
+
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> env = check_env2d(env)
@@ -262,8 +274,13 @@ def _finalise_environment(env: Dict[str, Any]) -> Dict[str, Any]:
 def print_env(env: Dict[str, Any]) -> None:
     """Display the environment in a human readable form.
 
-    :param env: environment definition
+    Parameters
+    ----------
+    env : dict
+        Environment definition
 
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d(depth=40, soundspeed=1540)
     >>> bh.print_env(env)

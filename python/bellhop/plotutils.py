@@ -157,8 +157,13 @@ def _hold_enable(enable: bool) -> bool:
 def theme(name: str) -> None:
     """Set color theme.
 
-    :param name: name of theme
+    Parameters
+    ----------
+    name : str
+        Name of theme
 
+    Examples
+    --------
     >>> import arlpy.plot
     >>> arlpy.plot.theme('dark')
     """
@@ -173,8 +178,12 @@ def theme(name: str) -> None:
 def figsize(x: int, y: int) -> None:
     """Set the default figure size in pixels.
 
-    :param x: figure width
-    :param y: figure height
+    Parameters
+    ----------
+    x : int
+        Figure width
+    y : int
+        Figure height
     """
     global _figsize
     _figsize = (x, y)
@@ -182,7 +191,10 @@ def figsize(x: int, y: int) -> None:
 def interactive(b: bool) -> None:
     """Set default interactivity for plots.
 
-    :param b: True to enable interactivity, False to disable it
+    Parameters
+    ----------
+    b : bool
+        True to enable interactivity, False to disable it
     """
     global _interactive
     _interactive = b
@@ -190,8 +202,13 @@ def interactive(b: bool) -> None:
 def enable_javascript(b: bool) -> None:
     """Enable/disable Javascript.
 
-    :param b: True to use Javacript, False to avoid use of Javascript
+    Parameters
+    ----------
+    b : bool
+        True to use Javascript, False to avoid use of Javascript
 
+    Notes
+    -----
     Jupyterlab does not support Javascript output. To avoid error messages,
     Javascript can be disabled using this call. This removes an optimization
     to replace non-interactive plots with static images, but other than that
@@ -203,8 +220,13 @@ def enable_javascript(b: bool) -> None:
 def use_static_images(b: bool = True) -> None:
     """Use static images instead of dynamic HTML/Javascript in Jupyter notebook.
 
-    :param b: True to use static images, False to use HTML/Javascript
+    Parameters
+    ----------
+    b : bool, default=True
+        True to use static images, False to use HTML/Javascript
 
+    Notes
+    -----
     Static images are useful when the notebook is to be exported as a markdown,
     LaTeX or PDF document, since dynamic HTML/Javascript is not rendered in these
     formats. When static images are used, all interactive functionality is disabled.
@@ -225,9 +247,18 @@ def use_static_images(b: bool = True) -> None:
 def hold(enable: bool = True) -> Optional[bool]:
     """Combine multiple plots into one.
 
-    :param enable: True to hold plot, False to release hold
-    :returns: old state of hold if enable is True
+    Parameters
+    ----------
+    enable : bool, default=True
+        True to hold plot, False to release hold
 
+    Returns
+    -------
+    bool or None
+        Old state of hold if enable is True
+
+    Examples
+    --------
     >>> import arlpy.plot
     >>> oh = arlpy.plot.hold()
     >>> arlpy.plot.plot([0,10], [0,10], color='blue', legend='A')

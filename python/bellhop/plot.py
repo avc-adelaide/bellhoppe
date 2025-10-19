@@ -36,19 +36,31 @@ def plot_env(env: Dict[str, Any],
             ) -> None:
     """Plots a visual representation of the environment.
 
-    :param env: environment description
-    :param surface_color: color of the surface (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
-    :param bottom_color: color of the bottom (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
-    :param source_color: color of transmitters (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
-    :param receiver_color: color of receviers (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
-    :param receiver_plot: True to plot all receivers, False to not plot any receivers, None to automatically decide
+    Parameters
+    ----------
+    env : dict
+        Environment description
+    surface_color : str, default='dodgerblue'
+        Color of the surface (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    bottom_color : str, default='peru'
+        Color of the bottom (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    source_color : str, default='orangered'
+        Color of transmitters (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    receiver_color : str, default='midnightblue'
+        Color of receivers (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    receiver_plot : bool, optional
+        True to plot all receivers, False to not plot any receivers, None to automatically decide
+    **kwargs
+        Other keyword arguments applicable for `bellhop.plot.plot()` are also supported
 
-    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
-
+    Notes
+    -----
     The surface, bottom, transmitters (marker: '*') and receivers (marker: 'o')
     are plotted in the environment. If `receiver_plot` is set to None and there are
     more than 2000 receivers, they are not plotted.
 
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
     >>> bh.plot_env(env)
@@ -117,12 +129,19 @@ def plot_env(env: Dict[str, Any],
 def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
     """Plots the sound speed profile.
 
-    :param env: environment description
+    Parameters
+    ----------
+    env : dict
+        Environment description
+    **kwargs
+        Other keyword arguments applicable for `bellhop.plot.plot()` are also supported
 
-    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
-
+    Notes
+    -----
     If the sound speed profile is range-dependent, this function only plots the first profile.
 
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
     >>> bh.plot_ssp(env)
@@ -149,12 +168,19 @@ def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
 def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs: Any) -> None:
     """Plots the arrival times and amplitudes.
 
-    :param arrivals: arrivals times (s) and coefficients
-    :param dB: True to plot in dB, False for linear scale
-    :param color: line color (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    Parameters
+    ----------
+    arrivals : pandas.DataFrame
+        Arrivals times (s) and coefficients
+    dB : bool, default=False
+        True to plot in dB, False for linear scale
+    color : str, default='blue'
+        Line color (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    **kwargs
+        Other keyword arguments applicable for `bellhop.plot.plot()` are also supported
 
-    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
-
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> arrivals = bh.compute_arrivals(env)
@@ -182,15 +208,24 @@ def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs
 def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bool = False, **kwargs: Any) -> None:
     """Plots ray paths.
 
-    :param rays: ray paths
-    :param env: environment definition
-    :param invert_colors: False to use black for high intensity rays, True to use white
+    Parameters
+    ----------
+    rays : pandas.DataFrame
+        Ray paths
+    env : dict, optional
+        Environment definition
+    invert_colors : bool, default=False
+        False to use black for high intensity rays, True to use white
+    **kwargs
+        Other keyword arguments applicable for `bellhop.plot.plot()` are also supported
 
+    Notes
+    -----
     If environment definition is provided, it is overlayed over this plot using default
     parameters for `bellhop.plot_env()`.
 
-    Other keyword arguments applicable for `bellhop.plot.plot()` are also supported.
-
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> rays = bh.compute_eigenrays(env)
@@ -226,14 +261,22 @@ def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bo
 def plot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
     """Plots transmission loss.
 
-    :param tloss: complex transmission loss
-    :param env: environment definition
+    Parameters
+    ----------
+    tloss : pandas.DataFrame
+        Complex transmission loss
+    env : dict, optional
+        Environment definition
+    **kwargs
+        Other keyword arguments applicable for `bellhop.plot.image()` are also supported
 
+    Notes
+    -----
     If environment definition is provided, it is overlayed over this plot using default
     parameters for `bellhop.plot_env()`.
 
-    Other keyword arguments applicable for `bellhop.plot.image()` are also supported.
-
+    Examples
+    --------
     >>> import bellhop as bh
     >>> import numpy as np
     >>> env = bh.create_env2d(
