@@ -225,7 +225,7 @@ class _Maps:
 @dataclass(frozen=True)
 class Defaults:
     """Dataclass of hard-coded defaults used throughout the Bellhop interface."""
-    model_name: str = field(default="Bellhop", metadata={"desc": "Name of the class instance for the model"})
+    model_name: str = field(default="bellhop", metadata={"desc": "Name of the class instance for the model"})
     exe: str = field(default="bellhop.exe", metadata={"desc": "Executable name"})
     beam_angle_halfspace: float = field(default=90.0, metadata={"units": "deg"})
     beam_angle_fullspace: float = field(default=180.0, metadata={"units": "deg"})

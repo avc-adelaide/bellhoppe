@@ -62,10 +62,10 @@ def new_model(name: str, **kwargs: Any) -> Bellhop:
     Examples
     --------
     >>> bh.models() # there is always a default model
-    ['Bellhop']
-    >>> bh.new_model(name="Bellhop AT", exe="bellhop_at.exe")
+    ['bellhop']
+    >>> bh.new_model(name="bellhop-at", exe="bellhop_at.exe")
     >>> bh.models()
-    ['Bellhop', 'Bellhop AT']
+    ['bellhop', 'bellhop-at']
     """
     for m in _models:
         if name == m.name:
