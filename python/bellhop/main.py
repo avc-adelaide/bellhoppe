@@ -41,9 +41,49 @@ bellhop_default = Bellhop()
 _models: List[Any] = []
 _models.append(('bellhop', bellhop_default))
 
-def _debug_print(debug: bool, msg: str) -> None:
-    if debug:
-        print("[DEBUG]", msg)
+def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
+            model: Optional[Any] = None,
+            task: Optional[Any] = None,
+            debug: bool = False,
+            fname_base: Optional[str] = None
+           ) -> Union[Dict[str, Any],List[Dict[str, Any]]]:
+    """Compute Bellhop task(s).
+
+    :param env: environment definition (which includes the task specification)
+    :param model: propagation model to use (None to auto-select)
+    :param task: optional task or list of tasks ("arrivals", etc.)
+    :param debug: generate debug information for propagation model
+    :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
+    :returns: dictionary of results and metadata (model used, task executed, etc)
+
+    If any of env, model, and/or task are lists then multiple runs are performed with a list of dictionary outputs returned.
+
+    >>> import bellhop as bh
+    >>> env = bh.read_env2d("...")
+    >>> output = bh.compute(env)
+    >>> assert output['task'] == "arrivals"
+    >>> bh.plot_arrivals(output['results'])
+    """
+    envs = env if isinstance(env, list) else [env]
+    models = model if isinstance(model, list) else [model]
+    tasks = task if isinstance(task, list) else [task]
+    results: List[Any] = []
+    for this_env in envs:
+        for this_model in models:
+            for this_task in tasks:
+                env_chk = check_env2d(this_env)
+                this_task = this_task or env_chk.get('task')
+                if this_task is None:
+                    raise ValueError("Task must be specified in env or as parameter")
+                model_fn = _select_model(env_chk, this_task, this_model, debug)
+                results.append({
+                       "name": env_chk["name"],
+                       "model": this_model,
+                       "task": this_task,
+                       "results": model_fn.run(env_chk, this_task, debug, fname_base),
+                      })
+    assert len(results)>0, "No results generated"
+    return results if len(results)>1 else results[0]
 
 def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute arrivals between each transmitter and receiver.
@@ -59,9 +99,8 @@ def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bo
     >>> arrivals = bh.compute_arrivals(env)
     >>> bh.plot_arrivals(arrivals)
     """
-    env = check_env2d(env)
-    model = _select_model(env, _Strings.arrivals, model, debug)
-    return model.run(env, _Strings.arrivals, debug, fname_base)
+    output = compute(env, model, _Strings.arrivals, debug, fname_base)
+    return output['results']
 
 def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute eigenrays between a given transmitter and receiver.
@@ -130,8 +169,7 @@ def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mo
     >>> bh.plot_transmission_loss(tloss, width=1000)
     """
     mode = mode or env.get("interference_mode") or Defaults.interference_mode
-    if debug:
-        print(f"  {mode=}")
+    debug and print(f"  {mode=}")
     env = check_env2d(env)
     if _np.size(env['source_depth']) > 1:
         env = env.copy()
@@ -175,7 +213,7 @@ def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> 
     >>> bh.models()
     ['bellhop']
     >>> env = bh.create_env2d()
-    >>> bh.models(env, task=coherent)
+    >>> bh.models(env, task="coherent")
     ['bellhop']
     """
     if env is not None:
@@ -211,14 +249,14 @@ def _select_model(env: Dict[str, Any],
     if model is not None:
         for m in _models:
             if m[0] == model:
-                _debug_print(debug, 'Model: '+m[0])
+                debug and print(debug, 'Model selected: '+m[0])
                 return m[1]
         raise ValueError(f"Unknown model: '{model}'")
-    _debug_print(debug, "Searching for propagation model:")
+    debug and print(debug, "Searching for propagation model:")
     for m in _models:
         mm = m[1]
         if mm.supports(env, task):
-            _debug_print(debug, 'Model found: '+m[0])
+            debug and print(debug, 'Model found: '+m[0])
             return mm
     raise ValueError('No suitable propagation model available')
 
