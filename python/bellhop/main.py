@@ -47,7 +47,7 @@ def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
             debug: bool = False,
             fname_base: Optional[str] = None
            ) -> Union[Dict[str, Any],List[Dict[str, Any]]]:
-    """Compute Bellhop task(s).
+    """Compute Bellhop task(s) for given model(s) and environment(s).
 
     :param env: environment definition (which includes the task specification)
     :param model: propagation model to use (None to auto-select)
@@ -56,7 +56,8 @@ def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
     :returns: dictionary of results and metadata (model used, task executed, etc)
 
-    If any of env, model, and/or task are lists then multiple runs are performed with a list of dictionary outputs returned.
+    If any of env, model, and/or task are lists then multiple runs are performed
+    with a list of dictionary outputs returned.
 
     >>> import bellhop as bh
     >>> env = bh.read_env2d("...")
@@ -82,8 +83,8 @@ def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
                        "task": this_task,
                        "results": model_fn.run(env_chk, this_task, debug, fname_base),
                       })
-    assert len(results)>0, "No results generated"
-    return results if len(results)>1 else results[0]
+    assert len(results) > 0, "No results generated"
+    return results if len(results) > 1 else results[0]
 
 def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute arrivals between each transmitter and receiver.
@@ -94,12 +95,14 @@ def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bo
     :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
     :returns: arrival times and coefficients for all transmitter-receiver combinations
 
+    
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> arrivals = bh.compute_arrivals(env)
     >>> bh.plot_arrivals(arrivals)
     """
     output = compute(env, model, _Strings.arrivals, debug, fname_base)
+    assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
 def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
