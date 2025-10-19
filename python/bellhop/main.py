@@ -117,7 +117,7 @@ def compute(
             task: Optional[Any] = None,
             debug: bool = False,
             fname_base: Optional[str] = None
-           ) -> Union[
+           ) -> Union[  Any,
                         Dict[str, Any],
                         Tuple[List[Dict[str, Any]], _pd.DataFrame]
                      ]:
