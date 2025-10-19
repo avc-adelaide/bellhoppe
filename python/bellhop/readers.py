@@ -128,18 +128,26 @@ def read_env2d(fname: str) -> Dict[str, Any]:
     that is compatible with create_env2d(). This enables round-trip testing and
     compatibility between file-based and programmatic environment definitions.
 
-    :param fname: path to .env file (with or without .env extension)
+    Parameters
+    ----------
+    fname : str
+        Path to .env file (with or without .env extension)
 
-    :returns: environment dictionary compatible with create_env2d()
+    Returns
+    -------
+    dict
+        Environment dictionary compatible with create_env2d()
 
+    Notes
+    -----
     **Unit conversions performed:**
 
     - Receiver ranges: km → m
     - Bottom density: g/cm³ → kg/m³
     - All other units preserved as in ENV file
 
-    **Examples:**
-
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.read_env2d('examples/Munk/MunkB_ray.env')
     >>> print(env['name'])
@@ -343,10 +351,19 @@ def read_ssp(fname: str,
     - Line 2: Range coordinates in km (space-separated)
     - Line 3+: Sound speed values, one line per depth point across all ranges
 
-    :param fname: path to .ssp file (with or without .ssp extension)
-    :returns: for single-profile files: numpy array with [depth, soundspeed] pairs;
-              for multi-profile files: pandas DataFrame with range-dependent sound speed data
+    Parameters
+    ----------
+    fname : str
+        Path to .ssp file (with or without .ssp extension)
 
+    Returns
+    -------
+    numpy.ndarray or pandas.DataFrame
+        For single-profile files: numpy array with [depth, soundspeed] pairs;
+        for multi-profile files: pandas DataFrame with range-dependent sound speed data
+
+    Notes
+    -----
     **Return format:**
 
     - **Single-profile files (1 range)**: Returns a 2D numpy array with [depth, soundspeed] pairs,
@@ -365,8 +382,8 @@ def read_ssp(fname: str,
     since the actual depth coordinates come from the associated BELLHOP .env file.
     Users can modify the DataFrame index if actual depth values are known.
 
-    **Examples:**
-
+    Examples
+    --------
     >>> import bellhop as bh
     >>> # Single-profile file
     >>> ssp1 = bh.read_ssp("single_profile.ssp")  # Returns numpy array
@@ -444,9 +461,18 @@ def read_ati_bty(fname: str) -> Tuple[NDArray[_np.float64], str]:
     - Line 2: Number of points
     - Line 3+: Range (km) and depth (m) pairs
 
-    :param fname: path to .bty file (with or without .bty extension)
-    :returns: numpy array with [range, depth] pairs compatible with create_env2d()
+    Parameters
+    ----------
+    fname : str
+        Path to .bty file (with or without .bty extension)
 
+    Returns
+    -------
+    numpy.ndarray
+        Numpy array with [range, depth] pairs compatible with create_env2d()
+
+    Notes
+    -----
     The returned array can be assigned to env["depth"] for range-dependent bathymetry.
 
     **Examples:**
@@ -504,8 +530,15 @@ def read_sbp(fname: str) -> NDArray[_np.float64]:
     - Line 1: Number of points
     - Line 2+: Angle (deg) and power (dB) pairs
 
-    :param fname: path to .sbp file (with or without extension)
-    :returns: numpy array with [angle, power] pairs
+    Parameters
+    ----------
+    fname : str
+        Path to .sbp file (with or without extension)
+
+    Returns
+    -------
+    numpy.ndarray
+        Numpy array with [angle, power] pairs
     """
 
     fname, _ = _prepare_filename(fname, _File_Ext.sbp, "SBP")
@@ -561,13 +594,22 @@ def read_refl_coeff(fname: str) -> NDArray[_np.float64]:
     - RMAG():   Magnitude of reflection coefficient
     - RPHASE(): Phase of reflection coefficient (degrees)
 
-    :param fname: path to .brc/.trc file (extension required)
-    :returns: numpy array with [theta, rmag, rphase] triplets compatible with create_env2d()
+    Parameters
+    ----------
+    fname : str
+        Path to .brc/.trc file (extension required)
 
+    Returns
+    -------
+    numpy.ndarray
+        Numpy array with [theta, rmag, rphase] triplets compatible with create_env2d()
+
+    Notes
+    -----
     The returned array can be assigned to env["bottom_reflection_coefficient"] or env["surface_reflection_coefficient"] .
 
-    **Example:**
-
+    Examples
+    --------
     >>> import bellhop as bh
     >>> brc = bh.read_refl_coeff("tests/MunkB_geo_rot/MunkB_geo_rot.brc")
     >>> env = bh.create_env2d()

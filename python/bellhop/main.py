@@ -79,10 +79,20 @@ new_model(name=Defaults.model_name)
 def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> List[str]:
     """List available models.
 
-    :param env: environment to model
-    :param task: arrivals/eigenrays/rays/coherent/incoherent/semicoherent
-    :returns: list of models that can be used
+    Parameters
+    ----------
+    env : dict, optional
+        Environment to model
+    task : str, optional
+        Task type: arrivals/eigenrays/rays/coherent/incoherent/semicoherent
 
+    Returns
+    -------
+    list of str
+        List of models that can be used
+
+    Examples
+    --------
     >>> import bellhop as bh
     >>> bh.models()
     ['bellhop']
@@ -108,16 +118,31 @@ def compute(env: Union[Dict[str, Any],List[Dict[str, Any]]],
            ) -> Union[Dict[str, Any],List[Dict[str, Any]]]:
     """Compute Bellhop task(s) for given model(s) and environment(s).
 
-    :param env: environment definition (which includes the task specification)
-    :param model: propagation model to use (None to auto-select)
-    :param task: optional task or list of tasks ("arrivals", etc.)
-    :param debug: generate debug information for propagation model
-    :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
-    :returns: dictionary of results and metadata (model used, task executed, etc)
+    Parameters
+    ----------
+    env : dict or list of dict
+        Environment definition (which includes the task specification)
+    model : str, optional
+        Propagation model to use (None to auto-select)
+    task : str or list of str, optional
+        Optional task or list of tasks ("arrivals", etc.)
+    debug : bool, default=False
+        Generate debug information for propagation model
+    fname_base : str, optional
+        Base file name for Bellhop working files, default (None), creates a temporary file
 
+    Returns
+    -------
+    dict or list of dict
+        Dictionary of results and metadata (model used, task executed, etc)
+
+    Notes
+    -----
     If any of env, model, and/or task are lists then multiple runs are performed
     with a list of dictionary outputs returned.
 
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.read_env2d("...")
     >>> output = bh.compute(env)
@@ -155,13 +180,24 @@ def _select_model(env: Dict[str, Any],
                  ) -> Any:
     """Finds a model to use, or if a model is requested validate it.
 
-    :param env: the environment dictionary
-    :param task: the task to be computed
-    :param model: specified model to use
-    :param debug: whether to print diagnostics
+    Parameters
+    ----------
+    env : dict
+        The environment dictionary
+    task : str
+        The task to be computed
+    model : str, optional
+        Specified model to use
+    debug : bool, default=False
+        Whether to print diagnostics
 
-    :returns: the model function to evaluate its `.run()` method
+    Returns
+    -------
+    Bellhop
+        The model function to evaluate its `.run()` method
 
+    Notes
+    -----
     The intention of this function is to allow multiple models to be "loaded" and the
     first appropriate model found is used for the computation.
 
@@ -185,13 +221,24 @@ def _select_model(env: Dict[str, Any],
 def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute arrivals between each transmitter and receiver.
 
-    :param env: environment definition
-    :param model: propagation model to use (None to auto-select)
-    :param debug: generate debug information for propagation model
-    :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
-    :returns: arrival times and coefficients for all transmitter-receiver combinations
+    Parameters
+    ----------
+    env : dict
+        Environment definition
+    model : str, optional
+        Propagation model to use (None to auto-select)
+    debug : bool, default=False
+        Generate debug information for propagation model
+    fname_base : str, optional
+        Base file name for Bellhop working files, default (None), creates a temporary file
 
+    Returns
+    -------
+    pandas.DataFrame
+        Arrival times and coefficients for all transmitter-receiver combinations
 
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> arrivals = bh.compute_arrivals(env)
@@ -204,15 +251,30 @@ def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bo
 def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute eigenrays between a given transmitter and receiver.
 
-    :param env: environment definition
-    :param source_depth_ndx: transmitter depth index
-    :param receiver_depth_ndx: receiver depth index
-    :param receiver_range_ndx: receiver range index
-    :param model: propagation model to use (None to auto-select)
-    :param debug: generate debug information for propagation model
-    :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
-    :returns: eigenrays paths
+    Parameters
+    ----------
+    env : dict
+        Environment definition
+    source_depth_ndx : int, default=0
+        Transmitter depth index
+    receiver_depth_ndx : int, default=0
+        Receiver depth index
+    receiver_range_ndx : int, default=0
+        Receiver range index
+    model : str, optional
+        Propagation model to use (None to auto-select)
+    debug : bool, default=False
+        Generate debug information for propagation model
+    fname_base : str, optional
+        Base file name for Bellhop working files, default (None), creates a temporary file
 
+    Returns
+    -------
+    pandas.DataFrame
+        Eigenrays paths
+
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> rays = bh.compute_eigenrays(env)
@@ -233,13 +295,26 @@ def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_d
 def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute rays from a given transmitter.
 
-    :param env: environment definition
-    :param source_depth_ndx: transmitter depth index
-    :param model: propagation model to use (None to auto-select)
-    :param debug: generate debug information for propagation model
-    :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
-    :returns: ray paths
+    Parameters
+    ----------
+    env : dict
+        Environment definition
+    source_depth_ndx : int, default=0
+        Transmitter depth index
+    model : str, optional
+        Propagation model to use (None to auto-select)
+    debug : bool, default=False
+        Generate debug information for propagation model
+    fname_base : str, optional
+        Base file name for Bellhop working files, default (None), creates a temporary file
 
+    Returns
+    -------
+    pandas.DataFrame
+        Ray paths
+
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> rays = bh.compute_rays(env)
@@ -256,14 +331,28 @@ def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional
 def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mode: Optional[str] = None, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute transmission loss from a given transmitter to all receviers.
 
-    :param env: environment definition
-    :param source_depth_ndx: transmitter depth index
-    :param mode: coherent, incoherent or semicoherent
-    :param model: propagation model to use (None to auto-select)
-    :param debug: generate debug information for propagation model
-    :param fname_base: base file name for Bellhop working files, default (None), creates a temporary file
-    :returns: complex transmission loss at each receiver depth and range
+    Parameters
+    ----------
+    env : dict
+        Environment definition
+    source_depth_ndx : int, default=0
+        Transmitter depth index
+    mode : str, optional
+        Coherent, incoherent or semicoherent
+    model : str, optional
+        Propagation model to use (None to auto-select)
+    debug : bool, default=False
+        Generate debug information for propagation model
+    fname_base : str, optional
+        Base file name for Bellhop working files, default (None), creates a temporary file
 
+    Returns
+    -------
+    numpy.ndarray
+        Complex transmission loss at each receiver depth and range
+
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> tloss = bh.compute_transmission_loss(env, mode=bh.incoherent)
@@ -282,14 +371,27 @@ def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mo
 def arrivals_to_impulse_response(arrivals: Any, fs: float, abs_time: bool = False) -> Any:
     """Convert arrival times and coefficients to an impulse response.
 
-    :param arrivals: arrivals times (s) and coefficients
-    :param fs: sampling rate (Hz)
-    :param abs_time: absolute time (True) or relative time (False)
-    :returns: impulse response
+    Parameters
+    ----------
+    arrivals : pandas.DataFrame
+        Arrivals times (s) and coefficients
+    fs : float
+        Sampling rate (Hz)
+    abs_time : bool, default=False
+        Absolute time (True) or relative time (False)
 
+    Returns
+    -------
+    numpy.ndarray
+        Impulse response
+
+    Notes
+    -----
     If `abs_time` is set to True, the impulse response is placed such that
     the zero time corresponds to the time of transmission of signal.
 
+    Examples
+    --------
     >>> import bellhop as bh
     >>> env = bh.create_env2d()
     >>> arrivals = bh.compute_arrivals(env)
