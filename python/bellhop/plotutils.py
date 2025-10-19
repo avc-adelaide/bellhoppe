@@ -271,17 +271,31 @@ def hold(enable: bool = True) -> Optional[bool]:
 class figure:
     """Create a new figure, and optionally automatically display it.
 
-    :param title: figure title
-    :param xlabel: x-axis label
-    :param ylabel: y-axis label
-    :param xlim: x-axis limits (min, max)
-    :param ylim: y-axis limits (min, max)
-    :param xtype: x-axis type ('auto', 'linear', 'log', etc)
-    :param ytype: y-axis type ('auto', 'linear', 'log', etc)
-    :param width: figure width in pixels
-    :param height: figure height in pixels
-    :param interactive: enable interactive tools (pan, zoom, etc) for plot
+    Parameters
+    ----------
+    title : str, optional
+        Figure title
+    xlabel : str, optional
+        X-axis label
+    ylabel : str, optional
+        Y-axis label
+    xlim : tuple of float, optional
+        X-axis limits (min, max)
+    ylim : tuple of float, optional
+        Y-axis limits (min, max)
+    xtype : str, default='auto'
+        X-axis type ('auto', 'linear', 'log', etc)
+    ytype : str, default='auto'
+        Y-axis type ('auto', 'linear', 'log', etc)
+    width : int, optional
+        Figure width in pixels
+    height : int, optional
+        Figure height in pixels
+    interactive : bool, optional
+        Enable interactive tools (pan, zoom, etc) for plot
 
+    Notes
+    -----
     This function can be used in standalone mode to create a figure:
 
     >>> import arlpy.plot
@@ -321,8 +335,13 @@ class figure:
 class many_figures:
     """Create a grid of many figures.
 
-    :param figsize: default size of figure in grid as (width, height)
+    Parameters
+    ----------
+    figsize : tuple of int, optional
+        Default size of figure in grid as (width, height)
 
+    Examples
+    --------
     >>> import arlpy.plot
     >>> with arlpy.plot.many_figures(figsize=(300,200)):
     >>>     arlpy.plot.plot([0,10], [0,10])
