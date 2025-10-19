@@ -241,5 +241,8 @@ env = bh.create_env2d(
     depth=50,
 )
 erays = bh.compute_rays(env)
-bhp.plot_rays(erays,env=env)
+with bhp.figure() as f:
+    bhp.plot_rays(erays,env=env)
+    f.xgrid.visible = False
+    f.ygrid.visible = False
 ```
