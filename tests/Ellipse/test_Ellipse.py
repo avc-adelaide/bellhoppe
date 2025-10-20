@@ -30,11 +30,11 @@ def test_Ellipse_read_data():
     assert env['depth'].shape == (1000,2), "BTY file contains 1000 data points"
     assert env['surface'].shape == (1000,2), "ATI file contains 1000 data points"
 
-    assert env['task'] == "ray", "Task description is 'RB RR'"
+    assert env['task'] == "rays", "Task description is 'RB RR'"
     assert env['beam_type'] == "gaussian-cartesian", "Task description is 'RB RR'"
     assert env['_sbp_file'] == "default", "Task description is 'RB RR' => ' ' = none"
     assert env['source_type'] == "point", "Task description is 'RB RR'"
-    assert env['grid'] == "rectilinear", "Task description is 'RB RR'"
+    assert env['grid_type'] == "rectilinear", "Task description is 'RB RR'"
 
     print(env)
     bh.check_env(env)

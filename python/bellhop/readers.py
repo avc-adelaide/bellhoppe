@@ -220,12 +220,12 @@ class EnvironmentReader:
         # Line 4: Top boundary options
         topopt_line = _read_next_valid_line(f)
         topopt = _unquote_string(topopt_line) + "      "
-        self.env["soundspeed_interp"]          = _opt_lookup("Interpolation",          topopt[0], _Maps.interp)
-        self.env["surface_boundary_condition"] = _opt_lookup("Top boundary condition", topopt[1], _Maps.boundcond)
-        self.env["attenuation_units"]          = _opt_lookup("Attenuation units",      topopt[2], _Maps.attunits)
-        self.env["volume_attenuation"]         = _opt_lookup("Volume attenuation",     topopt[3], _Maps.volatt)
-        self.env["_altimetry"]                 = _opt_lookup("Altimetry",              topopt[4], _Maps.surface)
-        self.env["_single_beam"]               = _opt_lookup("Single beam",            topopt[5], _Maps.single_beam)
+        self.env["soundspeed_interp"]          = _opt_lookup("Interpolation",          topopt[0], _Maps.soundspeed_interp)
+        self.env["surface_boundary_condition"] = _opt_lookup("Top boundary condition", topopt[1], _Maps.surface_boundary_condition)
+        self.env["attenuation_units"]          = _opt_lookup("Attenuation units",      topopt[2], _Maps.attenuation_units)
+        self.env["volume_attenuation"]         = _opt_lookup("Volume attenuation",     topopt[3], _Maps.volume_attenuation)
+        self.env["_altimetry"]                 = _opt_lookup("Altimetry",              topopt[4], _Maps._altimetry)
+        self.env["_single_beam"]               = _opt_lookup("Single beam",            topopt[5], _Maps._single_beam)
         if self.env["_altimetry"] == _Strings.from_file:
             self.env["surface"], self.env["surface_interp"] = read_ati(self.fname_base)
 
@@ -272,8 +272,8 @@ class EnvironmentReader:
         bottom_line = _read_next_valid_line(f)
         bottom_parts = _parse_line(bottom_line) + [None] * 3
         botopt = _unquote_string(cast(str,bottom_parts[0])) + "  " # cast() => I promise this is a str :)
-        self.env["bottom_boundary_condition"] = _opt_lookup("Bottom boundary condition", botopt[0], _Maps.boundcond)
-        self.env["_bathymetry"]               = _opt_lookup("Bathymetry",                botopt[1], _Maps.bottom)
+        self.env["bottom_boundary_condition"] = _opt_lookup("Bottom boundary condition", botopt[0], _Maps.bottom_boundary_condition)
+        self.env["_bathymetry"]               = _opt_lookup("Bathymetry",                botopt[1], _Maps._bathymetry)
         self.env['bottom_roughness']       = _float(bottom_parts[1])
         self.env['bottom_beta']            = _float(bottom_parts[2])
         self.env['bottom_transition_freq'] = _float(bottom_parts[3])
@@ -305,10 +305,10 @@ class EnvironmentReader:
         task_line = _read_next_valid_line(f)
         task_code = _unquote_string(task_line) + "    "
         self.env['task']        = _Maps.task.get(task_code[0])
-        self.env['beam_type']   = _Maps.beam.get(task_code[1])
-        self.env['_sbp_file']   = _Maps.sbp.get(task_code[2])
-        self.env['source_type'] = _Maps.source.get(task_code[3])
-        self.env['grid']        = _Maps.grid.get(task_code[4])
+        self.env['beam_type']   = _Maps.beam_type.get(task_code[1])
+        self.env['_sbp_file']   = _Maps._sbp_file.get(task_code[2])
+        self.env['source_type'] = _Maps.source_type.get(task_code[3])
+        self.env['grid_type']   = _Maps.grid_type.get(task_code[4])
 
         # Check for source directionality
         if self.env["_sbp_file"] == _Strings.from_file:
@@ -521,7 +521,7 @@ def read_ati_bty(fname: str) -> Tuple[NDArray[_np.float64], str]:
         depths_array = _np.array(depths)
 
         # Return as [range, depth] pairs
-        return _np.column_stack([ranges_m, depths_array]), _Maps.bty_interp[interp_type]
+        return _np.column_stack([ranges_m, depths_array]), _Maps.depth_interp[interp_type]
 
 def read_sbp(fname: str) -> NDArray[_np.float64]:
     """Read an source beam patterm (.sbp) file used by BELLHOP.

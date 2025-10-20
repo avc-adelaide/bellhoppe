@@ -95,7 +95,7 @@ class EnvironmentConfig(MutableMapping[str, Any]):
     step_size: Optional[float] = 0.0
     box_depth: Optional[float] = None
     box_range: Optional[float] = None
-    grid: str = 'default'
+    grid_type: str = 'default'
     interference_mode: Optional[str] = None
     task: Optional[str] = None
 
@@ -119,9 +119,10 @@ class EnvironmentConfig(MutableMapping[str, Any]):
         if not hasattr(self, key):
             raise KeyError(key)
         # Generalized validation
-        allowed = _Maps.allowed_values.get(key)
-        if allowed is not None and value not in allowed:
-            raise ValueError(f"Invalid value for {key!r}: {value}. Allowed: {allowed}")
+        allowed = getattr(_Maps, key, None)
+
+        if allowed is not None and value not in set(allowed.values()):
+            raise ValueError(f"Invalid value for {key!r}: {value}. Allowed: {set(allowed.values())}")
         setattr(self, key, value)
 
     def __delitem__(self, key: str) -> None:
@@ -149,12 +150,12 @@ class EnvironmentConfig(MutableMapping[str, Any]):
 
     def _validate_interpolation_types(self) -> None:
         """Validate interpolation type options."""
-        valid_interp = set(_Maps.interp_rev.keys())
+        valid_interp = set(_Maps.soundspeed_interp_rev.keys())
         if self.soundspeed_interp not in valid_interp:
             raise ValueError(f"Invalid soundspeed_interp: {self.soundspeed_interp}. "
                            f"Must be one of: {sorted(valid_interp)}")
 
-        valid_bty_interp = set(_Maps.bty_interp_rev.keys())
+        valid_bty_interp = set(_Maps.depth_interp_rev.keys())
         if self.depth_interp not in valid_bty_interp:
             raise ValueError(f"Invalid depth_interp: {self.depth_interp}. "
                            f"Must be one of: {sorted(valid_bty_interp)}")
@@ -165,7 +166,7 @@ class EnvironmentConfig(MutableMapping[str, Any]):
 
     def _validate_boundary_conditions(self) -> None:
         """Validate boundary condition options."""
-        valid_boundary = set(_Maps.boundcond_rev.keys())
+        valid_boundary = set(_Maps.bottom_boundary_condition_rev.keys())
         if self.bottom_boundary_condition not in valid_boundary:
             raise ValueError(f"Invalid bottom_boundary_condition: {self.bottom_boundary_condition}. "
                            f"Must be one of: {sorted(valid_boundary)}")
@@ -176,31 +177,31 @@ class EnvironmentConfig(MutableMapping[str, Any]):
 
     def _validate_grid_types(self) -> None:
         """Validate grid type options."""
-        valid_grid = set(_Maps.grid_rev.keys())
-        if self.grid not in valid_grid:
-            raise ValueError(f"Invalid grid: {self.grid}. "
+        valid_grid = set(_Maps.grid_type_rev.keys())
+        if self.grid_type not in valid_grid:
+            raise ValueError(f"Invalid grid: {self.grid_type}. "
                            f"Must be one of: {sorted(valid_grid)}")
 
     def _validate_beam_types(self) -> None:
         """Validate beam type options."""
-        valid_beam = set(_Maps.beam_rev.keys())
+        valid_beam = set(_Maps.beam_type_rev.keys())
         if self.beam_type not in valid_beam:
             raise ValueError(f"Invalid beam_type: {self.beam_type}. "
                            f"Must be one of: {sorted(valid_beam)}")
 
     def _validate_attenuation_options(self) -> None:
         """Validate attenuation unit options."""
-        valid_attunits = set(_Maps.attunits_rev.keys())
-        if self.attenuation_units not in valid_attunits:
+        valid_attenuation_units = set(_Maps.attenuation_units_rev.keys())
+        if self.attenuation_units not in valid_attenuation_units:
             raise ValueError(f"Invalid attenuation_units: {self.attenuation_units}. "
-                           f"Must be one of: {sorted(valid_attunits)}")
+                           f"Must be one of: {sorted(valid_attenuation_units)}")
 
     def _validate_volume_attenuation(self) -> None:
         """Validate volume attenuation options."""
-        valid_volatt = set(_Maps.volatt_rev.keys())
-        if self.volume_attenuation not in valid_volatt:
+        valid_volume_attenuation = set(_Maps.volume_attenuation_rev.keys())
+        if self.volume_attenuation not in valid_volume_attenuation:
             raise ValueError(f"Invalid volume_attenuation: {self.volume_attenuation}. "
-                           f"Must be one of: {sorted(valid_volatt)}")
+                           f"Must be one of: {sorted(valid_volume_attenuation)}")
 
     def _validate_interference_mode(self) -> None:
         """Validate transmission loss mode."""

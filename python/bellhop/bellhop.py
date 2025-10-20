@@ -236,15 +236,15 @@ class Bellhop:
     def _write_env_surface_depth(self, fh: TextIO, env: EnvironmentConfig) -> None:
         """Writes surface boundary and depth lines of env file."""
 
-        svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
-        svp_boundcond = _Maps.boundcond_rev[env['surface_boundary_condition']]
-        svp_attunits = _Maps.attunits_rev[env['attenuation_units']]
-        svp_volatt = _Maps.volatt_rev[env['volume_attenuation']]
-        svp_alti = _Maps.surface_rev[env['_altimetry']]
-        svp_singlebeam = _Maps.single_beam_rev[env['_single_beam']]
+        svp_interp = _Maps.soundspeed_interp_rev[env['soundspeed_interp']]
+        svp_boundcond = _Maps.surface_boundary_condition_rev[env['surface_boundary_condition']]
+        svp_attenuation_units = _Maps.attenuation_units_rev[env['attenuation_units']]
+        svp_volume_attenuation = _Maps.volume_attenuation_rev[env['volume_attenuation']]
+        svp_alti = _Maps._altimetry_rev[env['_altimetry']]
+        svp_singlebeam = _Maps._single_beam_rev[env['_single_beam']]
 
         comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
-        topopt = self._quoted_opt(svp_interp, svp_boundcond, svp_attunits, svp_volatt, svp_alti, svp_singlebeam)
+        topopt = self._quoted_opt(svp_interp, svp_boundcond, svp_attenuation_units, svp_volume_attenuation, svp_alti, svp_singlebeam)
         self._print_env_line(fh,f"{topopt}",comment)
 
         if env['volume_attenuation'] == _Strings.francois_garrison:
@@ -269,7 +269,7 @@ class Bellhop:
     def _write_env_sound_speed(self, fh: TextIO, env: EnvironmentConfig) -> None:
         """Writes sound speed profile lines of env file."""
         svp = env['soundspeed']
-        svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
+        svp_interp = _Maps.soundspeed_interp_rev[env['soundspeed_interp']]
         if isinstance(svp, _pd.DataFrame) and len(svp.columns) == 1:
             svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
         if svp.size == 1:
@@ -284,8 +284,8 @@ class Bellhop:
 
     def _write_env_bottom(self, fh: TextIO, env: EnvironmentConfig) -> None:
         """Writes bottom boundary lines of env file."""
-        bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
-        dp_flag = _Maps.bottom_rev[env['_bathymetry']]
+        bot_bc = _Maps.bottom_boundary_condition_rev[env['bottom_boundary_condition']]
+        dp_flag = _Maps._bathymetry_rev[env['_bathymetry']]
         bot_str = self._quoted_opt(bot_bc,dp_flag)
         comment = "BOT_Boundary_cond / BOT_Roughness"
         self._print_env_line(fh,f"{bot_str} {env['bottom_roughness']}",comment)
@@ -309,10 +309,10 @@ class Bellhop:
 
     def _write_env_task(self, fh: TextIO, env: EnvironmentConfig, taskcode: str) -> None:
         """Writes task lines of env file."""
-        beamtype = _Maps.beam_rev[env['beam_type']]
+        beamtype = _Maps.beam_type_rev[env['beam_type']]
         beampattern = " " if env['source_directionality'] is None else "*"
-        txtype = _Maps.source_rev[env['source_type']]
-        gridtype = _Maps.grid_rev[env['grid']]
+        txtype = _Maps.source_type_rev[env['source_type']]
+        gridtype = _Maps.grid_type_rev[env['grid_type']]
         runtype_str = self._quoted_opt(taskcode, beamtype, beampattern, txtype, gridtype)
         self._print_env_line(fh,f"{runtype_str}","RUN TYPE")
 
@@ -365,7 +365,7 @@ class Bellhop:
 
     def _create_bty_ati_file(self, filename: str, depth: Any, interp: _Strings) -> None:
         with open(filename, 'wt') as f:
-            f.write(f"'{_Maps.bty_interp_rev[interp]}'\n")
+            f.write(f"'{_Maps.depth_interp_rev[interp]}'\n")
             f.write(str(depth.shape[0])+"\n")
             for j in range(depth.shape[0]):
                 f.write(f"{depth[j,0]/1000} {depth[j,1]}\n")

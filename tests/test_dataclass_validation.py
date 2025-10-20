@@ -79,14 +79,14 @@ class TestEnvironmentConfigValidation:
     def test_invalid_grid_type(self):
         """Test that invalid grid type raises ValueError."""
         with pytest.raises(ValueError, match="Invalid grid"):
-            EnvironmentConfig(grid='invalid_grid')
+            EnvironmentConfig(grid_type='invalid_grid')
 
     def test_valid_grid_options(self):
         """Test that all valid grid options work."""
         valid_options = ['rectilinear', 'irregular', 'default']
         for option in valid_options:
-            config = EnvironmentConfig(grid=option)
-            assert config.grid == option
+            config = EnvironmentConfig(grid_type=option)
+            assert config.grid_type == option
 
     def test_invalid_beam_type(self):
         """Test that invalid beam type raises ValueError."""

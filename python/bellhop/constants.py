@@ -47,13 +47,6 @@ class _Strings(str, Enum):
     # ati/bty interpolation
     curvilinear = "curvilinear"
 
-    # tasks
-    eigenrays = "eigenrays"
-    rays = "rays"
-    coherent = "coherent"
-    incoherent = "incoherent"
-    semicoherent = "semicoherent"
-
     # boundaries
     vacuum = "vacuum"
     acousto_elastic = "acousto-elastic"
@@ -72,6 +65,8 @@ class _Strings(str, Enum):
     hat_ray = "hat-ray",
     gaussian_cartesian = "gaussian-cartesian",
     gaussian_ray = "gaussian-ray",
+    omnidirectional = "omnidirectional"
+    single_beam = "single beam"
 
     # grid
     rectilinear = "rectilinear"
@@ -90,19 +85,15 @@ class _Strings(str, Enum):
     quality_factor = "quality factor"
     loss_parameter = "loss parameter"
 
-    omnidirectional = "omnidirectional"
-    single_beam = "single beam"
-
     # tasks
-    ray = "ray"
-    eigenray = "eigenray"
+    rays = "rays"
+    eigenrays = "eigenrays"
     arrivals = "arrivals"
+    coherent = "coherent"
+    incoherent = "incoherent"
+    semicoherent = "semicoherent"
     amplitude = "amplitude"
     amplitude_b = "amplitude-binary"
-    tl_coherent = "TL-coherent"
-    tl_incoherent = "TL-incoherent"
-    tl_semicoherent = "TL-semicoherent"
-
 
 
 class _Maps:
@@ -110,15 +101,15 @@ class _Maps:
 
     These are also defined with reverse mappings in the form:
 
-    >>> _Maps.interp["S"]
+    >>> _Maps.soundspeed_interp["S"]
     "spline"
 
-    >>> _Maps.interp_rev["spline"]
+    >>> _Maps.soundspeed_interp_rev["spline"]
     "S"
 
     """
 
-    interp = {
+    soundspeed_interp = {
         "S": _Strings.spline,
         "C": _Strings.linear,
         "Q": _Strings.quadrilateral, # TODO: add test
@@ -127,18 +118,29 @@ class _Maps:
         "N": _Strings.nlinear,
         " ": _Strings.default,
     }
-    bty_interp = {
+    depth_interp = {
         "L": _Strings.linear,
         "C": _Strings.curvilinear,
     }
-    boundcond = {
+    surface_interp = {
+        "L": _Strings.linear,
+        "C": _Strings.curvilinear,
+    }
+    bottom_boundary_condition = {
         "V": _Strings.vacuum,
         "A": _Strings.acousto_elastic,
         "R": _Strings.rigid,
         "F": _Strings.from_file,
         " ": _Strings.default,
     }
-    attunits = {
+    surface_boundary_condition = {
+        "V": _Strings.vacuum,
+        "A": _Strings.acousto_elastic,
+        "R": _Strings.rigid,
+        "F": _Strings.from_file,
+        " ": _Strings.default,
+    }
+    attenuation_units = {
         "N": _Strings.nepers_per_meter,
         "F": _Strings.frequency_dependent,
         "M": _Strings.db_per_meter,
@@ -147,40 +149,40 @@ class _Maps:
         "L": _Strings.loss_parameter,
         " ": _Strings.default,
     }
-    volatt = {
+    volume_attenuation = {
         "T": _Strings.thorp,
         "F": _Strings.francois_garrison,
         "B": _Strings.biological,
         " ": _Strings.none,
     }
-    bottom = {
+    _bathymetry = {
         "_": _Strings.flat,
         "~": _Strings.from_file,
         "*": _Strings.from_file,
         " ": _Strings.default,
     }
-    surface = {
+    _altimetry = {
         "_": _Strings.flat,
         "~": _Strings.from_file,
         "*": _Strings.from_file,
         " ": _Strings.default,
     }
-    source = {
+    source_type = {
         "R": _Strings.point,
         "X": _Strings.line,
         " ": _Strings.default,
     }
-    sbp = {
+    _sbp_file = {
         "*": _Strings.from_file,
         "O": _Strings.omnidirectional,
         " ": _Strings.default,
     }
-    grid = {
+    grid_type = {
         "R": _Strings.rectilinear,
         "I": _Strings.irregular,
         " ": _Strings.default,
     }
-    beam = {
+    beam_type = {
         "G": _Strings.hat_cartesian,
         "^": _Strings.hat_cartesian,
         "g": _Strings.hat_ray,
@@ -188,18 +190,18 @@ class _Maps:
         "b": _Strings.gaussian_ray,
         " ": _Strings.default,
     }
-    single_beam = {
+    _single_beam = {
         "I": _Strings.single_beam,
         " ": _Strings.default,
     }
     task = {
-        "R": _Strings.ray,
-        "E": _Strings.eigenray,
+        "R": _Strings.rays,
+        "E": _Strings.eigenrays,
         "A": _Strings.amplitude,
         "a": _Strings.amplitude_b,
-        "C": _Strings.tl_coherent,
-        "I": _Strings.tl_incoherent,
-        "S": _Strings.tl_semicoherent,
+        "C": _Strings.coherent,
+        "I": _Strings.incoherent,
+        "S": _Strings.semicoherent,
     }
     mode = {
         "C": _Strings.coherent,
@@ -208,26 +210,22 @@ class _Maps:
     }
 
     # reverse maps
-    interp_rev = {v: k for k, v in interp.items()}
-    bty_interp_rev = {v: k for k, v in bty_interp.items()}
-    boundcond_rev = {v: k for k, v in boundcond.items()}
-    attunits_rev = {v: k for k, v in attunits.items()}
-    volatt_rev = {v: k for k, v in volatt.items()}
-    bottom_rev = {v: k for k, v in bottom.items()}
-    surface_rev = {v: k for k, v in surface.items()}
-    source_rev = {v: k for k, v in source.items()}
-    grid_rev = {v: k for k, v in grid.items()}
-    beam_rev = {v: k for k, v in beam.items()}
-    single_beam_rev = {v: k for k, v in single_beam.items()}
+    soundspeed_interp_rev = {v: k for k, v in soundspeed_interp.items()}
+    depth_interp_rev = {v: k for k, v in depth_interp.items()}
+    surface_interp_rev = {v: k for k, v in surface_interp.items()}
+    bottom_boundary_condition_rev = {v: k for k, v in bottom_boundary_condition.items()}
+    surface_boundary_condition_rev = {v: k for k, v in surface_boundary_condition.items()}
+    attenuation_units_rev = {v: k for k, v in attenuation_units.items()}
+    volume_attenuation_rev = {v: k for k, v in volume_attenuation.items()}
+    _bathymetry_rev = {v: k for k, v in _bathymetry.items()}
+    _altimetry_rev = {v: k for k, v in _altimetry.items()}
+    source_type_rev = {v: k for k, v in source_type.items()}
+    grid_type_rev = {v: k for k, v in grid_type.items()}
+    beam_type_rev = {v: k for k, v in beam_type.items()}
+    _single_beam_rev = {v: k for k, v in _single_beam.items()}
     task_rev = {v: k for k, v in task.items()}
     mode_rev = {v: k for k, v in mode.items()}
 
-    # option validation
-    allowed_values = {
-        "soundspeed_interp": set(interp.values()),
-        "bottom_interp": set(bty_interp.values()),
-        "surface_interp": set(bty_interp.values()),
-    }
 
 @dataclass(frozen=True)
 class Defaults:
