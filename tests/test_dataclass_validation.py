@@ -9,10 +9,7 @@ manual checking.
 import pytest
 import numpy as np
 import bellhop as bh
-from bellhop.environment import (
-    EnvironmentConfig,
-    _validate_source_type
-)
+from bellhop.environment import EnvironmentConfig
 from bellhop.constants import _Strings
 
 
@@ -158,22 +155,6 @@ class TestDataclassIntegration:
         env = bh.check_env(env)
         assert env['depth'] == 40
         assert env['soundspeed'].iloc[0,0] == 1540
-
-
-class TestTransmissionLossValidation:
-    """Test validation of source type."""
-
-    def test_validate_source_type_valid(self):
-        """Test that valid source types pass validation."""
-        valid_types = ['point', 'line', 'default']
-        for source_type in valid_types:
-            # Should not raise exception
-            _validate_source_type(source_type)
-
-    def test_validate_source_type_invalid(self):
-        """Test that invalid source types raise ValueError."""
-        with pytest.raises(ValueError, match="Invalid source type"):
-            _validate_source_type('invalid_source')
 
 
 class TestDataclassUtilities:

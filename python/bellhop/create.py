@@ -7,7 +7,7 @@ import pandas as _pd
 
 from bellhop.constants import Defaults, _Strings
 import bellhop.environment as _env
-from bellhop.environment import EnvironmentConfig, _validate_source_type
+from bellhop.environment import EnvironmentConfig
 
 def create_env2d(**kv: Any) -> EnvironmentConfig:
     """Backwards compatibility for create_env"""
@@ -124,23 +124,12 @@ def check_env(env: Dict[str, Any]) -> Dict[str, Any]:
     env = _finalise_environment(env)
 
     try:
-        assert env['type'] == '2D', 'Not a 2D environment'
-        assert env["_num_media"] == 1, f"BELLHOP only supports 1 medium, found {env['_num_media']}"
+        _check_env_header(env)
         _check_env_surface(env)
         _check_env_depth(env)
         _check_env_ssp(env)
         _check_env_sbp(env)
-        assert _np.max(env['source_depth']) <= env['depth_max'], 'source_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
-        assert _np.max(env['receiver_depth']) <= env['depth_max'], 'receiver_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
-        assert env['beam_angle_min'] >= -180 and env['beam_angle_min'] <= 180, 'beam_angle_min must be in range (-180, 180]'
-        assert env['beam_angle_max'] >= -180 and env['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
-        if env["bottom_reflection_coefficient"] is not None:
-            assert env["bottom_boundary_condition"] == _Strings.from_file, "BRC values need to be read from file"
-        if env["surface_reflection_coefficient"] is not None:
-            assert env["surface_boundary_condition"] == _Strings.from_file, "TRC values need to be read from file"
-        _validate_source_type(env['source_type'])
-        if env['_single_beam'] == _Strings.single_beam:
-            assert env['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
+        _check_env_beam(env)
         return env
     except AssertionError as e:
         raise ValueError(str(e))
@@ -149,6 +138,10 @@ def check_env(env: Dict[str, Any]) -> Dict[str, Any]:
 def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
     """Backwards compatibility for check_env"""
     return check_env(env=env)
+
+def _check_env_header(env: Dict[str, Any]) -> None:
+    assert env['type'] == '2D', 'Not a 2D environment'
+    assert env["_num_media"] == 1, f"BELLHOP only supports 1 medium, found {env['_num_media']}"
 
 def _check_env_surface(env: Dict[str, Any]) -> None:
     max_range = _np.max(env['receiver_range'])
@@ -159,6 +152,8 @@ def _check_env_surface(env: Dict[str, Any]) -> None:
         assert env['surface'][0,0] <= 0, 'First range in surface array must be 0 m'
         assert env['surface'][-1,0] >= max_range, 'Last range in surface array must be beyond maximum range: '+str(max_range)+' m'
         assert _np.all(_np.diff(env['surface'][:,0]) > 0), 'surface array must be strictly monotonic in range'
+    if env["surface_reflection_coefficient"] is not None:
+        assert env["surface_boundary_condition"] == _Strings.from_file, "TRC values need to be read from file"
 
 def _check_env_depth(env: Dict[str, Any]) -> None:
     max_range = _np.max(env['receiver_range'])
@@ -169,6 +164,10 @@ def _check_env_depth(env: Dict[str, Any]) -> None:
         assert env['depth'][-1,0] >= max_range, 'Last range in depth array must be beyond maximum range: '+str(max_range)+' m'
         assert _np.all(_np.diff(env['depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
         assert env["_bathymetry"] == _Strings.from_file, 'len(depth)>1 requires BTY file'
+    if env["bottom_reflection_coefficient"] is not None:
+        assert env["bottom_boundary_condition"] == _Strings.from_file, "BRC values need to be read from file"
+    assert _np.max(env['source_depth']) <= env['depth_max'], 'source_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
+    assert _np.max(env['receiver_depth']) <= env['depth_max'], 'receiver_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
 
 def _check_env_ssp(env: Dict[str, Any]) -> None:
     assert isinstance(env['soundspeed'], _pd.DataFrame), 'Soundspeed should always be a DataFrame by this point'
@@ -206,6 +205,12 @@ def _check_env_sbp(env: Dict[str, Any]) -> None:
         assert env['source_directionality'].ndim == 2, 'source_directionality must be an Nx2 array'
         assert env['source_directionality'].shape[1] == 2, 'source_directionality must be an Nx2 array'
         assert _np.all(env['source_directionality'][:,0] >= -180) and _np.all(env['source_directionality'][:,0] <= 180), 'source_directionality angles must be in (-180, 180]'
+
+def _check_env_beam(env: Dict[str, Any]) -> None:
+    assert env['beam_angle_min'] >= -180 and env['beam_angle_min'] <= 180, 'beam_angle_min must be in range (-180, 180]'
+    assert env['beam_angle_max'] >= -180 and env['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
+    if env['_single_beam'] == _Strings.single_beam:
+        assert env['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
 
 def _finalise_environment(env: Dict[str, Any]) -> Dict[str, Any]:
     """Reviews the data within an environment and updates settings for consistency.

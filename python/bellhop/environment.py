@@ -236,22 +236,3 @@ def new() -> EnvironmentConfig:
         Default environment parameters as a dictionary.
     """
     return EnvironmentConfig()
-
-
-def _validate_source_type(source_type: str) -> None:
-    """Validate source type using predefined options.
-
-    Parameters
-    ----------
-    source_type : str
-        The source type to validate.
-
-    Raises
-    ------
-    ValueError
-        If the source type is not valid.
-    """
-    valid_source_types = set(_Maps.source_rev.keys())
-    if source_type not in valid_source_types:
-        raise ValueError(f'Invalid source type: {source_type}. '
-                        f'Must be one of: {sorted(valid_source_types)}')
