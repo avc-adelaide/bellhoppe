@@ -17,15 +17,8 @@ import pandas as _pd
 
 from .constants import _Strings, _Maps, Defaults
 
-
 @dataclass
-class EnvironmentConfig(MutableMapping[str, Any]):
-    """Dataclass for 2D underwater acoustic environment configuration.
-
-    This class provides automatic validation of environment parameters,
-    eliminating the need for manual checking of option validity.
-    """
-
+class _EnvironmentParam():
     # Basic environment properties
     name: str = 'bellhop/python default'
     type: str = '2D'
@@ -109,55 +102,9 @@ class EnvironmentConfig(MutableMapping[str, Any]):
     fg_pH: Optional[float] = None
     fg_depth: Optional[float] = None
 
-    # --- Mapping interface ---
-    def __getitem__(self, key: str) -> Any:
-        if not hasattr(self, key):
-            raise KeyError(key)
-        return getattr(self, key)
 
-    def __setitem__(self, key: str, value: Any) -> None:
-        self.__setattr__(key, value)
-
-    def __setattr__(self, key: str, value: Any) -> None:
-        if not hasattr(self, key):
-            raise KeyError(key)
-        # Generalized validation of values
-        allowed = getattr(_Maps, key, None)
-        if allowed is not None and value is not None and value not in set(allowed.values()):
-            raise ValueError(f"Invalid value for {key!r}: {value}. Allowed: {set(allowed.values())}")
-        object.__setattr__(self, key, value)
-
-    def __delitem__(self, key: str) -> None:
-        raise KeyError("Environment parameters cannot be deleted")
-
-    def __iter__(self) -> Iterator[str]:
-        return (f.name for f in fields(self))
-
-    def __len__(self) -> int:
-        return len(fields(self))
-
-    def to_dict(self) -> Dict[str,Any]:
-        """Return a dictionary representation of the environment."""
-        return asdict(self)
-
-    def copy(self) -> "EnvironmentConfig":
-        """Return a shallow copy of the environment."""
-        # Copy all fields
-        data = {f.name: getattr(self, f.name) for f in fields(self)}
-        # Return a new instance
-        new_env = type(self)(**data)
-        return new_env
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'EnvironmentConfig':
-        """Create EnvironmentConfig from dictionary."""
-        # Filter out any keys that aren't valid field names
-        valid_fields = {f.name for f in fields(cls)}
-        filtered_data = {k: v for k, v in data.items() if k in valid_fields}
-        return cls(**filtered_data)
-
-    def __repr__(self) -> str:
-        return pformat(self.to_dict())
+@dataclass
+class _EnvironmentMethods():
 
     def check(self) -> "EnvironmentConfig":
         self._finalise()
@@ -306,3 +253,61 @@ class EnvironmentConfig(MutableMapping[str, Any]):
         assert self['beam_angle_max'] >= -180 and self['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
         if self['_single_beam'] == _Strings.single_beam:
             assert self['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
+
+
+@dataclass
+class EnvironmentConfig(_EnvironmentParam, _EnvironmentMethods, MutableMapping[str, Any]):
+    """Dataclass for underwater acoustic environment configuration.
+
+    This class provides automatic validation of environment parameters,
+    eliminating the need for manual checking of option validity.
+    """
+
+    def __getitem__(self, key: str) -> Any:
+        if not hasattr(self, key):
+            raise KeyError(key)
+        return getattr(self, key)
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        self.__setattr__(key, value)
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if not hasattr(self, key):
+            raise KeyError(key)
+        # Generalized validation of values
+        allowed = getattr(_Maps, key, None)
+        if allowed is not None and value is not None and value not in set(allowed.values()):
+            raise ValueError(f"Invalid value for {key!r}: {value}. Allowed: {set(allowed.values())}")
+        object.__setattr__(self, key, value)
+
+    def __delitem__(self, key: str) -> None:
+        raise KeyError("Environment parameters cannot be deleted")
+
+    def __iter__(self) -> Iterator[str]:
+        return (f.name for f in fields(self))
+
+    def __len__(self) -> int:
+        return len(fields(self))
+
+    def __repr__(self) -> str:
+        return pformat(self.to_dict())
+
+    def to_dict(self) -> Dict[str,Any]:
+        """Return a dictionary representation of the environment."""
+        return asdict(self)
+
+    def copy(self) -> "EnvironmentConfig":
+        """Return a shallow copy of the environment."""
+        # Copy all fields
+        data = {f.name: getattr(self, f.name) for f in fields(self)}
+        # Return a new instance
+        new_env = type(self)(**data)
+        return new_env
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'EnvironmentConfig':
+        """Create EnvironmentConfig from dictionary."""
+        # Filter out any keys that aren't valid field names
+        valid_fields = {f.name for f in fields(cls)}
+        filtered_data = {k: v for k, v in data.items() if k in valid_fields}
+        return cls(**filtered_data)
