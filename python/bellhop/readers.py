@@ -7,7 +7,6 @@ from numpy.typing import NDArray
 import numpy as _np
 import pandas as _pd
 from bellhop.constants import _Strings, _Maps, _File_Ext
-import bellhop.environment
 from bellhop.environment import EnvironmentConfig
 
 def _read_next_valid_line(f: TextIO) -> str:
@@ -189,7 +188,7 @@ class EnvironmentReader:
             fname: Path to .env file (with or without extension)
         """
         self.fname, self.fname_base = _prepare_filename(fname, _File_Ext.env, "Environment")
-        self.env: EnvironmentConfig = bellhop.environment.new()
+        self.env: EnvironmentConfig = EnvironmentConfig()
 
     def read(self) -> EnvironmentConfig:
         """Do the reading..."""

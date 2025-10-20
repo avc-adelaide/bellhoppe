@@ -229,6 +229,7 @@ class EnvironmentConfig(MutableMapping[str, Any]):
         return pformat(self.to_dict())
 
     def check(self) -> "EnvironmentConfig":
+        self._finalise()
         try:
             self._check_env_header()
             self._check_env_surface()
@@ -374,18 +375,3 @@ class EnvironmentConfig(MutableMapping[str, Any]):
         assert self['beam_angle_max'] >= -180 and self['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
         if self['_single_beam'] == _Strings.single_beam:
             assert self['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
-
-
-
-def new() -> EnvironmentConfig:
-    """Get default environment dictionary for underwater acoustic modeling.
-
-    Creates a new environment using the dataclass and returns it as a dictionary
-    for backward compatibility.
-
-    Returns
-    -------
-    dict
-        Default environment parameters as a dictionary.
-    """
-    return EnvironmentConfig()

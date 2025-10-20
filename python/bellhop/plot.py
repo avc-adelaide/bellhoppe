@@ -22,10 +22,10 @@ import matplotlib.pyplot as _pyplt
 import matplotlib.colors as _mplc
 
 from .environment import EnvironmentConfig
-from bellhop.constants import _Strings
+from .constants import _Strings
+from .plotutils import figure as figure
+
 import bellhop.plotutils as _plt
-from bellhop.plotutils import figure as figure
-from bellhop.create import check_env as check_env
 
 def plot_env(env: EnvironmentConfig,
              surface_color: str = 'dodgerblue',
@@ -68,7 +68,7 @@ def plot_env(env: EnvironmentConfig,
     """
 
     if env is not None:
-        env = check_env(env)
+        env.check()
 
     min_x = 0.0
     max_x = float(_np.max(env['receiver_range']))
@@ -149,7 +149,7 @@ def plot_ssp(env: EnvironmentConfig, **kwargs: Any) -> None:
     """
 
     if env is not None:
-        env = check_env(env)
+        env.check()
 
     oh = _plt.hold()
     svp = env['soundspeed']

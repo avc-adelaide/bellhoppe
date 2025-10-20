@@ -8,7 +8,6 @@ This is the Python API documentation for BELLHOP, an underwater acoustic propaga
    :caption: Contents:
 
    code
-   create
    environment
    const
    readers

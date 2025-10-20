@@ -18,8 +18,6 @@ File structure
     +------------------+-------------------------------------------------+
     | `readers.py`     | Functions for reading Bellhop input text files  |
     +------------------+-------------------------------------------------+
-    | `setup.py`       | Functions for creating environments             |
-    +------------------+-------------------------------------------------+
     | `environment.py` | Environment class definition                    |
     +------------------+-------------------------------------------------+
     | `plot.py`        | Plotting functions using Bokeh                  |
