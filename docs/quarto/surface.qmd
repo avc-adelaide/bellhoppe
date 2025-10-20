@@ -34,10 +34,8 @@ When `surface_boundary_condition` is `acousto-elastic`, the following parameters
 Option                           Description
 ------                           -----------
 `surface_soundspeed`             Sound speed of surface medium (m/s)
-`surface_soundspeed_shear`       Shear sound speed of surface medium (m/s)
 `surface_density`                Density of surface medium (kg/m^3)
 `surface_attenuation`            Sound speed attenuation of surface medium (attenuation units given below)
-`surface_attenuation_shear`      Shear sound speed attenuation of surface medium (attenuation units given below)
 `attenuation_units`              See below
 
 Attenuation units are defined using the following options:
@@ -230,10 +228,8 @@ env = bh.create_env(
     surface=ice_data,
     surface_boundary_condition="acousto-elastic",
     surface_soundspeed=3500,
-    surface_soundspeed_shear=1800,
     surface_density=890,
     surface_attenuation=0.4,
-    surface_attenuation_shear=1.0,
     attenuation_units="dB per wavelength",
     beam_num=10,
     beam_angle_min=-45,

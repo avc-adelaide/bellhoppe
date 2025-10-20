@@ -52,4 +52,4 @@ def test_MunkB_extra_bot_param():
     assert env2['bottom_beta'] == 3.3, "Bottom beta value not read correctly"
     assert env2['bottom_transition_freq'] == 4.4, "Bottom trans freq value not read correctly"
     assert env2['bottom_attenuation'] == 7.7, "Bottom abs value not read correctly"
-    assert env2['bottom_attenuation_shear'] == 8.8, "Bottom abs shear value not read correctly"
+    assert env2['_bottom_attenuation_shear'] == 8.8, "Bottom abs shear value not read correctly"

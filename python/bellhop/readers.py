@@ -244,10 +244,10 @@ class EnvironmentReader:
             surface_props = _parse_line(surface_props_line) + [None] * 6
             self.env['surface_depth']             = _float(surface_props[0])
             self.env['surface_soundspeed']        = _float(surface_props[1])
-            self.env['surface_soundspeed_shear']  = _float(surface_props[2])
+            self.env['_surface_soundspeed_shear']  = _float(surface_props[2])
             self.env['surface_density']           = _float(surface_props[3], scale=1000)  # convert from g/cm³ to kg/m³
             self.env['surface_attenuation']       = _float(surface_props[4])
-            self.env['surface_attenuation_shear'] = _float(surface_props[5])
+            self.env['_surface_attenuation_shear'] = _float(surface_props[5])
 
     def _read_sound_speed_profile(self, f: TextIO) -> None:
         """Read environment file sound speed profile"""
@@ -255,8 +255,8 @@ class EnvironmentReader:
         # SSP depth specification
         ssp_spec_line = _read_next_valid_line(f)
         ssp_parts = _parse_line(ssp_spec_line) + [None] * 3
-        self.env['depth_npts']   = _int(ssp_parts[0])
-        self.env['depth_sigmaz'] = _float(ssp_parts[1])
+        self.env['_mesh_npts']   = _int(ssp_parts[0])
+        self.env['_depth_sigma'] = _float(ssp_parts[1])
         self.env['depth_max']    = _float(ssp_parts[2])
         self.env['depth'] = self.env['depth_max']
 
@@ -285,10 +285,10 @@ class EnvironmentReader:
             bottom_props_line = _read_next_valid_line(f)
             bottom_props = _parse_line(bottom_props_line) + [None] * 6
             self.env['bottom_soundspeed'] = _float(bottom_props[1])
-            self.env['bottom_soundspeed_shear'] = _float(bottom_props[2])
+            self.env['_bottom_soundspeed_shear'] = _float(bottom_props[2])
             self.env['bottom_density'] = _float(bottom_props[3], 1000)  # convert from g/cm³ to kg/m³
             self.env['bottom_attenuation'] = _float(bottom_props[4])
-            self.env['bottom_attenuation_shear'] = _float(bottom_props[5])
+            self.env['_bottom_attenuation_shear'] = _float(bottom_props[5])
 
     def _read_sources_receivers_task(self, f: TextIO) -> None:
         """Read environment file sources, receivers, and task"""

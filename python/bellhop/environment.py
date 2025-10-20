@@ -19,29 +19,45 @@ from .constants import _Strings, _Maps, Defaults
 
 @dataclass
 class _EnvironmentParam():
+    """Defines the dataclass elements of the Environment class.
+
+    These entries are either intended to be set or edited by the user, or with `_` prefix are
+    internal state read from a .env file or inferred by other data. Some others are ignored."""
+
     # Basic environment properties
     name: str = 'bellhop/python default'
     type: str = '2D'
     frequency: float = 25000.0  # Hz
-    _num_media: int = 1
+    _num_media: int = 1 # must always = 1 in bellhop
 
     # Sound speed parameters
-    soundspeed: Union[float, Any] = 1500.0  # m/s - Any allows for np.ndarray, pd.DataFrame
-    soundspeed_interp: str = _Strings.linear  # spline/linear/quadrilateral/pchip/hexahedral/nlinear
+    soundspeed: Union[float, Any] = 1500.0  # m/s
+    soundspeed_interp: str = _Strings.linear
+
+    # Depth parameters
+    depth: Union[float, Any] = 25.0  # m
+    depth_interp: str = _Strings.linear
+    _mesh_npts: int = 0 # ignored by bellhop
+    _depth_sigma: float = 0.0 # ignored by bellhop
+    depth_max: Optional[float] = None  # m
+
+    # Flags to read/write from separate files
+    _bathymetry: str = _Strings.flat  # set to "from-file" if multiple bottom depths
+    _altimetry: str = _Strings.flat  # set to "from-file" if multiple surface heights
+    _sbp_file: str = _Strings.default # set to "from-file" if source_directionality defined
 
     # Bottom parameters
     bottom_interp: Optional[str] = None
     bottom_soundspeed: float = 1600.0  # m/s
-    bottom_soundspeed_shear: float = 0.0  # m/s
+    _bottom_soundspeed_shear: float = 0.0  # m/s (ignored)
     bottom_density: float = 1600  # kg/m^3  # this value doesn't seem right but is copied from ARLpy
     bottom_attenuation: Optional[float] = None  # dB/wavelength
-    bottom_attenuation_shear: Optional[float] = None  # dB/wavelength
+    _bottom_attenuation_shear: Optional[float] = None  # dB/wavelength (ignored)
     bottom_roughness: float = 0.0  # m (rms)
     bottom_beta: Optional[float] = None
     bottom_transition_freq: Optional[float] = None  # Hz
     bottom_boundary_condition: str = _Strings.acousto_elastic
     bottom_reflection_coefficient: Optional[Any] = None
-    _bathymetry: str = _Strings.flat  # set to "from-file" if multiple bottom depths
 
     # Surface parameters
     surface: Optional[Any] = None  # surface profile
@@ -50,47 +66,38 @@ class _EnvironmentParam():
     surface_reflection_coefficient: Optional[Any] = None
     surface_depth: float = 0.0  # m
     surface_soundspeed: float = 1600.0  # m/s
-    surface_soundspeed_shear: float = 0.0  # m/s
+    _surface_soundspeed_shear: float = 0.0  # m/s (ignored)
     surface_density: float = 1000.0  # kg/m^3
     surface_attenuation: Optional[float] = None  # dB/wavelength
-    surface_attenuation_shear: Optional[float] = None  # dB/wavelength
-    _altimetry: str = _Strings.flat  # set to "from-file" if multiple surface heights
+    _surface_attenuation_shear: Optional[float] = None  # dB/wavelength (ignored)
 
     # Source parameters
     source_type: str = 'default'
     source_depth: Union[float, Any] = 5.0  # m - Any allows for np.ndarray
     source_ndepth: Optional[int] = None
-    source_directionality: Optional[Any] = None  # [(deg, dB)...] - Any allows for np.ndarray
-    _sbp_file: str = _Strings.default
+    source_directionality: Optional[Any] = None  # [(deg, dB)...]
 
     # Receiver parameters
     receiver_depth: Union[float, Any] = 10.0  # m - Any allows for np.ndarray
-    receiver_ndepth: Optional[int] = None
     receiver_range: Union[float, Any] = 1000.0  # m - Any allows for np.ndarray
+    receiver_ndepth: Optional[int] = None
     receiver_nrange: Optional[int] = None
-
-    # Bathymetry parameters
-    depth: Union[float, Any] = 25.0  # m - Any allows for np.ndarray
-    depth_interp: str = _Strings.linear  # curvilinear/linear
-    depth_npts: int = 0
-    depth_sigmaz: float = 0.0
-    depth_max: Optional[float] = None  # m
 
     # Beam settings
     beam_type: str = _Strings.default
     beam_angle_min: Optional[float] = None  # deg
     beam_angle_max: Optional[float] = None  # deg
-    beam_num: int = 0  # number of beams (0 = auto)
-    single_beam_index: Optional[int] = None # if a single beam is traced only, select this one
-    _single_beam: str = _Strings.default
+    beam_num: int = 0  # (0 = auto)
+    single_beam_index: Optional[int] = None
+    _single_beam: str = _Strings.default # value inferred from `single_beam_index`
 
     # Solution parameters
     step_size: Optional[float] = 0.0
     box_depth: Optional[float] = None
     box_range: Optional[float] = None
     grid_type: str = 'default'
-    interference_mode: Optional[str] = None
     task: Optional[str] = None
+    interference_mode: Optional[str] = None # subset of `task` for providing TL interface
 
     # Attenuation parameters
     volume_attenuation: str = 'none'

@@ -256,15 +256,15 @@ class Bellhop:
             array_str = self._array2str([
               env['depth_max'],
               env['surface_soundspeed'],
-              env['surface_soundspeed_shear'],
+              env['_surface_soundspeed_shear'],
               self._float(env['surface_density'],scale=1/1000),
               env['surface_attenuation'],
-              env['surface_attenuation_shear']
+              env['_surface_attenuation_shear']
             ])
             self._print_env_line(fh,array_str,comment)
 
-        comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
-        self._print_env_line(fh,f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}",comment)
+        comment = "[Npts - ignored]  [Sigma - ignored]  Depth_Max"
+        self._print_env_line(fh,f"{env['_mesh_npts']} {env['_depth_sigma']} {env['depth_max']}",comment)
 
     def _write_env_sound_speed(self, fh: TextIO, env: EnvironmentConfig) -> None:
         """Writes sound speed profile lines of env file."""
@@ -294,10 +294,10 @@ class Bellhop:
             array_str = self._array2str([
               env['depth_max'],
               env['bottom_soundspeed'],
-              env['bottom_soundspeed_shear'],
+              env['_bottom_soundspeed_shear'],
               self._float(env['bottom_density'],scale=1/1000),
               env['bottom_attenuation'],
-              env['bottom_attenuation_shear']
+              env['_bottom_attenuation_shear']
             ])
             self._print_env_line(fh,array_str,comment)
 
