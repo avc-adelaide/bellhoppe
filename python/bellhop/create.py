@@ -1,11 +1,9 @@
 
-import warnings
 from typing import Any
 
 import numpy as _np
 import pandas as _pd
 
-from bellhop.constants import _Strings
 import bellhop.environment as _env
 from bellhop.environment import EnvironmentConfig
 
@@ -123,93 +121,10 @@ def check_env(env: EnvironmentConfig) -> EnvironmentConfig:
     """
 
     env._finalise()
-    try:
-        _check_env_header(env)
-        _check_env_surface(env)
-        _check_env_depth(env)
-        _check_env_ssp(env)
-        _check_env_sbp(env)
-        _check_env_beam(env)
-        return env
-    except AssertionError as e:
-        raise ValueError(str(e))
+    return env.check()
 
 
 def check_env2d(env: EnvironmentConfig) -> EnvironmentConfig:
     """Backwards compatibility for check_env"""
     return check_env(env=env)
-
-def _check_env_header(env: EnvironmentConfig) -> None:
-    assert env['type'] == '2D', 'Not a 2D environment'
-    assert env["_num_media"] == 1, f"BELLHOP only supports 1 medium, found {env['_num_media']}"
-
-def _check_env_surface(env: EnvironmentConfig) -> None:
-    max_range = _np.max(env['receiver_range'])
-    if env['surface'] is not None:
-        assert _np.size(env['surface']) > 1, 'surface must be an Nx2 array'
-        assert env['surface'].ndim == 2, 'surface must be a scalar or an Nx2 array'
-        assert env['surface'].shape[1] == 2, 'surface must be a scalar or an Nx2 array'
-        assert env['surface'][0,0] <= 0, 'First range in surface array must be 0 m'
-        assert env['surface'][-1,0] >= max_range, 'Last range in surface array must be beyond maximum range: '+str(max_range)+' m'
-        assert _np.all(_np.diff(env['surface'][:,0]) > 0), 'surface array must be strictly monotonic in range'
-    if env["surface_reflection_coefficient"] is not None:
-        assert env["surface_boundary_condition"] == _Strings.from_file, "TRC values need to be read from file"
-
-def _check_env_depth(env: EnvironmentConfig) -> None:
-    max_range = _np.max(env['receiver_range'])
-    if _np.size(env['depth']) > 1:
-        assert env['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array'
-        assert env['depth'].shape[1] == 2, 'depth must be a scalar or an Nx2 array'
-        assert env['depth'][0,0] <= 0, 'First range in depth array must be 0 m'
-        assert env['depth'][-1,0] >= max_range, 'Last range in depth array must be beyond maximum range: '+str(max_range)+' m'
-        assert _np.all(_np.diff(env['depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
-        assert env["_bathymetry"] == _Strings.from_file, 'len(depth)>1 requires BTY file'
-    if env["bottom_reflection_coefficient"] is not None:
-        assert env["bottom_boundary_condition"] == _Strings.from_file, "BRC values need to be read from file"
-    assert _np.max(env['source_depth']) <= env['depth_max'], 'source_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
-    assert _np.max(env['receiver_depth']) <= env['depth_max'], 'receiver_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
-
-def _check_env_ssp(env: EnvironmentConfig) -> None:
-    assert isinstance(env['soundspeed'], _pd.DataFrame), 'Soundspeed should always be a DataFrame by this point'
-    assert env['soundspeed'].size > 1, "Soundspeed DataFrame should have been constructed internally to be two elements"
-    if env['soundspeed'].size > 1:
-        if len(env['soundspeed'].columns) > 1:
-            assert env['soundspeed_interp'] == _Strings.quadrilateral, "SVP DataFrame with multiple columns implies quadrilateral interpolation."
-        if env['soundspeed_interp'] == _Strings.spline:
-            assert env['soundspeed'].shape[0] > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
-        else:
-            assert env['soundspeed'].shape[0] > 1, 'soundspeed profile must have at least 2 points'
-        assert env['soundspeed'].index[0] <= 0.0, 'First depth in soundspeed array must be 0 m'
-        assert _np.all(_np.diff(env['soundspeed'].index) > 0), 'Soundspeed array must be strictly monotonic in depth'
-        if env['depth_max'] != env['soundspeed'].index[-1]:
-            if env['soundspeed'].shape[1] > 1:
-                # TODO: generalise interpolation trimming from np approach below
-                assert env['soundspeed'].index[-1] == env['depth_max'], '2D SSP: Final entry in soundspeed array must be at the maximum water depth: '+str(env['depth_max'])+' m'
-            else:
-                indlarger = _np.argwhere(env['soundspeed'].index > env['depth_max'])[0][0]
-                prev_ind = env['soundspeed'].index[:indlarger].tolist()
-                insert_ss_val = _np.interp(env['depth_max'], env['soundspeed'].index, env['soundspeed'].iloc[:,0])
-                new_row = _pd.DataFrame([env['depth_max'], insert_ss_val], columns=env['soundspeed'].columns)
-                env['soundspeed'] = _pd.concat([
-                        env['soundspeed'].iloc[:(indlarger-1)],  # rows before insertion
-                        new_row,                             # new row
-                    ], ignore_index=True)
-                env['soundspeed'].index = prev_ind + [env['depth_max']]
-                warnings.warn("Bellhop.py has used linear interpolation to ensure the sound speed profile ends at the max depth. Ensure this is what you want.", UserWarning)
-                print("ATTEMPTING TO FIX")
-        # TODO: check soundspeed range limits
-
-def _check_env_sbp(env: EnvironmentConfig) -> None:
-    if env['source_directionality'] is not None:
-        assert _np.size(env['source_directionality']) > 1, 'source_directionality must be an Nx2 array'
-        assert env['source_directionality'].ndim == 2, 'source_directionality must be an Nx2 array'
-        assert env['source_directionality'].shape[1] == 2, 'source_directionality must be an Nx2 array'
-        assert _np.all(env['source_directionality'][:,0] >= -180) and _np.all(env['source_directionality'][:,0] <= 180), 'source_directionality angles must be in (-180, 180]'
-
-def _check_env_beam(env: EnvironmentConfig) -> None:
-    assert env['beam_angle_min'] >= -180 and env['beam_angle_min'] <= 180, 'beam_angle_min must be in range (-180, 180]'
-    assert env['beam_angle_max'] >= -180 and env['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
-    if env['_single_beam'] == _Strings.single_beam:
-        assert env['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
-
 
