@@ -15,7 +15,7 @@ to work, the complete bellhop.py package must be built and installed
 and `bellhop.exe` should be in your PATH.
 """
 
-from typing import Any, Dict, List, Optional, Union, Tuple
+from typing import Any, List, Optional, Union, Tuple
 
 import numpy as _np
 import pandas as _pd
@@ -34,7 +34,9 @@ from bellhop.readers import read_sbp as read_sbp
 from bellhop.readers import read_trc as read_trc
 from bellhop.readers import read_brc as read_brc
 
+from bellhop.environment import EnvironmentConfig
 from bellhop.bellhop import Bellhop
+
 _models: List[Bellhop] = []
 
 def new_model(name: str, **kwargs: Any) -> Bellhop:
@@ -76,7 +78,7 @@ def new_model(name: str, **kwargs: Any) -> Bellhop:
 
 new_model(name=Defaults.model_name)
 
-def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> List[str]:
+def models(env: Optional[EnvironmentConfig] = None, task: Optional[str] = None) -> List[str]:
     """List available models.
 
     Parameters
@@ -111,14 +113,14 @@ def models(env: Optional[Dict[str, Any]] = None, task: Optional[str] = None) -> 
     return rv
 
 def compute(
-            env: Union[Dict[str, Any],List[Dict[str, Any]]],
+            env: Union[EnvironmentConfig,List[EnvironmentConfig]],
             model: Optional[Any] = None,
             task: Optional[Any] = None,
             debug: bool = False,
             fname_base: Optional[str] = None
            ) -> Union[  Any,
-                        Dict[str, Any],
-                        Tuple[List[Dict[str, Any]], _pd.DataFrame]
+                        EnvironmentConfig,
+                        Tuple[List[EnvironmentConfig], _pd.DataFrame]
                      ]:
     """Compute Bellhop task(s) for given model(s) and environment(s).
 
@@ -201,7 +203,7 @@ def compute(
     else:
         return results[0]
 
-def _select_model(env: Dict[str, Any],
+def _select_model(env: EnvironmentConfig,
                   task: str,
                   model: Optional[str] = None,
                   debug: bool = False
@@ -246,7 +248,7 @@ def _select_model(env: Dict[str, Any],
             return mm
     raise ValueError('No suitable propagation model available')
 
-def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_arrivals(env: EnvironmentConfig, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute arrivals between each transmitter and receiver.
 
     Parameters
@@ -276,7 +278,7 @@ def compute_arrivals(env: Dict[str, Any], model: Optional[Any] = None, debug: bo
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
-def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_eigenrays(env: EnvironmentConfig, source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute eigenrays between a given transmitter and receiver.
 
     Parameters
@@ -320,7 +322,7 @@ def compute_eigenrays(env: Dict[str, Any], source_depth_ndx: int = 0, receiver_d
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
-def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_rays(env: EnvironmentConfig, source_depth_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute rays from a given transmitter.
 
     Parameters
@@ -356,7 +358,7 @@ def compute_rays(env: Dict[str, Any], source_depth_ndx: int = 0, model: Optional
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
-def compute_transmission_loss(env: Dict[str, Any], source_depth_ndx: int = 0, mode: Optional[str] = None, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_transmission_loss(env: EnvironmentConfig, source_depth_ndx: int = 0, mode: Optional[str] = None, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute transmission loss from a given transmitter to all receviers.
 
     Parameters

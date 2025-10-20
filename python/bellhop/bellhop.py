@@ -11,6 +11,7 @@ import numpy as _np
 import pandas as _pd
 
 from .constants import Defaults, _Strings, _Maps, _File_Ext
+from .environment import EnvironmentConfig
 
 class Bellhop:
     """
@@ -36,7 +37,7 @@ class Bellhop:
         self.exe: str = exe
         self.env_comment_pad: int = env_comment_pad
 
-    def supports(self, env: Optional[Dict[str, Any]] = None,
+    def supports(self, env: Optional[EnvironmentConfig] = None,
                        task: Optional[str] = None,
                        exe: Optional[str] = None,
                 ) -> bool:
@@ -50,7 +51,7 @@ class Bellhop:
 
         return (which_bool and task_bool)
 
-    def run(self, env: Dict[str, Any],
+    def run(self, env: EnvironmentConfig,
                   task: str,
                   debug: bool = False,
                   fname_base: Optional[str] = None,
@@ -179,7 +180,7 @@ class Bellhop:
         except FileNotFoundError:
             pass
 
-    def _create_env_file(self, env: Dict[str, Any], taskcode: str, fh: TextIO, fname_base: str) -> None:
+    def _create_env_file(self, env: EnvironmentConfig, taskcode: str, fh: TextIO, fname_base: str) -> None:
         """Writes a complete .env file for specifying a Bellhop simulation
 
         Parameters
@@ -226,13 +227,13 @@ class Bellhop:
         if env['source_directionality'] is not None:
             self._create_sbp_file(fname_base+'.sbp', env['source_directionality'])
 
-    def _write_env_header(self, fh: TextIO, env: Dict[str, Any]) -> None:
+    def _write_env_header(self, fh: TextIO, env: EnvironmentConfig) -> None:
         """Writes header of env file."""
         self._print_env_line(fh,"'"+env['name']+"'","Bellhop environment name/description")
         self._print_env_line(fh,env['frequency'],"Frequency (Hz)")
         self._print_env_line(fh,1,"NMedia -- always =1 for Bellhop")
 
-    def _write_env_surface_depth(self, fh: TextIO, env: Dict[str, Any]) -> None:
+    def _write_env_surface_depth(self, fh: TextIO, env: EnvironmentConfig) -> None:
         """Writes surface boundary and depth lines of env file."""
 
         svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
@@ -265,7 +266,7 @@ class Bellhop:
         comment = "DEPTH_Npts  DEPTH_SigmaZ  DEPTH_Max"
         self._print_env_line(fh,f"{env['depth_npts']} {env['depth_sigmaz']} {env['depth_max']}",comment)
 
-    def _write_env_sound_speed(self, fh: TextIO, env: Dict[str, Any]) -> None:
+    def _write_env_sound_speed(self, fh: TextIO, env: EnvironmentConfig) -> None:
         """Writes sound speed profile lines of env file."""
         svp = env['soundspeed']
         svp_interp = _Maps.interp_rev[env['soundspeed_interp']]
@@ -281,7 +282,7 @@ class Bellhop:
             for j in range(svp.shape[0]):
                 self._print_env_line(fh,self._array2str([svp[j,0], svp[j,1]]),f"ssp_{j}")
 
-    def _write_env_bottom(self, fh: TextIO, env: Dict[str, Any]) -> None:
+    def _write_env_bottom(self, fh: TextIO, env: EnvironmentConfig) -> None:
         """Writes bottom boundary lines of env file."""
         bot_bc = _Maps.boundcond_rev[env['bottom_boundary_condition']]
         dp_flag = _Maps.bottom_rev[env['_bathymetry']]
@@ -300,13 +301,13 @@ class Bellhop:
             ])
             self._print_env_line(fh,array_str,comment)
 
-    def _write_env_source_receiver(self, fh: TextIO, env: Dict[str, Any]) -> None:
+    def _write_env_source_receiver(self, fh: TextIO, env: EnvironmentConfig) -> None:
         """Writes source and receiver lines of env file."""
         self._print_array(fh, env['source_depth'], nn=env['source_ndepth'], label="Source depth (m)")
         self._print_array(fh, env['receiver_depth'], nn=env['receiver_ndepth'], label="Receiver depth (m)")
         self._print_array(fh, env['receiver_range']/1000, nn=env['receiver_nrange'], label="Receiver range (km)")
 
-    def _write_env_task(self, fh: TextIO, env: Dict[str, Any], taskcode: str) -> None:
+    def _write_env_task(self, fh: TextIO, env: EnvironmentConfig, taskcode: str) -> None:
         """Writes task lines of env file."""
         beamtype = _Maps.beam_rev[env['beam_type']]
         beampattern = " " if env['source_directionality'] is None else "*"
@@ -315,7 +316,7 @@ class Bellhop:
         runtype_str = self._quoted_opt(taskcode, beamtype, beampattern, txtype, gridtype)
         self._print_env_line(fh,f"{runtype_str}","RUN TYPE")
 
-    def _write_env_beam_footer(self, fh: TextIO, env: Dict[str, Any]) -> None:
+    def _write_env_beam_footer(self, fh: TextIO, env: EnvironmentConfig) -> None:
         """Writes beam and footer lines of env file."""
         self._print_env_line(fh,self._array2str([env['beam_num'], env['single_beam_index']]),"Num_Beams [ Single_Beam_Index ]")
         self._print_env_line(fh,f"{env['beam_angle_min']} {env['beam_angle_max']} /","ALPHA1,2 (degrees)")

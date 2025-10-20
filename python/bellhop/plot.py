@@ -11,7 +11,7 @@
 """Plotting functions for the underwater acoustic propagation modeling toolbox.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 from sys import float_info as _fi
 
 import numpy as _np
@@ -21,12 +21,13 @@ import pandas as _pd
 import matplotlib.pyplot as _pyplt
 import matplotlib.colors as _mplc
 
+from .environment import EnvironmentConfig
 from bellhop.constants import _Strings
 import bellhop.plotutils as _plt
 from bellhop.plotutils import figure as figure
 from bellhop.create import check_env as check_env
 
-def plot_env(env: Dict[str, Any],
+def plot_env(env: EnvironmentConfig,
              surface_color: str = 'dodgerblue',
              bottom_color: str = 'peru',
              source_color: str = 'orangered',
@@ -126,7 +127,7 @@ def plot_env(env: Dict[str, Any],
 
     _plt.hold(oh if oh is not None else False)
 
-def plot_ssp(env: Dict[str, Any], **kwargs: Any) -> None:
+def plot_ssp(env: EnvironmentConfig, **kwargs: Any) -> None:
     """Plots the sound speed profile.
 
     Parameters
@@ -205,7 +206,7 @@ def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs
         _plt.plot([t, t], [min_y, y], color=color, **kwargs)
     _plt.hold(oh if oh is not None else False)
 
-def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bool = False, **kwargs: Any) -> None:
+def plot_rays(rays: Any, env: Optional[EnvironmentConfig] = None, invert_colors: bool = False, **kwargs: Any) -> None:
     """Plots ray paths.
 
     Parameters
@@ -258,7 +259,7 @@ def plot_rays(rays: Any, env: Optional[Dict[str, Any]] = None, invert_colors: bo
         plot_env(env,title=None)
     _plt.hold(oh if oh is not None else False)
 
-def plot_transmission_loss(tloss: Any, env: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
+def plot_transmission_loss(tloss: Any, env: Optional[EnvironmentConfig] = None, **kwargs: Any) -> None:
     """Plots transmission loss.
 
     Parameters

@@ -1,11 +1,11 @@
 
 import warnings
-from typing import Any, Dict
+from typing import Any
 
 import numpy as _np
 import pandas as _pd
 
-from bellhop.constants import Defaults, _Strings
+from bellhop.constants import _Strings
 import bellhop.environment as _env
 from bellhop.environment import EnvironmentConfig
 
@@ -93,7 +93,7 @@ def create_env(**kv: Any) -> EnvironmentConfig:
 
 
 
-def check_env(env: Dict[str, Any]) -> Dict[str, Any]:
+def check_env(env: EnvironmentConfig) -> EnvironmentConfig:
     """Check the validity of a underwater environment definition.
 
     This function is automatically executed before any of the compute_ functions,
@@ -121,8 +121,8 @@ def check_env(env: Dict[str, Any]) -> Dict[str, Any]:
     >>> env = bh.create_env()
     >>> env = check_env(env)
     """
-    env = _finalise_environment(env)
 
+    env._finalise()
     try:
         _check_env_header(env)
         _check_env_surface(env)
@@ -135,15 +135,15 @@ def check_env(env: Dict[str, Any]) -> Dict[str, Any]:
         raise ValueError(str(e))
 
 
-def check_env2d(env: Dict[str, Any]) -> Dict[str, Any]:
+def check_env2d(env: EnvironmentConfig) -> EnvironmentConfig:
     """Backwards compatibility for check_env"""
     return check_env(env=env)
 
-def _check_env_header(env: Dict[str, Any]) -> None:
+def _check_env_header(env: EnvironmentConfig) -> None:
     assert env['type'] == '2D', 'Not a 2D environment'
     assert env["_num_media"] == 1, f"BELLHOP only supports 1 medium, found {env['_num_media']}"
 
-def _check_env_surface(env: Dict[str, Any]) -> None:
+def _check_env_surface(env: EnvironmentConfig) -> None:
     max_range = _np.max(env['receiver_range'])
     if env['surface'] is not None:
         assert _np.size(env['surface']) > 1, 'surface must be an Nx2 array'
@@ -155,7 +155,7 @@ def _check_env_surface(env: Dict[str, Any]) -> None:
     if env["surface_reflection_coefficient"] is not None:
         assert env["surface_boundary_condition"] == _Strings.from_file, "TRC values need to be read from file"
 
-def _check_env_depth(env: Dict[str, Any]) -> None:
+def _check_env_depth(env: EnvironmentConfig) -> None:
     max_range = _np.max(env['receiver_range'])
     if _np.size(env['depth']) > 1:
         assert env['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array'
@@ -169,7 +169,7 @@ def _check_env_depth(env: Dict[str, Any]) -> None:
     assert _np.max(env['source_depth']) <= env['depth_max'], 'source_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
     assert _np.max(env['receiver_depth']) <= env['depth_max'], 'receiver_depth cannot exceed water depth: '+str(env['depth_max'])+' m'
 
-def _check_env_ssp(env: Dict[str, Any]) -> None:
+def _check_env_ssp(env: EnvironmentConfig) -> None:
     assert isinstance(env['soundspeed'], _pd.DataFrame), 'Soundspeed should always be a DataFrame by this point'
     assert env['soundspeed'].size > 1, "Soundspeed DataFrame should have been constructed internally to be two elements"
     if env['soundspeed'].size > 1:
@@ -199,77 +199,17 @@ def _check_env_ssp(env: Dict[str, Any]) -> None:
                 print("ATTEMPTING TO FIX")
         # TODO: check soundspeed range limits
 
-def _check_env_sbp(env: Dict[str, Any]) -> None:
+def _check_env_sbp(env: EnvironmentConfig) -> None:
     if env['source_directionality'] is not None:
         assert _np.size(env['source_directionality']) > 1, 'source_directionality must be an Nx2 array'
         assert env['source_directionality'].ndim == 2, 'source_directionality must be an Nx2 array'
         assert env['source_directionality'].shape[1] == 2, 'source_directionality must be an Nx2 array'
         assert _np.all(env['source_directionality'][:,0] >= -180) and _np.all(env['source_directionality'][:,0] <= 180), 'source_directionality angles must be in (-180, 180]'
 
-def _check_env_beam(env: Dict[str, Any]) -> None:
+def _check_env_beam(env: EnvironmentConfig) -> None:
     assert env['beam_angle_min'] >= -180 and env['beam_angle_min'] <= 180, 'beam_angle_min must be in range (-180, 180]'
     assert env['beam_angle_max'] >= -180 and env['beam_angle_max'] <= 180, 'beam_angle_max must be in range (-180, 180]'
     if env['_single_beam'] == _Strings.single_beam:
         assert env['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
 
-def _finalise_environment(env: Dict[str, Any]) -> Dict[str, Any]:
-    """Reviews the data within an environment and updates settings for consistency.
-
-    This function is run as the first step of check_env().
-    """
-
-    if _np.size(env['depth']) > 1:
-        env["_bathymetry"] = _Strings.from_file
-    if env["surface"] is not None:
-        env["_altimetry"] = _Strings.from_file
-    if env["bottom_reflection_coefficient"] is not None:
-        env["bottom_boundary_condition"] = _Strings.from_file
-    if env["surface_reflection_coefficient"] is not None:
-        env["surface_boundary_condition"] = _Strings.from_file
-
-    if env['depth_max'] is None:
-        env['depth_max'] = _np.max(env['depth'])
-
-    if not isinstance(env['soundspeed'], _pd.DataFrame):
-        if _np.size(env['soundspeed']) == 1:
-            speed = [float(env["soundspeed"]), float(env["soundspeed"])]
-            depth = [0, float(env['depth_max'])]
-            env["soundspeed"] = _pd.DataFrame(speed, columns=["speed"], index=depth)
-            env["soundspeed"].index.name = "depth"
-        elif env['soundspeed'].shape[0] == 1 and env['soundspeed'].shape[1] == 2:
-            speed = [float(env["soundspeed"][0,1]), float(env["soundspeed"][0,1])]
-            d1 = float(min([0.0, env["soundspeed"][0,0]]))
-            d2 = float(max([env["soundspeed"][0,0], env['depth_max']]))
-            env["soundspeed"] = _pd.DataFrame(speed, columns=["speed"], index=[d1, d2])
-            env["soundspeed"].index.name = "depth"
-        elif env['soundspeed'].ndim == 2 and env['soundspeed'].shape[1] == 2:
-            depth = env['soundspeed'][:,0]
-            speed = env['soundspeed'][:,1]
-            env["soundspeed"] = _pd.DataFrame(speed, columns=["speed"], index=depth)
-            env["soundspeed"].index.name = "depth"
-        else:
-            raise ValueError("Soundspeed array must be a 2xN array (better to use a DataFrame)")
-
-    if "depth" in env["soundspeed"].columns:
-        env["soundspeed"] = env["soundspeed"].set_index("depth")
-
-    if len(env['soundspeed'].columns) > 1:
-        env['soundspeed_interp'] == _Strings.quadrilateral
-
-    # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
-    if env['beam_angle_min'] is None:
-        if _np.min(env['receiver_range']) < 0:
-            env['beam_angle_min'] = - Defaults.beam_angle_fullspace
-        else:
-            env['beam_angle_min'] = - Defaults.beam_angle_halfspace
-    if env['beam_angle_max'] is None:
-        if _np.min(env['receiver_range']) < 0:
-            env['beam_angle_max'] =  Defaults.beam_angle_fullspace
-        else:
-            env['beam_angle_max'] = Defaults.beam_angle_halfspace
-
-    env['box_depth'] = env['box_depth'] or 1.01 * env['depth_max']
-    env['box_range'] = env['box_range'] or 1.01 * (_np.max(env['receiver_range']) - min(0,_np.min(env['receiver_range'])))
-
-    return env
 

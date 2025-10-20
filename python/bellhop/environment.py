@@ -11,7 +11,10 @@ from dataclasses import dataclass, asdict, fields
 from typing import Optional, Union, Any, Dict, Iterator
 from pprint import pformat
 
-from .constants import _Strings, _Maps
+import numpy as _np
+import pandas as _pd
+
+from .constants import _Strings, _Maps, Defaults
 
 
 @dataclass
@@ -224,8 +227,70 @@ class EnvironmentConfig(MutableMapping[str, Any]):
     def __repr__(self) -> str:
         return pformat(self.to_dict())
 
+    def _finalise(self) -> "EnvironmentConfig":
+        """Reviews the data within an environment and updates settings for consistency.
+
+        This function is run as the first step of check_env().
+        """
+
+        if _np.size(self['depth']) > 1:
+            self["_bathymetry"] = _Strings.from_file
+        if self["surface"] is not None:
+            self["_altimetry"] = _Strings.from_file
+        if self["bottom_reflection_coefficient"] is not None:
+            self["bottom_boundary_condition"] = _Strings.from_file
+        if self["surface_reflection_coefficient"] is not None:
+            self["surface_boundary_condition"] = _Strings.from_file
+
+        if self['depth_max'] is None:
+            self['depth_max'] = _np.max(self['depth'])
+
+        if not isinstance(self['soundspeed'], _pd.DataFrame):
+            if _np.size(self['soundspeed']) == 1:
+                speed = [float(self["soundspeed"]), float(self["soundspeed"])]
+                depth = [0, float(self['depth_max'])]
+                self["soundspeed"] = _pd.DataFrame(speed, columns=["speed"], index=depth)
+                self["soundspeed"].index.name = "depth"
+            elif self['soundspeed'].shape[0] == 1 and self['soundspeed'].shape[1] == 2:
+                speed = [float(self["soundspeed"][0,1]), float(self["soundspeed"][0,1])]
+                d1 = float(min([0.0, self["soundspeed"][0,0]]))
+                d2 = float(max([self["soundspeed"][0,0], self['depth_max']]))
+                self["soundspeed"] = _pd.DataFrame(speed, columns=["speed"], index=[d1, d2])
+                self["soundspeed"].index.name = "depth"
+            elif self['soundspeed'].ndim == 2 and self['soundspeed'].shape[1] == 2:
+                depth = self['soundspeed'][:,0]
+                speed = self['soundspeed'][:,1]
+                self["soundspeed"] = _pd.DataFrame(speed, columns=["speed"], index=depth)
+                self["soundspeed"].index.name = "depth"
+            else:
+                raise ValueError("Soundspeed array must be a 2xN array (better to use a DataFrame)")
+
+        if "depth" in self["soundspeed"].columns:
+            self["soundspeed"] = self["soundspeed"].set_index("depth")
+
+        if len(self['soundspeed'].columns) > 1:
+            self['soundspeed_interp'] == _Strings.quadrilateral
+
+        # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
+        if self['beam_angle_min'] is None:
+            if _np.min(self['receiver_range']) < 0:
+                self['beam_angle_min'] = - Defaults.beam_angle_fullspace
+            else:
+                self['beam_angle_min'] = - Defaults.beam_angle_halfspace
+        if self['beam_angle_max'] is None:
+            if _np.min(self['receiver_range']) < 0:
+                self['beam_angle_max'] =  Defaults.beam_angle_fullspace
+            else:
+                self['beam_angle_max'] = Defaults.beam_angle_halfspace
+
+        self['box_depth'] = self['box_depth'] or 1.01 * self['depth_max']
+        self['box_range'] = self['box_range'] or 1.01 * (_np.max(self['receiver_range']) - min(0,_np.min(self['receiver_range'])))
+
+        return self
+
+
 def new() -> EnvironmentConfig:
-    """Get default environment dictionary for 2D underwater acoustic modeling.
+    """Get default environment dictionary for underwater acoustic modeling.
 
     Creates a new environment using the dataclass and returns it as a dictionary
     for backward compatibility.
