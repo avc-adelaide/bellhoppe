@@ -99,7 +99,7 @@ def test_variable_soundspeed():
 
     # Create environment with variable sound speed profile
     env = bh.create_env(soundspeed=ssp, soundspeed_interp="spline", depth=30, beam_angle_min=-80, beam_angle_max=80)
-    bh.print_env(env)
+    print(env)
 
     # Compute arrivals
     arrivals = bh.compute_arrivals(env)

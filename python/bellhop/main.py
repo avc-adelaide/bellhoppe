@@ -25,7 +25,6 @@ from bellhop.constants import _Strings, Defaults
 # this format to explicitly mark the functions as public:
 from bellhop.create import create_env as create_env
 from bellhop.create import check_env as check_env
-from bellhop.create import print_env as print_env
 
 from bellhop.readers import read_env2d as read_env2d
 from bellhop.readers import read_ssp as read_ssp

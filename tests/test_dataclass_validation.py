@@ -141,25 +141,15 @@ class TestDataclassIntegration:
             soundspeed=1540,
             soundspeed_interp='linear'
         )
-        assert isinstance(env, dict)
+        assert isinstance(env, EnvironmentConfig)
         assert env['depth'] == 40
         assert env['soundspeed'] == 1540
         assert env['soundspeed_interp'] == 'linear'
 
     def test_create_env_with_invalid_options(self):
         """Test that create_env fails with invalid options."""
-        with pytest.raises(ValueError, match="Invalid soundspeed_interp"):
+        with pytest.raises(ValueError, match="Invalid value for 'soundspeed_interp'"):
             bh.create_env(soundspeed_interp='invalid_option')
-
-    def test_check_env_with_dataclass_validation(self):
-        """Test that check_env uses dataclass validation."""
-        # Create an environment with invalid option
-        env = bh.create_env()
-        env['soundspeed_interp'] = 'invalid_option'
-
-        # Should raise ValueError due to dataclass validation
-        with pytest.raises(ValueError, match="Invalid soundspeed_interp"):
-            bh.check_env(env)
 
     def test_backward_compatibility_preserved(self):
         """Test that existing dictionary-based interface still works."""

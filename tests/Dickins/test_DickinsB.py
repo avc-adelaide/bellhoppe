@@ -39,7 +39,7 @@ def test_DickensB():
     assert env['box_range'] == 101000.0, "0.0  3100.0  101.0		! STEP (m), ZBOX (m), RBOX (km)"
 
     bh.check_env(env)
-    # bh.print_env(env)
+    # print(env)
 
     assert tl is not None, "No results generated"
     assert (tl.shape == tl_exp.shape), "Incorrect/inconsistent number of TL values calculated"

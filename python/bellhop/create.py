@@ -1,6 +1,6 @@
 
 import warnings
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import numpy as _np
 import pandas as _pd
@@ -9,11 +9,11 @@ from bellhop.constants import Defaults, _Strings
 import bellhop.environment as _env
 from bellhop.environment import EnvironmentConfig, _validate_source_type
 
-def create_env2d(**kv: Any) -> Dict[str, Any]:
+def create_env2d(**kv: Any) -> EnvironmentConfig:
     """Backwards compatibility for create_env"""
     return create_env(**kv)
 
-def create_env(**kv: Any) -> Dict[str, Any]:
+def create_env(**kv: Any) -> EnvironmentConfig:
     """Create a new underwater environment.
 
     Parameters
@@ -38,17 +38,17 @@ def create_env(**kv: Any) -> Dict[str, Any]:
 
     >>> import bellhop as bh
     >>> env = bh.create_env()
-    >>> bh.print_env(env)
+    >>> print(env)
 
     The environment parameters may be changed by passing keyword arguments
     or modified later using dictionary notation:
 
     >>> import bellhop as bh
     >>> env = bh.create_env(depth=40, soundspeed=1540)
-    >>> bh.print_env(env)
+    >>> print(env)
     >>> env['depth'] = 25
     >>> env['bottom_soundspeed'] = 1800
-    >>> bh.print_env(env)
+    >>> print(env)
 
     The default environment has a constant sound speed.
     A depth dependent sound speed profile be provided as a Nx2 array of (depth, sound speed):
@@ -89,25 +89,9 @@ def create_env(**kv: Any) -> Dict[str, Any]:
         else:
             env[k] = _np.asarray(v, dtype=_np.float64)
 
-    # Validate options using dataclass validation
-    env = _validate_options_with_dataclass(env)
-
     return env
 
 
-
-def _validate_options_with_dataclass(env: Dict[str, Any]) -> Dict[str, Any]:
-    """Validate environment options using dataclass validation.
-
-    This function validates all option fields using the dataclass,
-    then returns the original dictionary.
-    """
-    try:
-        # Validate options by creating dataclass instance (for side effects only)
-        EnvironmentConfig.from_dict(env)
-        return env  # Return original dict if validation passes
-    except (ValueError, TypeError) as e:
-        raise ValueError(str(e))
 
 def check_env(env: Dict[str, Any]) -> Dict[str, Any]:
     """Check the validity of a underwater environment definition.
@@ -138,9 +122,6 @@ def check_env(env: Dict[str, Any]) -> Dict[str, Any]:
     >>> env = check_env(env)
     """
     env = _finalise_environment(env)
-
-    # Use dataclass validation for option checking
-    env = _validate_options_with_dataclass(env)
 
     try:
         assert env['type'] == '2D', 'Not a 2D environment'
@@ -287,29 +268,3 @@ def _finalise_environment(env: Dict[str, Any]) -> Dict[str, Any]:
 
     return env
 
-def print_env(env: Dict[str, Any]) -> None:
-    """Display the environment in a human readable form.
-
-    Parameters
-    ----------
-    env : dict
-        Environment definition
-
-    Examples
-    --------
-    >>> import bellhop as bh
-    >>> env = bh.create_env(depth=40, soundspeed=1540)
-    >>> bh.print_env(env)
-    """
-    env = check_env(env)
-    keys_set = set(env.keys()) - {'name'}
-    keys: List[str] = ['name'] + sorted(list(keys_set))
-    for k in keys:
-        v_str = str(env[k])
-        if '\n' in v_str:
-            v_list = v_str.split('\n')
-            print('%20s : '%(k) + v_list[0])
-            for v1 in v_list[1:]:
-                print('%20s   '%('') + v1)
-        else:
-            print('%20s : '%(k) + v_str)

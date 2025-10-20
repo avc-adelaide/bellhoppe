@@ -44,7 +44,7 @@ def test_FGB():
 
     assert env['task'] == 'TL-coherent'
 
-    bh.print_env(env)
+    print(env)
 
     assert tl is not None, "No results generated"
     assert (tl.shape == tl_exp.shape), "Incorrect/inconsistent number of TL values calculated"

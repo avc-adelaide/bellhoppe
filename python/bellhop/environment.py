@@ -6,14 +6,16 @@ This module provides dataclass-based environment configuration with automatic va
 replacing manual option checking with field validators.
 """
 
-from dataclasses import dataclass, fields
-from typing import Optional, Union, Any, Dict
+from collections.abc import MutableMapping
+from dataclasses import dataclass, asdict, fields
+from typing import Optional, Union, Any, Dict, Iterator
+from pprint import pformat
 
 from .constants import _Strings, _Maps
 
 
 @dataclass
-class EnvironmentConfig:
+class EnvironmentConfig(MutableMapping[str, Any]):
     """Dataclass for 2D underwater acoustic environment configuration.
 
     This class provides automatic validation of environment parameters,
@@ -31,6 +33,7 @@ class EnvironmentConfig:
     soundspeed_interp: str = _Strings.linear  # spline/linear/quadrilateral/pchip/hexahedral/nlinear
 
     # Bottom parameters
+    bottom_interp: Optional[str] = None
     bottom_soundspeed: float = 1600.0  # m/s
     bottom_soundspeed_shear: float = 0.0  # m/s
     bottom_density: float = 1600  # kg/m^3  # this value doesn't seem right but is copied from ARLpy
@@ -90,6 +93,7 @@ class EnvironmentConfig:
     box_range: Optional[float] = None
     grid: str = 'default'
     interference_mode: Optional[str] = None
+    task: Optional[str] = None
 
     # Attenuation parameters
     volume_attenuation: str = 'none'
@@ -100,6 +104,34 @@ class EnvironmentConfig:
     fg_temperature: Optional[float] = None
     fg_pH: Optional[float] = None
     fg_depth: Optional[float] = None
+
+    # --- Mapping interface ---
+    def __getitem__(self, key: str) -> Any:
+        if not hasattr(self, key):
+            raise KeyError(key)
+        return getattr(self, key)
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        if not hasattr(self, key):
+            raise KeyError(key)
+        # Generalized validation
+        allowed = _Maps.allowed_values.get(key)
+        if allowed is not None and value not in allowed:
+            raise ValueError(f"Invalid value for {key!r}: {value}. Allowed: {allowed}")
+        setattr(self, key, value)
+
+    def __delitem__(self, key: str) -> None:
+        raise KeyError("Environment parameters cannot be deleted")
+
+    def __iter__(self) -> Iterator[str]:
+        return (f.name for f in fields(self))
+
+    def __len__(self) -> int:
+        return len(fields(self))
+
+    def to_dict(self) -> Dict[str,Any]:
+        """Return a dictionary representation of the environment."""
+        return asdict(self)
 
     def __post_init__(self) -> None:
         """Validate field values after initialization."""
@@ -173,13 +205,13 @@ class EnvironmentConfig:
             raise ValueError(f'Invalid transmission loss mode: {self.interference_mode}. '
                             f'Must be one of: {sorted(valid_modes)}')
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert dataclass to dictionary format for backward compatibility."""
-        result = {}
-        for field_obj in fields(self):
-            value = getattr(self, field_obj.name)
-            result[field_obj.name] = value
-        return result
+    def copy(self) -> "EnvironmentConfig":
+        """Return a shallow copy of the environment."""
+        # Copy all fields
+        data = {f.name: getattr(self, f.name) for f in fields(self)}
+        # Return a new instance
+        new_env = type(self)(**data)
+        return new_env
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'EnvironmentConfig':
@@ -189,8 +221,10 @@ class EnvironmentConfig:
         filtered_data = {k: v for k, v in data.items() if k in valid_fields}
         return cls(**filtered_data)
 
+    def __repr__(self) -> str:
+        return pformat(self.to_dict())
 
-def new() -> Dict[str, Any]:
+def new() -> EnvironmentConfig:
     """Get default environment dictionary for 2D underwater acoustic modeling.
 
     Creates a new environment using the dataclass and returns it as a dictionary
@@ -201,8 +235,7 @@ def new() -> Dict[str, Any]:
     dict
         Default environment parameters as a dictionary.
     """
-    config = EnvironmentConfig()
-    return config.to_dict()
+    return EnvironmentConfig()
 
 
 def _validate_source_type(source_type: str) -> None:

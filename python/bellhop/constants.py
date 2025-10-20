@@ -5,7 +5,7 @@ from enum import Enum
 
 class _File_Ext:
     """Strings to define file extensions.
-    
+
     Using this class avoids typos in the source.
     It is also used to loop through files to delete them
     when needed before/after Bellhop execution.
@@ -221,6 +221,13 @@ class _Maps:
     single_beam_rev = {v: k for k, v in single_beam.items()}
     task_rev = {v: k for k, v in task.items()}
     mode_rev = {v: k for k, v in mode.items()}
+
+    # option validation
+    allowed_values = {
+        "soundspeed_interp": set(interp.values()),
+        "bottom_interp": set(bty_interp.values()),
+        "surface_interp": set(bty_interp.values()),
+    }
 
 @dataclass(frozen=True)
 class Defaults:
