@@ -18,8 +18,11 @@ import pandas as _pd
 from .constants import _Strings, _Maps, Defaults
 
 @dataclass
-class EnvironmentParam():
-    """Defines the dataclass elements of the Environment class.
+class Environment(MutableMapping[str, Any]):
+    """Dataclass for underwater acoustic environment configuration.
+
+    This class provides automatic validation of environment parameters,
+    eliminating the need for manual checking of option validity.
 
     These entries are either intended to be set or edited by the user, or with `_` prefix are
     internal state read from a .env file or inferred by other data. Some others are ignored."""
@@ -109,9 +112,6 @@ class EnvironmentParam():
     fg_pH: Optional[float] = None
     fg_depth: Optional[float] = None
 
-
-@dataclass
-class EnvironmentMethods():
 
     def check(self) -> "Environment":
         self._finalise()
@@ -261,14 +261,6 @@ class EnvironmentMethods():
         if self['_single_beam'] == _Strings.single_beam:
             assert self['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
 
-
-@dataclass
-class Environment(EnvironmentParam, EnvironmentMethods, MutableMapping[str, Any]):
-    """Dataclass for underwater acoustic environment configuration.
-
-    This class provides automatic validation of environment parameters,
-    eliminating the need for manual checking of option validity.
-    """
 
     def __getitem__(self, key: str) -> Any:
         if not hasattr(self, key):
