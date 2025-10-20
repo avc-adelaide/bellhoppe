@@ -506,11 +506,12 @@ def compute_transmission_loss(env: EnvironmentConfig, source_depth_ndx: int = 0,
     >>> tloss = bh.compute_transmission_loss(env, mode=bh.incoherent)
     >>> bh.plot_transmission_loss(tloss, width=1000)
     """
+    env = env.copy()
     task = mode or env.get("interference_mode") or Defaults.interference_mode
-    debug and print(f"  {mode=}")
+    env['interference_mode'] = task
+    debug and print(f"  {task=}")
     env = check_env(env)
     if _np.size(env['source_depth']) > 1:
-        env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]
     output = compute(env, model, task, debug, fname_base)
     assert isinstance(output, dict), "Single env should return single result"

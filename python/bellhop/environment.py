@@ -116,14 +116,16 @@ class EnvironmentConfig(MutableMapping[str, Any]):
         return getattr(self, key)
 
     def __setitem__(self, key: str, value: Any) -> None:
+        self.__setattr__(key, value)
+
+    def __setattr__(self, key: str, value: Any) -> None:
         if not hasattr(self, key):
             raise KeyError(key)
-        # Generalized validation
+        # Generalized validation of values
         allowed = getattr(_Maps, key, None)
-
-        if allowed is not None and value not in set(allowed.values()):
+        if allowed is not None and value is not None and value not in set(allowed.values()):
             raise ValueError(f"Invalid value for {key!r}: {value}. Allowed: {set(allowed.values())}")
-        setattr(self, key, value)
+        object.__setattr__(self, key, value)
 
     def __delitem__(self, key: str) -> None:
         raise KeyError("Environment parameters cannot be deleted")
@@ -137,78 +139,6 @@ class EnvironmentConfig(MutableMapping[str, Any]):
     def to_dict(self) -> Dict[str,Any]:
         """Return a dictionary representation of the environment."""
         return asdict(self)
-
-    def __post_init__(self) -> None:
-        """Validate field values after initialization."""
-        self._validate_interpolation_types()
-        self._validate_boundary_conditions()
-        self._validate_grid_types()
-        self._validate_beam_types()
-        self._validate_attenuation_options()
-        self._validate_volume_attenuation()
-        self._validate_interference_mode()
-
-    def _validate_interpolation_types(self) -> None:
-        """Validate interpolation type options."""
-        valid_interp = set(_Maps.soundspeed_interp_rev.keys())
-        if self.soundspeed_interp not in valid_interp:
-            raise ValueError(f"Invalid soundspeed_interp: {self.soundspeed_interp}. "
-                           f"Must be one of: {sorted(valid_interp)}")
-
-        valid_bty_interp = set(_Maps.depth_interp_rev.keys())
-        if self.depth_interp not in valid_bty_interp:
-            raise ValueError(f"Invalid depth_interp: {self.depth_interp}. "
-                           f"Must be one of: {sorted(valid_bty_interp)}")
-
-        if self.surface_interp not in valid_bty_interp:
-            raise ValueError(f"Invalid surface_interp: {self.surface_interp}. "
-                           f"Must be one of: {sorted(valid_bty_interp)}")
-
-    def _validate_boundary_conditions(self) -> None:
-        """Validate boundary condition options."""
-        valid_boundary = set(_Maps.bottom_boundary_condition_rev.keys())
-        if self.bottom_boundary_condition not in valid_boundary:
-            raise ValueError(f"Invalid bottom_boundary_condition: {self.bottom_boundary_condition}. "
-                           f"Must be one of: {sorted(valid_boundary)}")
-
-        if self.surface_boundary_condition not in valid_boundary:
-            raise ValueError(f"Invalid surface_boundary_condition: {self.surface_boundary_condition}. "
-                           f"Must be one of: {sorted(valid_boundary)}")
-
-    def _validate_grid_types(self) -> None:
-        """Validate grid type options."""
-        valid_grid = set(_Maps.grid_type_rev.keys())
-        if self.grid_type not in valid_grid:
-            raise ValueError(f"Invalid grid: {self.grid_type}. "
-                           f"Must be one of: {sorted(valid_grid)}")
-
-    def _validate_beam_types(self) -> None:
-        """Validate beam type options."""
-        valid_beam = set(_Maps.beam_type_rev.keys())
-        if self.beam_type not in valid_beam:
-            raise ValueError(f"Invalid beam_type: {self.beam_type}. "
-                           f"Must be one of: {sorted(valid_beam)}")
-
-    def _validate_attenuation_options(self) -> None:
-        """Validate attenuation unit options."""
-        valid_attenuation_units = set(_Maps.attenuation_units_rev.keys())
-        if self.attenuation_units not in valid_attenuation_units:
-            raise ValueError(f"Invalid attenuation_units: {self.attenuation_units}. "
-                           f"Must be one of: {sorted(valid_attenuation_units)}")
-
-    def _validate_volume_attenuation(self) -> None:
-        """Validate volume attenuation options."""
-        valid_volume_attenuation = set(_Maps.volume_attenuation_rev.keys())
-        if self.volume_attenuation not in valid_volume_attenuation:
-            raise ValueError(f"Invalid volume_attenuation: {self.volume_attenuation}. "
-                           f"Must be one of: {sorted(valid_volume_attenuation)}")
-
-    def _validate_interference_mode(self) -> None:
-        """Validate transmission loss mode."""
-        valid_modes = set(_Maps.mode_rev.keys())
-        if self.interference_mode and self.interference_mode not in valid_modes:
-            raise ValueError(f'Invalid transmission loss mode: {self.interference_mode}. '
-                            f'Must be one of: {sorted(valid_modes)}')
 
     def copy(self) -> "EnvironmentConfig":
         """Return a shallow copy of the environment."""

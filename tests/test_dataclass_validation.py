@@ -25,7 +25,7 @@ class TestEnvironmentConfigValidation:
 
     def test_invalid_soundspeed_interp(self):
         """Test that invalid soundspeed interpolation raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid soundspeed_interp"):
+        with pytest.raises(ValueError, match="Invalid value for 'soundspeed_interp'"):
             EnvironmentConfig(soundspeed_interp='invalid_interpolation')
 
     def test_valid_soundspeed_interp_options(self):
@@ -37,7 +37,7 @@ class TestEnvironmentConfigValidation:
 
     def test_invalid_depth_interp(self):
         """Test that invalid depth interpolation raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid depth_interp"):
+        with pytest.raises(ValueError, match="Invalid value for 'depth_interp'"):
             EnvironmentConfig(depth_interp='invalid_interpolation')
 
     def test_valid_depth_interp_options(self):
@@ -49,17 +49,17 @@ class TestEnvironmentConfigValidation:
 
     def test_invalid_surface_interp(self):
         """Test that invalid surface interpolation raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid surface_interp"):
+        with pytest.raises(ValueError, match="Invalid value for 'surface_interp'"):
             EnvironmentConfig(surface_interp='invalid_interpolation')
 
     def test_invalid_bottom_boundary_condition(self):
         """Test that invalid bottom boundary condition raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid bottom_boundary_condition"):
+        with pytest.raises(ValueError, match="Invalid value for 'bottom_boundary_condition'"):
             EnvironmentConfig(bottom_boundary_condition='invalid_boundary')
 
     def test_invalid_surface_boundary_condition(self):
         """Test that invalid surface boundary condition raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid surface_boundary_condition"):
+        with pytest.raises(ValueError, match="Invalid value for 'surface_boundary_condition'"):
             EnvironmentConfig(surface_boundary_condition='invalid_boundary')
 
     def test_valid_boundary_condition_options(self):
@@ -78,7 +78,7 @@ class TestEnvironmentConfigValidation:
 
     def test_invalid_grid_type(self):
         """Test that invalid grid type raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid grid"):
+        with pytest.raises(ValueError, match="Invalid value for 'grid_type'"):
             EnvironmentConfig(grid_type='invalid_grid')
 
     def test_valid_grid_options(self):
@@ -90,7 +90,7 @@ class TestEnvironmentConfigValidation:
 
     def test_invalid_beam_type(self):
         """Test that invalid beam type raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid beam_type"):
+        with pytest.raises(ValueError, match="Invalid value for 'beam_type'"):
             EnvironmentConfig(beam_type='invalid_beam')
 
     def test_valid_beam_type_options(self):
@@ -102,7 +102,7 @@ class TestEnvironmentConfigValidation:
 
     def test_invalid_attenuation_units(self):
         """Test that invalid attenuation units raise ValueError."""
-        with pytest.raises(ValueError, match="Invalid attenuation_units"):
+        with pytest.raises(ValueError, match="Invalid value for 'attenuation_units'"):
             EnvironmentConfig(attenuation_units='invalid_units')
 
     def test_valid_attenuation_units_options(self):
@@ -117,7 +117,7 @@ class TestEnvironmentConfigValidation:
 
     def test_invalid_volume_attenuation(self):
         """Test that invalid volume attenuation raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid volume_attenuation"):
+        with pytest.raises(ValueError, match="Invalid value for 'volume_attenuation'"):
             EnvironmentConfig(volume_attenuation='invalid_attenuation')
 
     def test_valid_volume_attenuation_options(self):
