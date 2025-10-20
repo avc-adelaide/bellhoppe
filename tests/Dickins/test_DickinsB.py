@@ -10,7 +10,7 @@ skip_if_coverage = pytest.mark.skipif(
     reason="Skipped during coverage run"
 )
 
-env = bh.read_env2d("tests/Dickins/DickinsB.env")
+env = bh.read_env("tests/Dickins/DickinsB.env")
 bty,interp_bty = bh.read_bty("tests/Dickins/DickinsB.bty")
 
 print(interp_bty)
@@ -58,25 +58,25 @@ def test_table_output():
 def test_DickensB_one_ssp():
     """Artificial scenario to test if just one point in the SSP profile"""
     with pytest.raises(ValueError, match="Only one SSP point found"):
-        env2 = bh.read_env2d("tests/Dickins/DickinsB_one_ssp.env")
+        env2 = bh.read_env("tests/Dickins/DickinsB_one_ssp.env")
 
 
 def test_DickensB_no_ssp():
     """Artificial scenario to test if are no points in the SSP profile"""
     with pytest.raises(ValueError, match="No SSP points were found in the env file"):
-        env2 = bh.read_env2d("tests/Dickins/DickinsB_no_ssp.env")
+        env2 = bh.read_env("tests/Dickins/DickinsB_no_ssp.env")
 
 
 def test_DickensB_mal_ssp():
     """This is a valid env file!"""
-    env2 = bh.read_env2d("tests/Dickins/DickinsB_mal_ssp.env")
+    env2 = bh.read_env("tests/Dickins/DickinsB_mal_ssp.env")
     tl = bh.compute_transmission_loss(env2,fname_base="tests/Dickins/DickinsB_mal_output",debug=True)
     #print(env2["soundspeed"])
 
 
 def test_DickensB_one_beam():
     """Artificial scenario to test if one beam"""
-    env3 = bh.read_env2d("tests/Dickins/DickinsB_one_beam.env")
+    env3 = bh.read_env("tests/Dickins/DickinsB_one_beam.env")
     ray3 = bh.compute_rays(env3,fname_base="tests/Dickins/DickinsB_output3",debug=True)
     assert ray3 is not None, "No results generated"
     assert len(ray3) == 1, "One beam should result in one row of results only"
@@ -85,22 +85,22 @@ def test_DickensB_one_beam():
 def test_DickensB_one_beam_wrong():
     """Artificial scenario to test if one beam with malformed env file"""
     with pytest.raises(ValueError, match="Single beam was requested with option I but"):
-        env3 = bh.read_env2d("tests/Dickins/DickinsB_one_beam_wrong.env")
+        env3 = bh.read_env("tests/Dickins/DickinsB_one_beam_wrong.env")
         ray3 = bh.compute_rays(env3,fname_base="tests/Dickins/DickinsB_output3",debug=True)
         assert ray3 is not None, "No results generated"
 
 
 def test_DickensB_empty_lines():
     """Test if empty lines are okay"""
-    env5 = bh.read_env2d("tests/Dickins/DickinsB_simpl.env")
-    env6 = bh.read_env2d("tests/Dickins/DickinsB_simpl_empty_lines.env")
+    env5 = bh.read_env("tests/Dickins/DickinsB_simpl.env")
+    env6 = bh.read_env("tests/Dickins/DickinsB_simpl_empty_lines.env")
     pdt.assert_frame_equal(pd.DataFrame(env5['soundspeed']),pd.DataFrame(env6['soundspeed']))
 
 
 def test_DickensB_interpolate_depth():
     """Test what happens when the SSP extends below max depth"""
     with pytest.warns(UserWarning):
-        env7 = bh.read_env2d("tests/Dickins/DickinsB_interp_depth.env")
+        env7 = bh.read_env("tests/Dickins/DickinsB_interp_depth.env")
         env7 = bh.check_env(env7)
 #        tl = bh.compute_transmission_loss(env7,fname_base="tests/Dickins/DickinsB_idepth_output",debug=True)
 #        assert tl is not None, "Interpolated values should allow Bellhop to run"

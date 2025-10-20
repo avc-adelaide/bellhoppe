@@ -10,7 +10,7 @@ skip_if_coverage = pytest.mark.skipif(
     reason="Skipped during coverage run"
 )
 
-env = bh.read_env2d("tests/MunkB_geo_rot/MunkB_geo_rot.env")
+env = bh.read_env("tests/MunkB_geo_rot/MunkB_geo_rot.env")
 
 tl = bh.compute_transmission_loss(env,fname_base="tests/MunkB_geo_rot/MunkB_output",debug=True)
 tl_exp = bh.main.Bellhop._load_shd(None,"tests/MunkB_geo_rot/MunkB_geo_rot",".shd")
@@ -48,7 +48,7 @@ def test_table_output():
     )
 
 def test_MunkB_extra_bot_param():
-    env2 = bh.read_env2d("tests/MunkB_geo_rot/MunkB_geo_rot_botx.env")
+    env2 = bh.read_env("tests/MunkB_geo_rot/MunkB_geo_rot_botx.env")
     assert env2['bottom_beta'] == 3.3, "Bottom beta value not read correctly"
     assert env2['bottom_transition_freq'] == 4.4, "Bottom trans freq value not read correctly"
     assert env2['bottom_attenuation'] == 7.7, "Bottom abs value not read correctly"

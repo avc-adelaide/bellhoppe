@@ -16,7 +16,7 @@ def test_MunkB_ray_rot():
     Just check that there are no execution errors.
     """
 
-    env = bh.read_env2d("tests/Munk_SSP/MunkB_ray_rot.env")
+    env = bh.read_env("tests/Munk_SSP/MunkB_ray_rot.env")
     ssp0 = env['soundspeed']
     ssp1 = bh.read_ssp("tests/Munk_SSP/MunkB_ray_rot.ssp")
     ssp2 = bh.read_ssp("tests/Munk_SSP/MunkB_ray_rot_empties.ssp")

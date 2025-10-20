@@ -46,7 +46,7 @@ The Python interface also allows reading input files directly:
 import bellhop as bh
 import bellhop.plot as bhp
 
-env = bh.read_env2d("tests/MunkB_geo_rot/MunkB_geo_rot.env")
+env = bh.read_env("tests/MunkB_geo_rot/MunkB_geo_rot.env")
 tl = bh.compute_transmission_loss(env)
 bhp.plot_transmission_loss(tl,env=env)
 ```

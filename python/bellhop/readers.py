@@ -122,7 +122,7 @@ def _prepare_filename(fname: str, ext: str, name: str) -> Tuple[str,str]:
 
     return fname, fname_base
 
-def read_env2d(fname: str) -> EnvironmentConfig:
+def read_env(fname: str) -> EnvironmentConfig:
     """Read a 2D underwater environment from a BELLHOP .env file.
 
     This function parses a BELLHOP .env file and returns a Python data structure
@@ -150,7 +150,7 @@ def read_env2d(fname: str) -> EnvironmentConfig:
     Examples
     --------
     >>> import bellhop as bh
-    >>> env = bh.read_env2d('examples/Munk/MunkB_ray.env')
+    >>> env = bh.read_env('examples/Munk/MunkB_ray.env')
     >>> print(env['name'])
     'Munk profile'
     >>> print(env['frequency'])
@@ -163,7 +163,7 @@ def read_env2d(fname: str) -> EnvironmentConfig:
     >>> # Round-trip compatibility
     >>> env_orig = bh.create_env(name="test", frequency=100)
     >>> # ... write to file via BELLHOP ...
-    >>> env_read = bh.read_env2d("test.env")
+    >>> env_read = bh.read_env("test.env")
     >>> assert env_read['frequency'] == env_orig['frequency']
 
     """

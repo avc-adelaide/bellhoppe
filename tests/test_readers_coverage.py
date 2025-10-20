@@ -38,7 +38,7 @@ def test_parse_vector_unexpected_eof():
 
     try:
         with pytest.raises(EOFError):
-            bh.read_env2d(fname)
+            bh.read_env(fname)
     finally:
         os.unlink(fname)
 
@@ -75,7 +75,7 @@ def test_read_ssp_points_empty_line_break():
 
     try:
         # This should successfully parse, stopping at the empty line
-        env = bh.read_env2d(fname)
+        env = bh.read_env(fname)
         assert env['name'] == 'Test profile'
 
         # Should have captured the SSP points before the empty line
@@ -126,7 +126,7 @@ def test_read_ssp_points_value_error_recovery():
         # This should successfully parse. The 'A' line will initially be read as SSP data,
         # trigger a ValueError when trying to parse 'A' as a float, then get put back
         # and correctly processed as the bottom boundary condition
-        env = bh.read_env2d(fname)
+        env = bh.read_env(fname)
         assert env['name'] == 'Test profile'
 
         # Should have captured the SSP points before the 'A' line

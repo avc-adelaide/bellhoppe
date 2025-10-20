@@ -26,7 +26,7 @@ from bellhop.constants import _Strings, Defaults
 from bellhop.create import create_env as create_env
 from bellhop.create import check_env as check_env
 
-from bellhop.readers import read_env2d as read_env2d
+from bellhop.readers import read_env as read_env
 from bellhop.readers import read_ssp as read_ssp
 from bellhop.readers import read_ati as read_ati
 from bellhop.readers import read_bty as read_bty
@@ -153,7 +153,7 @@ def compute(
     --------
     Single task based on reading a complete `.env` file:
     >>> import bellhop as bh
-    >>> env = bh.read_env2d("...")
+    >>> env = bh.read_env("...")
     >>> output = bh.compute(env)
     >>> assert output['task'] == "arrivals"
     >>> bh.plot_arrivals(output['results'])

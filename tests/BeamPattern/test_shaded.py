@@ -10,7 +10,7 @@ skip_if_coverage = pytest.mark.skipif(
     reason="Skipped during coverage run"
 )
 
-env = bh.read_env2d("tests/BeamPattern/shaded.env")
+env = bh.read_env("tests/BeamPattern/shaded.env")
 
 def test_shaded_read_data():
     """Test using a Bellhop example that ENV file parameters are being picked up properly.

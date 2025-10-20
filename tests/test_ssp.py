@@ -36,6 +36,6 @@ def test_ssp_one_speed():
 
 
 def test_ssp_neg():
-    env = bh.read_env2d("tests/simple/simple_neg_ssp")
+    env = bh.read_env("tests/simple/simple_neg_ssp")
     with pytest.raises(RuntimeError):
         tl = bh.compute_transmission_loss(env)

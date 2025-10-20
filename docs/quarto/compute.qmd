@@ -14,7 +14,7 @@ For complex scenarios, the more general `compute()` method allows multiple tasks
 
 One feature of the `compute()` function is to maintain interface compatibility with the original .env file Bellhop interface. Within a legacy .env file, the task to run is hard-coded and therefore
 ```
-env = read_env2d('myenv.env')
+env = read_env('myenv.env')
 print(f"Running task {env['task']}")
 results = compute(env)
 ```
