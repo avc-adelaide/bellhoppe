@@ -18,7 +18,7 @@ import pandas as _pd
 from .constants import _Strings, _Maps, Defaults
 
 @dataclass
-class _EnvironmentParam():
+class EnvironmentParam():
     """Defines the dataclass elements of the Environment class.
 
     These entries are either intended to be set or edited by the user, or with `_` prefix are
@@ -111,9 +111,9 @@ class _EnvironmentParam():
 
 
 @dataclass
-class _EnvironmentMethods():
+class EnvironmentMethods():
 
-    def check(self) -> "EnvironmentConfig":
+    def check(self) -> "Environment":
         self._finalise()
         try:
             self._check_env_header()
@@ -126,7 +126,7 @@ class _EnvironmentMethods():
         except AssertionError as e:
             raise ValueError(str(e))
 
-    def _finalise(self) -> "EnvironmentConfig":
+    def _finalise(self) -> "Environment":
         """Reviews the data within an environment and updates settings for consistency.
 
         This function is run as the first step of check_env().
@@ -263,7 +263,7 @@ class _EnvironmentMethods():
 
 
 @dataclass
-class EnvironmentConfig(_EnvironmentParam, _EnvironmentMethods, MutableMapping[str, Any]):
+class Environment(EnvironmentParam, EnvironmentMethods, MutableMapping[str, Any]):
     """Dataclass for underwater acoustic environment configuration.
 
     This class provides automatic validation of environment parameters,
@@ -303,7 +303,7 @@ class EnvironmentConfig(_EnvironmentParam, _EnvironmentMethods, MutableMapping[s
         """Return a dictionary representation of the environment."""
         return asdict(self)
 
-    def copy(self) -> "EnvironmentConfig":
+    def copy(self) -> "Environment":
         """Return a shallow copy of the environment."""
         # Copy all fields
         data = {f.name: getattr(self, f.name) for f in fields(self)}
@@ -312,8 +312,8 @@ class EnvironmentConfig(_EnvironmentParam, _EnvironmentMethods, MutableMapping[s
         return new_env
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'EnvironmentConfig':
-        """Create EnvironmentConfig from dictionary."""
+    def from_dict(cls, data: Dict[str, Any]) -> 'Environment':
+        """Create Environment from dictionary."""
         # Filter out any keys that aren't valid field names
         valid_fields = {f.name for f in fields(cls)}
         filtered_data = {k: v for k, v in data.items() if k in valid_fields}

@@ -31,7 +31,7 @@ from bellhop.readers import read_sbp as read_sbp
 from bellhop.readers import read_trc as read_trc
 from bellhop.readers import read_brc as read_brc
 
-from bellhop.environment import EnvironmentConfig
+from bellhop.environment import Environment
 from bellhop.bellhop import Bellhop
 
 _models: List[Bellhop] = []
@@ -75,7 +75,7 @@ def new_model(name: str, **kwargs: Any) -> Bellhop:
 
 new_model(name=Defaults.model_name)
 
-def models(env: Optional[EnvironmentConfig] = None, task: Optional[str] = None) -> List[str]:
+def models(env: Optional[Environment] = None, task: Optional[str] = None) -> List[str]:
     """List available models.
 
     Parameters
@@ -109,11 +109,11 @@ def models(env: Optional[EnvironmentConfig] = None, task: Optional[str] = None) 
             rv.append(m.name)
     return rv
 
-def create_env2d(**kv: Any) -> EnvironmentConfig:
+def create_env2d(**kv: Any) -> Environment:
     """Backwards compatibility for create_env"""
     return create_env(**kv)
 
-def create_env(**kv: Any) -> EnvironmentConfig:
+def create_env(**kv: Any) -> Environment:
     """Create a new underwater environment.
 
     Parameters
@@ -174,7 +174,7 @@ def create_env(**kv: Any) -> EnvironmentConfig:
     >>> import bellhop as bh
     >>> env = bh.create_env(depth=[[0,20], [300,10], [500,18], [1000,15]])
     """
-    env = EnvironmentConfig()
+    env = Environment()
 
     # Apply user-provided values to environment
     for k, v in kv.items():
@@ -193,7 +193,7 @@ def create_env(**kv: Any) -> EnvironmentConfig:
 
 
 
-def check_env(env: EnvironmentConfig) -> EnvironmentConfig:
+def check_env(env: Environment) -> Environment:
     """Check the validity of a underwater environment definition.
 
     This function is automatically executed before any of the compute_ functions,
@@ -226,19 +226,19 @@ def check_env(env: EnvironmentConfig) -> EnvironmentConfig:
     return env.check()
 
 
-def check_env2d(env: EnvironmentConfig) -> EnvironmentConfig:
+def check_env2d(env: Environment) -> Environment:
     """Backwards compatibility for check_env"""
     return check_env(env=env)
 
 def compute(
-            env: Union[EnvironmentConfig,List[EnvironmentConfig]],
+            env: Union[Environment,List[Environment]],
             model: Optional[Any] = None,
             task: Optional[Any] = None,
             debug: bool = False,
             fname_base: Optional[str] = None
            ) -> Union[  Any,
-                        EnvironmentConfig,
-                        Tuple[List[EnvironmentConfig], _pd.DataFrame]
+                        Environment,
+                        Tuple[List[Environment], _pd.DataFrame]
                      ]:
     """Compute Bellhop task(s) for given model(s) and environment(s).
 
@@ -321,7 +321,7 @@ def compute(
     else:
         return results[0]
 
-def _select_model(env: EnvironmentConfig,
+def _select_model(env: Environment,
                   task: str,
                   model: Optional[str] = None,
                   debug: bool = False
@@ -366,7 +366,7 @@ def _select_model(env: EnvironmentConfig,
             return mm
     raise ValueError('No suitable propagation model available')
 
-def compute_arrivals(env: EnvironmentConfig, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_arrivals(env: Environment, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute arrivals between each transmitter and receiver.
 
     Parameters
@@ -396,7 +396,7 @@ def compute_arrivals(env: EnvironmentConfig, model: Optional[Any] = None, debug:
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
-def compute_eigenrays(env: EnvironmentConfig, source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_eigenrays(env: Environment, source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute eigenrays between a given transmitter and receiver.
 
     Parameters
@@ -440,7 +440,7 @@ def compute_eigenrays(env: EnvironmentConfig, source_depth_ndx: int = 0, receive
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
-def compute_rays(env: EnvironmentConfig, source_depth_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_rays(env: Environment, source_depth_ndx: int = 0, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute rays from a given transmitter.
 
     Parameters
@@ -476,7 +476,7 @@ def compute_rays(env: EnvironmentConfig, source_depth_ndx: int = 0, model: Optio
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
-def compute_transmission_loss(env: EnvironmentConfig, source_depth_ndx: int = 0, mode: Optional[str] = None, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
+def compute_transmission_loss(env: Environment, source_depth_ndx: int = 0, mode: Optional[str] = None, model: Optional[Any] = None, debug: bool = False, fname_base: Optional[str] = None) -> Any:
     """Compute transmission loss from a given transmitter to all receviers.
 
     Parameters

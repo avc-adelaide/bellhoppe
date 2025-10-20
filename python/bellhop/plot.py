@@ -21,13 +21,13 @@ import pandas as _pd
 import matplotlib.pyplot as _pyplt
 import matplotlib.colors as _mplc
 
-from .environment import EnvironmentConfig
+from .environment import Environment
 from .constants import _Strings
 from .plotutils import figure as figure
 
 import bellhop.plotutils as _plt
 
-def plot_env(env: EnvironmentConfig,
+def plot_env(env: Environment,
              surface_color: str = 'dodgerblue',
              bottom_color: str = 'peru',
              source_color: str = 'orangered',
@@ -127,7 +127,7 @@ def plot_env(env: EnvironmentConfig,
 
     _plt.hold(oh if oh is not None else False)
 
-def plot_ssp(env: EnvironmentConfig, **kwargs: Any) -> None:
+def plot_ssp(env: Environment, **kwargs: Any) -> None:
     """Plots the sound speed profile.
 
     Parameters
@@ -206,7 +206,7 @@ def plot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs
         _plt.plot([t, t], [min_y, y], color=color, **kwargs)
     _plt.hold(oh if oh is not None else False)
 
-def plot_rays(rays: Any, env: Optional[EnvironmentConfig] = None, invert_colors: bool = False, **kwargs: Any) -> None:
+def plot_rays(rays: Any, env: Optional[Environment] = None, invert_colors: bool = False, **kwargs: Any) -> None:
     """Plots ray paths.
 
     Parameters
@@ -259,7 +259,7 @@ def plot_rays(rays: Any, env: Optional[EnvironmentConfig] = None, invert_colors:
         plot_env(env,title=None)
     _plt.hold(oh if oh is not None else False)
 
-def plot_transmission_loss(tloss: Any, env: Optional[EnvironmentConfig] = None, **kwargs: Any) -> None:
+def plot_transmission_loss(tloss: Any, env: Optional[Environment] = None, **kwargs: Any) -> None:
     """Plots transmission loss.
 
     Parameters

@@ -7,7 +7,7 @@ from numpy.typing import NDArray
 import numpy as _np
 import pandas as _pd
 from bellhop.constants import _Strings, _Maps, _File_Ext
-from bellhop.environment import EnvironmentConfig
+from bellhop.environment import Environment
 
 def _read_next_valid_line(f: TextIO) -> str:
     """Read the next valid text line of an input file, discarding empty content.
@@ -121,7 +121,7 @@ def _prepare_filename(fname: str, ext: str, name: str) -> Tuple[str,str]:
 
     return fname, fname_base
 
-def read_env(fname: str) -> EnvironmentConfig:
+def read_env(fname: str) -> Environment:
     """Read a 2D underwater environment from a BELLHOP .env file.
 
     This function parses a BELLHOP .env file and returns a Python data structure
@@ -188,9 +188,9 @@ class EnvironmentReader:
             fname: Path to .env file (with or without extension)
         """
         self.fname, self.fname_base = _prepare_filename(fname, _File_Ext.env, "Environment")
-        self.env: EnvironmentConfig = EnvironmentConfig()
+        self.env: Environment = Environment()
 
-    def read(self) -> EnvironmentConfig:
+    def read(self) -> Environment:
         """Do the reading..."""
         with open(self.fname, 'r') as f:
             self._read_header(f)
