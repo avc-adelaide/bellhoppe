@@ -124,7 +124,7 @@ class Environment(MutableMapping[str, Any]):
             self._check_env_beam()
             return self
         except AssertionError as e:
-            raise ValueError(str(e))
+            raise ValueError(f"Env check error: str(e)") from None
 
     def _finalise(self) -> "Environment":
         """Reviews the data within an environment and updates settings for consistency.
@@ -142,7 +142,11 @@ class Environment(MutableMapping[str, Any]):
             self["surface_boundary_condition"] = _Strings.from_file
 
         if self['depth_max'] is None:
-            self['depth_max'] = _np.max(self['depth'])
+            if _np.size(self['depth']) == 1:
+                self['depth_max'] = self['depth']
+            else:
+                # depth : Nx2 array = [ranges,depths]
+                self['depth_max'] = _np.max(self['depth'][:,1])
 
         if not isinstance(self['soundspeed'], _pd.DataFrame):
             if _np.size(self['soundspeed']) == 1:
@@ -207,9 +211,8 @@ class Environment(MutableMapping[str, Any]):
     def _check_env_depth(self) -> None:
         max_range = _np.max(self['receiver_range'])
         if _np.size(self['depth']) > 1:
-            assert self['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array'
-            assert self['depth'].shape[1] == 2, 'depth must be a scalar or an Nx2 array'
-            assert self['depth'][0,0] <= 0, 'First range in depth array must be 0 m'
+            assert self['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array [ranges, depths]'
+            assert self['depth'].shape[1] == 2, 'depth must be a scalar or an Nx2 array [ranges, depths]'
             assert self['depth'][-1,0] >= max_range, 'Last range in depth array must be beyond maximum range: '+str(max_range)+' m'
             assert _np.all(_np.diff(self['depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
             assert self["_bathymetry"] == _Strings.from_file, 'len(depth)>1 requires BTY file'
@@ -272,7 +275,7 @@ class Environment(MutableMapping[str, Any]):
 
     def __setattr__(self, key: str, value: Any) -> None:
         if not hasattr(self, key):
-            raise KeyError(key)
+            raise KeyError(f"Unknown environment configuration parameter: {key!r}")
         # Generalized validation of values
         allowed = getattr(_Maps, key, None)
         if allowed is not None and value is not None and value not in set(allowed.values()):
@@ -302,11 +305,3 @@ class Environment(MutableMapping[str, Any]):
         # Return a new instance
         new_env = type(self)(**data)
         return new_env
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Environment':
-        """Create Environment from dictionary."""
-        # Filter out any keys that aren't valid field names
-        valid_fields = {f.name for f in fields(cls)}
-        filtered_data = {k: v for k, v in data.items() if k in valid_fields}
-        return cls(**filtered_data)

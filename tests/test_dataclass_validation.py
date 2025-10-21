@@ -171,29 +171,3 @@ class TestDataclassUtilities:
         assert 'name' in env_dict
         assert 'type' in env_dict
 
-    def test_from_dict_conversion(self):
-        """Test creation of dataclass from dictionary."""
-        env_dict = {
-            'depth': 40,
-            'soundspeed': 1540,
-            'soundspeed_interp': 'linear'
-        }
-        config = Environment.from_dict(env_dict)
-
-        assert config.depth == 40
-        assert config.soundspeed == 1540
-        assert config.soundspeed_interp == 'linear'
-
-    def test_from_dict_with_invalid_fields(self):
-        """Test that from_dict ignores invalid field names."""
-        env_dict = {
-            'depth': 40,
-            'soundspeed': 1540,
-            'invalid_field': 'should_be_ignored'
-        }
-        # Should not raise exception, invalid field should be ignored
-        config = Environment.from_dict(env_dict)
-        assert config.depth == 40
-        assert config.soundspeed == 1540
-        # Invalid field should not be present
-        assert not hasattr(config, 'invalid_field')
