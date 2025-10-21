@@ -50,7 +50,7 @@ bhp.plot_arrivals(arr)
 
 The examples of eigenrays and arrival times were for a fixed reciever point.
 If we consider an array of receiver points across the entire underwater domain, we can calculate the corresponding transmission loss plot shown in @fig-basic-tl.
-The default settings are to calculate transmission loss assuming coherent interference, which explains the interference patterns seen. 
+The default settings are to calculate transmission loss assuming coherent interference, which explains the interference patterns seen.
 (Note these patterns are also likely aliased due to the fairly coarse grid used here for efficiency.)
 
 ```{python}
@@ -71,7 +71,12 @@ bhp.plot_transmission_loss(tl,env=env)
 ```
 
 
-## Generalised interface
+## Next steps
+
+Now that you've seen how to run simple Bellhop simulations, you will want to see the range
+of [environment configuration](environ.qmd) options available.
+These include source and receiver positions, sound speed properties, absorption properties,
+and so on.
 
 For complex simulations you may wish to run more than one type of computation, or compare the results of computations from varying the environment file.
 These types of workflows are enabled using the [generalised `compute()` interface](compute.qmd).

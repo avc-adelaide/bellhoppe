@@ -1,0 +1,101 @@
+---
+title: "Bellhop.py environment configuration"
+format:
+  html:
+    code-fold: true
+jupyter: python3
+---
+
+Each Bellhop simulation is driven by its so-called environment configuration file.
+This is created by `bellhop.py` based on the setup of the respective `Environment` class.
+
+## Creating new environments
+
+The Python front-end to Bellhop provides a "default" environment to allow quick setup for demonstration purposes:
+```
+import bellhop as bh
+env = bh.create_env()
+assert isinstance(env, Environment)
+```
+
+## Environment methods
+
+The `Environment` class provide the following user-facing methods:
+
+* `.check()` --- finalise and validate parameters (semi-automatic, see below)
+* `.copy()` --- shallow copy the instance
+* `.to_dict()` --- convert parameters to a standard `dict`
+
+To scan over the full list of user-facing fields, the standard `print()` function will return
+something sensible.
+```
+> env = bh.create_env()
+> print(env)
+>
+    ...
+ 'frequency': 25000.0,
+ 'grid_type': 'default',
+ 'interference_mode': None,
+ 'name': 'bellhop/python default',
+ 'receiver_depth': 10.0,
+    ...
+```
+
+## Setting environment parameters
+
+The parameters of the environment can be set via arguments to this initialisation function:
+```
+env = bh.create_env(frequency=500) # Hz
+```
+These parameters can also be changed using both class- and dict-based setting approaches:
+```
+env.frequency = 500    # okay
+env['frequency'] = 500 # also okay
+```
+Parameters can of course be queried in the same way:
+```{python}
+import bellhop as bh
+env = bh.create_env()
+
+env.frequency = 600
+print(f"{env.frequency =}")
+env.frequency = 700
+print(f"{env['frequency'] =}")
+```
+
+The `Environment` class does not allow unrecognised fields to be set:
+```
+env.quefrency = 500  # ERROR
+```
+Some fields take a hard-coded list of string options:
+```
+env.soundspeed_interp = "spline"  # okay
+```
+And again unrecognised options result in an error:
+```
+env.soundspeed_interp = "plines"  # ERROR
+```
+
+## Parameter checking
+
+Before standard functions for running Bellhop computations, or otherwise working with
+the environment configuration data, the instance method `.check()` will be called on the
+`Environment`.
+This function performs two key tasks:
+
+1. Final assignments of implicitly-linked parameters (for instance, setting `max_depth` to the maximum of the `depth` field)
+2. A suite of consistency checks and assertions
+
+Most users will be unlikely to explicitly use this function. However, if there are situations
+where various parameters are set and then the environment needs to be copied or queried,
+it would be good practice (or sometimes necessary) to run it directly.
+For instance:
+```
+env1 = bh.create_env()
+range_vec = np.linspace(0,5000) # 5km simulation
+depth_vec = np.linspace(1000,2000) # ramp seabed
+env1.depth = np.column_stack([range_vec,depth_vec])
+env1.check()
+env2 = env1.copy()
+assert env2.depth_max == 2000
+```

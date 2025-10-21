@@ -42,3 +42,7 @@ def test_tl():
     #print(tl)
 
 
+def test_print():
+    """Test printing"""
+    env = bh.create_env()
+    print(env)

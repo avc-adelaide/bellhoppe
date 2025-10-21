@@ -12,6 +12,8 @@ jupyter: python3
     - basics of creating an environment and plotting results
 - [Computation options](compute.qmd)
     - using the more general interface to define different ways of executing computations
+- [Environment configuration](environ.qmd)
+    - a comprehensive survey of how to set up the simulation environment
 - [Sound speed profiles](ssp.qmd)
     - defining depth-dependent SSPs and setting interpolation options
     - example using NOAA data to define a 2D sound speed profile that varies with range and depth
