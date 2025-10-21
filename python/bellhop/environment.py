@@ -124,7 +124,7 @@ class Environment(MutableMapping[str, Any]):
             self._check_env_beam()
             return self
         except AssertionError as e:
-            raise ValueError(f"Env check error: str(e)") from None
+            raise ValueError(f"Env check error: {str(e)}") from None
 
     def _finalise(self) -> "Environment":
         """Reviews the data within an environment and updates settings for consistency.
