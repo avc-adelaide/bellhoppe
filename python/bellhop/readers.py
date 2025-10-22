@@ -282,32 +282,40 @@ class EnvironmentReader:
 
         Bellhop and Bellhop3D have different numbers of variables specified before
         the task line. Luckily we can detect that reliably by looking for a line which
-        starts with `'`."""
+        starts with `'` to mark the definition of the tasks."""
 
-        next_line = ""
         sr_lines = []
-        while not next_line.startswith("'"):
-            if next_line:
-                sr_lines.append(next_line)
+        while True:
             next_line = _read_next_valid_line(f)
-        self._read_task(f, next_line)
+            if next_line.startswith("'"):
+                break
+            sr_lines.append(next_line)
 
+        self._parse_src_rcv(sr_lines)
+        self._parse_task(next_line)
+
+    def _parse_src_rcv(self, sr_lines: List[str]) -> None:
+        """Parse the N lines read defining sources and receivers and assign the corresponding variables."""
         nlines = len(sr_lines)
         if nlines == 6:
             self.env['type'] = "2D"
-            self.env['source_ndepth']   = self._parse_line_count(sr_lines[0])
-            self.env['receiver_ndepth'] = self._parse_line_count(sr_lines[2])
-            self.env['receiver_nrange'] = self._parse_line_count(sr_lines[4])
+            self.env['source_ndepth']   = self._parse_line_int(sr_lines[0])
+            self.env['receiver_ndepth'] = self._parse_line_int(sr_lines[2])
+            self.env['receiver_nrange'] = self._parse_line_int(sr_lines[4])
             self.env['source_depth']    = self._parse_vector(sr_lines[1])
             self.env['receiver_depth']  = self._parse_vector(sr_lines[3])
             self.env['receiver_range']  = self._parse_vector(sr_lines[5]) * 1000.0 # convert km to m
         elif nlines == 12:
             self.env['type'] = "3D"
         else:
-            raise RuntimeError(f"The python parsing of Bellhop's so-called 'list-directed IO' is not robust. Expected to read 6 or 12 lines (2D or 3D cases); found: {nlines}")
+            raise RuntimeError(
+                "The python parsing of Bellhop's so-called 'list-directed IO' is not robust."
+                f"Expected to read 6 or 12 lines (2D or 3D cases); found: {nlines}")
 
-        if self.env["_sbp_file"] == _Strings.from_file:
-            self.env["source_directionality"] = read_sbp(self.fname_base)
+    def _parse_line_int(self,line: str) -> int:
+        """Parse an integer on a line by itself"""
+        parts = _parse_line(line)
+        return int(parts[0])
 
     def _parse_vector(self,line: str) -> Union[NDArray[_np.float64], float]:
         """Parse a vector of floats with unknown number of values"""
@@ -316,18 +324,17 @@ class EnvironmentReader:
         valout = _np.array(val) if len(val) > 1 else val[0]
         return valout
 
-    def _parse_line_count(self,line: str) -> int:
-        """Parse an integer on a line by itself"""
-        parts = _parse_line(line)
-        return int(parts[0])
-
-    def _read_task(self, f: TextIO, task_line: str) -> None:
+    def _parse_task(self, task_line: str) -> None:
+        """Parse the 'task' line."""
         task_code = _unquote_string(task_line) + "    "
         self.env['task']        = _Maps.task.get(task_code[0])
         self.env['beam_type']   = _Maps.beam_type.get(task_code[1])
         self.env['_sbp_file']   = _Maps._sbp_file.get(task_code[2])
         self.env['source_type'] = _Maps.source_type.get(task_code[3])
         self.env['grid_type']   = _Maps.grid_type.get(task_code[4])
+
+        if self.env["_sbp_file"] == _Strings.from_file:
+            self.env["source_directionality"] = read_sbp(self.fname_base)
 
     def _read_beams_limits(self, f: TextIO) -> None:
         """Read environment file beams and limits"""
