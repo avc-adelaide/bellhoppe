@@ -2,16 +2,16 @@
 import os as _os
 import subprocess as _proc
 import shutil
-from pathlib import Path
-from struct import unpack as _unpack
+
 from tempfile import mkstemp as _mkstemp
-from typing import Any, Dict, List, Optional, Tuple, IO, TextIO
+from typing import Any, Dict, List, Optional, Tuple, TextIO
 
 import numpy as _np
 import pandas as _pd
 
 from .constants import Defaults, _Strings, _Maps, _File_Ext
 from .environment import Environment
+from .readers import read_shd, read_arrivals, read_rays
 
 class Bellhop:
     """
@@ -87,12 +87,12 @@ class Bellhop:
     def taskmap(self) -> Dict[Any, List[Any]]:
         """Dictionary which maps tasks to execution functions and their parameters"""
         return {
-            _Strings.arrivals:     ['A', self._load_arrivals, _File_Ext.arr],
-            _Strings.eigenrays:    ['E', self._load_rays, _File_Ext.ray],
-            _Strings.rays:         ['R', self._load_rays, _File_Ext.ray],
-            _Strings.coherent:     ['C', self._load_shd, _File_Ext.shd],
-            _Strings.incoherent:   ['I', self._load_shd, _File_Ext.shd],
-            _Strings.semicoherent: ['S', self._load_shd, _File_Ext.shd]
+            _Strings.arrivals:     ['A', read_arrivals, _File_Ext.arr],
+            _Strings.eigenrays:    ['E', read_rays,     _File_Ext.ray],
+            _Strings.rays:         ['R', read_rays,     _File_Ext.ray],
+            _Strings.coherent:     ['C', read_shd,      _File_Ext.shd],
+            _Strings.incoherent:   ['I', read_shd,      _File_Ext.shd],
+            _Strings.semicoherent: ['S', read_shd,      _File_Ext.shd],
         }
 
     def _prepare_env_file(self, fname_base: Optional[str]) -> Tuple[int, str]:
@@ -392,124 +392,6 @@ class Bellhop:
                 for j in range(svp.shape[1]):
                     f.write("%0.6f%c" % (svp.iloc[k,j], '\n' if j == svp.shape[1]-1 else ' '))
 
-    def _readf(self, f: IO[str], types: Tuple[Any, ...], dtype: type = str) -> Tuple[Any, ...]:
-        """Wrapper around readline() to read in a 1D array of data"""
-        p = f.readline().split()
-        for j in range(len(p)):
-            if len(types) > j:
-                p[j] = types[j](p[j])
-            else:
-                p[j] = dtype(p[j])
-        return tuple(p)
-
-    def _load_arrivals(self, fname: str) -> _pd.DataFrame:
-        """Read Bellhop arrivals file and parse data into a high level data structure"""
-        path = self._ensure_file_exists(fname)
-        with path.open('rt') as f:
-            hdr = f.readline()
-            if hdr.find('2D') >= 0:
-                freq = self._readf(f, (float,))
-                source_depth_info = self._readf(f, (int,), float)
-                source_depth_count = source_depth_info[0]
-                source_depth = source_depth_info[1:]
-                assert source_depth_count == len(source_depth)
-                receiver_depth_info = self._readf(f, (int,), float)
-                receiver_depth_count = receiver_depth_info[0]
-                receiver_depth = receiver_depth_info[1:]
-                assert receiver_depth_count == len(receiver_depth)
-                receiver_range_info = self._readf(f, (int,), float)
-                receiver_range_count = receiver_range_info[0]
-                receiver_range = receiver_range_info[1:]
-                assert receiver_range_count == len(receiver_range)
-#             else: # worry about 3D later
-#                 freq, source_depth_count, receiver_depth_count, receiver_range_count = self._readf(hdr, (float, int, int, int))
-#                 source_depth = self._readf(f, (float,)*source_depth_count)
-#                 receiver_depth = self._readf(f, (float,)*receiver_depth_count)
-#                 receiver_range = self._readf(f, (float,)*receiver_range_count)
-            arrivals: List[_pd.DataFrame] = []
-            for j in range(source_depth_count):
-                f.readline()
-                for k in range(receiver_depth_count):
-                    for m in range(receiver_range_count):
-                        count = int(f.readline())
-                        for n in range(count):
-                            data = self._readf(f, (float, float, float, float, float, float, int, int))
-                            arrivals.append(_pd.DataFrame({
-                                'source_depth_ndx': [j],
-                                'receiver_depth_ndx': [k],
-                                'receiver_range_ndx': [m],
-                                'source_depth': [source_depth[j]],
-                                'receiver_depth': [receiver_depth[k]],
-                                'receiver_range': [receiver_range[m]],
-                                'arrival_number': [n],
-                                # 'arrival_amplitude': [data[0]*_np.exp(1j * data[1]* _np.pi/180)],
-                                'arrival_amplitude': [data[0] * _np.exp( -1j * (_np.deg2rad(data[1]) + freq[0] * 2 * _np.pi * (data[3] * 1j +  data[2])))],
-                                'time_of_arrival': [data[2]],
-                                'complex_time_of_arrival': [data[2] + 1j*data[3]],
-                                'angle_of_departure': [data[4]],
-                                'angle_of_arrival': [data[5]],
-                                'surface_bounces': [data[6]],
-                                'bottom_bounces': [data[7]]
-                            }, index=[len(arrivals)+1]))
-        return _pd.concat(arrivals)
-
-
-    def _load_shd(self, fname: str) -> _pd.DataFrame:
-        """Read Bellhop shd file and parse data into a high level data structure"""
-        path = self._ensure_file_exists(fname)
-        with path.open('rb') as f:
-            recl, = _unpack('i', f.read(4))
-            # _title = str(f.read(80))
-            f.seek(4*recl, 0)
-            ptype = f.read(10).decode('utf8').strip()
-            assert ptype == 'rectilin', 'Invalid file format (expecting ptype == "rectilin")'
-            f.seek(8*recl, 0)
-            nfreq, ntheta, nsx, nsy, nsd, nrd, nrr, atten = _unpack('iiiiiiif', f.read(32))
-            assert nfreq == 1, 'Invalid file format (expecting nfreq == 1)'
-            assert ntheta == 1, 'Invalid file format (expecting ntheta == 1)'
-            assert nsd == 1, 'Invalid file format (expecting nsd == 1)'
-            f.seek(32*recl, 0)
-            pos_r_depth = _unpack('f'*nrd, f.read(4*nrd))
-            f.seek(36*recl, 0)
-            pos_r_range = _unpack('f'*nrr, f.read(4*nrr))
-            pressure = _np.zeros((nrd, nrr), dtype=_np.complex128)
-            for ird in range(nrd):
-                recnum = 10 + ird
-                f.seek(recnum*4*recl, 0)
-                temp = _np.array(_unpack('f'*2*nrr, f.read(2*nrr*4)))
-                pressure[ird,:] = temp[::2] + 1j*temp[1::2]
-        return _pd.DataFrame(pressure, index=pos_r_depth, columns=pos_r_range)
-
-
-    def _load_rays(self, fname: str) -> _pd.DataFrame:
-        """Read Bellhop rays file and parse data into a high level data structure"""
-        path = self._ensure_file_exists(fname)
-        with path.open('rt') as f:
-            f.readline()
-            f.readline()
-            f.readline()
-            f.readline()
-            f.readline()
-            f.readline()
-            f.readline()
-            rays = []
-            while True:
-                s = f.readline()
-                if s is None or len(s.strip()) == 0:
-                    break
-                a = float(s)
-                pts, sb, bb = self._readf(f, (int, int, int))
-                ray = _np.empty((pts, 2))
-                for k in range(pts):
-                    ray[k,:] = self._readf(f, (float, float))
-                rays.append(_pd.DataFrame({
-                    'angle_of_departure': [a],
-                    'surface_bounces': [sb],
-                    'bottom_bounces': [bb],
-                    'ray': [ray]
-                }))
-        return _pd.concat(rays)
-
     def _quoted_opt(self, *args: str) -> str:
         """Concatenate N input _Strings. strip whitespace, surround with single quotes
         """
@@ -519,9 +401,3 @@ class Bellhop:
     def _float(self, x: Optional[float], scale: float = 1) -> Optional[float]:
         """Permissive floatenator"""
         return None if x is None else float(x) * scale
-
-    def _ensure_file_exists(self, fname: str) -> Path:
-        path = Path(fname)
-        if not path.exists():
-            raise RuntimeError(f"Missing expected output file: {path}")
-        return path

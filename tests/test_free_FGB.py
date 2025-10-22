@@ -13,7 +13,7 @@ skip_if_coverage = pytest.mark.skipif(
 env = bh.read_env("tests/VolAtt/free_FGB.env")
 
 tl = bh.compute_transmission_loss(env,mode='coherent',fname_base="tests/VolAtt/FGB_output",debug=True)
-tl_exp = bh.main.Bellhop._load_shd(None,"tests/VolAtt/free_FGB.shd")
+tl_exp = bh.read_shd("tests/VolAtt/free_FGB.shd")
 
 
 def test_simple():

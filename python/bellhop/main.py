@@ -31,6 +31,10 @@ from bellhop.readers import read_sbp as read_sbp
 from bellhop.readers import read_trc as read_trc
 from bellhop.readers import read_brc as read_brc
 
+from bellhop.readers import read_shd as read_shd
+from bellhop.readers import read_rays as read_rays
+from bellhop.readers import read_arrivals as read_arrivals
+
 from bellhop.environment import Environment
 from bellhop.bellhop import Bellhop
 
