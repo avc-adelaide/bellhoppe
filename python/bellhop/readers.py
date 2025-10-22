@@ -40,21 +40,6 @@ def _unquote_string(line: str) -> str:
     """Extract string from within single quotes, possibly with commas too."""
     return line.strip().strip(",'")
 
-def _parse_vector(f: TextIO, dtype: type = float) -> Tuple[NDArray[_np.float64], int]:
-    """Parse a vector that starts with count then values, ending with '/'"""
-
-    # First line is the count
-    line = _read_next_valid_line(f)
-    linecount = int(_parse_line(line)[0])
-
-    # Second line has the values
-    values_line = _read_next_valid_line(f)
-    parts = _parse_line(values_line)
-    val = [dtype(p) for p in parts]
-
-    valout = _np.array(val) if len(val) > 1 else val[0]
-    return valout, linecount
-
 def _read_ssp_points(f: TextIO) -> _pd.DataFrame:
     """Read sound speed profile points until we find the bottom boundary line
 
@@ -295,26 +280,50 @@ class EnvironmentReader:
     def _read_sources_receivers_task(self, f: TextIO) -> None:
         """Read environment file sources, receivers, and task"""
 
-        # Source & receiver depths
-        self.env['source_depth'],   self.env['source_ndepth']   = _parse_vector(f)
-        self.env['receiver_depth'], self.env['receiver_ndepth'] = _parse_vector(f)
+        next_line = ""
+        sr_lines = []
+        while not next_line.startswith("'"):
+            if next_line:
+                sr_lines.append(next_line)
+            next_line = _read_next_valid_line(f)
+        self._read_task(f, next_line)
 
-        # Receiver ranges (in km, need to convert to m)
-        receiver_ranges, self.env['receiver_nrange'] = _parse_vector(f)
-        self.env['receiver_range'] = receiver_ranges * 1000  # convert km to m
+        nlines = len(sr_lines)
+        if nlines == 6:
+            self.env['type'] = "2D"
+            self.env['source_ndepth']   = _parse_line_count(sr_lines[0])
+            self.env['receiver_ndepth'] = _parse_line_count(sr_lines[2])
+            self.env['receiver_nrange'] = _parse_line_count(sr_lines[4])
+            self.env['source_depth']   = _parse_vector(sr_lines[1])
+            self.env['receiver_depth'] = _parse_vector(sr_lines[3])
+            self.env['receiver_range'] = _parse_vector(sr_lines[5]) * 1000 # convert km to m
+        elif nlines == 12:
+            self.env['type'] = "3D"
+        else:
+            raise RuntimeError(f"The python parsing of Bellhop's so-called 'list-directed IO' is not robust. Expected to read 6 or 12 lines (2D or 3D cases); found: {nlines}")
 
-        # Task/run type (e.g., 'R', 'C', etc.)
-        task_line = _read_next_valid_line(f)
+        if self.env["_sbp_file"] == _Strings.from_file:
+            self.env["source_directionality"] = read_sbp(self.fname_base)
+
+    def _parse_vector(line: str) -> NDArray[_np.float64]:
+        """Parse a vector of floats with unknown number of values"""
+        parts = _parse_line(line)
+        val = [float(p) for p in parts]
+        valout = _np.array(val) if len(val) > 1 else val[0]
+        return valout
+    
+    def _parse_line_count(line: str) -> int:
+        """Parse an integer on a line by itself"""
+        parts = _parse_line(line)
+        return int(parts[0])
+
+    def _read_task(self, f: TextIO, task_line: str) -> None:
         task_code = _unquote_string(task_line) + "    "
         self.env['task']        = _Maps.task.get(task_code[0])
         self.env['beam_type']   = _Maps.beam_type.get(task_code[1])
         self.env['_sbp_file']   = _Maps._sbp_file.get(task_code[2])
         self.env['source_type'] = _Maps.source_type.get(task_code[3])
         self.env['grid_type']   = _Maps.grid_type.get(task_code[4])
-
-        # Check for source directionality
-        if self.env["_sbp_file"] == _Strings.from_file:
-            self.env["source_directionality"] = read_sbp(self.fname_base)
 
     def _read_beams_limits(self, f: TextIO) -> None:
         """Read environment file beams and limits"""
