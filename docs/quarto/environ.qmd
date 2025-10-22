@@ -27,7 +27,7 @@ The `Environment` class provide the following user-facing methods:
 * `.to_dict()` --- convert parameters to a standard `dict`
 
 To scan over the full list of user-facing fields, the standard `print()` function will return
-something sensible.
+something sensible:
 ```
 > env = bh.create_env()
 > print(env)
@@ -52,7 +52,7 @@ These parameters can also be changed using both class- and dict-based setting ap
 env.frequency = 500    # okay
 env['frequency'] = 500 # also okay
 ```
-Parameters can of course be queried in the same way:
+Parameters can be queried in the same way:
 ```{python}
 import bellhop as bh
 env = bh.create_env()
@@ -79,14 +79,15 @@ env.soundspeed_interp = "plines"  # ERROR
 ## Parameter checking
 
 Before standard functions for running Bellhop computations, or otherwise working with
-the environment configuration data, the instance method `.check()` will be called on the
-`Environment`.
+the environment configuration data, the method `.check()` will be called on the
+`Environment` instance.
 This function performs two key tasks:
 
 1. Final assignments of implicitly-linked parameters (for instance, setting `max_depth` to the maximum of the `depth` field)
 2. A suite of consistency checks and assertions
 
-Most users will be unlikely to explicitly use this function. However, if there are situations
+Most users will be unlikely to explicitly need to use this function.
+However, if there are situations
 where various parameters are set and then the environment needs to be copied or queried,
 it would be good practice (or sometimes necessary) to run it directly.
 For instance:

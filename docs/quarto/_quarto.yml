@@ -9,13 +9,15 @@ website:
       - href: index.qmd
         text: Home
       - href: intro.qmd
-        text: Intro
+        text: Introduction
       - href: compute.qmd
-        text: Compute
+        text: Compute Tasks
+      - href: environ.qmd
+        text: Environments
       - href: ssp.qmd
-        text: Soundspeed
+        text: Soundspeeds
       - href: surface.qmd
-        text: Surface
+        text: Surfaces
 
 format:
   html:

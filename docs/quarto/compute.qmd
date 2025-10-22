@@ -31,17 +31,19 @@ The possible tasks are shown in @tbl-tasks.
 Note that Bellhop runs separately for each one of these computations — it does not provide
 a feature to re-use data from prior runs (which would seem like it should).
 
-Option `task=`
-----------------------
-`"rays"`
-`"eigenrays"`
-`"arrivals"`
-`"coherent"`
-`"incoherent"`
-`"semicoherent"`
+| Option `task=` value | Description |
+|----------------------|-------------|
+| `"rays"`             | All rays from a source           |
+| `"eigenrays"`        | All rays between a source and one receiver            |
+| `"arrivals"`         | All arrival data from the eigenrays            |
+| `"coherent"`         | Transmission loss from a source to a grid of receivers (coherent superposition)            |
+| `"incoherent"`       | (incoherent superposition)           |
+| `"semicoherent"`     | (semicoherent superposition)            |
 
-: Values allowed for the `task=` option for `bellhop.compute` (can be a string or list of strings). {#tbl-tasks}
-
+: Values allowed for the `task=` option for `bellhop.compute`  
+  (can be a string or list of strings). {#tbl-tasks}
+  
+  
 When more than one task is provided, the output data is returned as a list of dictionaries:
 
 ```{python}
@@ -117,8 +119,9 @@ env = bh.create_env()
 output, ind_df = bh.compute(env,task=["arrivals", "eigenrays"])
 print(ind_df)
 
-arr = output[ind_df[ind_df["task"]=="arrivals"].index[0]]
-# [0] => first one only in this case
+arr_ind = ind_df[ind_df["task"]=="arrivals"].index[0]
+# [0] => first one / only one in this case
+arr = output[arr_ind]
 bhp.plot_arrivals(arr['results'] )
 ```
 
