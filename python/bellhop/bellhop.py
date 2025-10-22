@@ -67,14 +67,14 @@ class Bellhop:
         to be executed.
         """
 
-        task_flag, load_task_data, ext = self.taskmap[task]
+        task_flag, load_task_data, task_ext = self.taskmap[task]
 
         fd, fname_base = self._prepare_env_file(fname_base)
         with _os.fdopen(fd, "w") as fh:
             self._create_env_file(env, task_flag, fh, fname_base)
 
-        self._run_exe(fname_base, ext)
-        results = load_task_data(fname_base, ext)
+        self._run_exe(fname_base)
+        results = load_task_data(fname_base + task_ext)
 
         if debug:
             print('[DEBUG] Bellhop working files NOT deleted: '+fname_base+'.*')
@@ -128,7 +128,6 @@ class Bellhop:
             self._unlink(fname_base + ext)
 
     def _run_exe(self, fname_base: str,
-                       output_ext: str,
                        args: str = "",
                        debug: bool = False,
                        exe: Optional[str] = None,
@@ -155,10 +154,6 @@ class Bellhop:
                 f"\nOutput:\n{result.stdout.strip()}\n"
                 f"\nExtract from PRT file:\n{err}"
             )
-
-        path = Path(fname_base + output_ext)
-        if not path.exists():
-            raise RuntimeError(f"Bellhop did not generate expected output file: {path}")
 
 
     def _check_error(self, fname_base: str) -> Optional[str]:
@@ -407,9 +402,10 @@ class Bellhop:
                 p[j] = dtype(p[j])
         return tuple(p)
 
-    def _load_arrivals(self, fname_base: str, ext: str) -> _pd.DataFrame:
+    def _load_arrivals(self, fname: str) -> _pd.DataFrame:
         """Read Bellhop arrivals file and parse data into a high level data structure"""
-        with open(fname_base+ext, 'rt') as f:
+        path = self._ensure_file_exists(fname)
+        with path.open('rt') as f:
             hdr = f.readline()
             if hdr.find('2D') >= 0:
                 freq = self._readf(f, (float,))
@@ -458,9 +454,10 @@ class Bellhop:
         return _pd.concat(arrivals)
 
 
-    def _load_shd(self, fname_base: str, ext: str) -> _pd.DataFrame:
+    def _load_shd(self, fname: str) -> _pd.DataFrame:
         """Read Bellhop shd file and parse data into a high level data structure"""
-        with open(fname_base+ext, 'rb') as f:
+        path = self._ensure_file_exists(fname)
+        with path.open('rt') as f:
             recl, = _unpack('i', f.read(4))
             # _title = str(f.read(80))
             f.seek(4*recl, 0)
@@ -484,9 +481,10 @@ class Bellhop:
         return _pd.DataFrame(pressure, index=pos_r_depth, columns=pos_r_range)
 
 
-    def _load_rays(self, fname_base: str, ext: str) -> _pd.DataFrame:
+    def _load_rays(self, fname: str) -> _pd.DataFrame:
         """Read Bellhop rays file and parse data into a high level data structure"""
-        with open(fname_base+ext, 'rt') as f:
+        path = self._ensure_file_exists(fname)
+        with path.open('rt') as f:
             f.readline()
             f.readline()
             f.readline()
@@ -522,3 +520,8 @@ class Bellhop:
         """Permissive floatenator"""
         return None if x is None else float(x) * scale
 
+    def _ensure_file_exists(fname: str) -> Path:
+        path = Path(fname)
+        if not path.exists():
+            raise RuntimeError(f"Missing expected output file: {path}")
+        return path
