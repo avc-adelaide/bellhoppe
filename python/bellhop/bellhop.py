@@ -2,7 +2,7 @@
 import os as _os
 import subprocess as _proc
 import shutil
-
+from pathlib import Path
 from struct import unpack as _unpack
 from tempfile import mkstemp as _mkstemp
 from typing import Any, Dict, List, Optional, Tuple, IO, TextIO
@@ -69,15 +69,12 @@ class Bellhop:
 
         task_flag, load_task_data, ext = self.taskmap[task]
 
-        fh_fd, fname_base = self._prepare_env_file(fname_base)
-        with _os.fdopen(fh_fd, "w") as fh:
+        fd, fname_base = self._prepare_env_file(fname_base)
+        with _os.fdopen(fd, "w") as fh:
             self._create_env_file(env, task_flag, fh, fname_base)
 
-        self._run_exe(fname_base)
-        try:
-            results = load_task_data(fname_base, ext)
-        except FileNotFoundError:
-            raise RuntimeError(f'Bellhop did not generate expected output file ({fname_base+ext})')
+        self._run_exe(fname_base, ext)
+        results = load_task_data(fname_base, ext)
 
         if debug:
             print('[DEBUG] Bellhop working files NOT deleted: '+fname_base+'.*')
@@ -131,6 +128,7 @@ class Bellhop:
             self._unlink(fname_base + ext)
 
     def _run_exe(self, fname_base: str,
+                       output_ext: str,
                        args: str = "",
                        debug: bool = False,
                        exe: Optional[str] = None,
@@ -157,6 +155,11 @@ class Bellhop:
                 f"\nOutput:\n{result.stdout.strip()}\n"
                 f"\nExtract from PRT file:\n{err}"
             )
+
+        path = Path(fname_base + output_ext)
+        if not path.exists():
+            raise RuntimeError(f"Bellhop did not generate expected output file: {path}")
+
 
     def _check_error(self, fname_base: str) -> Optional[str]:
         """Extracts Bellhop error text from the .prt file"""
