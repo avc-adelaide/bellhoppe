@@ -278,7 +278,11 @@ class EnvironmentReader:
             self.env['_bottom_attenuation_shear'] = _float(bottom_props[5])
 
     def _read_sources_receivers_task(self, f: TextIO) -> None:
-        """Read environment file sources, receivers, and task"""
+        """Read environment file sources, receivers, and task.
+
+        Bellhop and Bellhop3D have different numbers of variables specified before
+        the task line. Luckily we can detect that reliably by looking for a line which
+        starts with `'`."""
 
         next_line = ""
         sr_lines = []
@@ -291,12 +295,12 @@ class EnvironmentReader:
         nlines = len(sr_lines)
         if nlines == 6:
             self.env['type'] = "2D"
-            self.env['source_ndepth']   = _parse_line_count(sr_lines[0])
-            self.env['receiver_ndepth'] = _parse_line_count(sr_lines[2])
-            self.env['receiver_nrange'] = _parse_line_count(sr_lines[4])
-            self.env['source_depth']   = _parse_vector(sr_lines[1])
-            self.env['receiver_depth'] = _parse_vector(sr_lines[3])
-            self.env['receiver_range'] = _parse_vector(sr_lines[5]) * 1000 # convert km to m
+            self.env['source_ndepth']   = self._parse_line_count(sr_lines[0])
+            self.env['receiver_ndepth'] = self._parse_line_count(sr_lines[2])
+            self.env['receiver_nrange'] = self._parse_line_count(sr_lines[4])
+            self.env['source_depth']    = self._parse_vector(sr_lines[1])
+            self.env['receiver_depth']  = self._parse_vector(sr_lines[3])
+            self.env['receiver_range']  = self._parse_vector(sr_lines[5]) * 1000.0 # convert km to m
         elif nlines == 12:
             self.env['type'] = "3D"
         else:
@@ -305,14 +309,14 @@ class EnvironmentReader:
         if self.env["_sbp_file"] == _Strings.from_file:
             self.env["source_directionality"] = read_sbp(self.fname_base)
 
-    def _parse_vector(line: str) -> NDArray[_np.float64]:
+    def _parse_vector(self,line: str) -> Union[NDArray[_np.float64], float]:
         """Parse a vector of floats with unknown number of values"""
         parts = _parse_line(line)
         val = [float(p) for p in parts]
         valout = _np.array(val) if len(val) > 1 else val[0]
         return valout
-    
-    def _parse_line_count(line: str) -> int:
+
+    def _parse_line_count(self,line: str) -> int:
         """Parse an integer on a line by itself"""
         parts = _parse_line(line)
         return int(parts[0])
@@ -345,7 +349,7 @@ class EnvironmentReader:
         limits_parts = _parse_line(limits_line)
         self.env['step_size'] = float(limits_parts[0])
         self.env['box_depth'] = float(limits_parts[1])
-        self.env['box_range'] = float(limits_parts[2]) * 1000  # convert km to m
+        self.env['box_range'] = float(limits_parts[2]) * 1000.0  # convert km to m
 
 
 def read_ssp(fname: str,
