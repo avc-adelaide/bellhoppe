@@ -457,7 +457,7 @@ class Bellhop:
     def _load_shd(self, fname: str) -> _pd.DataFrame:
         """Read Bellhop shd file and parse data into a high level data structure"""
         path = self._ensure_file_exists(fname)
-        with path.open('rt') as f:
+        with path.open('rb') as f:
             recl, = _unpack('i', f.read(4))
             # _title = str(f.read(80))
             f.seek(4*recl, 0)
