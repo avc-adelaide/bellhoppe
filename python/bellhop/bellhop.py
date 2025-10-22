@@ -520,7 +520,7 @@ class Bellhop:
         """Permissive floatenator"""
         return None if x is None else float(x) * scale
 
-    def _ensure_file_exists(fname: str) -> Path:
+    def _ensure_file_exists(self, fname: str) -> Path:
         path = Path(fname)
         if not path.exists():
             raise RuntimeError(f"Missing expected output file: {path}")
