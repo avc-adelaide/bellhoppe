@@ -297,7 +297,11 @@ class Environment(MutableMapping[str, Any]):
         allowed = getattr(_Maps, key, None)
         if allowed is not None and value is not None and value not in set(allowed.values()):
             raise ValueError(f"Invalid value for {key!r}: {value}. Allowed: {set(allowed.values())}")
-        if not (isinstance(value,_pd.DataFrame) or _np.isscalar(value)):
+        if not (
+            value is None or 
+            isinstance(value,_pd.DataFrame) or 
+            _np.isscalar(value) 
+               ):
             if not isinstance(value[0],str):
                 value = _np.asarray(value, dtype=_np.float64)
         object.__setattr__(self, key, value)
