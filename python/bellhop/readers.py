@@ -175,8 +175,7 @@ class EnvironmentReader:
             fname: Path to .env file (with or without extension)
         """
         self.fname, self.fname_base = _prepare_filename(fname, _File_Ext.env, "Environment")
-        env = Environment()
-        self.env: Environment = env.clear()
+        self.env: Environment = Environment()
 
     def read(self) -> Environment:
         """Do the reading..."""

@@ -248,5 +248,6 @@ class Defaults:
     env_comment_pad: int = field(default=50, metadata={"desc": "Number of characters used before the comment in the constructed .env files."})
     interference_mode: str = field(default=_Strings.coherent, metadata={"desc": "Mode of interference when calculating transmission loss"})
     dimension: str = field(default=_Strings.two_d, metadata={"desc": "Dimension of simulation (2D, 2.5D, 3D)"})
+    attenuation_units: str = field(default=_Strings.frequency_dependent, metadata={"desc": "Attenuation units to define volume attenuation"})
 
 

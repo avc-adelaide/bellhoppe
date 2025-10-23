@@ -24,7 +24,7 @@ The `Environment` class provide the following user-facing methods:
 
 * `.check()` --- finalise and validate parameters (semi-automatic, see below)
 * `.copy()` --- shallow copy the instance
-* `.clear()` — delete all user-facing values from the instance
+* `.reset()` — set all user-facing values from the instance to `None`
 * `.to_dict()` --- convert parameters to a standard `dict`
 
 To scan over the full list of user-facing fields, the standard `print()` function will return

@@ -115,7 +115,7 @@ class Environment(MutableMapping[str, Any]):
 
     # Attenuation parameters
     volume_attenuation: str = 'none'
-    attenuation_units: str = 'frequency dependent'
+    attenuation_units: str = Defaults.attenuation_units
 
     # Francois-Garrison volume attenuation parameters
     fg_salinity: Optional[float] = None
@@ -123,7 +123,7 @@ class Environment(MutableMapping[str, Any]):
     fg_pH: Optional[float] = None
     fg_depth: Optional[float] = None
 
-    def clear(self) -> "Environment":
+    def reset(self) -> "Environment":
         """Delete values for all user-facing parameters."""
         for k in self.keys():
             if not k.startswith("_"):
