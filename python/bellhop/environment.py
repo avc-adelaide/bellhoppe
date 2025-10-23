@@ -123,6 +123,11 @@ class Environment(MutableMapping[str, Any]):
     fg_pH: Optional[float] = None
     fg_depth: Optional[float] = None
 
+    def clear(self) -> "Environment":
+        """Delete values for all user-facing parameters."""
+        for k in self.keys():
+            if not k.startswith("_"):
+                self[k] = None
 
     def check(self) -> "Environment":
         self._finalise()
