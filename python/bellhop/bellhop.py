@@ -13,9 +13,9 @@ from .constants import Defaults, _Strings, _Maps, _File_Ext
 from .environment import Environment
 from .readers import read_shd, read_arrivals, read_rays
 
-class Bellhop:
+class BellhopSimulator:
     """
-    Interface to the Bellhop 2D underwater acoustics ray tracing propagation model.
+    Interface to the Bellhop underwater acoustics ray tracing propagation model.
 
     Two public methods are defined: `supports()` and `run()`.
     Both take arguments of environment and task, and respectively
@@ -31,15 +31,18 @@ class Bellhop:
 
     def __init__(self, name: str = Defaults.model_name,
                        exe: str = Defaults.exe,
+                       dim: int = Defaults.model_dim,
                        env_comment_pad: int = Defaults.env_comment_pad,
                 ) -> None:
         self.name: str = name
         self.exe: str = exe
+        self.dim: int = dim
         self.env_comment_pad: int = env_comment_pad
 
     def supports(self, env: Optional[Environment] = None,
                        task: Optional[str] = None,
                        exe: Optional[str] = None,
+                       dim: Optional[int] = None,
                 ) -> bool:
         """Check whether the model supports the task.
 
@@ -48,8 +51,9 @@ class Bellhop:
 
         which_bool = shutil.which(exe or self.exe) is not None
         task_bool = task is None or task in self.taskmap
+        dim_bool = dim is None or dim == self.dim
 
-        return (which_bool and task_bool)
+        return (which_bool and task_bool and dim_bool)
 
     def run(self, env: Environment,
                   task: str,

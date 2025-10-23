@@ -36,11 +36,11 @@ from bellhop.readers import read_rays as read_rays
 from bellhop.readers import read_arrivals as read_arrivals
 
 from bellhop.environment import Environment
-from bellhop.bellhop import Bellhop
+from bellhop.bellhop import BellhopSimulator
 
-_models: List[Bellhop] = []
+_models: List[BellhopSimulator] = []
 
-def new_model(name: str, **kwargs: Any) -> Bellhop:
+def new_model(name: str, **kwargs: Any) -> BellhopSimulator:
     """Instantiate a new Bellhop model and add it to the list of models.
 
     Creates a Bellhop instance with the specified parameters and
@@ -73,13 +73,13 @@ def new_model(name: str, **kwargs: Any) -> Bellhop:
     for m in _models:
         if name == m.name:
             raise ValueError(f"Bellhop model with this name ('{name}') already exists.")
-    model = Bellhop(name=name, **kwargs)
+    model = BellhopSimulator(name=name, **kwargs)
     _models.append(model)
     return model
 
 new_model(name=Defaults.model_name)
 
-def models(env: Optional[Environment] = None, task: Optional[str] = None) -> List[str]:
+def models(env: Optional[Environment] = None, task: Optional[str] = None, dim: Optional[int] = None) -> List[str]:
     """List available models.
 
     Parameters
@@ -104,12 +104,12 @@ def models(env: Optional[Environment] = None, task: Optional[str] = None) -> Lis
     ['bellhop']
     """
     if env is not None:
-        env = check_env(env)
+        env.check()
     if (env is None and task is not None) or (env is not None and task is None):
         raise ValueError('env and task should be both specified together')
     rv: List[str] = []
     for m in _models:
-        if m.supports(env, task):
+        if m.supports(env=env, task=task, dim=dim):
             rv.append(m.name)
     return rv
 
@@ -328,7 +328,7 @@ def compute(
 def _select_model(env: Environment,
                   task: str,
                   model: Optional[str] = None,
-                  debug: bool = False
+                  debug: bool = False,
                  ) -> Any:
     """Finds a model to use, or if a model is requested validate it.
 
@@ -365,7 +365,7 @@ def _select_model(env: Environment,
 
     debug and print("Searching for propagation model:")
     for mm in _models:
-        if mm.supports(env, task):
+        if mm.supports(env=env, task=task, dim=env._dimension):
             debug and print(f'Model found: {mm.name}')
             return mm
     raise ValueError('No suitable propagation model available')

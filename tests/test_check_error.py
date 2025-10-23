@@ -11,7 +11,7 @@ import pytest
 import tempfile
 import os
 from pathlib import Path
-from bellhop.main import Bellhop
+from bellhop.main import BellhopSimulator
 
 
 class TestCheckError:
@@ -19,7 +19,7 @@ class TestCheckError:
 
     def setup_method(self):
         """Set up test fixtures."""
-        self.bellhop = Bellhop()
+        self.bellhop = BellhopSimulator()
         self.temp_dir = tempfile.mkdtemp()
 
     def teardown_method(self):
