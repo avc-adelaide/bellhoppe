@@ -297,6 +297,7 @@ class Environment(MutableMapping[str, Any]):
         allowed = getattr(_Maps, key, None)
         if allowed is not None and value is not None and value not in set(allowed.values()):
             raise ValueError(f"Invalid value for {key!r}: {value}. Allowed: {set(allowed.values())}")
+        # coerce types
         if not (
             value is None or 
             isinstance(value,_pd.DataFrame) or 
