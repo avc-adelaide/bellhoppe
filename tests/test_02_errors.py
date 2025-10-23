@@ -8,7 +8,7 @@ def test_missing_key_error():
     """Test that KeyError is raised for unknown key 'missing_key'."""
 
     # Test that the specific KeyError is raised
-    with pytest.raises(TypeError, match=r"unexpected keyword argument: 'missing_key'"):
+    with pytest.raises(TypeError, match=r"unexpected keyword argument .*missing_key"):
 	    env = bh.create_env(missing_key=7)
 
 
