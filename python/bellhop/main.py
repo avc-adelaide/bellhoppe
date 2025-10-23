@@ -113,9 +113,6 @@ def models(env: Optional[Environment] = None, task: Optional[str] = None, dim: O
             rv.append(m.name)
     return rv
 
-def create_env2d(**kv: Any) -> Environment:
-    """Backwards compatibility for create_env"""
-    return create_env(**kv)
 
 def create_env(**kv: Any) -> Environment:
     """Create a new underwater environment.
@@ -178,22 +175,7 @@ def create_env(**kv: Any) -> Environment:
     >>> import bellhop as bh
     >>> env = bh.create_env(depth=[[0,20], [300,10], [500,18], [1000,15]])
     """
-    env = Environment()
-
-    # Apply user-provided values to environment
-    for k, v in kv.items():
-        if k not in env.keys():
-            raise KeyError('Unknown key: '+k)
-
-        # Convert everything to ndarray except DataFrames and scalars
-        if isinstance(v, _pd.DataFrame):
-            env[k] = v
-        elif _np.isscalar(v):
-            env[k] = v
-        else:
-            env[k] = _np.asarray(v, dtype=_np.float64)
-
-    return env
+    return Environment(**kv)
 
 
 
@@ -229,10 +211,6 @@ def check_env(env: Environment) -> Environment:
     env._finalise()
     return env.check()
 
-
-def check_env2d(env: Environment) -> Environment:
-    """Backwards compatibility for check_env"""
-    return check_env(env=env)
 
 def compute(
             env: Union[Environment,List[Environment]],
