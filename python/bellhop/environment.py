@@ -128,8 +128,10 @@ class Environment(MutableMapping[str, Any]):
         for k in self.keys():
             if not k.startswith("_"):
                 self[k] = None
+        return self
 
     def check(self) -> "Environment":
+        """Finalise environment parameters and perform assertion checks."""
         self._finalise()
         try:
             self._check_env_header()
