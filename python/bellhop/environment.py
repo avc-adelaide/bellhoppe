@@ -204,7 +204,6 @@ class Environment(MutableMapping[str, Any]):
 
 
     def _check_env_header(self) -> None:
-        assert self['type'] == '2D', 'Not a 2D environment'
         assert self["_num_media"] == 1, f"BELLHOP only supports 1 medium, found {self['_num_media']}"
 
     def _check_env_surface(self) -> None:
