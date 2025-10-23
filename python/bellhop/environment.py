@@ -29,7 +29,8 @@ class Environment(MutableMapping[str, Any]):
 
     # Basic environment properties
     name: str = 'bellhop/python default'
-    type: str = '2D'
+    dimension: str = _Strings.two_d
+    _dimension: int = 2
     frequency: float = 25000.0  # Hz
     _num_media: int = 1 # must always = 1 in bellhop
 
@@ -76,21 +77,30 @@ class Environment(MutableMapping[str, Any]):
 
     # Source parameters
     source_type: str = 'default'
+    source_range: Union[float, Any] = None
+    source_cross_range: Union[float, Any] = None
     source_depth: Union[float, Any] = 5.0  # m - Any allows for np.ndarray
     source_ndepth: Optional[int] = None
+    source_nrange: Optional[int] = None
+    source_ncrossrange: Optional[int] = None
     source_directionality: Optional[Any] = None  # [(deg, dB)...]
 
     # Receiver parameters
     receiver_depth: Union[float, Any] = 10.0  # m - Any allows for np.ndarray
     receiver_range: Union[float, Any] = 1000.0  # m - Any allows for np.ndarray
+    receiver_bearing: Union[float, Any] = 0.0  # deg - Any allows for np.ndarray
     receiver_ndepth: Optional[int] = None
     receiver_nrange: Optional[int] = None
+    receiver_nbearing: Optional[int] = None
 
     # Beam settings
     beam_type: str = _Strings.default
     beam_angle_min: Optional[float] = None  # deg
     beam_angle_max: Optional[float] = None  # deg
+    beam_bearing_min: Optional[float] = None  # deg
+    beam_bearing_max: Optional[float] = None  # deg
     beam_num: int = 0  # (0 = auto)
+    beam_bearing_num: int = 0
     single_beam_index: Optional[int] = None
     _single_beam: str = _Strings.default # value inferred from `single_beam_index`
 
@@ -98,6 +108,7 @@ class Environment(MutableMapping[str, Any]):
     step_size: Optional[float] = 0.0
     box_depth: Optional[float] = None
     box_range: Optional[float] = None
+    box_cross_range: Optional[float] = None
     grid_type: str = 'default'
     task: Optional[str] = None
     interference_mode: Optional[str] = None # subset of `task` for providing TL interface

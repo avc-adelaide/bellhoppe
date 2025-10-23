@@ -298,7 +298,7 @@ class EnvironmentReader:
         """Parse the N lines read defining sources and receivers and assign the corresponding variables."""
         nlines = len(sr_lines)
         if nlines == 6:
-            self.env['type'] = "2D"
+            self.env['_dimension'] = 2
             self.env['source_ndepth']   = self._parse_line_int(sr_lines[0])
             self.env['receiver_ndepth'] = self._parse_line_int(sr_lines[2])
             self.env['receiver_nrange'] = self._parse_line_int(sr_lines[4])
@@ -306,7 +306,19 @@ class EnvironmentReader:
             self.env['receiver_depth']  = self._parse_vector(sr_lines[3])
             self.env['receiver_range']  = self._parse_vector(sr_lines[5]) * 1000.0 # convert km to m
         elif nlines == 12:
-            self.env['type'] = "3D"
+            self.env['_dimension'] = 3
+            self.env['source_nrange']      = self._parse_line_int(sr_lines[0])
+            self.env['source_ncrossraneg'] = self._parse_line_int(sr_lines[2])
+            self.env['source_ndepth']      = self._parse_line_int(sr_lines[4])
+            self.env['receiver_ndepth']    = self._parse_line_int(sr_lines[6])
+            self.env['receiver_nrange']    = self._parse_line_int(sr_lines[8])
+            self.env['receiver_nbearing']  = self._parse_line_int(sr_lines[10])
+            self.env['source_range']       = self._parse_vector(sr_lines[1]) * 1000.0 # convert km to m
+            self.env['source_cross_range'] = self._parse_vector(sr_lines[3]) * 1000.0 # convert km to m
+            self.env['source_depth']       = self._parse_vector(sr_lines[5])
+            self.env['receiver_depth']     = self._parse_vector(sr_lines[7])
+            self.env['receiver_range']     = self._parse_vector(sr_lines[9]) * 1000.0 # convert km to m
+            self.env['receiver_bearing']   = self._parse_vector(sr_lines[11])
         else:
             raise RuntimeError(
                 "The python parsing of Bellhop's so-called 'list-directed IO' is not robust."
@@ -326,12 +338,16 @@ class EnvironmentReader:
 
     def _parse_task(self, task_line: str) -> None:
         """Parse the 'task' line."""
-        task_code = _unquote_string(task_line) + "    "
+        task_code = _unquote_string(task_line) + "     "
         self.env['task']        = _Maps.task.get(task_code[0])
         self.env['beam_type']   = _Maps.beam_type.get(task_code[1])
         self.env['_sbp_file']   = _Maps._sbp_file.get(task_code[2])
         self.env['source_type'] = _Maps.source_type.get(task_code[3])
         self.env['grid_type']   = _Maps.grid_type.get(task_code[4])
+        if self.env['_dimension'] == 2:
+            self.env['dimension'] = _Strings.two_d
+        else:
+            self.env['dimension'] = _Maps.dimension.get(task_code[5])
 
         if self.env["_sbp_file"] == _Strings.from_file:
             self.env["source_directionality"] = read_sbp(self.fname_base)
@@ -351,13 +367,27 @@ class EnvironmentReader:
         self.env['beam_angle_min'] = _float(angle_parts[0])
         self.env['beam_angle_max'] = _float(angle_parts[1])
 
+        if self.env['_dimension'] == 3:
+            # Beam bearing fan
+            beam_num_line = _read_next_valid_line(f)
+            beam_num_parts = _parse_line(beam_num_line) + [None] * 1
+            self.env['beam_angle_num'] = int(beam_num_parts[0] or 0)
+            angles_line = _read_next_valid_line(f)
+            angle_parts = _parse_line(angles_line) + [None] * 2
+            self.env['beam_bearing_min'] = _float(angle_parts[0])
+            self.env['beam_bearing_max'] = _float(angle_parts[1])
+
         # Ray tracing limits (step, max_depth, max_range) - last line
         limits_line = _read_next_valid_line(f)
         limits_parts = _parse_line(limits_line)
         self.env['step_size'] = float(limits_parts[0])
-        self.env['box_depth'] = float(limits_parts[1])
-        self.env['box_range'] = float(limits_parts[2]) * 1000.0  # convert km to m
-
+        if self.env['_dimension'] == 2:
+            self.env['box_depth'] = float(limits_parts[1])
+            self.env['box_range'] = float(limits_parts[2]) * 1000.0  # convert km to m
+        else:
+            self.env['box_range'] = float(limits_parts[1]) * 1000.0  # convert km to m
+            self.env['box_cross_range'] = float(limits_parts[2]) * 1000.0  # convert km to m
+            self.env['box_depth'] = float(limits_parts[3])
 
 def read_ssp(fname: str,
              depths: Optional[Union[

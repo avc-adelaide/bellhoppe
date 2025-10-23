@@ -36,6 +36,11 @@ class _Strings(str, Enum):
     default = "default"
     none = "none"
 
+    # dimension
+    two_d = "2D"
+    two_half_d = "2.5D"
+    three_d = "3D"
+
     # interpolation
     linear = "linear"
     spline = "spline"
@@ -94,6 +99,7 @@ class _Strings(str, Enum):
     semicoherent = "semicoherent"
     amplitude = "amplitude"
     amplitude_b = "amplitude-binary"
+
 
 
 class _Maps:
@@ -190,6 +196,11 @@ class _Maps:
         "b": _Strings.gaussian_ray,
         " ": _Strings.default,
     }
+    dimension = {
+        " ": _Strings.two_d,
+        "2": _Strings.two_half_d,
+        "3": _Strings.three_d,
+    }
     _single_beam = {
         "I": _Strings.single_beam,
         " ": _Strings.default,
@@ -225,7 +236,7 @@ class _Maps:
     _single_beam_rev = {v: k for k, v in _single_beam.items()}
     task_rev = {v: k for k, v in task.items()}
     mode_rev = {v: k for k, v in mode.items()}
-
+    dimension_rev = {v: k for k, v in dimension.items()}
 
 @dataclass(frozen=True)
 class Defaults:
@@ -236,5 +247,6 @@ class Defaults:
     beam_angle_fullspace: float = field(default=180.0, metadata={"units": "deg"})
     env_comment_pad: int = field(default=50, metadata={"desc": "Number of characters used before the comment in the constructed .env files."})
     interference_mode: str = field(default=_Strings.coherent, metadata={"desc": "Mode of interference when calculating transmission loss"})
+    dimension: str = field(default=_Strings.two_d, metadata={"desc": "Dimension of simulation (2D, 2.5D, 3D)"})
 
 
