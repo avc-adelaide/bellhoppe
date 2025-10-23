@@ -24,7 +24,7 @@ def test_simple():
     assert(env["surface_interp"] == "linear")
     assert(env["source_depth"] == 5)
     assert(env["source_directionality"] == None)
-    assert(env["type"] == "2D")
+    assert(env["dimension"] == "2D")
 
     arrivals = bh.compute_arrivals(env)
     arrival_times = arrivals["time_of_arrival"]

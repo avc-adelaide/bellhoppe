@@ -20,7 +20,7 @@ class TestEnvironmentValidation:
         """Test that default configuration is valid."""
         config = Environment()
         assert config.name == 'bellhop/python default'
-        assert config.type == '2D'
+        assert config.dimension == '2D'
         assert config.frequency == 25000.0
 
     def test_invalid_soundspeed_interp(self):
@@ -169,5 +169,5 @@ class TestDataclassUtilities:
         assert env_dict['depth'] == 40
         assert env_dict['soundspeed'] == 1540
         assert 'name' in env_dict
-        assert 'type' in env_dict
+        assert 'dimension' in env_dict
 

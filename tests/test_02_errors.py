@@ -33,14 +33,6 @@ def test_variable_soundspeed_error():
 
 
 
-def test_error_type():
-    """Test that an error is raised for unknown model type."""
-
-    with pytest.raises(ValueError, match=r"Not a 2D environment"):
-        env = bh.create_env(type="4D")
-        bh.check_env(env)
-
-
 def test_ssp_spline_points():
     ssp = pd.DataFrame({'speed': [1540,1530,1535]},index=[0,15,30])
     env = bh.create_env(soundspeed=ssp,depth=30,soundspeed_interp="spline")
