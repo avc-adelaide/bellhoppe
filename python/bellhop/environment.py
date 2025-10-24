@@ -11,6 +11,7 @@ from dataclasses import dataclass, asdict, fields
 from typing import Optional, Union, Any, Dict, Iterator
 from pprint import pformat
 import warnings
+from itertools import product
 
 import numpy as _np
 import pandas as _pd
@@ -282,6 +283,49 @@ class Environment(MutableMapping[str, Any]):
         if self['_single_beam'] == _Strings.single_beam:
             assert self['single_beam_index'] is not None, 'Single beam was requested with option I but no index was provided in NBeam line'
 
+
+    def unwrap(self, *keys: str) -> list["Environment"]:
+        """Return a list of Environment copies expanded over the given keys.
+
+        If multiple keys are provided, all combinations are produced.
+        Each unwrapped Environment gets a unique `.name` derived from the
+        parent name and the expanded field values.
+        """
+
+        # Ensure keys are valid
+        for k in keys:
+            if k not in self:
+                raise KeyError(f"Environment has no field '{k}'")
+
+        # Prepare value lists (convert scalars → singletons)
+        values: list[Any] = []
+        for k in keys:
+            v = self[k]
+            if isinstance(v, (list, tuple, _np.ndarray)):
+                values.append(v)
+            else:
+                values.append([v])
+
+        combos = product(*values)
+        envs = []
+
+        base_name = str(self.get("name", "env"))
+
+        for combo in combos:
+            env_i = self.copy()
+            name_parts = [base_name]
+            for k, v in zip(keys, combo):
+                env_i[k] = v
+                # Replace disallowed chars and truncate floats nicely
+                if isinstance(v, float):
+                    v_str = f"{v:g}"
+                else:
+                    v_str = str(v)
+                name_parts.append(f"{k}{v_str}")
+            env_i["name"] = "-".join(name_parts)
+            envs.append(env_i)
+
+        return envs
 
     def __getitem__(self, key: str) -> Any:
         if not hasattr(self, key):

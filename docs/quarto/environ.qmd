@@ -26,6 +26,7 @@ The `Environment` class provide the following user-facing methods:
 * `.copy()` --- shallow copy the instance
 * `.reset()` — set all user-facing values from the instance to `None`
 * `.to_dict()` --- convert parameters to a standard `dict`
+* `.unwrap()` --- converts a field list into a list of envs with single values
 
 To scan over the full list of user-facing fields, the standard `print()` function will return
 something sensible:
@@ -101,3 +102,31 @@ env1.check()
 env2 = env1.copy()
 assert env2.depth_max == 2000
 ```
+
+## Unwrapping list-based parameters
+
+Bellhop often can only handle single values at a time for parameters such as frequency,
+source position, and so on. The `.unwrap` method allows such parameters to be defined
+as lists, and then create a list of environments. An example will explain more clearly.
+These two definitions are equivalent:
+```
+env = bh.create_env()
+env.frequency = [100, 200]
+envs = env.unwrap('frequency')
+
+env1 = bh.create_env()
+env2 = bh.create_env()
+env1.frequency = 100
+env2.frequency = 200
+envs = [env1, env2]
+```
+Moreover, multiple fields can be unwrapped at once to result in every combination of defined parameters:
+```
+env = bh.create_env()
+env.frequency = [100, 200, 300]
+env.source_depth = [5, 10]
+envs = env.unwrap('frequency','source_depth')
+# results in a list of 6 Environments for 3x2 combination of options
+```
+These lists of environments are intended to be useful when used as inputs into the `bellhop.compute` function.
+The `env.name` field is unique for each Environment in the list.

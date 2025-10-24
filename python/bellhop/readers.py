@@ -239,7 +239,7 @@ class EnvironmentReader:
         if self.env["volume_attenuation"] == _Strings.biological:
             self.env['biological_layer_parameters'] = self._read_biological_layers(f)
 
-    def _read_biological_layers(self, f: TextIO) -> _np.ndarray:
+    def _read_biological_layers(self, f: TextIO) -> _pd.DataFrame:
         """Read biological layer parameters for attenuation due to fish."""
         next_line = _read_next_valid_line(f)
         print(next_line)
