@@ -236,12 +236,14 @@ class EnvironmentReader:
             self.env['_surface_attenuation_shear'] = _float(surface_props[5])
 
         # Line 4b: Biological layer properties
-        if self.env["surface_boundary_condition"] == _Strings.biological:
-            self.env['biological_layer_params'] = _read_biological_layers(f)
+        if self.env["volume_attenuation"] == _Strings.biological:
+            self.env['biological_layer_parameters'] = self._read_biological_layers(f)
 
     def _read_biological_layers(self, f: TextIO) -> _np.ndarray:
         """Read biological layer parameters for attenuation due to fish."""
-        npoints = int(_read_next_valid_line(f))
+        next_line = _read_next_valid_line(f)
+        print(next_line)
+        npoints = int(next_line)
         z1 = []
         z2 = []
         f0 = []
@@ -258,7 +260,7 @@ class EnvironmentReader:
                 a0.append(float(parts[4]))
         if len(z1) != npoints:
             raise ValueError(f"Expected {npoints} points, but found {len(z1)}")
-        return _np.column_stack([z1, z2, f0, QQ, a0])
+        return _pd.DataFrame({"z1": z1, "z2": z2, "f0": f0, "Q": QQ, "a0": a0})
 
     def _read_sound_speed_profile(self, f: TextIO) -> None:
         """Read environment file sound speed profile"""

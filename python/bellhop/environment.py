@@ -116,6 +116,7 @@ class Environment(MutableMapping[str, Any]):
     # Attenuation parameters
     volume_attenuation: str = 'none'
     attenuation_units: str = Defaults.attenuation_units
+    biological_layer_parameters: Optional[Any] = None
 
     # Francois-Garrison volume attenuation parameters
     fg_salinity: Optional[float] = None
@@ -299,9 +300,9 @@ class Environment(MutableMapping[str, Any]):
             raise ValueError(f"Invalid value for {key!r}: {value}. Allowed: {set(allowed.values())}")
         # coerce types
         if not (
-            value is None or 
-            isinstance(value,_pd.DataFrame) or 
-            _np.isscalar(value) 
+            value is None or
+            isinstance(value,_pd.DataFrame) or
+            _np.isscalar(value)
                ):
             if not isinstance(value[0],str):
                 value = _np.asarray(value, dtype=_np.float64)
