@@ -216,7 +216,6 @@ class EnvironmentReader:
         if self.env["_altimetry"] == _Strings.from_file:
             self.env["surface"], self.env["surface_interp"] = read_ati(self.fname_base)
 
-        # Line 4a: Volume attenuation params
         if self.env["volume_attenuation"] == _Strings.francois_garrison:
             fg_spec_line = _read_next_valid_line(f)
             fg_parts = _parse_line(fg_spec_line)
@@ -225,7 +224,7 @@ class EnvironmentReader:
             self.env["fg_pH"]          = float(fg_parts[2])
             self.env["fg_depth"]       = float(fg_parts[3])
 
-        # Line 4b: Boundary condition params
+        # Line 4a: Boundary condition params
         if self.env["surface_boundary_condition"] == _Strings.acousto_elastic:
             surface_props_line = _read_next_valid_line(f)
             surface_props = _parse_line(surface_props_line) + [None] * 6
@@ -235,6 +234,31 @@ class EnvironmentReader:
             self.env['surface_density']           = _float(surface_props[3], scale=1000)  # convert from g/cm³ to kg/m³
             self.env['surface_attenuation']       = _float(surface_props[4])
             self.env['_surface_attenuation_shear'] = _float(surface_props[5])
+
+        # Line 4b: Biological layer properties
+        if self.env["surface_boundary_condition"] == _Strings.biological:
+            self.env['biological_layer_params'] = _read_biological_layers(f)
+
+    def _read_biological_layers(self, f: TextIO) -> _np.ndarray
+        """Read biological layer parameters for attenuation due to fish."""
+        npoints = int(_read_next_valid_line(f))
+        z1 = []
+        z2 = []
+        f0 = []
+        QQ = []
+        a0 = []
+        for i in range(npoints):
+            line = _read_next_valid_line(f)
+            parts = _parse_line(line)
+            if len(parts) == 5:
+                z1.append(float(parts[0]))
+                z2.append(float(parts[1]))
+                f0.append(float(parts[2]))
+                QQ.append(float(parts[3]))
+                a0.append(float(parts[4]))
+        if len(z1) != npoints:
+            raise ValueError(f"Expected {npoints} points, but found {len(z1)}")
+        return _np.column_stack([z1, z2, f0, QQ, a0])
 
     def _read_sound_speed_profile(self, f: TextIO) -> None:
         """Read environment file sound speed profile"""

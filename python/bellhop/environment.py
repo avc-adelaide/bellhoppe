@@ -105,7 +105,7 @@ class Environment(MutableMapping[str, Any]):
     _single_beam: str = _Strings.default # value inferred from `single_beam_index`
 
     # Solution parameters
-    step_size: Optional[float] = 0.0
+    step_size: Optional[float] = 0.0 # (0 = auto)
     box_depth: Optional[float] = None
     box_range: Optional[float] = None
     box_cross_range: Optional[float] = None
