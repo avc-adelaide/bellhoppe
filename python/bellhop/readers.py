@@ -239,7 +239,7 @@ class EnvironmentReader:
         if self.env["surface_boundary_condition"] == _Strings.biological:
             self.env['biological_layer_params'] = _read_biological_layers(f)
 
-    def _read_biological_layers(self, f: TextIO) -> _np.ndarray
+    def _read_biological_layers(self, f: TextIO) -> _np.ndarray:
         """Read biological layer parameters for attenuation due to fish."""
         npoints = int(_read_next_valid_line(f))
         z1 = []
