@@ -245,6 +245,7 @@ class BellhopSimulator:
         svp_alti = _Maps._altimetry_rev[env['_altimetry']]
         svp_singlebeam = _Maps._single_beam_rev[env['_single_beam']]
 
+        # Line 4
         comment = "SSP parameters: Interp / Top Boundary Cond / Attenuation Units / Volume Attenuation)"
         topopt = self._quoted_opt(svp_interp, svp_boundcond, svp_attenuation_units, svp_volume_attenuation, svp_alti, svp_singlebeam)
         self._print_env_line(fh,f"{topopt}",comment)
@@ -253,6 +254,7 @@ class BellhopSimulator:
             comment = "Francois-Garrison volume attenuation parameters (sal, temp, pH, depth)"
             self._print_env_line(fh,f"{env['fg_salinity']} {env['fg_temperature']} {env['fg_pH']} {env['fg_depth']}",comment)
 
+        # Line 4a
         if env['surface_boundary_condition'] == _Strings.acousto_elastic:
             comment = "DEPTH_Top (m)  TOP_SoundSpeed (m/s)  TOP_SoundSpeed_Shear (m/s)  TOP_Density (g/cm^3)  [ TOP_Absorp [ TOP_Absorp_Shear ] ]"
             array_str = self._array2str([
@@ -265,12 +267,23 @@ class BellhopSimulator:
             ])
             self._print_env_line(fh,array_str,comment)
 
-        comment = "[Npts - ignored]  [Sigma - ignored]  Depth_Max"
-        self._print_env_line(fh,f"{env['_mesh_npts']} {env['_depth_sigma']} {env['depth_max']}",comment)
+        # Line 4b
+        if env['biological_layer_parameters'] is not None:
+            self._write_env_biological(fh, env['biological_layer_parameters'])
+        
+    def _write_env_biological(self, fh: TextIO, biol: _pd.DataFrame) -> None:
+        """Writes biological layer parameters to env file."""
+        self._print_env_line(fh, biol.shape[0], "N_Biol_Layers / z1 z2 w0 Q a0")
+        for j, row in enumerate(biol.values):
+            self._print_env_line(fh, self._array2str(row), f"biol_{j}")
 
     def _write_env_sound_speed(self, fh: TextIO, env: Environment) -> None:
         """Writes sound speed profile lines of env file."""
         svp = env['soundspeed']
+        
+        comment = "[Npts - ignored]  [Sigma - ignored]  Depth_Max"
+        self._print_env_line(fh,f"{env['_mesh_npts']} {env['_depth_sigma']} {env['depth_max']}",comment)
+        
         svp_interp = _Maps.soundspeed_interp_rev[env['soundspeed_interp']]
         if isinstance(svp, _pd.DataFrame) and len(svp.columns) == 1:
             svp = _np.hstack((_np.array([svp.index]).T, _np.asarray(svp)))
