@@ -54,8 +54,10 @@ class DataclassTableDirective(Directive):
                 raise ImportError(f"Cannot load module spec from {module_full_path}")
             
             module = importlib.util.module_from_spec(spec)
-            sys.modules[module_path] = module
+            # Execute the module
             spec.loader.exec_module(module)
+            # Add to sys.modules only after successful execution
+            sys.modules[module_path] = module
             
             dataclass_obj = getattr(module, class_name)
         except (ImportError, AttributeError, FileNotFoundError) as e:
