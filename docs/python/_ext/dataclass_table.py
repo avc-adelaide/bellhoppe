@@ -129,9 +129,14 @@ class DataclassTableDirective(Directive):
     
     def _format_default(self, default_value):
         """Format the default value for display."""
-        # Handle enum values
+        # Handle enum values - extract the underlying value
         if hasattr(default_value, 'value'):
-            return str(default_value.value)
+            default_value = default_value.value
+        
+        # Add quotes around string values
+        if isinstance(default_value, str):
+            return f'"{default_value}"'
+        
         return str(default_value)
     
     def _get_units(self, field_obj):
