@@ -23,7 +23,7 @@ def test_read_env_basic():
     assert env['beam_num'] == 41
 
     # Verify the environment is valid
-    checked_env = bh.check_env(env)
+    checked_env = env.check()
     assert checked_env is not None
 
 
@@ -62,7 +62,7 @@ def test_read_env_round_trip():
         beam_angle_max=30.0,
         beam_num=31
     )
-    env_orig = bh.check_env(env_orig)
+    env_orig.check()
 
     with tempfile.TemporaryDirectory() as temp_dir:
         fname_base = os.path.join(temp_dir, "test_env")

@@ -105,8 +105,6 @@ def models(env: Optional[Environment] = None, task: Optional[str] = None, dim: O
     """
     if env is not None:
         env.check()
-    if (env is None and task is not None) or (env is not None and task is None):
-        raise ValueError('env and task should be both specified together')
     rv: List[str] = []
     for m in _models:
         if m.supports(env=env, task=task, dim=dim):
@@ -179,38 +177,6 @@ def create_env(**kv: Any) -> Environment:
 
 
 
-def check_env(env: Environment) -> Environment:
-    """Check the validity of a underwater environment definition.
-
-    This function is automatically executed before any of the compute_ functions,
-    but must be called manually after setting environment parameters if you need to
-    query against defaults that may be affected.
-
-    Parameters
-    ----------
-    env : dict
-        Environment definition
-
-    Returns
-    -------
-    dict
-        Updated environment definition
-
-    Raises
-    ------
-    ValueError
-        If the environment is invalid
-
-    Examples
-    --------
-    >>> import bellhop as bh
-    >>> env = bh.create_env()
-    >>> env = check_env(env)
-    """
-
-    env._finalise()
-    return env.check()
-
 
 def compute(
             env: Union[Environment,List[Environment]],
@@ -276,16 +242,16 @@ def compute(
             debug and print(f"Using model: {'[None] (default)' if this_model is None else this_model.get('name')}")
             for this_task in tasks:
                 debug and print(f"Using task: {this_task}")
-                env_chk = check_env(this_env)
-                this_task = this_task or env_chk.get('task')
+                this_env.check()
+                this_task = this_task or this_env.get('task')
                 if this_task is None:
                     raise ValueError("Task must be specified in env or as parameter")
-                model_fn = _select_model(env_chk, this_task, this_model, debug)
+                model_fn = _select_model(this_env, this_task, this_model, debug)
                 results.append({
-                       "name": env_chk["name"],
+                       "name": this_env["name"],
                        "model": this_model,
                        "task": this_task,
-                       "results": model_fn.run(env_chk, this_task, debug, fname_base),
+                       "results": model_fn.run(this_env, this_task, debug, fname_base),
                       })
     assert len(results) > 0, "No results generated"
     index_df = _pd.DataFrame([
@@ -410,7 +376,7 @@ def compute_eigenrays(env: Environment, source_depth_ndx: int = 0, receiver_dept
     >>> rays = bh.compute_eigenrays(env)
     >>> bh.plot_rays(rays, width=1000)
     """
-    env = check_env(env)
+    env.check()
     env = env.copy()
     if _np.size(env['source_depth']) > 1:
         env['source_depth'] = env['source_depth'][source_depth_ndx]
@@ -450,7 +416,7 @@ def compute_rays(env: Environment, source_depth_ndx: int = 0, model: Optional[An
     >>> rays = bh.compute_rays(env)
     >>> bh.plot_rays(rays, width=1000)
     """
-    env = check_env(env)
+    env.check()
     if _np.size(env['source_depth']) > 1:
         env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]
@@ -492,7 +458,7 @@ def compute_transmission_loss(env: Environment, source_depth_ndx: int = 0, mode:
     task = mode or env.get("interference_mode") or Defaults.interference_mode
     env['interference_mode'] = task
     debug and print(f"  {task=}")
-    env = check_env(env)
+    env.check()
     if _np.size(env['source_depth']) > 1:
         env['source_depth'] = env['source_depth'][source_depth_ndx]
     output = compute(env, model, task, debug, fname_base)

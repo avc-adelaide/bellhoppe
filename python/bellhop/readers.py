@@ -143,7 +143,7 @@ def read_env(fname: str) -> Environment:
     50.0
 
     >>> # Use with existing functions
-    >>> checked_env = bh.check_env(env)
+    >>> checked_env.check()
     >>> rays = bh.compute_rays(env)
 
     >>> # Round-trip compatibility

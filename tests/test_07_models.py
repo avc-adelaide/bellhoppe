@@ -9,17 +9,6 @@ def test_models():
     print(models)
     assert models is not None
 
-def test_models_arg():
-
-    env = bh.create_env()
-    with pytest.raises(ValueError,match="env and task should be both specified together"):
-        models = bh.models(env)
-
-def test_models_arg_task():
-
-    env = bh.create_env()
-    with pytest.raises(ValueError,match="env and task should be both specified together"):
-        models = bh.models(task="foobar")
 
 def test_models_task():
 

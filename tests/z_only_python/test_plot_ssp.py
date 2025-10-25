@@ -39,7 +39,7 @@ def test_plot_ssp_dataframe():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors."""
     ssp = pd.DataFrame({ 'depth':[0,10,20,30], 'speed':[1540,1530,1532,1535]})
     env = bh.create_env(soundspeed=ssp,depth=30,soundspeed_interp="spline")
-    env = bh.check_env(env)
+    env.check()
 
     with bhp.figure() as f:
         bhp.plot_ssp(env)
@@ -49,7 +49,7 @@ def test_plot_ssp_dataframe():
 def test_plot_ssp_const():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors."""
     env = bh.create_env(soundspeed=1500,depth=30)
-    env = bh.check_env(env)
+    env.check()
 
     with bhp.figure() as f:
         bhp.plot_ssp(env)
@@ -64,7 +64,7 @@ def test_plot_ssp_quad():
         'ssp3':[1545,1550,1552,1545],
     }, index=[0,10,20,30])
     env = bh.create_env(soundspeed=ssp,depth=30,soundspeed_interp="quadrilateral")
-    env = bh.check_env(env)
+    env.check()
 
     with bhp.figure() as f:
         bhp.plot_ssp(env)

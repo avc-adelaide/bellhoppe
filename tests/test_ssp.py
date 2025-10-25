@@ -7,7 +7,7 @@ import pandas.testing as pdt
 def test_ssp_spline_points(): # not an error but anyway
     ssp = pd.DataFrame({ 'depth':[0,10,20,30], 'speed':[1540,1530,1520,1525]})
     env = bh.create_env(soundspeed=ssp,depth=30,soundspeed_interp="spline")
-    env = bh.check_env(env)
+    env.check()
     arr = bh.compute_arrivals(env,debug=True)
 
 
@@ -16,20 +16,17 @@ def test_ssp_one_speed():
     """Test singleton SSP entries. All of these should be equivalent."""
 
     ssp1 = 1540
-    env1 = bh.create_env(soundspeed=ssp1, depth=30, soundspeed_interp="pchip")
-    bh.check_env(env1)
+    env1 = bh.create_env(soundspeed=ssp1, depth=30, soundspeed_interp="pchip").check()
 
     ssp2 = [
         [ 0, 1540],  # equivalent to "constant"
     ]
-    env2 = bh.create_env(soundspeed=ssp2, depth=30, soundspeed_interp="pchip")
-    bh.check_env(env2)
+    env2 = bh.create_env(soundspeed=ssp2, depth=30, soundspeed_interp="pchip").check()
 
     ssp3 = [
         [ 30, 1540],  # equivalent to "constant"
     ]
-    env3 = bh.create_env(soundspeed=ssp3, depth=30, soundspeed_interp="pchip")
-    bh.check_env(env3)
+    env3 = bh.create_env(soundspeed=ssp3, depth=30, soundspeed_interp="pchip").check()
 
     pdt.assert_frame_equal(env1['soundspeed'],env2['soundspeed'])
     pdt.assert_frame_equal(env1['soundspeed'],env3['soundspeed'])

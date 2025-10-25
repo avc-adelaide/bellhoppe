@@ -29,22 +29,22 @@ def test_variable_soundspeed_error():
     # Create environment with variable sound speed profile
     with pytest.raises(ValueError, match=r"Soundspeed array must be strictly monotonic in depth"):
         env = bh.create_env(soundspeed=ssp, depth=30)
-        env = bh.check_env(env)
+        env.check()
 
 
 
 def test_ssp_spline_points():
     ssp = pd.DataFrame({'speed': [1540,1530,1535]},index=[0,15,30])
-    env = bh.create_env(soundspeed=ssp,depth=30,soundspeed_interp="spline")
 
     with pytest.raises(ValueError, match=r"soundspeed profile must have at least 4 points for spline interpolation"):
-        bh.check_env(env)
+        env = bh.create_env(soundspeed=ssp,depth=30,soundspeed_interp="spline")
+        env.check()
 
 
 def test_missing_output_triggers_warning(capsys):
     bellhop = bh.bellhop.BellhopSimulator()
     env = bh.create_env()
-    env = bh.check_env(env)
+    env.check()
     task = bh.bellhop._Strings.arrivals
 
     with pytest.raises(RuntimeError, match="Bellhop did not generate expected output file"):

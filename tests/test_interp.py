@@ -97,7 +97,7 @@ def test_spline_fail():
             [30, 1535]   # 1535 m/s at the seabed
         ]
         env2 = bh.create_env(soundspeed=ssp2, depth=30, soundspeed_interp="spline")
-        bh.check_env(env2)
+        env2.check()
 
 
 def test_pchip():

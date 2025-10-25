@@ -37,7 +37,7 @@ def test_Ellipse_read_data():
     assert env['grid_type'] == "rectilinear", "Task description is 'RB RR'"
 
     print(env)
-    bh.check_env(env)
+    env.check()
 
     rays = bh.compute_rays(env, debug=True, fname_base="tests/Ellipse/ellipse_debug")
     assert rays is not None

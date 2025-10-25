@@ -149,7 +149,7 @@ class Environment(MutableMapping[str, Any]):
     def _finalise(self) -> "Environment":
         """Reviews the data within an environment and updates settings for consistency.
 
-        This function is run as the first step of check_env().
+        This function is run as the first step of `.check()`.
         """
 
         if _np.size(self['depth']) > 1:

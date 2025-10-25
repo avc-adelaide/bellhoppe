@@ -38,7 +38,7 @@ def test_DickensB():
     assert env['box_depth'] ==   3100.0, "0.0  3100.0  101.0		! STEP (m), ZBOX (m), RBOX (km)"
     assert env['box_range'] == 101000.0, "0.0  3100.0  101.0		! STEP (m), ZBOX (m), RBOX (km)"
 
-    bh.check_env(env)
+    env.check()
     # print(env)
 
     assert tl is not None, "No results generated"
@@ -101,7 +101,7 @@ def test_DickensB_interpolate_depth():
     """Test what happens when the SSP extends below max depth"""
     with pytest.warns(UserWarning):
         env7 = bh.read_env("tests/Dickins/DickinsB_interp_depth.env")
-        env7 = bh.check_env(env7)
+        env7.check()
 #        tl = bh.compute_transmission_loss(env7,fname_base="tests/Dickins/DickinsB_idepth_output",debug=True)
 #        assert tl is not None, "Interpolated values should allow Bellhop to run"
 

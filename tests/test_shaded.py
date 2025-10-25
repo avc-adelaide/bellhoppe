@@ -20,7 +20,7 @@ def test_shaded_read_data():
     assert len(env["source_directionality"]) == 37, "37 entries in SBP file"
 
     # print(env)
-    bh.check_env(env)
+    env.check()
 
 
 def test_shaded_calc():

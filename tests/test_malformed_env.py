@@ -12,7 +12,7 @@ def test_malformed_env_media():
     """Test ENV file where nmedia > 1"""
     with pytest.raises(ValueError, match="BELLHOP only supports 1 medium, found 2"):
         env = bh.read_env("tests/malformed_env/bad_media.env")
-        bh.check_env(env)
+        env.check()
 
 
 def test_malformed_env_top():

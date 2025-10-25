@@ -14,7 +14,7 @@ def test_sqrt_bug():
 
     nn = len(env["receiver_range"])
 
-    bh.check_env(env)
+    env.check()
 
     assert(env["depth"].ndim == 2)
     assert(env["depth"].size == 4)

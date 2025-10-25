@@ -152,7 +152,7 @@ class TestDataclassIntegration:
         """Test that existing dictionary-based interface still works."""
         # This should work exactly as before
         env = bh.create_env(depth=40, soundspeed=1540)
-        env = bh.check_env(env)
+        env.check()
         assert env['depth'] == 40
         assert env['soundspeed'].iloc[0,0] == 1540
 

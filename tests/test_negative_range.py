@@ -15,7 +15,7 @@ def test_negative_receiver_ranges():
     env["receiver_range"] = np.array([-1000, -500, -1, 1, 500, 1000])
 
     # Verify environment is valid
-    bh.check_env(env)
+    env.check()
 
     # Verify that angle range was automatically extended for negative ranges
     assert env['beam_angle_min'] == - Defaults.beam_angle_fullspace, "beam_angle_min should be automatically extended to -179 for negative ranges"
@@ -39,7 +39,7 @@ def test_positive_receiver_ranges_unchanged():
     env["receiver_range"] = np.array([1, 500, 1000])
 
     # Verify environment is valid
-    bh.check_env(env)
+    env.check()
 
     # Verify that angle range was NOT modified for positive-only ranges
     assert env['beam_angle_min'] == - Defaults.beam_angle_halfspace, "beam_angle_min should not be modified for positive-only ranges"
@@ -65,7 +65,7 @@ def test_manual_angle_override():
     env["beam_angle_max"] = 45
 
     # Verify environment is valid
-    bh.check_env(env)
+    env.check()
 
     # Verify that manually set angles are respected (not auto-extended)
     # The condition checks if beam_angle_min > -120, so -45 should not trigger auto-extension
