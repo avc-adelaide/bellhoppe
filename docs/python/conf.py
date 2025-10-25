@@ -1,10 +1,14 @@
 # Configuration file for the Sphinx documentation builder.
 
 import os
+import sys
 
 # Add Python package path
 conf_dir = os.path.dirname(__file__)
 package_dir = os.path.abspath(os.path.join(conf_dir, '../bellhop'))
+
+# Add custom extensions directory
+sys.path.insert(0, os.path.abspath('_ext'))
 
 # -- Project information -----------------------------------------------------
 project = 'BELLHOP Python API'
@@ -17,6 +21,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
+    'dataclass_table',
 ]
 
 templates_path = ['_templates']
