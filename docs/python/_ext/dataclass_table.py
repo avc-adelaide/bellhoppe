@@ -91,11 +91,12 @@ class DataclassTableDirective(Directive):
         lines = [
             ".. list-table::",
             "   :header-rows: 1",
-            "   :widths: 25 15 20 40",
+            "   :widths: 20 10 15 15 40",
             "",
             "   * - Field Name",
             "     - Type",
             "     - Default Value",
+            "     - Units",
             "     - Description",
         ]
         
@@ -105,6 +106,7 @@ class DataclassTableDirective(Directive):
             field_name = field_obj.name
             field_type = self._format_type(field_obj.type)
             default_value = self._format_default(field_obj.default)
+            units = self._get_units(field_obj)
             description = self._get_description(field_obj)
             
             # Add table row
@@ -112,6 +114,7 @@ class DataclassTableDirective(Directive):
                 f"   * - ``{field_name}``",
                 f"     - {field_type}",
                 f"     - ``{default_value}``",
+                f"     - {units}",
                 f"     - {description}",
             ])
         
@@ -131,21 +134,24 @@ class DataclassTableDirective(Directive):
             return str(default_value.value)
         return str(default_value)
     
+    def _get_units(self, field_obj):
+        """Extract units from field metadata."""
+        metadata = field_obj.metadata
+        
+        # Check for 'units' in metadata
+        if 'units' in metadata:
+            return metadata['units']
+        
+        # No units available
+        return ""
+    
     def _get_description(self, field_obj):
         """Extract description from field metadata."""
         metadata = field_obj.metadata
         
         # Check for 'desc' in metadata
         if 'desc' in metadata:
-            desc = metadata['desc']
-            # Check if there's also units
-            if 'units' in metadata:
-                return f"{desc} (units: {metadata['units']})"
-            return desc
-        
-        # Check for 'units' only
-        if 'units' in metadata:
-            return f"Units: {metadata['units']}"
+            return metadata['desc']
         
         # No description available
         return ""
