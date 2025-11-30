@@ -2,7 +2,26 @@
 title: Compilation and installation
 ---
 
-## Installation
+## Installation -- PyPI
+
+### `uv`
+
+`aubellhop` is distributed through PyPI with precompiled binaries.
+It should be enough to get started using:
+
+```bash
+mkdir bhex
+cd bhex
+uv init --bare
+uv add aubellhop
+echo "import aubellhop as bh\n\nbh.demo()" > bhex.py
+uv run bhex.py
+```
+
+I strongly recommend using `uv` for command line use, as it avoids the need to set up `pip` and virtual environments manually.
+Using a Jupyter notebook is likely more convenient for more in-depth studies.
+
+## Installation -- manual
 
 ### Mac
 

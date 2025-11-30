@@ -40,6 +40,7 @@ arr = bh.compute_arrivals(env)
 bhp.plot_arrivals(arr,env=env)
 ```
 This approach uses a modern Python interface for specifying parameters and executing calculation tasks, by writing bellhop-native input files to disk.
+See the [installation instructions](page/installation.html) for an example of how to run the Python script using `uv`.
 
 The Python interface also allows reading input files directly:
 ```
