@@ -4,15 +4,25 @@
 [![Test Suite](https://github.com/avc-adelaide/aubellhop/actions/workflows/check.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml)
 [![Code Lint](https://github.com/avc-adelaide/aubellhop/actions/workflows/lint.yml/badge.svg)](https://github.com/avc-adelaide/aubellhop/actions/workflows/lint.yml)
 
-## Installation
+## Installation and demo
 
-You can (hopefully) install bellhop with pre-compiled binaries:
+You can (hopefully) install `aubellhop` with pre-compiled binaries included straight from PyPI.
+This short script will create a demo folder, install `aubellhop` using `uv`, and then run the demo function:
+```bash
+mkdir bellhop-example && cd $_
+uv init --bare
+uv add aubellhop
+uv run python -c "import aubellhop as bh; bh.demo()"
+```
+Then to re-run the demo:
+```bash
+uv run bellhop_demo.py
+```
 
+If you use Python with different build/environment setups, the standard approaches should work just fine:
 ```bash
 pip install aubellhop
 ```
-
-This includes pre-built Fortran executables for Linux, macOS, and Windows, so you don't need to compile anything yourself.
 
 See the [compilation and installation guide](https://avc-adelaide.github.io/aubellhop/page/installation.html) for building from source if you wish to edit the code or the prebuilt binaries don't work for you.
 
@@ -63,5 +73,3 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-

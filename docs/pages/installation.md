@@ -10,12 +10,10 @@ title: Compilation and installation
 It should be enough to get started using:
 
 ```bash
-mkdir bhex
-cd bhex
+mkdir bhex && cd bhex
 uv init --bare
 uv add aubellhop
-echo "import aubellhop as bh\n\nbh.demo()" > bhex.py
-uv run bhex.py
+uv run python -c "import aubellhop as bh; bh.demo()"
 ```
 
 I strongly recommend using `uv` for command line use, as it avoids the need to set up `pip` and virtual environments manually.
@@ -121,21 +119,21 @@ If you wish to use the Matlab interfaces, the following commands should be added
 If the build and installation steps were successful, you should now be able to run
 the Python test suite located in the `tests/` subfolder:
 
-    hatch test
-
-Or:
-
     make test
 
 The code can be statically tested with the respective Python and Fortran linters with:
 
     pip install ruff
-    hatch run lintp
+    make lintp
 
     pip install fortitude-lint
-    hatch run lintf
+    make lintf
 
-These steps can be run together with:
+The Python code can also be type checked using:
+
+    make typep
+
+These steps can all be run together with:
 
     make lint
 
@@ -145,35 +143,32 @@ These steps can be run together with:
 ### Fortran Documentation
 
 Generate Fortran documentation locally with:
-```bash
-pip install FORD # if needed
-hatch run docf
-```
+
+    pip install FORD # if needed
+    make docf
+
 This uses FORD to build the HTML documentation in `doc/` with the static pages `docs/` copied
 into the `doc/media` subdirectory, with main page `doc/index.html`.
 
 ### Python API Documentation
 
 Generate Python API documentation with:
-```bash
-pip install sphinx # if needed
-hatch run docp
-```
+
+    pip install sphinx # if needed
+    make docp
+
 The generated documentation will be in the `doc/media/python/` subdirectory.
 
 ### Quarto tutorials
 
-```bash
-brew install --cask quarto # Mac
-hatch run docq
-```
+    brew install --cask quarto # Mac, if needed
+    make docq
 
 ### Make interface
 
-These steps are combined together with:
-```bash
-make doc
-```
+These steps are all combined together with:
+
+    make doc
 
 
 ## Code coverage analysis
@@ -183,7 +178,7 @@ This helps assess how much of the codebase is exercised by tests and identify ar
 
 Generate the code coverage locally with:
 
-    make coverage-full
+    make cov
 
 This requires a complete rebuild of the binary to enable the coverage instrumentation.
 The resulting coverage report is saved to `docs/coverage-index.html`.
