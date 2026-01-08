@@ -154,6 +154,9 @@ debug = [
     "install-dev",
     "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import aubellhop; print(\"bellhop:\", aubellhop.__file__, aubellhop.__version__)'"
 ]
+doc = [
+    "make docs"
+]
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true
