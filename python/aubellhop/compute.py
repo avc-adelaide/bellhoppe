@@ -14,7 +14,7 @@ Simpler once-off wrapper functions are also provided for convenience (`compute_a
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 import numpy as np
 import pandas as pd
 
@@ -120,10 +120,14 @@ def compute(
     >>> output, ind_df = bh.compute(env,task=["arrivals", "eigenrays"])
     >>> bh.plot_arrivals(output[0]['results'])
     """
-    envs = env if isinstance(env, list) else [env]
+    if isinstance(env, list):
+        envs = cast(list[Environment], env)
+    else:
+        envs = [env]
     models_ = model if isinstance(model, list) else [model]
     tasks = task if isinstance(task, list) else [task]
     results: list[dict[str, Any]] = []
+    this_env: Environment
     for this_env in envs:
         for this_model in models_:
             for this_task in tasks:
