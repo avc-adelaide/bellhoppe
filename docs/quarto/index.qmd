@@ -16,6 +16,8 @@ jupyter: python3
     - describes how to set up the simulation environment
 - [Environment parameters](environ-fields.qmd)
     - comprehensive survey of environment parameters
+- [Reading data from external files](reading.qmd)
+    - interfaces to legacy `bellhop` data files
 - [Sound speed profiles](ssp.qmd)
     - defining depth-dependent SSPs and setting interpolation options
     - example using NOAA data to define a 2D sound speed profile that varies with range and depth

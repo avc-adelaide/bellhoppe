@@ -380,6 +380,7 @@ class EnvironmentReader:
         """Extract string from within single quotes, possibly with commas too."""
         return line.strip().strip(",'")
 
+########################################
 
 def read_ssp(fname: str,
              depths: list[float] | NDArray[np.float64] | pd.DataFrame | None = None
@@ -483,17 +484,17 @@ def read_ssp(fname: str,
         df.index.name = "depth"
         return df
 
-def read_bty(fname: str) -> tuple[NDArray[np.float64], str]:
-    """Read a bathymetry file used by Bellhop."""
-    fname, _ = _prepare_filename(fname, FileExt.bty, "BTY")
-    return read_ati_bty(fname)
-
 def read_ati(fname: str) -> tuple[NDArray[np.float64], str]:
     """Read an altimetry file used by Bellhop."""
     fname, _ = _prepare_filename(fname, FileExt.ati, "ATI")
-    return read_ati_bty(fname)
+    return _read_ati_bty(fname)
 
-def read_ati_bty(fname: str) -> tuple[NDArray[np.float64], str]:
+def read_bty(fname: str) -> tuple[NDArray[np.float64], str]:
+    """Read a bathymetry file used by Bellhop."""
+    fname, _ = _prepare_filename(fname, FileExt.bty, "BTY")
+    return _read_ati_bty(fname)
+
+def _read_ati_bty(fname: str) -> tuple[NDArray[np.float64], str]:
     """Read an altimetry (.ati) or bathymetry (.bty) file used by BELLHOP.
 
     This function reads BELLHOP's .bty files which define the bottom depth
@@ -646,19 +647,6 @@ def read_sbp(fname: str) -> NDArray[np.float64]:
 def read_brc(fname: str) -> NDArray[np.float64]:
     """Read a BRC file and return array of reflection coefficients.
 
-    See `read_refl_coeff` for documentation, but use this function for extension checkking."""
-    fname, _ = _prepare_filename(fname, FileExt.brc, "BRC")
-    return read_refl_coeff(fname)
-
-def read_trc(fname: str) -> NDArray[np.float64]:
-    """Read a TRC file and return array of reflection coefficients.
-
-    See `read_refl_coeff` for documentation, but use this function for extension checkking."""
-    fname, _ = _prepare_filename(fname, FileExt.trc, "TRC")
-    return read_refl_coeff(fname)
-
-def read_refl_coeff(fname: str) -> NDArray[np.float64]:
-    """Read a reflection coefficient (.brc/.trc) file used by BELLHOP.
 
     This function reads BELLHOP's .brc files which define the reflection coefficient
     data. The file format is:
@@ -682,25 +670,40 @@ def read_refl_coeff(fname: str) -> NDArray[np.float64]:
 
     Notes
     -----
-    The returned array can be assigned to env["bottom_reflection_coefficient"] or env["surface_reflection_coefficient"] .
+    The returned array can be assigned to `env["bottom_reflection_coefficient"]`.
+    The equivalent `read_trc()` data would be assigned to `env["surface_reflection_coefficient"]`.
 
-    Examples
-    --------
-    >>> import aubellhop as bh
-    >>> brc = bh.read_refl_coeff("tests/MunkB_geo_rot/MunkB_geo_rot.brc")
-    >>> env = bh.Environment()
-    >>> env["bottom_reflection_coefficient"] = brc
-    >>> arrivals = bh.calculate_arrivals(env)
-
-    **File format example:**
-
+    File format example
+    -------------------
     ::
 
         3
         0.0   1.00  180.0
         45.0  0.95  175.0
         90.0  0.90  170.0
+
+    Example
+    -------
+    >>> import aubellhop as bh
+    >>> import aubellhop.readers as bhr
+    >>> brc = bhr.read_refl_coeff("tests/MunkB_geo_rot/MunkB_geo_rot.brc")
+    >>> env = bh.Environment()
+    >>> env["bottom_reflection_coefficient"] = brc
+    >>> arrivals = bh.calculate_arrivals(env)
+
     """
+    fname, _ = _prepare_filename(fname, FileExt.brc, "BRC")
+    return _read_refl_coeff(fname)
+
+def read_trc(fname: str) -> NDArray[np.float64]:
+    """Read a TRC file and return array of reflection coefficients.
+
+    See equivalent `read_brc` function for documentation."""
+    fname, _ = _prepare_filename(fname, FileExt.trc, "TRC")
+    return _read_refl_coeff(fname)
+
+def _read_refl_coeff(fname: str) -> NDArray[np.float64]:
+    """Read a reflection coefficient (.brc/.trc) file used by BELLHOP."""
 
     with open(fname, 'r') as f:
 
@@ -805,15 +808,15 @@ def read_arrivals(fname: str) -> pd.DataFrame:
     reader = BellhopOutputReader(fname)
     return reader.read_arrivals()
 
-def read_shd(fname: str) -> pd.DataFrame:
-    """Read Bellhop shd file and parse data into a high level data structure"""
-    reader = BellhopOutputReader(fname)
-    return reader.read_shd()
-
 def read_rays(fname: str) -> pd.DataFrame:
     """Read Bellhop rays file and parse data into a high level data structure"""
     reader = BellhopOutputReader(fname)
     return reader.read_rays()
+
+def read_shd(fname: str) -> pd.DataFrame:
+    """Read Bellhop shd file and parse data into a high level data structure"""
+    reader = BellhopOutputReader(fname)
+    return reader.read_shd()
 
 class BellhopOutputReader:
     """Read and parse Bellhop output files."""

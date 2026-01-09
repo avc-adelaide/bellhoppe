@@ -25,12 +25,106 @@ See [`aubellhop` environment configuration](environ.qmd) for full detail about t
 
 ### Reading input files
 
+The six reading functions for input files are:
+```
+    import aubellhop.readers as bhr
+    bhr.read_ati(filename)
+    bhr.read_bty(filename)
+
+    bhr.read_brc(filename)
+    bhr.read_trc(filename)
+
+    bhr.read_sbp(filename)
+    bhr.read_ssp(filename)
+```
+All six functions read in text-based `BELLHOP` input data and return the results in a Numpy 2D array.
+
+These functions are used internally by `aubellhop` where requested in the `.env` file, so their use is not generally necessary unless performing work that integrates a suite of legacy input data into a new set of simulations, or if you wish to use/visualise their data separately from running a `BELLHOP` simulation.
+
+**Surface altimetry** and **bottom bathymetry**
+
+Altimetry and bathymetry files (`.ati` and `.bty`) are [documented in the original Acoustics Toolbox files](https://avc-adelaide.github.io/aubellhop/media/ATI_BTY_File.htm).
+
+They contain columns of range and z-direction profile ("depth") data, and optionally include five columns of geoacoustic data (compressional wave speed,  compressional wave attenuation, density, shear wave speed, shear wave attenuation).
+
+These files also specify the type of interpolation to use between data points, and therefore the reading functions have two outputs (Numpy array of data, interpolation type string).
+
+**3D bathymetry**
+
 [TODO]
 
+**Reflection coefficient**
+
+The Acoustics Toolbox does not provide high-fidelity reflection coefficient data; the following example uses a coarse digitisation from an example in: (Figure 6.12, page 198)
+
+> Introduction to sound propagation under water \
+> C. Erbe, A. Duncan, and K. J. Vigness-Raposa \ 
+> pp. 185–216. Springer International Publishing, 2022
+> DOI: 10.1007/978-3-030-97540-1_6 
+
+```{python}
+import aubellhop.readers as bhr
+brc = bhr.read_brc("sand.brc")
+
+plt.figure()
+ax1 = plt.gca()
+ln1, = ax1.plot(brc[:, 0], brc[:, 1],label="Mag.")
+ax1.set_ylim([0.0, 1.0])
+ax1.set_xlabel('Angle, deg.')
+ax1.set_ylabel('Magnitude, abs.')
+ax2 = ax1.twinx()
+ln2, = ax2.plot(brc[:, 0], brc[:, 2],linestyle="--",label="Phase")
+ax2.set_ylim([0.0, 180])
+ax2.set_ylabel('Phase, deg.')
+plt.title('Reflection coefficient')
+ax1.legend(handles=[ln1, ln2], loc='best')
+plt.show()
+```
+
+**Source beam pattern**
+
+By default, sources are assumed to be omnidirectional.
+Source beam pattern files define directionality otherwise, stored in `.sbp` files (defined in the [Acoustics Toolbox Bellhop guide](https://avc-adelaide.github.io/aubellhop/media/bellhop.htm)).
+
+These `.sbp` files consist of two columns: declination angle (0° is to the right, 90° is to the bottom) and dB power. The following example data is provided by the Acoustics Toolbox:
+
+```{python}
+import aubellhop.readers as bhr
+sbp = bhr.read_sbp("../../examples/BeamPattern/shaded.sbp")
+ang = sbp[:, 0] # deg
+pow = sbp[:, 1] # dB
+
+fig = plt.figure()
+ax = fig.add_subplot(projection="polar")
+ax.plot(ang*np.pi/180, pow)
+plt.show()
+```
+
+
+**Sound speed profile**
+
+[TODO]
 
 ### Reading output files
 
-Transmission loss files are stored in binary `.shd` files.
+The three reading functions for output files are:
+```
+    import aubellhop.readers as bhr
+    bhr.read_arrivals(filename)
+    bhr.read_rays(filename)
+    bhr.read_shd(filename)
+```
+All three functions process a respective `bellhop` output file and return the results in a Pandas `DataFrame`.
+
+*Arrivals data* are stored in text-based `.arr` files.
+
+[TODO]
+
+*Rays data* are stored in text-based `.ray` files.
+
+[TODO]
+
+*Transmission loss* data are stored in binary `.shd` files.
 
 ```{python}
 #| label: fig-shd
