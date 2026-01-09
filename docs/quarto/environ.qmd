@@ -1,5 +1,5 @@
 ---
-title: "AUBELLHOP environment configuration"
+title: "AUBELLHOP: environment configuration"
 format:
   html:
     code-fold: true
