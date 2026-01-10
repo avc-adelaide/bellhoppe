@@ -90,6 +90,7 @@ Source beam pattern files define directionality otherwise, stored in `.sbp` file
 These `.sbp` files consist of two columns: declination angle (0° is to the right, 90° is to the bottom) and dB power. The following example data is provided by the Acoustics Toolbox:
 
 ```{python}
+import numpy as np
 import matplotlib.pyplot as plt
 import aubellhop.readers as bhr
 sbp = bhr.read_sbp("../../examples/BeamPattern/shaded.sbp")
