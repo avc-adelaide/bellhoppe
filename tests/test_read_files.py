@@ -1,5 +1,6 @@
 import pytest
 import aubellhop as bh
+import aubellhop.readers as bhr
 import numpy as np
 import pandas as pd
 import os
@@ -132,6 +133,14 @@ def test_bty_long_format():
     assert bty[0][2,2] == 1550.0
     assert bty[0][1,4] ==    1.2
     assert bty[0][2,5] ==    0.5
+
+
+def test_bty3d():
+
+    bty = bhr.read_bty3d("../../examples/Bellhop3DTests/KoreanSeas/KoreanSea.bty")
+    assert bty['depths'].shape == (721, 661)
+    assert bty['depths'][3,4] == -10.0
+    assert bty['depths'][4,3] == -50.0
 
 
 def test_integration_with_env():

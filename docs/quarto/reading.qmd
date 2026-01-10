@@ -51,7 +51,43 @@ These files also specify the type of interpolation to use between data points, a
 
 **3D bathymetry**
 
-[TODO]
+
+```{python}
+import numpy as np
+import aubellhop.readers as bhr
+
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+bty = bhr.read_bty3d("../../examples/Bellhop3DTests/KoreanSeas/KoreanSea.bty")
+
+assert bty['depths'].shape == (721, 661)
+assert bty['depths'][3,4] == -10.0
+assert bty['depths'][4,3] == -50.0
+
+ranges = np.linspace(bty['ranges'][0], bty['ranges'][-1], bty['depths'].shape[0])
+crossranges = np.linspace(bty['crossranges'][0], bty['crossranges'][-1], bty['depths'].shape[1])
+depths = bty['depths']       # shape (721, 661)
+
+# Create 2D meshgrid
+R, X = np.meshgrid(ranges, crossranges, indexing='ij')  # R and X match depths shape
+
+fig = plt.figure(figsize=(12,6))
+ax = fig.add_subplot(111, projection='3d')
+
+# Surface plot
+surf = ax.plot_surface(R, X, depths, cmap='viridis', linewidth=0, antialiased=False)
+
+ax.set_xlabel('Range (m)')
+ax.set_ylabel('Cross-range (m)')
+ax.set_zlabel('Depth (m)')
+plt.title('Bathymetry')
+ax.view_init(elev=30, azim=150)  # elev = vertical angle, azim = horizontal rotation in degrees
+
+plt.show()
+
+```
+
 
 **Reflection coefficient**
 

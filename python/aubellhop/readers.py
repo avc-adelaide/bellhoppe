@@ -572,7 +572,7 @@ def _read_ati_bty(fname: str) -> tuple[NDArray[np.float64], str]:
     Parameters
     ----------
     fname : str
-        Path to .bty file (with or without .bty extension)
+        Path to .ati/.bty file (with extension)
 
     Returns
     -------
@@ -662,6 +662,72 @@ def _read_ati_bty(fname: str) -> tuple[NDArray[np.float64], str]:
                          shear_attenuation_array,
                         ]
         return np.column_stack(val_array), FlagMaps.depth_interp[interp_type]
+
+def read_ati3d(fname: str) -> tuple[NDArray[np.float64], str]:
+    """Read an altimetry file used by Bellhop."""
+    fname, _ = _prepare_filename(fname, FileExt.ati, "ATI")
+    return _read_ati_bty3d(fname)
+
+def read_bty3d(fname: str) -> tuple[NDArray[np.float64], str]:
+    """Read a bathymetry file used by Bellhop."""
+    fname, _ = _prepare_filename(fname, FileExt.bty, "BTY")
+    return _read_ati_bty3d(fname)
+
+def _read_ati_bty3d(fname: str) -> dict[str, np.ndarray]:
+    """Read an altimetry (.ati) or bathymetry (.bty) file used by BELLHOP.
+
+    This function reads BELLHOP's .bty files which define the bottom depth
+    profile. The file format is:
+    - Line 1: Interpolation type ('R' always for Bellhop3D)
+    - Line 2: Nx: Number of range points
+    - Line 3: Range coordinates (x)
+    - Line 4: Ny: Number of crossrange points
+    - Line 5: Crossrange points (y)
+    - Line 6+: 2D array of depths. Ny lines, one per crossrange, with Nx depths per line (space separated)
+
+    Parameters
+    ----------
+    fname : str
+        Path to .ati/.bty file (with extension)
+
+    Returns
+    -------
+    dict
+        Dictionary of ranges, crossranges, and 2D depth data
+
+    Notes
+    -----
+    The returned array can be assigned to env["depth"] for range-dependent bathymetry.
+
+    """
+
+    with open(fname, 'r') as f:
+        interp_type = _read_next_valid_line(f).strip("'\"")
+
+        nranges = int(_read_next_valid_line(f))
+        range_line = _read_next_valid_line(f)
+        ncrossranges = int(_read_next_valid_line(f))
+        crossrange_line = _read_next_valid_line(f)
+
+        ranges = np.array([_float(x) for x in _parse_line(range_line)])
+        crossranges = np.array([_float(x) for x in _parse_line(crossrange_line)])
+
+        # Convert ranges from km to meters (as expected by Environment())
+        ranges_m = ranges * 1000
+        crossranges_m = crossranges * 1000
+
+        depth_data = []
+        line_num = 0
+        for line in f:
+            line_num += 1
+            line = line.replace(","," ").strip()
+            if line:  # Skip empty lines
+                values = [_float(x) for x in line.split()]
+                if len(values) != nranges:
+                    raise ValueError(f"Depth line {line_num} has {len(values)} depth values, expected {nranges}")
+                depth_data.append(values)
+
+    return {"depths": np.array(depth_data).transpose(), "ranges": np.array(ranges_m), "crossranges": np.array(crossranges_m)}
 
 
 def read_sbp(fname: str) -> NDArray[np.float64]:
