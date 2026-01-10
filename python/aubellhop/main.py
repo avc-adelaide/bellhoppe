@@ -15,6 +15,7 @@ from __future__ import annotations
 
 # this format to explicitly mark the functions as public:
 from aubellhop.readers import read_ssp as read_ssp
+from aubellhop.readers import read_ssp3d as read_ssp3d
 from aubellhop.readers import read_ati as read_ati
 from aubellhop.readers import read_bty as read_bty
 from aubellhop.readers import read_sbp as read_sbp

@@ -37,7 +37,7 @@ The six reading functions for input files are:
     bhr.read_sbp(filename)
     bhr.read_ssp(filename)
 ```
-All six functions read in text-based `BELLHOP` input data and return the results in a Numpy 2D array.
+All six functions read in text-based `BELLHOP` input data and (usually) return the results in a Numpy array.
 
 These functions are used internally by `aubellhop` where requested in the `.env` file, so their use is not generally necessary unless performing work that integrates a suite of legacy input data into a new set of simulations, or if you wish to use/visualise their data separately from running a `BELLHOP` simulation.
 
@@ -104,9 +104,59 @@ plt.show()
 ```
 
 
-**Sound speed profile**
+**Sound speed profile (2D, 3D)**
 
-[TODO]
+Sound speed profiles (SSPs) which vary by depth only are represented within a standard `.env` [environment file](https://avc-adelaide.github.io/aubellhop/media/EnvironmentalFile.htm).
+Sound speed profiles which vary by [depth and range](https://avc-adelaide.github.io/aubellhop/media/RangeDepSSPFile.htm) (2D), or depth and range and bearing (3D) are stored in separate `.ssp` text files. 3D SSP files are documented in the original [BELLHOP3D user guide](https://avc-adelaide.github.io/aubellhop/media/Bellhop3D%20User%20Guide%202016_7_25.pdf).
+
+The following example uses the `KoreanSea.ssp` data file provided with Bellhop3D; note that it has a nonuniform spacing in the z-direction (depth).
+
+```{python}
+#| label: fig-ssp3d
+#| fig-cap: "Reading a `.ssp` text input file for a 3D sound speed profile and plotting the results."
+
+import numpy as np
+import matplotlib.pyplot as plt
+from aubellhop.readers import read_ssp3d
+
+ssp3d = read_ssp3d("../../examples/Bellhop3DTests/KoreanSeas/KoreanSea.ssp")
+
+assert ssp3d["ssp"].shape == (151, 169, 33)
+assert ssp3d["ranges"].shape[0] == 151
+assert ssp3d["crossranges"].shape[0] == 169
+assert ssp3d["depths"].shape[0] == 33
+
+
+# Pick a cross-range index
+cross_idx = ssp3d["crossranges"].shape[0] // 2
+
+# Extract slice: depth vs range at this cross-range
+ssp_slice = ssp3d["ssp"][:, cross_idx, :]
+
+plt.figure(figsize=(8,6))
+plt.pcolormesh(ssp3d["ranges"], ssp3d["depths"], ssp_slice.T, shading='auto')
+plt.colorbar(label='Sound speed (m/s)')
+plt.xlabel('Range (m)')
+plt.ylabel('Depth (m)')
+plt.title(f'SSP slice at cross-range index {cross_idx}')
+plt.gca().invert_yaxis()
+plt.show()
+
+
+from mpl_toolkits.mplot3d import Axes3D
+
+R, X, Z = np.meshgrid(ssp3d["ranges"], ssp3d["crossranges"], ssp3d["depths"], indexing='ij')
+
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+# Take every nth point to reduce plotting size
+ax.scatter(R[::5,::5,::5], X[::5,::5,::5], Z[::5,::5,::5], c=ssp3d["ssp"][::5,::5,::5], cmap='viridis', marker='o')
+ax.set_xlabel('Range')
+ax.set_ylabel('Cross-range')
+ax.set_zlabel('Depth')
+plt.gca().invert_zaxis()
+plt.show()
+```
 
 ### Reading output files
 

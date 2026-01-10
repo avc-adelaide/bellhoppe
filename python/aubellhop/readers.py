@@ -148,6 +148,8 @@ class EnvironmentReader:
         self.env['soundspeed'] = self._read_ssp_points(ssp_lines)
         if self.env["soundspeed_interp"] == BHStrings.quadrilateral:
             self.env['soundspeed'] = read_ssp(self.fname_base, self.env['soundspeed'].index)
+        elif self.env["soundspeed_interp"] == BHStrings.hexahedral:
+            self.env['soundspeed'] = read_ssp3d(self.fname_base)
         return next_line
 
     def _read_until_quote(self, f: TextIO) -> tuple[list[str],str]:
@@ -483,6 +485,70 @@ def read_ssp(fname: str,
         df = pd.DataFrame(ssp_array, index=pd.Index(depths), columns=ranges_m)
         df.index.name = "depth"
         return df
+
+def read_ssp3d(fname: str) -> dict[str, np.ndarray]:
+    """Read a 3D sound speed profile (.ssp) file used by BELLHOP3D and return a 3D Numpy array.
+
+    This function reads BELLHOP's .ssp files which contain range-dependent
+    sound speed profiles. The file format is:
+    - Line 1: Nx: Number of coordinates in the range (x) direction
+    - Line 2: Range coordinates in km (space-separated)
+    - Line 3: Ny: Number of coordinates in the crossrange (y) direction
+    - Line 4: Crossrange coordinates in km (space-separated)
+    - Line 5: Nz: Number of coordinates in the depth (z) direction
+    - Line 6: Depth coordinates in km (space-separated)
+    - Line 7+: Sound speed values, one line per crossrange and depth across all ranges
+               (i.e., each line has Nx number of values and there are Ny*Nz lines)
+    """
+
+    fname, _ = _prepare_filename(fname, FileExt.ssp, "SSP")
+    with open(fname, 'r') as f:
+
+        nranges = int(_read_next_valid_line(f))
+        range_line = _read_next_valid_line(f)
+        ncrossranges = int(_read_next_valid_line(f))
+        crossrange_line = _read_next_valid_line(f)
+        ndepths = int(_read_next_valid_line(f))
+        depth_line = _read_next_valid_line(f)
+
+        ranges = np.array([_float(x) for x in _parse_line(range_line)])
+        crossranges = np.array([_float(x) for x in _parse_line(crossrange_line)])
+        depths = np.array([_float(x) for x in _parse_line(depth_line)])
+
+        # Convert ranges from km to meters (as expected by Environment())
+        ranges_m = ranges * 1000
+        crossranges_m = crossranges * 1000
+        depths_m = depths * 1000
+
+        if len(ranges) != nranges:
+            raise ValueError(f"Expected {nranges} ranges, but found {len(ranges)}")
+        if len(crossranges) != ncrossranges:
+            raise ValueError(f"Expected {ncrossranges} ranges, but found {len(crossranges)}")
+        if len(depths) != ndepths:
+            raise ValueError(f"Expected {ndepths} ranges, but found {len(depths)}")
+
+        # Read sound speed data - read all remaining lines as a matrix
+        ssp_data = []
+        line_num = 0
+        for line in f:
+            line_num += 1
+            line = line.replace(","," ").strip()
+            if line:  # Skip empty lines
+                values = [_float(x) for x in line.split()]
+                if len(values) != nranges:
+                    raise ValueError(f"SSP line {line_num} has {len(values)} range values, expected {nranges}")
+                ssp_data.append(values)
+
+        ssp_array = np.array(ssp_data)
+        narray = ssp_array.shape[0]
+        if narray != ncrossranges * ndepths:
+            raise ValueError("Wrong number of entries found in sound speed data file"
+                             f" (expected {ncrossranges} * {ndepths} = {ncrossranges * ndepths} lines, found {narray})")
+
+        ssp_3d = ssp_array.reshape(ndepths, ncrossranges, nranges, order="C")
+        ssp_xyz = np.transpose(ssp_3d, (2, 1, 0))
+
+        return {"ssp": ssp_xyz, "ranges": ranges_m, "crossranges": crossranges_m, "depths": depths_m}
 
 def read_ati(fname: str) -> tuple[NDArray[np.float64], str]:
     """Read an altimetry file used by Bellhop."""
