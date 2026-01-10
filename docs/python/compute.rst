@@ -10,7 +10,7 @@ Overview
 .. code-block:: text
 
    ┌─────────────────────────────────────────────────┐
-   │ import aubellhop as bh                            │
+   │ import aubellhop as bh                          │
    ├─────────────────────────────────────────────────┤
    │ bh.compute(env, task=["..."])                   │
    │    → run computations using the auto model      │

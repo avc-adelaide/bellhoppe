@@ -10,7 +10,7 @@ Overview
 .. code-block:: text
 
    ┌───────────────────────────────────────────────┐
-   │ import aubellhop as bh                          │
+   │ import aubellhop as bh                        │
    ├───────────────────────────────────────────────┤
    │ bh.Models                                     │
    │  • Registry of BellhopSimulator instances     │
