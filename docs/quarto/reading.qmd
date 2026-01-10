@@ -63,6 +63,7 @@ The Acoustics Toolbox does not provide high-fidelity reflection coefficient data
 > DOI: 10.1007/978-3-030-97540-1_6 
 
 ```{python}
+import matplotlib.pyplot as plt
 import aubellhop.readers as bhr
 brc = bhr.read_brc("sand.brc")
 
@@ -89,6 +90,7 @@ Source beam pattern files define directionality otherwise, stored in `.sbp` file
 These `.sbp` files consist of two columns: declination angle (0° is to the right, 90° is to the bottom) and dB power. The following example data is provided by the Acoustics Toolbox:
 
 ```{python}
+import matplotlib.pyplot as plt
 import aubellhop.readers as bhr
 sbp = bhr.read_sbp("../../examples/BeamPattern/shaded.sbp")
 ang = sbp[:, 0] # deg
@@ -124,15 +126,15 @@ All three functions process a respective `bellhop` output file and return the re
 
 [TODO]
 
-*Transmission loss* data are stored in binary `.shd` files.
+*Transmission loss* data are stored in binary `.shd` files. For gridded 2D simulations, the DataFrame is a 2D structure with column values corresponding to ranges and row index values corresponding to depths. The transmission loss data is represented as a complex value (magnitude and phase).
 
 ```{python}
 #| label: fig-shd
 #| fig-cap: "Reading a `.shd` binary output file and plotting the results."
 
 import numpy as np
-from aubellhop.readers import read_shd
 import matplotlib.pyplot as plt
+from aubellhop.readers import read_shd
 
 df = read_shd("../../tests/MunkB_geo_rot/MunkB_geo_rot.shd")
 X, Y = np.meshgrid(df.columns.values, df.index.values)
