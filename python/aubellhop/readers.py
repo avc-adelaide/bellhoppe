@@ -703,6 +703,8 @@ def _read_ati_bty3d(fname: str) -> dict[str, np.ndarray]:
 
     with open(fname, 'r') as f:
         interp_type = _read_next_valid_line(f).strip("'\"")
+        if interp_type != "R":
+            raise ValueError("3D depth files (.ati/.bty) can only have 'R' = regular grid as the first line")
 
         nranges = int(_read_next_valid_line(f))
         range_line = _read_next_valid_line(f)
@@ -727,7 +729,15 @@ def _read_ati_bty3d(fname: str) -> dict[str, np.ndarray]:
                     raise ValueError(f"Depth line {line_num} has {len(values)} depth values, expected {nranges}")
                 depth_data.append(values)
 
-    return {"depths": np.array(depth_data).transpose(), "ranges": np.array(ranges_m), "crossranges": np.array(crossranges_m)}
+        depths = np.array(depth_data).transpose()
+        if depths.shape[0] != nranges:
+            raise ValueError("Wrong number of range entries found in depth file"
+                             f" (expected {nranges}, found {depths.shape[0]})")
+        if depths.shape[1] != ncrossranges:
+            raise ValueError("Wrong number of crossrange entries found in depth file"
+                             f" (expected {ncrossranges}, found {depths.shape[1]})")
+
+    return {"depths": depths, "ranges": np.array(ranges_m), "crossranges": np.array(crossranges_m)}
 
 
 def read_sbp(fname: str) -> NDArray[np.float64]:
