@@ -1,4 +1,4 @@
-# The BELLHOP underwater acoustics ray tracing tool
+# AUBELLHOP: underwater acoustics ray tracing
 
 [![PyPI](https://img.shields.io/pypi/v/aubellhop)](https://pypi.org/project/aubellhop/)
 [![Test Suite](https://github.com/avc-adelaide/aubellhop/actions/workflows/check.yml/badge.svg)](https://github.com/avc-adelaide/bellhop/actions/workflows/check.yml)
