@@ -663,17 +663,17 @@ def _read_ati_bty(fname: str) -> tuple[NDArray[np.float64], str]:
                         ]
         return np.column_stack(val_array), FlagMaps.depth_interp[interp_type]
 
-def read_ati3d(fname: str) -> tuple[NDArray[np.float64], str]:
+def read_ati3d(fname: str) -> dict[str, np.ndarray]:
     """Read an altimetry file used by Bellhop."""
     fname, _ = _prepare_filename(fname, FileExt.ati, "ATI")
     return _read_ati_bty3d(fname)
 
-def read_bty3d(fname: str) -> tuple[NDArray[np.float64], str]:
+def read_bty3d(fname: str) -> dict[str, np.ndarray]:
     """Read a bathymetry file used by Bellhop."""
     fname, _ = _prepare_filename(fname, FileExt.bty, "BTY")
     return _read_ati_bty3d(fname)
 
-def _read_ati_bty3d(fname: str) -> dict[str, np.ndarray]:
+def _read_ati_bty3d(fname: str) -> dict[str, NDArray[np.float64]]:
     """Read an altimetry (.ati) or bathymetry (.bty) file used by BELLHOP.
 
     This function reads BELLHOP's .bty files which define the bottom depth
@@ -737,7 +737,7 @@ def _read_ati_bty3d(fname: str) -> dict[str, np.ndarray]:
             raise ValueError("Wrong number of crossrange entries found in depth file"
                              f" (expected {ncrossranges}, found {depths.shape[1]})")
 
-    return {"depths": depths, "ranges": np.array(ranges_m), "crossranges": np.array(crossranges_m)}
+    return {"depths": depths, "ranges": ranges_m, "crossranges": crossranges_m}
 
 
 def read_sbp(fname: str) -> NDArray[np.float64]:
