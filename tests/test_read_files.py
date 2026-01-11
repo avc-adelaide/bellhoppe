@@ -137,7 +137,7 @@ def test_bty_long_format():
 
 def test_bty3d():
 
-    bty = bhr.read_bty3d("../../examples/Bellhop3DTests/KoreanSeas/KoreanSea.bty")
+    bty = bhr.read_bty3d("examples/Bellhop3DTests/KoreanSeas/KoreanSea.bty")
     assert bty['depths'].shape == (721, 661)
     assert bty['depths'][3,4] == -10.0
     assert bty['depths'][4,3] == -50.0
