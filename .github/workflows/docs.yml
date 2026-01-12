@@ -58,14 +58,23 @@ jobs:
       uses: quarto-dev/quarto-actions/setup@v2
 
     - name: Install dependencies
-      run: uv sync --extra dev
+      run: |
+        uv sync --extra dev
+        uv pip install --force-reinstall --no-cache-dir coverage
 
     - name: Install additional tools
-      run: uv tool install FORD
-
-    - name: Run coverage
       run: |
-        make cov
+        uv tool install FORD
+        uv tool install coverage
+
+    - name: Run coverage (fortran)
+      run: |
+        make covf
+
+    - name: Run coverage (python)
+      run: |
+        uv run coverage run -m pytest tests/ --tb=short
+        uvx coverage html
 
     - name: Move coverage reports to documentation
       run: |
