@@ -141,9 +141,9 @@ Where:
 For enhanced browsability, coverage reports are automatically integrated with the FORD documentation system as interactive HTML reports:
 
 ```bash
-make coverage-html    # Generate HTML reports in docs/ directory
+make coverage-html  # Generate HTML reports in docs/ directory
 # Note: Coverage reports are no longer integrated with documentation
-make docs            # Generate FORD documentation (separate from coverage)
+make doc            # Generate FORD documentation (separate from coverage)
 ```
 
 The HTML reports provide:

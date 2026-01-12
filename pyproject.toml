@@ -40,6 +40,19 @@ Repository = "https://github.com/avc-adelaide/aubellhop.git"
 Issues = "https://github.com/avc-adelaide/aubellhop/issues"
 Changelog = "https://github.com/avc-adelaide/aubellhop/blob/master/CHANGES.md"
 
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "gcovr",
+    "ruff",
+    "coverage",
+    "jupyter",
+    "nbformat",
+    "sphinxcontrib-mermaid",
+    "quarto>=0.1.0",
+    "fortitude-lint",
+]
+
 ####### BUILD #######
 
 [build-system]
@@ -112,20 +125,6 @@ packages = ["aubellhop","python/aubellhop"]
 [tool.hatch.build]
 sources = [".", "python"]
 
-[project.optional-dependencies]
-dev = [
-    "pytest",
-    "gcovr",
-    "ruff",
-    "coverage",
-    "mypy",
-    "jupyter",
-    "nbformat",
-    "sphinxcontrib-mermaid",
-    "quarto>=0.1.0",
-    "fortitude-lint",
-]
-
 [tool.hatch.envs.default]
 features = ["dev"]  # includes pytest
 
@@ -133,24 +132,6 @@ features = ["dev"]  # includes pytest
 PATH = "{root}/bin:{env:PATH}"
 PYTHONPATH = "{root}/python:{env:PYTHONPATH:}"
 
-[tool.hatch.envs.default.scripts]
-install-dev = "pip install -e ."
-covf = [
-    "install-dev",
-    "make coverage-full"
-]
-covp = [
-    "install-dev",
-    "python3 -m coverage run -m pytest tests/ --tb=short",
-    "python3 -m coverage html"
-]
-debug = [
-    "install-dev",
-    "echo PWD: `pwd`; echo PATH: $PATH; python -c 'import aubellhop; print(\"bellhop:\", aubellhop.__file__, aubellhop.__version__)'"
-]
-doc = [
-    "make docs"
-]
 
 [tool.hatch.build.targets.sdist]
 ignore-vcs = true

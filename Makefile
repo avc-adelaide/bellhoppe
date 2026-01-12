@@ -137,9 +137,7 @@ help:
 	@echo "  DEVELOPMENT TOOLS"
 	@echo "     push - push code changes to repository"
 
-###### HATCH ######
-
-HATCH := hatch run
+###### RUNNERS ######
 
 cleantest: clean all install test
 
@@ -151,30 +149,31 @@ testv:
 	@echo "Running Python test suite (verbose)..."
 	uv run pytest --capture=tee-sys --exitfirst
 
-doc: docs
-
 docf:
 	@echo "Generating Fortran/FORD documentation..."
 	cd docs; ford index.md # config set in fpm.toml
 
-docp:
+docp: uvsync
 	@echo "Generating Python/Sphinx documentation..."
-	uv sync --extra dev
 	uv run sphinx-build docs/python docs/_build/media/python
 
 docq:
 	@echo "Generating Python/Quarto tutorials..."
 	uv run -- quarto render docs/quarto --to html
 
-docs: docf docp docq
+doc: docf docp docq
 	@echo "Documentation generated in ./doc/ directory"
 	@echo "Open ./doc/index.html in a web browser to view"
 
-cov:
-	@echo "Generating Fortran coverage report..."
-	$(HATCH) covf
+cov: covf covp
+	@echo "Coverage reports completed."
+
+covf: uvsync coverage-full
+
+covp: uvsync
 	@echo "Generating Python coverage report..."
-	$(HATCH) covp
+	uv run coverage run -m pytest tests/ --tb=short
+	uv run coverage html
 
 lint: lintp typep lintf
 	@echo "Lint and type checking complete."
@@ -183,13 +182,16 @@ lintp:
 	@echo "Linting with RUFF..."
 	uvx ruff check python/$(PKGNAME)/
 
-typep:
+typep: uvsync
 	@echo "Type checking with TY..."
 	uvx ty check python/$(PKGNAME) --exclude python/$(PKGNAME)/plotutils.py
 
 lintf:
 	@echo "Linting fortran with FORTITUDE..."
 	uv run -- fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003
+
+uvsync:
+	uv sync --extra dev
 
 ###### COVERAGE ######
 
@@ -270,7 +272,7 @@ coverage-gcovr:
 		./fortran/
 
 coverage-full: clean coverage-build coverage-install coverage-test coverage-report coverage-html
-	@echo "Full coverage analysis complete."
+	@echo "Fortran coverage analysis complete."
 
 #######################################
 

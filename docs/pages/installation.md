@@ -36,7 +36,7 @@ which at time of writing required something like:
 
 To run the test suite and compile the package documentation, you will also need:
 
-    brew install hatch FORD graphvis
+    brew install FORD graphvis
 
 ### Linux
 
@@ -81,26 +81,6 @@ added to your path via your standard shell configuration.
 The Makefile message outputs an example of how
 to do this for a ZSH or BASH setup.
 
-
-### Python
-
-Although the `hatch` build system should set up paths and environments automatically,
-you will likely wish to run Bellhop locally for your own purposes. You can do this with
-`hatch` with:
-
-    hatch shell
-    <custom scripts running Bellhop>
-    exit
-
-Alternatively, to use `venv` directly in a local environment:
-
-    $(brew --prefix python@3.12)/bin/python3.12 -m venv .venv
-    ln -fs "$(pwd)/bin/bellhop.exe" .venv/bin/bellhop.exe
-    ln -fs "$(pwd)/bin/bellhop3d.exe" .venv/bin/bellhop3d.exe
-
-    source .venv/bin/activate
-    <custom scripts running Bellhop>
-    deactivate
 
 
 ### Matlab
