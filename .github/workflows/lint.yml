@@ -6,22 +6,23 @@ on:
     branches:
       - '**'
     tags-ignore:
-      - '**' 
+      - '**'
   pull_request:
   workflow_dispatch:
 
 jobs:
-
   lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
     - name: Install dependencies
-      run: pip install hatch fortitude-lint ruff uv
+      run: pip install fortitude-lint ruff
     - name: Ruff
-      run: hatch run make lintp
+      run: make lintp
     - name: Type checking
-      run: hatch run make typep
+      run: make typep
     - name: Fortitude
-      run: hatch run make lintf
+      run: make lintf
 
