@@ -155,7 +155,8 @@ docf:
 
 docp:
 	@echo "Generating Python/Sphinx documentation..."
-	sphinx-build docs/python docs/_build/media/python
+	uv sync --extra dev
+	uv run sphinx-build docs/python docs/_build/media/python
 
 docq:
 	@echo "Generating Python/Quarto tutorials..."
