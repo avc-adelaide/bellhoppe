@@ -219,7 +219,7 @@ coverage-test: coverage-install
 	PATH="$(PWD)/bin:$$PATH" \
 	PYTHONPATH="$(PWD)/python:$$PYTHONPATH" \
 	COVERAGE_RUN="true" \
-	uv run pytest --capture=tee-sys --ignore=tests/only_python/ tests/
+	uv run pytest --ignore=tests/only_python/ tests/
 
 coverage-report:
 	@echo "Generating coverage report from existing data..."
