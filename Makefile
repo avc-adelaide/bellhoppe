@@ -159,7 +159,7 @@ docp:
 
 docq:
 	@echo "Generating Python/Quarto tutorials..."
-	quarto render docs/quarto --to html
+	uv run -- quarto render docs/quarto --to html
 
 docs: docf docp docq
 	@echo "Documentation generated in ./doc/ directory"
@@ -176,7 +176,7 @@ lint: lintp typep lintf
 
 lintp:
 	@echo "Linting with RUFF..."
-	ruff check python/$(PKGNAME)/
+	uvx ruff check python/$(PKGNAME)/
 
 typep:
 	@echo "Type checking with TY..."
