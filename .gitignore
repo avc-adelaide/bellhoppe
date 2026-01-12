@@ -103,3 +103,4 @@ test_results.csv
 # quarto
 .quarto*
 _version.py
+uv.lock
