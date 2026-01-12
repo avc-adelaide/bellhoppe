@@ -134,14 +134,6 @@ PYTHONPATH = "{root}/python:{env:PYTHONPATH:}"
 
 [tool.hatch.envs.default.scripts]
 install-dev = "pip install -e ."
-test = [
-    "install-dev",
-    "pytest tests/"
-]
-testv = [
-    "install-dev",
-    "pytest --capture=tee-sys --exitfirst"
-]
 covf = [
     "install-dev",
     "make coverage-full"

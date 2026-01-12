@@ -6,7 +6,7 @@ on:
     branches:
       - '**'
     tags-ignore:
-      - '**' 
+      - '**'
   pull_request:
   workflow_dispatch:
 
@@ -24,9 +24,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install tools
-      run: pipx install hatch
     - name: make
       run: make && make install
     - name: Test with pytest
-      run:  hatch run make test
+      run:  make test

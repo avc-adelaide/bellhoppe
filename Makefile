@@ -145,7 +145,11 @@ cleantest: clean all install test
 
 test:
 	@echo "Running Python test suite..."
-	$(HATCH) test
+	uv run pytest tests/
+
+testv:
+	@echo "Running Python test suite (verbose)..."
+	uv run pytest --capture=tee-sys --exitfirst
 
 doc: docs
 

@@ -22,16 +22,15 @@ The following are the major changes or additions:
 
 * The base code compilation processes are based on Makefiles. These have been extended to support the code coverage tool. The [key Makefile](https://github.com/avc-adelaide/aubellhop/blob/main/Makefile) is at the root of the repository.
 
-* A modern build system using Hatch is also used for building documentation and running tests. These are configured using [pyproject.toml](https://github.com/avc-adelaide/aubellhop/blob/main/pyproject.toml). This build system makes the GitHub CI processes quite straightforward to define.
+* A modern build system using UV is also used for building documentation and running tests. These are configured using [pyproject.toml](https://github.com/avc-adelaide/aubellhop/blob/main/pyproject.toml). This build system makes the GitHub CI processes quite straightforward to define.
 
-* The documentation system uses FORD, configured using [fdm.toml](https://github.com/avc-adelaide/aubellhop/blob/main/fpm.toml). Executing the documentation process is managed by Hatch with
+* The documentation system uses FORD, configured using [fdm.toml](https://github.com/avc-adelaide/aubellhop/blob/main/fpm.toml). Executing the documentation process is managed with
 
-    hatch run doc
+    make doc
 
-* The test suite uses `pytest` with a build process set up using Hatch. Run the test suite using
+* The test suite uses `pytest` with a build process set up using UV. Run the test suite using
 
-    make && make install # if necessary
-    hatch run test
+    make test
 
 * The code coverage system uses both GCC tool `gcov` for Fortran code and `coverage.py` for Python code. This is controlled via the Makefile, with results compiled into HTML files. The unified coverage dashboard provides access to both Fortran and Python coverage reports in a single interface.
 
