@@ -189,7 +189,7 @@ typep:
 
 lintf:
 	@echo "Linting fortran with FORTITUDE..."
-	fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003
+	uv run -- fortitude check --output-format concise --line-length 129 --ignore PORT011,C121,C003
 
 ###### COVERAGE ######
 
