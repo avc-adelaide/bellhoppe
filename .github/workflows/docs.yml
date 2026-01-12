@@ -34,40 +34,34 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Cache apt packages
-      uses: actions/cache@v4
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
       with:
-        path: /var/cache/apt/archives
-        key: ${{ runner.os }}-apt-gfortran-graphviz-gcc
-        restore-keys: |
-          ${{ runner.os }}-apt-
+        enable-cache: true
+        cache-dependency-glob: "pyproject.toml"
+
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
+      run: uv python install ${{ env.PYTHON_VERSION }}
+
+    - name: Cache apt packages
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: gfortran gcc graphviz
+        version: 1.0
 
     - name: Install system dependencies
       run: |
         sudo apt update
         sudo apt install -y gfortran gcc graphviz
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ env.PYTHON_VERSION }}
-
     - name: Set up Quarto
       uses: quarto-dev/quarto-actions/setup@v2
 
-    - name: Cache Python packages
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-docs-${{ hashFiles('pyproject.toml') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-docs-
-          ${{ runner.os }}-pip-${{ env.PYTHON_VERSION }}-
-          ${{ runner.os }}-pip-
+    - name: Install dependencies
+      run: uv sync --extra dev
 
-    - name: Install python packages
-      run: |
-        pip install hatch FORD sphinx
+    - name: Install additional tools
+      run: uv tool install FORD
 
     - name: Run coverage
       run: |
