@@ -216,9 +216,10 @@ coverage-install: coverage-build
 
 coverage-test: coverage-install
 	@echo "Running fortran coverage test..."
-	export PATH="$(PWD)/bin:$$PATH" && \
-	export PYTHONPATH="$(PWD)/python:$$PYTHONPATH" && \
-	export COVERAGE_RUN="true" && pytest --capture=tee-sys --ignore=tests/only_python/ tests/
+	PATH="$(PWD)/bin:$$PATH" \
+	PYTHONPATH="$(PWD)/python:$$PYTHONPATH" \
+	COVERAGE_RUN="true" \
+	uv run pytest --capture=tee-sys --ignore=tests/only_python/ tests/
 
 coverage-report:
 	@echo "Generating coverage report from existing data..."
@@ -252,7 +253,7 @@ coverage-html: coverage-report
 		exit 1; \
 	fi
 	@echo "Creating HTML reports in _coverage/ directory..."
-	python3 python/generate_coverage_html.py _coverage
+	uv run python python/generate_coverage_html.py _coverage
 	@echo "HTML coverage reports generated."
 
 # although this is much lighter, I don't like the output -- maybe it needs more finetuning
