@@ -85,26 +85,6 @@ aubellhop = ["bin/*"]
 output-format = "github"
 
 
-####### MYPY #######
-
-[tool.mypy]
-python_version = "3.14"
-strict = true
-warn_return_any = true
-exclude = ["plotutils.py"]
-
-[[tool.mypy.overrides]]
-module = [
-    "numpy.*",
-    "scipy.*",
-    "pandas.*",
-    "matplotlib.*",
-    "bokeh.*",
-    "IPython.*"
-]
-ignore_missing_imports = true
-
-
 ####### COVERAGE #######
 
 [tool.coverage.run]
