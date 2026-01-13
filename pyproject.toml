@@ -54,6 +54,7 @@ dev = [
     "fortitude-lint",
 ]
 
+
 ####### BUILD #######
 
 [build-system]
@@ -62,6 +63,21 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
 write_to = "python/aubellhop/_version.py"
+
+
+####### SETUPTOOLS #######
+
+[tool.setuptools]
+py-modules = []
+
+[tool.setuptools.packages.find]
+where = ["python"]
+include = ["aubellhop*"]
+namespaces = false
+
+[tool.setuptools.package-data]
+aubellhop = ["bin/*"]
+
 
 ####### RUFF #######
 
@@ -87,6 +103,7 @@ module = [
     "IPython.*"
 ]
 ignore_missing_imports = true
+
 
 ####### COVERAGE #######
 
@@ -115,45 +132,4 @@ exclude_lines = [
 
 [tool.coverage.html]
 directory = "_coverage_python"
-
-
-
-####### HATCH #######
-
-[tool.hatch.build.targets.wheel]
-packages = ["aubellhop","python/aubellhop"]
-
-[tool.hatch.build]
-sources = [".", "python"]
-
-[tool.hatch.envs.default]
-features = ["dev"]  # includes pytest
-
-[tool.hatch.envs.default.env-vars]
-PATH = "{root}/bin:{env:PATH}"
-PYTHONPATH = "{root}/python:{env:PYTHONPATH:}"
-
-
-[tool.hatch.build.targets.sdist]
-ignore-vcs = true
-include = [
-  "/tests/*.py",
-]
-exclude = [
-  "/docs/*",
-]
-
-
-####### SETUPTOOLS #######
-
-[tool.setuptools]
-py-modules = []
-
-[tool.setuptools.packages.find]
-where = ["python"]
-include = ["aubellhop*"]
-namespaces = false
-
-[tool.setuptools.package-data]
-aubellhop = ["bin/*"]
 
