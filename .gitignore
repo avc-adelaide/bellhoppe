@@ -104,3 +104,5 @@ test_results.csv
 .quarto*
 _version.py
 uv.lock
+docs/quarto/bellhop_demo.py
+docs/quarto/demo.env
