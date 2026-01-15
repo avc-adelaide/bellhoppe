@@ -2,6 +2,13 @@
 title: AUBELLHOP CHANGELOG
 ---
 
+## [0.1.9] - 2026-01-13
+
+* Remove `hatch` as package system — standardise on `uv`.
+* Improve documentation breadth.
+* Add `read_ssp_3d()`, `read_ati_3d()`, `read_bty_3d()` for BELLHOP3D
+
+
 ## [0.1.8] - 2025-11-30
 
 * Really fix the wheel building process to omit unnecessary files.

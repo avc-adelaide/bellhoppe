@@ -4,9 +4,9 @@ import numpy as np
 import pandas as pd
 import os
 
-def test_read_ssp3d():
+def test_read_ssp_3d():
     """Test reading 3D SSP file"""
-    ssp3d = bhr.read_ssp3d("examples/Bellhop3DTests/KoreanSeas/KoreanSea.ssp")
+    ssp3d = bhr.read_ssp_3d("examples/Bellhop3DTests/KoreanSeas/KoreanSea.ssp")
     assert ssp3d["ssp"].shape == (151, 169, 33)
     assert ssp3d["ranges"].shape[0] == 151
     assert ssp3d["crossranges"].shape[0] == 169

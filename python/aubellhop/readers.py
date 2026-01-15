@@ -149,7 +149,7 @@ class EnvironmentReader:
         if self.env["soundspeed_interp"] == BHStrings.quadrilateral:
             self.env['soundspeed'] = read_ssp(self.fname_base, self.env['soundspeed'].index)
         elif self.env["soundspeed_interp"] == BHStrings.hexahedral:
-            self.env['soundspeed'] = read_ssp3d(self.fname_base)
+            self.env['soundspeed'] = read_ssp_3d(self.fname_base)
         return next_line
 
     def _read_until_quote(self, f: TextIO) -> tuple[list[str],str]:
@@ -486,7 +486,7 @@ def read_ssp(fname: str,
         df.index.name = "depth"
         return df
 
-def read_ssp3d(fname: str) -> dict[str, np.ndarray]:
+def read_ssp_3d(fname: str) -> dict[str, np.ndarray]:
     """Read a 3D sound speed profile (.ssp) file used by BELLHOP3D and return a 3D Numpy array.
 
     This function reads BELLHOP's .ssp files which contain range-dependent
@@ -663,12 +663,12 @@ def _read_ati_bty(fname: str) -> tuple[NDArray[np.float64], str]:
                         ]
         return np.column_stack(val_array), FlagMaps.depth_interp[interp_type]
 
-def read_ati3d(fname: str) -> dict[str, np.ndarray]:
+def read_ati_3d(fname: str) -> dict[str, np.ndarray]:
     """Read an altimetry file used by Bellhop."""
     fname, _ = _prepare_filename(fname, FileExt.ati, "ATI")
     return _read_ati_bty3d(fname)
 
-def read_bty3d(fname: str) -> dict[str, np.ndarray]:
+def read_bty_3d(fname: str) -> dict[str, np.ndarray]:
     """Read a bathymetry file used by Bellhop."""
     fname, _ = _prepare_filename(fname, FileExt.bty, "BTY")
     return _read_ati_bty3d(fname)
