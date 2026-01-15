@@ -1,5 +1,5 @@
 ---
-title: "AUBELLHOP reading files"
+title: "AUBELLHOP: reading files"
 format:
   html:
     code-fold: true
@@ -18,12 +18,12 @@ These fall into three classes:
 2.  Supplementary input files (`.ssp`, `.ati`, `.bty`, `.trc`, `.brc`, `.sbp`) — text-based arrays of data to augment the environment file
 3.  The output files (`.arr`, `.ray`, `.shd`)
 
-### Reading environment files
+## Reading environment files
 
 See [`aubellhop` environment configuration](environ.qmd) for full detail about the `Environment` class and its `.from_input()` class method.
 
 
-### Reading input files
+## Reading input files
 
 The six reading functions for input files are:
 ```
@@ -41,7 +41,7 @@ All six functions read in text-based `BELLHOP` input data and (usually) return t
 
 These functions are used internally by `aubellhop` where requested in the `.env` file, so their use is not generally necessary unless performing work that integrates a suite of legacy input data into a new set of simulations, or if you wish to use/visualise their data separately from running a `BELLHOP` simulation.
 
-**Surface altimetry** and **bottom bathymetry**
+### Surface altimetry** and **bottom bathymetry
 
 Altimetry and bathymetry files (`.ati` and `.bty`) are [documented in the original Acoustics Toolbox files](https://avc-adelaide.github.io/aubellhop/media/ATI_BTY_File.htm).
 
@@ -49,7 +49,7 @@ They contain columns of range and z-direction profile ("depth") data, and option
 
 These files also specify the type of interpolation to use between data points, and therefore the reading functions have two outputs (Numpy array of data, interpolation type string).
 
-**3D bathymetry**
+### 3D bathymetry
 
 
 ```{python}
@@ -59,7 +59,7 @@ import aubellhop.readers as bhr
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-bty = bhr.read_bty3d("../../examples/Bellhop3DTests/KoreanSeas/KoreanSea.bty")
+bty = bhr.read_bty_3d("../../examples/Bellhop3DTests/KoreanSeas/KoreanSea.bty")
 
 assert bty['depths'].shape == (721, 661)
 assert bty['depths'][3,4] == -10.0
@@ -89,14 +89,14 @@ plt.show()
 ```
 
 
-**Reflection coefficient**
+### Reflection coefficient
 
 The Acoustics Toolbox does not provide high-fidelity reflection coefficient data; the following example uses a coarse digitisation from an example in: (Figure 6.12, page 198)
 
 > Introduction to sound propagation under water \
-> C. Erbe, A. Duncan, and K. J. Vigness-Raposa \ 
+> C. Erbe, A. Duncan, and K. J. Vigness-Raposa \
 > pp. 185–216. Springer International Publishing, 2022
-> DOI: 10.1007/978-3-030-97540-1_6 
+> DOI: 10.1007/978-3-030-97540-1_6
 
 ```{python}
 import matplotlib.pyplot as plt
@@ -118,7 +118,7 @@ ax1.legend(handles=[ln1, ln2], loc='best')
 plt.show()
 ```
 
-**Source beam pattern**
+### Source beam pattern
 
 By default, sources are assumed to be omnidirectional.
 Source beam pattern files define directionality otherwise, stored in `.sbp` files (defined in the [Acoustics Toolbox Bellhop guide](https://avc-adelaide.github.io/aubellhop/media/bellhop.htm)).
@@ -140,12 +140,12 @@ plt.show()
 ```
 
 
-**Sound speed profile (2D, 3D)**
+### Sound speed profile (2D, 3D)
 
 Sound speed profiles (SSPs) which vary by depth only are represented within a standard `.env` [environment file](https://avc-adelaide.github.io/aubellhop/media/EnvironmentalFile.htm).
 Sound speed profiles which vary by [depth and range](https://avc-adelaide.github.io/aubellhop/media/RangeDepSSPFile.htm) (2D), or depth and range and bearing (3D) are stored in separate `.ssp` text files. 3D SSP files are documented in the original [BELLHOP3D user guide](https://avc-adelaide.github.io/aubellhop/media/Bellhop3D%20User%20Guide%202016_7_25.pdf).
 
-The following example uses the `KoreanSea.ssp` data file provided with Bellhop3D; note that it has a nonuniform spacing in the z-direction (depth).
+The following 3D example uses the `KoreanSea.ssp` data file provided with Bellhop3D; note that it has a nonuniform spacing in the z-direction (depth).
 
 ```{python}
 #| label: fig-ssp3d
@@ -153,9 +153,9 @@ The following example uses the `KoreanSea.ssp` data file provided with Bellhop3D
 
 import numpy as np
 import matplotlib.pyplot as plt
-from aubellhop.readers import read_ssp3d
+from aubellhop.readers import read_ssp_3d
 
-ssp3d = read_ssp3d("../../examples/Bellhop3DTests/KoreanSeas/KoreanSea.ssp")
+ssp3d = read_ssp_3d("../../examples/Bellhop3DTests/KoreanSeas/KoreanSea.ssp")
 
 assert ssp3d["ssp"].shape == (151, 169, 33)
 assert ssp3d["ranges"].shape[0] == 151
@@ -194,7 +194,7 @@ plt.gca().invert_zaxis()
 plt.show()
 ```
 
-### Reading output files
+## Reading output files
 
 The three reading functions for output files are:
 ```
@@ -204,14 +204,77 @@ The three reading functions for output files are:
     bhr.read_shd(filename)
 ```
 All three functions process a respective `bellhop` output file and return the results in a Pandas `DataFrame`.
+The examples below show how to work with the raw data; more convenient plotting functions are also provided via the `plot` or `pyplot` modules.
 
-*Arrivals data* are stored in text-based `.arr` files.
+### Arrivals
 
-[TODO]
+*Arrivals data* are stored in text-based `.arr` files. There are some header lines stored in the file which `read_arrivals()` does not output; the tabulated output data is returned in a Pandas `DataFrame`.
 
-*Rays data* are stored in text-based `.ray` files.
+```{python}
+#| label: fig-arr
+#| fig-cap: "Reading a `.arr` output file and plotting the results."
 
-[TODO]
+import numpy as np
+import aubellhop as bh
+import aubellhop.readers as bhr
+import matplotlib.pyplot as plt
+
+env = bh.Environment()
+results = bh.compute_arrivals(env,fname_base="demo",debug=True)
+results_fromdisk = bhr.read_arrivals("demo.arr")
+# results == results_fromdisk
+
+print("DataFrame has the following columns:")
+print(results_fromdisk.columns.values)
+
+plt.figure()
+t_arr = results_fromdisk["time_of_arrival"]
+arr_amp = np.abs(results_fromdisk["arrival_amplitude"])
+plt.stem(t_arr, arr_amp)
+plt.xlabel("Time of arrival, s")
+plt.ylabel("Amplitude")
+plt.show()
+```
+
+### Rays
+
+*Rays data* are stored in text-based `.ray` files. The data in these files is stored in a DataFrame with four columns:
+
+* Angle of departure (float, degrees)
+* Number of surface bounces (int)
+* Number of bottom bounces (int)
+* Ray trajectory coordinates (list of coordinates)
+
+```{python}
+#| label: fig-rays
+#| fig-cap: "Reading a `.ray` output file and plotting the results."
+
+import numpy as np
+import aubellhop as bh
+import aubellhop.readers as bhr
+import matplotlib.pyplot as plt
+
+env = bh.Environment()
+results = bh.compute_rays(env,fname_base="demo",debug=True)
+
+results_fromdisk = bhr.read_rays("demo.ray")
+
+print("The Nth entry of the DataFrame is:")
+n = 12
+print(f"Angle of departure: {results_fromdisk.iloc[n,0]}")
+print(f"Number of surface bounces: {results_fromdisk.iloc[n,1]}")
+print(f"Number of bottom bounces: {results_fromdisk.iloc[n,2]}")
+print(f"Number of coordinates in the ray: {len(results_fromdisk.iloc[n,3])}")
+
+plt.figure()
+for n in [10,20,30]:
+    xx = [xy[0] for xy in results_fromdisk.iloc[n,3]]
+    yy = [xy[1] for xy in results_fromdisk.iloc[n,3]]
+    plt.plot(xx,yy)
+plt.show()
+```
+
+### Transmission loss
 
 *Transmission loss* data are stored in binary `.shd` files. For gridded 2D simulations, the DataFrame is a 2D structure with column values corresponding to ranges and row index values corresponding to depths. The transmission loss data is represented as a complex value (magnitude and phase).
 
