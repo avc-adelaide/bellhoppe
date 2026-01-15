@@ -6,6 +6,9 @@ on:
       - 'v*'
   workflow_dispatch:
 
+env:
+  PYTHON_VERSION: "3.12"
+
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -25,7 +28,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: ${{ env.PYTHON_VERSION }}
 
       # Cache pip packages
       - name: Cache pip
@@ -144,18 +147,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
         with:
-          python-version: '3.12'
-
-      - name: Install build dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Build sdist
-        run: python -m build --sdist
+        run: |
+          uv pip install build
+          uv run python -m build --sdist
 
       - name: Upload sdist
         uses: actions/upload-artifact@v4
