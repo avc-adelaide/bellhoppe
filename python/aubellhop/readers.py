@@ -951,7 +951,15 @@ def read_arrivals(fname: str) -> pd.DataFrame:
     return reader.read_arrivals()
 
 def read_rays(fname: str, is_2d: Optional[bool] = None) -> pd.DataFrame:
-    """Read Bellhop rays file and parse data into a high level data structure"""
+    """Read Bellhop rays file and parse data into a high level data structure
+
+    Args:
+        fname: file path
+        is_2d: if True, read as 2D rays; if False, read as 3D rays; if None, auto-detect using header
+
+    Raises:
+        ValueError: if is_2d is not provided and parsing file header fails.
+    """
     reader = BellhopOutputReader(fname)
     return reader.read_rays(is_2d = is_2d)
 
