@@ -24,7 +24,7 @@ from __future__ import annotations
 import os
 from struct import unpack as _unpack
 from pathlib import Path
-from typing import Any, TextIO, cast
+from typing import Any, TextIO, cast, Optional
 from numpy.typing import NDArray
 
 import numpy as np
@@ -950,10 +950,10 @@ def read_arrivals(fname: str) -> pd.DataFrame:
     reader = BellhopOutputReader(fname)
     return reader.read_arrivals()
 
-def read_rays(fname: str) -> pd.DataFrame:
+def read_rays(fname: str, is_2d: Optional[bool] = None) -> pd.DataFrame:
     """Read Bellhop rays file and parse data into a high level data structure"""
     reader = BellhopOutputReader(fname)
-    return reader.read_rays()
+    return reader.read_rays(is_2d = is_2d)
 
 def read_shd(fname: str) -> pd.DataFrame:
     """Read Bellhop shd file and parse data into a high level data structure"""
@@ -1047,14 +1047,20 @@ class BellhopOutputReader:
                 pressure[ird,:] = temp[::2] + 1j*temp[1::2]
         return pd.DataFrame(pressure, index=pd.Index(pos_r_depth), columns=pd.Index(pos_r_range))
 
-    def read_rays(self) -> pd.DataFrame:
+    def read_rays(self, is_2d: Optional[bool] = None) -> pd.DataFrame:
         """Read Bellhop rays file and parse data into a high level data structure"""
         with self.filepath.open('rt') as f:
             hdr = f.readline()
-            if hdr.find('BELLHOP-') >= 0:
+            if is_2d is not None:
+                _dim = 2 if is_2d else 3
+            elif hdr.find('BELLHOP-') >= 0:
                 _dim = 2
             elif hdr.find('BELLHOP3D-') >= 0:
                 _dim = 3
+            else:
+                err_str = ("Invalid file header (expecting header to contain 'BELLHOP-' or 'BELLHOP3D-')" 
+                "or manually specify 2D vs 3D with is_2d argument")
+                raise ValueError(err_str)
             f.readline() # freq
             f.readline() # 1  1 1
             f.readline() # 50 50
