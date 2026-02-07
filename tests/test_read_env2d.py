@@ -70,11 +70,11 @@ def test_read_env_round_trip():
         # Create the Bellhop model and generate the env file
         from aubellhop.bellhop import BellhopSimulator
         model = BellhopSimulator()
-        fname_base, fname = model._prepare_env_file(fname_base)
-        task_flag = "R"
-        with open(fname, "w") as fh:
-            env_orig.to_file(fh, fname_base, task_flag)
+
+        # Write it
         env_file = fname_base + '.env'
+        task_flag = "rays"
+        env_orig.to_file(env_file, task_flag)
 
         # Read it back
         env_read = bh.Environment.from_file(env_file)
@@ -89,9 +89,6 @@ def test_read_env_round_trip():
         assert env_read['beam_num'] == env_orig['beam_num']
 
         # Sound speed gets converted to profile format (const entry for both)
-        print(env_orig['soundspeed'])
-        print(env_read['soundspeed'])
-
         pdt.assert_frame_equal(env_read['soundspeed'], env_orig['soundspeed'])
 
         # Arrays should match
