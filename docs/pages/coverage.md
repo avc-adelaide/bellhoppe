@@ -2,7 +2,7 @@
 title: Coverage Documentation
 ---
 
-BELLHOP supports comprehensive code coverage analysis for both **Fortran** and **Python** components, providing insights into code execution and test effectiveness.
+BELLHOP supports code coverage analysis for both **Fortran** and **Python** components. The reports are generated separately (one for each language).
 
 ## Prerequisites
 
@@ -27,18 +27,15 @@ pip install coverage
 
 ### Complete Coverage Analysis (Recommended)
 
-To generate comprehensive coverage reports for both Fortran and Python:
+To generate coverage reports for both Fortran and Python:
 
 ```bash
-make coverage-full
+make cov
 ```
 
 This single command performs the complete workflow:
-- Cleans previous coverage data
-- Builds Fortran code with coverage instrumentation
-- Runs all tests with coverage collection
-- Generates HTML reports for both Fortran and Python
-- Creates a unified coverage dashboard
+- Builds Fortran code with coverage instrumentation and generates Fortran HTML reports
+- Runs Python tests with coverage and generates Python HTML reports
 
 ### Individual Coverage Components
 
@@ -56,9 +53,7 @@ make coverage-html
 
 **Python Coverage Only:**
 ```bash
-make python-coverage-test
-make python-coverage-report
-make python-coverage-html
+make covp
 ```
 
 ## Understanding Coverage Reports
@@ -86,31 +81,16 @@ Taken at least once:62.50% of 16
 
 Coverage reports are available in multiple formats:
 
-### 1. Unified Coverage Dashboard
-
-Access both Fortran and Python coverage from a single entry point:
-
-```bash
-make coverage-full    # Generate all coverage reports
-# Open _coverage_unified/index.html in web browser
-```
-
-The unified dashboard provides:
-- **Navigation Links** - Direct access to both Fortran and Python coverage reports
-- **Status Indicators** - Shows which coverage reports are available
-- **Coverage Overview** - Summary information for both languages
-
-### 2. Individual Report Access
+### 1. Individual Report Access
 
 **Fortran Coverage (GCOV):**
 - Raw text reports: Check `.gcov` files in `fortran/` directory
 - HTML reports: Open `_coverage/coverage-index.html`
 
 **Python Coverage:**
-- Console report: `make python-coverage-report`
 - HTML reports: Open `_coverage_python/index.html`
 
-### 3. Coverage Report Features
+### 2. Coverage Report Features
 
 **Fortran Reports:**
 - Line-by-line execution counts
@@ -123,7 +103,7 @@ The unified dashboard provides:
 - Missing line identification
 - Function and class coverage
 - Interactive source code browsing
-Coverage reports are created as `.gcov` files in the source directories (`Bellhop/` and `misc/`). Each report shows the original source code with execution counts:
+Coverage reports are created as `.gcov` files in the `fortran/` directory. Each report shows the original source code with execution counts:
 
 ```
         -: 1:!! Monotonicity testing utilities
@@ -136,14 +116,12 @@ Where:
 - `-` indicates non-executable lines (comments, declarations)
 - `#####` indicates executable lines that were never run
 
-### 2. Interactive HTML Reports (FORD Integration)
+### 3. Interactive HTML Reports (FORD Integration)
 
-For enhanced browsability, coverage reports are automatically integrated with the FORD documentation system as interactive HTML reports:
+For enhanced browsability, coverage reports are generated as interactive HTML reports:
 
 ```bash
-make coverage-html  # Generate HTML reports in docs/ directory
-# Note: Coverage reports are no longer integrated with documentation
-make doc            # Generate FORD documentation (separate from coverage)
+make coverage-html  # Generate HTML reports in _coverage/
 ```
 
 The HTML reports provide:
@@ -153,8 +131,8 @@ The HTML reports provide:
 - **Browsable Navigation** - Easy switching between different source files
 
 **Accessing HTML Coverage Reports:**
-- Locally: Generate with `make coverage-html` then open generated HTML files in the `docs/` directory
-- The coverage reports are standalone HTML files, not integrated with FORD documentation
+- Locally: Generate with `make coverage-html` then open generated HTML files in `_coverage/`
+- The coverage reports are standalone HTML files
 
 ### 3. Coverage Report Features
 
@@ -171,21 +149,19 @@ Code coverage analysis runs automatically in GitHub Actions:
 
 ### Coverage Workflow
 - **Triggered on**: Pull requests and pushes to the main branch
-- **Generates**: Complete coverage analysis for both Fortran (GCOV) and Python (coverage.py)
-- **Uploads**: All coverage artifacts (HTML reports, unified dashboard) to GitHub Pages
-- **Provides**: Direct access to coverage reports through the online documentation
+- **Generates**: Coverage analysis for both Fortran (GCOV) and Python (coverage.py)
+- **Uploads**: Coverage HTML reports to GitHub Pages (as part of the docs build)
 
 ### Workflow Steps
 1. **Build Phase**: Compiles Fortran code with coverage instrumentation
 2. **Test Phase**: Runs full test suite with coverage collection for both languages
-3. **Report Generation**: Creates HTML reports and unified coverage dashboard
+3. **Report Generation**: Creates HTML reports for Fortran and Python
 4. **Deployment**: Uploads coverage reports to GitHub Pages for easy access
 
 ### Accessing Reports
 Coverage reports are automatically published to GitHub Pages and linked from the main documentation at:
-- **Unified Dashboard**: `/coverage/index.html` - Single entry point for all coverage reports
-- **Fortran Coverage**: `/coverage/_coverage/coverage-index.html` - Detailed Fortran coverage
-- **Python Coverage**: `/coverage/_coverage_python/index.html` - Detailed Python coverage
+- **Fortran Coverage**: `/static/coverage/_coverage/coverage-index.html`
+- **Python Coverage**: `/static/coverage/_coverage_python/index.html`
 
 ## Cleaning Coverage Files
 
@@ -198,5 +174,6 @@ make coverage-clean
 This removes:
 - Fortran coverage data (`.gcda`, `.gcno`, `.gcov` files)
 - Python coverage data (`.coverage` file)
-- Generated HTML reports (`_coverage/`, `_coverage_python/`, `_coverage_unified/`)
+- Generated Python HTML reports (`_coverage_python/`)
 
+Note: `_coverage/` (Fortran HTML reports) is not removed by `make coverage-clean`.

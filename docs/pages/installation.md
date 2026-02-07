@@ -36,7 +36,7 @@ which at time of writing required something like:
 
 To run the test suite and compile the package documentation, you will also need:
 
-    brew install FORD graphvis
+    brew install FORD graphviz
 
 ### Linux
 
@@ -103,10 +103,7 @@ the Python test suite located in the `tests/` subfolder:
 
 The code can be statically tested with the respective Python and Fortran linters with:
 
-    pip install ruff
     make lintp
-
-    pip install fortitude-lint
     make lintf
 
 The Python code can also be type checked using:
@@ -127,8 +124,8 @@ Generate Fortran documentation locally with:
     pip install FORD # if needed
     make docf
 
-This uses FORD to build the HTML documentation in `doc/` with the static pages `docs/` copied
-into the `doc/media` subdirectory, with main page `doc/index.html`.
+This uses FORD to build the HTML documentation in `docs/_build/` with the static pages `docs/` copied
+into the `docs/_build/` subdirectory, with main page `docs/_build/index.html`.
 
 ### Python API Documentation
 
@@ -137,12 +134,14 @@ Generate Python API documentation with:
     pip install sphinx # if needed
     make docp
 
-The generated documentation will be in the `doc/media/python/` subdirectory.
+The generated documentation will be in the `docs/_build/media/python/` subdirectory.
 
 ### Quarto tutorials
 
     brew install --cask quarto # Mac, if needed
     make docq
+
+The generated tutorials will be in the `docs/_build/media/quarto/` subdirectory.
 
 ### Make interface
 
@@ -161,7 +160,10 @@ Generate the code coverage locally with:
     make cov
 
 This requires a complete rebuild of the binary to enable the coverage instrumentation.
-The resulting coverage report is saved to `docs/coverage-index.html`.
+The resulting coverage reports are saved to:
+
+- Fortran: `_coverage/coverage-index.html`
+- Python: `_coverage_python/index.html`
 
 
 ## Running
