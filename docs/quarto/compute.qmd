@@ -10,6 +10,17 @@ In the [introduction](intro.qmd), the four computation types were introduced: ar
 When once-off simulations are being undertaken, the methods `compute_arrivals()`, `compute_rays()`, etc., are convenient wrapper functions.
 For complex scenarios, the more general `compute()` method allows multiple tasks, environmentals, and even Bellhop executables to be run with a single command.
 
+## Working files and cleanup
+
+By default, `compute()` uses a temporary working directory and deletes all intermediate files after the run.
+If you want to keep the generated `.env` and output files, pass `debug=True`.
+
+If you provide a `fname_base`, files are written to that base name (for example `fname_base="demo"` produces `demo.env`, `demo.ray`, etc.). In this case:
+
+- Existing files are **not** deleted by default.
+- You can explicitly remove old files by passing `overwrite=True`.
+- Passing `debug=True` prevents post-run cleanup.
+
 ## Compatibility with Fortran .env files
 
 One feature of the `compute()` function is to maintain interface compatibility with the original .env file Bellhop interface. Within a legacy .env file, the task to run is hard-coded and therefore

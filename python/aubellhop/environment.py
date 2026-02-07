@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import MutableMapping
 from dataclasses import dataclass, fields
-from typing import Any, Iterator, TextIO, Self, Callable
+from typing import Any, Iterator, Self, Callable
 
 from pprint import pformat
 import warnings
@@ -238,23 +238,49 @@ class Environment(MutableMapping[str, Any]):
 
     ############# WRITING ################
 
-    def to_file(self, fh: TextIO, fname_base: str, taskcode: str) -> None:
-        """Writes a complete .env file for specifying a Bellhop simulation
+    def to_file(self, fname: str, task: str | None = None) -> str:
+        """Write a complete .env file for specifying a Bellhop simulation.
+
+        This is the user-facing file writer. It infers the file basename and
+        resolves the task from the environment unless overridden.
 
         Parameters
         ----------
-        env : dict
-            Environment dict
-        fh : file object
-            File reference (already opened)
-        fname_base : str
-            Filename base (without extension)
-        taskcode : str
-            Task string which defines the computation to run
+        fname : str
+            Filename or filename base for the .env file. If no extension is
+            provided, `.env` is appended.
+        task : str, optional
+            Task string which defines the computation to run (e.g. "rays",
+            "eigenrays", "arrivals", "coherent", "incoherent", "semicoherent").
+            If not provided, this is inferred from `env.task` or
+            `env.interference_mode`.
 
+        Returns
+        -------
+        str
+            The filename base (no extension) of the written file.
         """
+        from pathlib import Path
+        from aubellhop.constants import FileExt, FlagMaps, EnvDefaults
         from aubellhop.writers import EnvironmentWriter
-        EnvironmentWriter(self, fh, fname_base, taskcode).write()
+
+        path = Path(fname)
+        if path.suffix == "":
+            path = path.with_suffix(FileExt.env)
+
+        # Resolve task
+        task_val = task or self.get("task") or self.get("interference_mode") or EnvDefaults.interference_mode
+        if task_val is None:
+            raise ValueError("Task must be specified via argument or env.task/interference_mode")
+
+        taskcode = FlagMaps.task_rev[task_val]
+        fname_base = str(path.with_suffix(""))
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w") as fh:
+            EnvironmentWriter(self, fh, fname_base, taskcode).write()
+
+        return fname_base
 
     ############# SMALL METHODS ################
 
