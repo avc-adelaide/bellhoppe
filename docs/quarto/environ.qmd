@@ -18,24 +18,24 @@ The Python front-end to Bellhop provides a "default" environment to allow quick 
 ```
 import aubellhop as bh
 env = bh.Environment()
-assert isinstance(env, Environment)
+assert isinstance(env, bh.Environment)
 ```
 
 ## Environment methods
 
-The `Environment` class provide the following user-facing class methods:
+The `Environment` class provides the following user-facing class methods:
 
 * `Environment.from_file(fname)` --- read environment configuration in original Bellhop `.env` text format (also reading in additional `.ssp`, `.bty` files if needed)
 * `Environment.from_dict(env_dict)` --- read environment configuration from dictionary of fields (see: `to_dict()` below)
 
-The `Environment` class provide the following user-facing instance methods:
+The `Environment` class provides the following user-facing instance methods:
 
 * `Environment().check()` --- finalise and validate parameters (semi-automatic, see below)
 * `Environment().copy()` --- shallow copy the instance
 * `Environment().defaults()` --- fill `None` fields with a default setting if there is one (use with care)
 * `Environment().reset()` — set all user-facing values from the instance to `None`
 * `Environment().to_dict()` --- convert parameters to a standard `dict`
-* `Environment().to_file(fname)` --- write environment configuration to file(s) in original Bellhop `.env` text format (also writing additional `.ssp`, `.bty` files if needed)
+* `Environment().to_file(fname, task=None)` --- write environment configuration to file(s) in original Bellhop `.env` text format (also writing additional `.ssp`, `.bty` files if needed)
 * `Environment().unwrap(fields)` --- converts a field list into a list of envs with single values
 
 To scan over the full list of user-facing fields, the standard `print()` function will return
@@ -126,8 +126,8 @@ env = bh.Environment.from_file('seamount.env')
 After setting up an environment, you may wish to write it to a file for debugging purposes,
 or to pass it along to another of the Acoustic Toolbox programs (such as KRAKEN).
 ```
-env = bh.Enviroment(...)
-env.to_file('kraken.env')
+env = bh.Environment(...)
+env.to_file("kraken.env", task="rays")
 ```
 The step is performed automatically, writing the file(s) to a temporary location, when
 performing a [`.compute()`](compute.qmd) step to execute the simulation.

@@ -75,6 +75,7 @@ def compute(
             task: Any | None = None,
             debug: bool = False,
             fname_base: str | None = None,
+            overwrite: bool = False,
            ) -> dict[str, Any] | tuple[list[dict[str, Any]], pd.DataFrame]:
     """Compute Bellhop task(s) for given model(s) and environment(s).
 
@@ -90,6 +91,8 @@ def compute(
         Generate debug information for propagation model
     fname_base : str, optional
         Base file name for Bellhop working files, default (None), creates a temporary file
+    overwrite : bool, default=False
+        If True, remove any existing working/output files that share the same `fname_base`.
 
     Returns
     -------
@@ -140,7 +143,7 @@ def compute(
                 if this_task is None:
                     raise ValueError("Task must be specified in env or as parameter")
                 model_fn = Models.select(this_env, this_task, this_model, debug)
-                fname_base = model_fn.write_env(this_env, this_task, fname_base)
+                fname_base = model_fn.write_env(this_env, this_task, fname_base, overwrite=overwrite)
                 results.append({
                        "name": this_env["name"],
                        "model": this_model,
@@ -165,7 +168,7 @@ def compute(
         return results[0]
 
 
-def compute_arrivals(env: Environment, model: Any | None = None, debug: bool = False, fname_base: str | None = None) -> Any:
+def compute_arrivals(env: Environment, model: Any | None = None, debug: bool = False, fname_base: str | None = None, overwrite: bool = False) -> Any:
     """Compute arrivals between each transmitter and receiver.
 
     Parameters
@@ -178,6 +181,8 @@ def compute_arrivals(env: Environment, model: Any | None = None, debug: bool = F
         Generate debug information for propagation model
     fname_base : str, optional
         Base file name for Bellhop working files, default (None), creates a temporary file
+    overwrite : bool, default=False
+        If True, remove any existing working/output files that share the same `fname_base`.
 
     Returns
     -------
@@ -191,11 +196,11 @@ def compute_arrivals(env: Environment, model: Any | None = None, debug: bool = F
     >>> arrivals = bh.compute_arrivals(env)
     >>> bh.plot_arrivals(arrivals)
     """
-    output = compute(env, model, BHStrings.arrivals, debug, fname_base)
+    output = compute(env, model, BHStrings.arrivals, debug, fname_base, overwrite)
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
-def compute_eigenrays(env: Environment, source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Any | None = None, debug: bool = False, fname_base: str | None = None) -> Any:
+def compute_eigenrays(env: Environment, source_depth_ndx: int = 0, receiver_depth_ndx: int = 0, receiver_range_ndx: int = 0, model: Any | None = None, debug: bool = False, fname_base: str | None = None, overwrite: bool = False) -> Any:
     """Compute eigenrays between a given transmitter and receiver.
 
     Parameters
@@ -214,6 +219,8 @@ def compute_eigenrays(env: Environment, source_depth_ndx: int = 0, receiver_dept
         Generate debug information for propagation model
     fname_base : str, optional
         Base file name for Bellhop working files, default (None), creates a temporary file
+    overwrite : bool, default=False
+        If True, remove any existing working/output files that share the same `fname_base`.
 
     Returns
     -------
@@ -235,11 +242,11 @@ def compute_eigenrays(env: Environment, source_depth_ndx: int = 0, receiver_dept
         env['receiver_depth'] = env['receiver_depth'][receiver_depth_ndx]
     if np.size(env['receiver_range']) > 1:
         env['receiver_range'] = env['receiver_range'][receiver_range_ndx]
-    output = compute(env, model, BHStrings.eigenrays, debug, fname_base)
+    output = compute(env, model, BHStrings.eigenrays, debug, fname_base, overwrite)
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
-def compute_rays(env: Environment, source_depth_ndx: int = 0, model: Any | None = None, debug: bool = False, fname_base: str | None = None) -> Any:
+def compute_rays(env: Environment, source_depth_ndx: int = 0, model: Any | None = None, debug: bool = False, fname_base: str | None = None, overwrite: bool = False) -> Any:
     """Compute rays from a given transmitter.
 
     Parameters
@@ -254,6 +261,8 @@ def compute_rays(env: Environment, source_depth_ndx: int = 0, model: Any | None 
         Generate debug information for propagation model
     fname_base : str, optional
         Base file name for Bellhop working files, default (None), creates a temporary file
+    overwrite : bool, default=False
+        If True, remove any existing working/output files that share the same `fname_base`.
 
     Returns
     -------
@@ -271,11 +280,11 @@ def compute_rays(env: Environment, source_depth_ndx: int = 0, model: Any | None 
     if np.size(env['source_depth']) > 1:
         env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]
-    output = compute(env, model, BHStrings.rays, debug, fname_base)
+    output = compute(env, model, BHStrings.rays, debug, fname_base, overwrite)
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
-def compute_transmission_loss(env: Environment, source_depth_ndx: int = 0, mode: str | None = None, model: Any | None = None, debug: bool = False, fname_base: str | None = None) -> Any:
+def compute_transmission_loss(env: Environment, source_depth_ndx: int = 0, mode: str | None = None, model: Any | None = None, debug: bool = False, fname_base: str | None = None, overwrite: bool = False) -> Any:
     """Compute transmission loss from a given transmitter to all receviers.
 
     Parameters
@@ -292,6 +301,8 @@ def compute_transmission_loss(env: Environment, source_depth_ndx: int = 0, mode:
         Generate debug information for propagation model
     fname_base : str, optional
         Base file name for Bellhop working files, default (None), creates a temporary file
+    overwrite : bool, default=False
+        If True, remove any existing working/output files that share the same `fname_base`.
 
     Returns
     -------
@@ -311,7 +322,7 @@ def compute_transmission_loss(env: Environment, source_depth_ndx: int = 0, mode:
     env.check()
     if np.size(env['source_depth']) > 1:
         env['source_depth'] = env['source_depth'][source_depth_ndx]
-    output = compute(env, model, task, debug, fname_base)
+    output = compute(env, model, task, debug, fname_base, overwrite)
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
 
@@ -351,4 +362,3 @@ def arrivals_to_impulse_response(arrivals: Any, fs: float, abs_time: bool = Fals
         ndx = int(np.round((row.time_of_arrival.real-t0)*fs))
         ir[ndx] = row.arrival_amplitude
     return ir
-

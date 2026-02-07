@@ -323,4 +323,3 @@ class EnvironmentWriter:
             for k in range(svp.shape[0]):
                 for j in range(svp.shape[1]):
                     f.write("%0.6f%c" % (svp.iloc[k,j], '\n' if j == svp.shape[1]-1 else ' '))
-

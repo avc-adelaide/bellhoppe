@@ -90,6 +90,7 @@ class BellhopSimulator:
                         task: str,
                         fname_base: str | None = None,
                         debug: bool = False,
+                        overwrite: bool = False,
                  ) -> str:
         """
         Writes the environment to .env file prior to running the model.
@@ -98,9 +99,8 @@ class BellhopSimulator:
         processng stages, in particular how to select specific "tasks"
         to be executed.
         """
-        fname_base, fname = self._prepare_env_file(fname_base)
-        with open(fname, "w") as fh:
-            env.to_file(fh, fname_base, FlagMaps.task_rev[task])
+        fname_base, fname = self._prepare_env_file(fname_base, overwrite=overwrite)
+        env.to_file(fname, task=task)
 
         return fname_base
 
@@ -162,6 +162,7 @@ class BellhopSimulator:
 
     def _prepare_env_file(self,
                                 fname_base: str | None,
+                                overwrite: bool = False,
                          ) -> Tuple[str, str]:
         """Opens a file for writing the .env file, in a temp location if necessary, and delete other files with same basename.
 
@@ -177,6 +178,7 @@ class BellhopSimulator:
     fname_base : str
             Filename base
         """
+        is_temp = fname_base is None
         if fname_base is not None:
             fname = os.path.abspath(fname_base + FileExt.env)
             os.makedirs(os.path.dirname(fname), exist_ok=True)
@@ -187,7 +189,10 @@ class BellhopSimulator:
             fname_base = fname[: -len(FileExt.env)]
             tmp.close()
 
-        self._rm_files(fname_base, not_env=True)
+        if fname_base is None:
+            raise RuntimeError("Internal error: fname_base is None after preparation")
+        if is_temp or overwrite:
+            self._rm_files(fname_base, not_env=True)
         return fname_base, fname
 
     def _rm_files(self, fname_base: str,
@@ -269,4 +274,3 @@ class BellhopSimulator:
             os.unlink(f)
         except FileNotFoundError:
             pass
-
