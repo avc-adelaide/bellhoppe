@@ -191,7 +191,7 @@ CONTAINS
       END IF
     ELSE
       ! force the interpolant to have an extrema here
-      fprime_interior = 0.0D0;
+      fprime_interior = 0.0D0
     END IF
 
   END FUNCTION fprime_interior
@@ -207,10 +207,10 @@ CONTAINS
 
     IF ( del1 * fprime <= 0.0D0 ) THEN
        ! set derivative to zero if the sign differs from sign of secant slope
-       fprime_left_end = 0.0;
+       fprime_left_end = 0.0
     ELSE IF ( ( del1 * del2 <= 0.0D0 ) .AND. ( ABS( fprime ) > ABS( 3.0D0 * del1 ) ) ) THEN
        ! adjust derivative value to enforce monotonicity
-       fprime_left_end = 3.0D0 * del1;
+       fprime_left_end = 3.0D0 * del1
     END IF
 
   END FUNCTION fprime_left_end
@@ -229,10 +229,10 @@ CONTAINS
 
     IF ( del2 * fprime <= 0.0D0 ) THEN
        ! set derivative to zero if the sign differs from sign of secant slope
-       fprime_right_end = 0.0;
+       fprime_right_end = 0.0
     ELSE IF ( ( del1 * del2 <= 0.0D0 ) .AND. ( ABS( fprime ) > ABS( 3.0D0 * del2 ) ) ) THEN
        ! adjust derivative value to enforce monotonicity
-       fprime_right_end = 3.0D0 * del2;
+       fprime_right_end = 3.0D0 * del2
     END IF
 
   END FUNCTION fprime_right_end
