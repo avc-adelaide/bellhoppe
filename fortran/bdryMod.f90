@@ -8,6 +8,7 @@ MODULE bdrymod
   !USE norms
   USE monotonicMod
   USE FatalError
+  USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: ERROR_UNIT
 
   IMPLICIT NONE
   PUBLIC
@@ -259,6 +260,9 @@ CONTAINS
     CASE ( 'Top' )
        NPts = NatiPts
        CurvilinearFlag = atiType
+    CASE DEFAULT
+       WRITE( ERROR_UNIT, * ) 'ComputeBdryTangentNormal: Unknown BotTop flag: ', BotTop
+       CALL ERROUT( 'ComputeBdryTangentNormal', 'Unknown boundary flag' )
     END SELECT
 
     ! extend the bathymetry to +/- infinity in a piecewise constant fashion
@@ -291,6 +295,9 @@ CONTAINS
        CASE ( 'Top' )
           Bdry( ii )%n( 1 ) = +Bdry( ii )%t( 2 )
           Bdry( ii )%n( 2 ) = -Bdry( ii )%t( 1 )
+       CASE DEFAULT
+          WRITE( ERROR_UNIT, * ) 'ComputeBdryTangentNormal: Unknown BotTop flag in normal calc: ', BotTop
+          CALL ERROUT( 'ComputeBdryTangentNormal', 'Unknown boundary flag' )
        END SELECT
 
     END DO BoundaryPt
@@ -313,6 +320,9 @@ CONTAINS
        CASE ( 'Top' )
           Bdry( : )%Noden( 1 ) = +Bdry( : )%Nodet( 2 )
           Bdry( : )%Noden( 2 ) = -Bdry( : )%Nodet( 1 )
+       CASE DEFAULT
+          WRITE( ERROR_UNIT, * ) 'ComputeBdryTangentNormal: Unknown BotTop flag in node normal calc: ', BotTop
+          CALL ERROUT( 'ComputeBdryTangentNormal', 'Unknown boundary flag' )
        END SELECT
 
        ! compute curvature in each segment

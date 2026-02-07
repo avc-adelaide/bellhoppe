@@ -31,6 +31,7 @@ PROGRAM BELLHOP
   USE sspMod
   USE influence
   USE FatalError
+  USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: ERROR_UNIT
 
   IMPLICIT NONE
 
@@ -215,6 +216,9 @@ SUBROUTINE BellhopCore
           CALL ERROUT( 'BELLHOP', 'Insufficient memory for TL matrix: reduce Nr * NRz'  )
   CASE ( 'A', 'a', 'R', 'E' )   ! Arrivals calculation
      ALLOCATE ( U( 1, 1 ), Stat = IAllocStat )   ! open a dummy variable
+  CASE DEFAULT
+     WRITE( ERROR_UNIT, * ) 'BELLHOP: Unknown RunType for allocation: ', Beam%RunType( 1 : 1 )
+     CALL ERROUT( 'BELLHOP', 'Unknown RunType in allocation' )
   END SELECT
 
   ! for an arrivals run, allocate space for arrivals matrices
@@ -237,12 +241,17 @@ SUBROUTINE BellhopCore
   SourceDepth: DO is = 1, Pos%NSz
      xs = [ 0.0, Pos%sz( is ) ]   ! source coordinate
 
-     SELECT CASE ( Beam%RunType( 1 : 1 ) )
-     CASE ( 'C', 'S', 'I' ) ! TL calculation, zero out pressure matrix
-        U = 0.0
-     CASE ( 'A', 'a' )      ! Arrivals calculation, zero out arrival matrix
-        NArr = 0
-     END SELECT
+  SELECT CASE ( Beam%RunType( 1 : 1 ) )
+  CASE ( 'C', 'S', 'I' ) ! TL calculation, zero out pressure matrix
+     U = 0.0
+  CASE ( 'A', 'a' )      ! Arrivals calculation, zero out arrival matrix
+     NArr = 0
+  CASE ( 'R', 'E' )      ! Ray trace or eigenrays
+     CONTINUE
+  CASE DEFAULT
+     WRITE( ERROR_UNIT, * ) 'BELLHOP: Unknown RunType for initialization: ', Beam%RunType( 1 : 1 )
+     CALL ERROUT( 'BELLHOP', 'Unknown RunType in initialization' )
+  END SELECT
 
      ! LP: This initialization was missing (only done once globally). In some
      ! cases (a source on a boundary), in conjunction with other subtle issues,
@@ -327,19 +336,24 @@ SUBROUTINE BellhopCore
 
      ! write results to disk
 
-     SELECT CASE ( Beam%RunType( 1 : 1 ) )
-     CASE ( 'C', 'S', 'I' )   ! TL calculation
-        CALL ScalePressure( Angles%Dalpha, ray2D( 1 )%c, Pos%Rr, U, NRz_per_range, Pos%NRr, Beam%RunType, freq )
-        IRec = 10 + NRz_per_range * ( is - 1 )
-        RcvrDepth: DO Irz1 = 1, NRz_per_range
-           IRec = IRec + 1
-           WRITE( SHDFile, REC = IRec ) U( Irz1, 1 : Pos%NRr )
-        END DO RcvrDepth
-     CASE ( 'A' )             ! arrivals calculation, ascii
-        CALL WriteArrivalsASCII(  Pos%Rr, NRz_per_range, Pos%NRr, Beam%RunType( 4 : 4 ) )
-     CASE ( 'a' )             ! arrivals calculation, binary
-        CALL WriteArrivalsBinary( Pos%Rr, NRz_per_range, Pos%NRr, Beam%RunType( 4 : 4 ) )
-     END SELECT
+  SELECT CASE ( Beam%RunType( 1 : 1 ) )
+  CASE ( 'C', 'S', 'I' )   ! TL calculation
+     CALL ScalePressure( Angles%Dalpha, ray2D( 1 )%c, Pos%Rr, U, NRz_per_range, Pos%NRr, Beam%RunType, freq )
+     IRec = 10 + NRz_per_range * ( is - 1 )
+     RcvrDepth: DO Irz1 = 1, NRz_per_range
+        IRec = IRec + 1
+        WRITE( SHDFile, REC = IRec ) U( Irz1, 1 : Pos%NRr )
+     END DO RcvrDepth
+  CASE ( 'A' )             ! arrivals calculation, ascii
+     CALL WriteArrivalsASCII(  Pos%Rr, NRz_per_range, Pos%NRr, Beam%RunType( 4 : 4 ) )
+  CASE ( 'a' )             ! arrivals calculation, binary
+     CALL WriteArrivalsBinary( Pos%Rr, NRz_per_range, Pos%NRr, Beam%RunType( 4 : 4 ) )
+  CASE ( 'R', 'E' )         ! ray trace or eigenrays
+     CONTINUE
+  CASE DEFAULT
+     WRITE( ERROR_UNIT, * ) 'BELLHOP: Unknown RunType when writing results: ', Beam%RunType( 1 : 1 )
+     CALL ERROUT( 'BELLHOP', 'Unknown RunType when writing results' )
+  END SELECT
 
   END DO SourceDepth
 
@@ -355,6 +369,9 @@ SUBROUTINE BellhopCore
      CLOSE( ARRFile )
   CASE ( 'R', 'E' )                ! ray trace
      CLOSE( RAYFile )
+  CASE DEFAULT
+     WRITE( ERROR_UNIT, * ) 'BELLHOP: Unknown RunType when closing files: ', Beam%RunType( 1 : 1 )
+     CALL ERROUT( 'BELLHOP', 'Unknown RunType when closing files' )
   END SELECT
 
   CLOSE( PRTFile )
@@ -399,9 +416,12 @@ COMPLEX (KIND=8 ) FUNCTION PickEpsilon( BeamType, omega, c, gradc, alpha, Dalpha
         ELSE
            epsilonOpt = ( -SIN( alpha ) / COS( alpha ** 2 ) ) * c * c / cz
         ENDIF
+     CASE DEFAULT
+        WRITE( ERROR_UNIT, * ) 'BELLHOP: Unknown beam width option: ', BeamType( 2 : 2 )
+        CALL ERROUT( 'BELLHOP', 'Unknown beam width option' )
      END SELECT
 
-  CASE ( 'G', 'g' ) ! LP: BUG: Missing ^
+  CASE ( 'G', 'g', '^' ) ! LP: BUG: Missing ^
      TAG        = 'Geometric hat beams'
      halfwidth  = 2.0 / ( ( omega / c ) * Dalpha )
      epsilonOpt = i * 0.5 * omega * halfwidth ** 2
@@ -418,6 +438,9 @@ COMPLEX (KIND=8 ) FUNCTION PickEpsilon( BeamType, omega, c, gradc, alpha, Dalpha
      TAG        = 'Simple Gaussian beams'
      halfwidth  = 2.0 / ( ( omega / c ) * Dalpha )
      epsilonOpt = i * 0.5 * omega * halfwidth ** 2
+  CASE DEFAULT
+     WRITE( ERROR_UNIT, * ) 'BELLHOP: Unknown beam type: ', BeamType( 1 : 1 )
+     CALL ERROUT( 'BELLHOP', 'Unknown beam type' )
   END SELECT
 
   PickEpsilon = EpsMultiplier * epsilonOpt
@@ -692,6 +715,11 @@ SUBROUTINE Reflect2D( is, HS, BotTop, tBdry, nBdry, kappa, RefC, Npts )
      RN = 2.0 * RN
   CASE ( 'Z' )
      RN = 0.0
+  CASE ( 'S', ' ' )
+     CONTINUE
+  CASE DEFAULT
+     WRITE( ERROR_UNIT, * ) 'BELLHOP: Unknown curvature option: ', Beam%Type( 3 : 3 )
+     CALL ERROUT( 'BELLHOP', 'Unknown curvature option' )
   END SELECT
 
   ray2D( is1 )%c   = c

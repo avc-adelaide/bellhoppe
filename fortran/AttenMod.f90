@@ -8,6 +8,7 @@ MODULE AttenMod
   ! Includes a formula for volume attenuation
 
   USE FatalError
+  USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: ERROR_UNIT
 
   IMPLICIT NONE
   PUBLIC
@@ -85,6 +86,9 @@ CONTAINS
        IF ( c * alpha /= 0.0 ) alphaT = omega / ( 2.0 * c * alpha )
     CASE ( 'L' )   ! loss parameter
        IF ( c /= 0.0         ) alphaT = alpha * omega / c
+    CASE DEFAULT
+       WRITE( ERROR_UNIT, * ) 'AttenMod: CRCI: Unknown attenuation unit (1st char): ', AttenUnit( 1 : 1 )
+       CALL ERROUT( 'AttenMod : CRCI', 'Unknown attenuation unit (first character)' )
     END SELECT
 
     ! added volume attenuation
@@ -114,6 +118,9 @@ CONTAINS
              alphaT = alphaT + a
           END IF
        END DO
+    CASE DEFAULT
+       WRITE( ERROR_UNIT, * ) 'AttenMod: CRCI: Unknown volume attenuation unit (2nd char): ', AttenUnit( 2 : 2 )
+       CALL ERROUT( 'AttenMod : CRCI', 'Unknown attenuation unit (second character)' )
     END SELECT
 
     ! Convert Nepers/m to equivalent imaginary sound speed

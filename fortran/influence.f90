@@ -11,6 +11,7 @@ MODULE Influence
   USE ArrMod
   USE sspMod   ! used to construct image beams in the Cerveny style beam routines
   USE WriteRay
+  USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: ERROR_UNIT
 
   IMPLICIT NONE
   PUBLIC
@@ -146,6 +147,9 @@ CONTAINS
                       P_n    = -i * omega * gamma * n * contri
                       P_s    = -i * omega / c         * contri
                       contri = c * ( -P_n * ray2D( iS )%t( 2 ) + P_s * ray2D( iS )%t( 1 ) )
+                   CASE DEFAULT
+                      WRITE( ERROR_UNIT, * ) 'InfluenceCervenyRayCen: Unknown component: ', Beam%Component
+                      CALL ERROUT( 'InfluenceCervenyRayCen', 'Unknown beam component' )
                    END SELECT
 
                    KMAH = KMAHV( iS - 1 )
@@ -157,6 +161,9 @@ CONTAINS
                    SELECT CASE ( Beam%RunType( 1 : 1 ) )
                    CASE ( 'I', 'S' )   ! Incoherent or Semi-coherent TL
                       contri = ABS( contri ) ** 2
+                   CASE DEFAULT
+                      WRITE( ERROR_UNIT, * ) 'InfluenceCervenyRayCen: Unknown RunType: ', Beam%RunType( 1 : 1 )
+                      CALL ERROUT( 'InfluenceCervenyRayCen', 'Unknown RunType' )
                    END SELECT
 
                    U( iz, ir ) = U( iz, ir ) + CMPLX( Hermite( n, RadiusMax, 2 * RadiusMax ) * contri )
@@ -281,17 +288,20 @@ CONTAINS
 
              contri = 0.0
              ImageLoop: DO Image = 1, Beam%Nimage
-                SELECT CASE ( Image )
-                CASE ( 1 )   ! True beam
-                   deltaz = zR - x( 2 )
-                   Polarity = +1.0D0
-                CASE ( 2 )   ! Surface reflected beam
-                   deltaz = -zR + 2.0 * Bdry%Top%HS%Depth - x( 2 )
-                   Polarity = -1.0D0
-                CASE ( 3 )   ! Bottom  reflected beam
-                   deltaz = -zR + 2.0 * Bdry%Bot%HS%Depth - x( 2 )
-                   Polarity = +1.0D0   ! assumes rigid bottom
-                END SELECT
+               SELECT CASE ( Image )
+               CASE ( 1 )   ! True beam
+                  deltaz = zR - x( 2 )
+                  Polarity = +1.0D0
+               CASE ( 2 )   ! Surface reflected beam
+                  deltaz = -zR + 2.0 * Bdry%Top%HS%Depth - x( 2 )
+                  Polarity = -1.0D0
+               CASE ( 3 )   ! Bottom  reflected beam
+                  deltaz = -zR + 2.0 * Bdry%Bot%HS%Depth - x( 2 )
+                  Polarity = +1.0D0   ! assumes rigid bottom
+               CASE DEFAULT
+                  WRITE( ERROR_UNIT, * ) 'InfluenceCervenyCart: Unknown image index: ', Image
+                  CALL ERROUT( 'InfluenceCervenyCart', 'Unknown image index' )
+               END SELECT
 
                 IF ( omega * AIMAG( gamma ) * deltaz ** 2 < iBeamWindow2 ) &
                      contri =  contri + Polarity * ray2D( iS )%Amp * Hermite( deltaz, RadiusMax, 2.0 * RadiusMax ) * &
@@ -299,12 +309,15 @@ CONTAINS
              END DO ImageLoop
 
              ! contribution to field
-             SELECT CASE( Beam%RunType( 1 : 1 ) )
-             CASE ( 'C' )        ! coherent
-                contri = const * contri
-             CASE ( 'I', 'S' )   ! incoherent or semi-coherent
-                contri = ABS( const * contri ) ** 2
-             END SELECT
+            SELECT CASE( Beam%RunType( 1 : 1 ) )
+            CASE ( 'C' )        ! coherent
+               contri = const * contri
+            CASE ( 'I', 'S' )   ! incoherent or semi-coherent
+               contri = ABS( const * contri ) ** 2
+            CASE DEFAULT
+               WRITE( ERROR_UNIT, * ) 'InfluenceCervenyCart: Unknown RunType: ', Beam%RunType( 1 : 1 )
+               CALL ERROUT( 'InfluenceCervenyCart', 'Unknown RunType' )
+            END SELECT
              U( iz, ir ) = U( iz, ir ) + CMPLX( contri )
           END DO RcvrDepths
        END DO RcvrRanges

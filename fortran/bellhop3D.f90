@@ -72,6 +72,7 @@ PROGRAM BELLHOP3D
   USE influence
   USE Influence3D
   USE FatalError
+  USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: ERROR_UNIT
 
   IMPLICIT NONE
 
@@ -143,6 +144,9 @@ SUBROUTINE BellhopCore
      NRz_per_range = 1         ! irregular grid
   CASE ( 'R' )
      NRz_per_range = Pos%NRz   ! rectilinear grid
+  CASE DEFAULT
+     WRITE( ERROR_UNIT, * ) 'BELLHOP3D: Unknown grid RunType: ', Beam%RunType( 5 : 5 )
+     CALL ERROUT( 'BELLHOP3D', 'Unknown grid RunType' )
   END SELECT
 
   ! for a TL calculation, allocate space for the pressure matrix
@@ -155,6 +159,9 @@ SUBROUTINE BellhopCore
   CASE ( 'A', 'a', 'R', 'E' )   ! Arrivals calculation
      ALLOCATE ( P( 1, 1, 1 ), Stat = IAllocStat )   ! open a dummy variable
      ALLOCATE ( U( 1, 1 ),    Stat = IAllocStat )   ! open a dummy variable
+  CASE DEFAULT
+     WRITE( ERROR_UNIT, * ) 'BELLHOP3D: Unknown RunType for allocation: ', Beam%RunType( 1 : 1 )
+     CALL ERROUT( 'BELLHOP3D', 'Unknown RunType in allocation' )
   END SELECT
 
   ! for an arrivals run, allocate space for arrivals matrices
@@ -335,6 +342,9 @@ SUBROUTINE BellhopCore
                                 CALL ERROUT( 'BELLHOP3D', 'Invalid Run Type' )
                              END SELECT
                           END IF
+                       CASE DEFAULT
+                          WRITE( ERROR_UNIT, * ) 'BELLHOP3D: Unknown 2D/3D flag: ', Beam%RunType( 6 : 6 )
+                          CALL ERROUT( 'BELLHOP3D', 'Unknown 2D/3D flag' )
                        END SELECT
 
                        ! Optionally dump rays to a disk file
@@ -363,6 +373,11 @@ SUBROUTINE BellhopCore
                        Arr3D(  ibeta, :, :, : )%SrcAzimAngle  = SNGL( SrcAzimAngle )   ! angle
                        Arr3D(  ibeta, :, :, : )%RcvrAzimAngle = SNGL( SrcAzimAngle )   ! angle (rcvr angle is same as source angle)
                        Narr = 0   ! this clears out the 2D arrival structure
+                    CASE ( 'R', 'E' )         ! ray trace or eigenrays
+                       CONTINUE
+                    CASE DEFAULT
+                       WRITE( ERROR_UNIT, * ) 'BELLHOP3D: Unknown RunType in 2D merge: ', Beam%RunType( 1 : 1 )
+                       CALL ERROUT( 'BELLHOP3D', 'Unknown RunType in 2D merge' )
                     END SELECT
                  END IF
               ENDIF   ! closes iSingle test
@@ -375,6 +390,11 @@ SUBROUTINE BellhopCore
               CASE ( 'C', 'S', 'I' )   ! TL calculation
                  CALL ScalePressure3D( Angles%Dalpha, Angles%Dbeta, ray2D( 1 )%c, epsilon, P, &
                                        Pos%Ntheta, NRz_per_range, Pos%NRr, Beam%RunType, freq )
+              CASE ( 'A', 'a', 'R', 'E' )
+                 CONTINUE
+              CASE DEFAULT
+                 WRITE( ERROR_UNIT, * ) 'BELLHOP3D: Unknown RunType in 3D scale: ', Beam%RunType( 1 : 1 )
+                 CALL ERROUT( 'BELLHOP3D', 'Unknown RunType in 3D scale' )
               END SELECT
            END IF
 
@@ -396,6 +416,11 @@ SUBROUTINE BellhopCore
                  CALL WriteArrivalsASCII3D(  Pos%Rr, Pos%Ntheta, NRz_per_range, Pos%NRr )
               CASE ( 'a' )             ! arrivals calculation, binary
                  CALL WriteArrivalsBinary3D( Pos%Rr, Pos%Ntheta, NRz_per_range, Pos%NRr )
+              CASE ( 'R', 'E' )         ! ray trace or eigenrays
+                 CONTINUE
+              CASE DEFAULT
+                 WRITE( ERROR_UNIT, * ) 'BELLHOP3D: Unknown RunType when writing results: ', Beam%RunType( 1 : 1 )
+                 CALL ERROUT( 'BELLHOP3D', 'Unknown RunType when writing results' )
            END SELECT
         END DO Source_y
      END DO Source_x
@@ -407,8 +432,11 @@ SUBROUTINE BellhopCore
      CLOSE( SHDFile )
   CASE ( 'A', 'a' )           ! arrivals calculation
      CLOSE( ARRFile )
-  CASE ( 'R' )                ! ray trace
+  CASE ( 'R', 'E' )            ! ray trace or eigenrays
      CLOSE( RAYFile )
+  CASE DEFAULT
+     WRITE( ERROR_UNIT, * ) 'BELLHOP3D: Unknown RunType when closing files: ', Beam%RunType( 1 : 1 )
+     CALL ERROUT( 'BELLHOP3D', 'Unknown RunType when closing files' )
   END SELECT
 
   ! Display run time
@@ -453,6 +481,9 @@ SUBROUTINE PickEpsilon( BeamType, omega, c, Dalpha, Dbeta, rLoop, EpsMultiplier,
         epsilonOPT      = i * 0.5 * omega * HalfWidth **2
      CASE ( 'C' )
         TAG    = 'Cerveny style beam'
+     CASE DEFAULT
+        WRITE( ERROR_UNIT, * ) 'BELLHOP3D: Unknown beam width option: ', BeamType( 2 : 2 )
+        CALL ERROUT( 'BELLHOP3D', 'Unknown beam width option' )
      END SELECT
 
   CASE ( 'g' )
@@ -471,6 +502,9 @@ SUBROUTINE PickEpsilon( BeamType, omega, c, Dalpha, Dbeta, rLoop, EpsMultiplier,
      TAG        = 'Simple Gaussian beams'
      halfwidth  = 2.0 / ( ( omega / c ) * Dalpha )
      epsilonOpt = i * 0.5 * omega * halfwidth ** 2
+  CASE DEFAULT
+     WRITE( ERROR_UNIT, * ) 'BELLHOP3D: Unknown beam type: ', BeamType( 1 : 1 )
+     CALL ERROUT( 'BELLHOP3D', 'Unknown beam type' )
   END SELECT
 
   epsilon = epsMultiplier * epsilonOPT
