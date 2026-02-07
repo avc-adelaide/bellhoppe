@@ -302,7 +302,8 @@ CONTAINS
 
     END DO BoundaryPt
 
-    IF ( CurvilinearFlag( 1 : 1 ) == 'C' ) THEN ! curvilinear option: compute tangent and normal at node by averaging normals on adjacent segments
+    IF ( CurvilinearFlag( 1 : 1 ) == 'C' ) THEN
+       ! curvilinear option: compute tangent and normal at node by averaging normals on adjacent segments
        ! averaging two centered differences is equivalent to forming a single centered difference of two steps ...
        DO ii = 2, NPts - 1
           sss = Bdry( ii - 1 )%Len / ( Bdry( ii - 1 )%Len + Bdry( ii )%Len )

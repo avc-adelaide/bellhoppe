@@ -259,8 +259,9 @@ CONTAINS
                       ! LP: mbp seems to have realized only some of these components were being used
                       ! and is only calculating the needed ones, but still storing all of them
                       e_theta      = [ -t_rcvr( 2, itheta ), t_rcvr( 1, itheta ), 0.0D0 ]  ! normal to the vertical receiver plane
-                      ! n_ray_z    = CROSS_PRODUCT( rayt, e_theta )                        ! normal to the ray in the vertical receiver plane
-                      n_ray_z( 3 ) = rayt( 1 ) * e_theta( 2 ) - rayt( 2 ) * e_theta( 1 )   ! normal to the ray in the vertical receiver plane
+                      ! n_ray_z    = CROSS_PRODUCT( rayt, e_theta )
+                      n_ray_z( 3 ) = rayt( 1 ) * e_theta( 2 ) - rayt( 2 ) * e_theta( 1 )
+                          ! normal to the ray in the vertical receiver plane
 
                       IF ( ABS( n_ray_z( 3 ) ) < 1D-9 ) THEN
                          ! WRITE( PRTFile, * ) 'Skip theta b/c L_z divide by zero', n_ray_z( 3 )
@@ -656,8 +657,9 @@ CONTAINS
 
                       ! calculate z-limits for the beam (could be pre-cacluated for each itheta)
                       e_theta      = [ -t_rcvr( 2, itheta ), t_rcvr( 1, itheta ), 0.0D0 ]  ! normal to the vertical receiver plane
-                      ! n_ray_z    = CROSS_PRODUCT( rayt, e_theta )                        ! normal to the ray in the vertical receiver plane
-                      n_ray_z( 3 ) = rayt( 1 ) * e_theta( 2 ) - rayt( 2 ) * e_theta( 1 )   ! normal to the ray in the vertical receiver plane
+                      ! n_ray_z    = CROSS_PRODUCT( rayt, e_theta )
+                      n_ray_z( 3 ) = rayt( 1 ) * e_theta( 2 ) - rayt( 2 ) * e_theta( 1 )
+                          ! normal to the ray in the vertical receiver plane
 
                       IF ( ABS( n_ray_z( 3 ) ) < 1D-9 ) CYCLE Radials   ! avoid divide by zero
                       L_z          = BeamWindow * L_diag / ABS( n_ray_z( 3 ) )

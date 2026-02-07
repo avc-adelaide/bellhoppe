@@ -188,7 +188,7 @@ typep: uvsync
 
 lintf:
 	@echo "Linting fortran with FORTITUDE..."
-	uv run -- fortitude check --output-format concise --line-length 150 --ignore PORT011,C121,C003
+	uv run -- fortitude check --output-format concise --line-length 131 --ignore PORT011,C121,C003
 
 uvsync:
 	uv sync --extra dev

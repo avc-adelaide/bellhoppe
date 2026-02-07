@@ -466,7 +466,8 @@ CONTAINS
        ! compute normalized tangent (compute it because we need to measure the step length)
        rayt = ray2D( iS )%x - ray2D( iS - 1 )%x
        rlen = NORM2( rayt )
-       IF ( rlen < 1.0D3 * SPACING( ray2D( iS )%x( 1 ) ) ) CYCLE Stepping  ! if duplicate point in ray, skip to next step along the ray
+       IF ( rlen < 1.0D3 * SPACING( ray2D( iS )%x( 1 ) ) ) CYCLE Stepping
+           ! if duplicate point in ray, skip to next step along the ray
        rayt = rayt / rlen                    ! unit tangent to ray
        rayn = [ -rayt( 2 ), rayt( 1 ) ]      ! unit normal  to ray
        RcvrDeclAngle = RadDeg * ATAN2( rayt( 2 ), rayt( 1 ) )
@@ -478,7 +479,8 @@ CONTAINS
        CALL IncPhaseIfCaustic( .TRUE. )
        qold = q
 
-       RadiusMax = MAX( ABS( ray2D( iS - 1 )%q( 1 ) ), ABS( ray2D( iS )%q( 1 ) ) ) / q0 / ABS( rayt( 1 ) ) ! beam radius projected onto vertical line
+       RadiusMax = MAX( ABS( ray2D( iS - 1 )%q( 1 ) ), ABS( ray2D( iS )%q( 1 ) ) ) / q0 / ABS( rayt( 1 ) )
+           ! beam radius projected onto vertical line
 
        ! depth limits of beam
        IF ( ABS( rayt( 1 ) ) > 0.5 ) THEN   ! shallow angle ray
@@ -594,7 +596,8 @@ CONTAINS
 
        ! calculate beam width
        lambda    = ray2D( iS - 1 )%c / freq
-       sigma     = MAX( ABS( ray2D( iS - 1 )%q( 1 ) ), ABS( ray2D( iS )%q( 1 ) ) ) / q0 / ABS( rayt( 1 ) ) ! beam radius projected onto vertical line
+       sigma     = MAX( ABS( ray2D( iS - 1 )%q( 1 ) ), ABS( ray2D( iS )%q( 1 ) ) ) / q0 / ABS( rayt( 1 ) )
+                   ! beam radius projected onto vertical line
        sigma     = MAX( sigma, MIN( 0.2 * freq * REAL( ray2D( iS )%tau ), pi * lambda ) )
        RadiusMax = BeamWindow * sigma
 
