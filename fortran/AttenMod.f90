@@ -61,9 +61,8 @@ CONTAINS
     COMPLEX  (KIND=8)                :: CRCI
 
     omega = 2.0 * pi * freq
-
-    !  Convert to Nepers/m
     alphaT = 0.0
+    !  Convert to Nepers/m
     SELECT CASE ( AttenUnit( 1 : 1 ) )
     CASE ( 'N' )
        alphaT = alpha
@@ -87,6 +86,8 @@ CONTAINS
        IF ( c * alpha /= 0.0 ) alphaT = omega / ( 2.0 * c * alpha )
     CASE ( 'L' )   ! loss parameter
        IF ( c /= 0.0         ) alphaT = alpha * omega / c
+    CASE ( ' ' )
+        ! default = do nothing
     CASE DEFAULT
        WRITE( ERROR_UNIT, * ) 'AttenMod: CRCI: Unknown attenuation unit (1st char): ', AttenUnit( 1 : 1 )
        CALL ERROUT( 'AttenMod : CRCI', 'Unknown attenuation unit (first character)' )
@@ -119,6 +120,8 @@ CONTAINS
              alphaT = alphaT + a
           END IF
        END DO
+    CASE ( ' ' )
+        ! default = do nothing
     CASE DEFAULT
        WRITE( ERROR_UNIT, * ) 'AttenMod: CRCI: Unknown volume attenuation unit (2nd char): ', AttenUnit( 2 : 2 )
        CALL ERROUT( 'AttenMod : CRCI', 'Unknown attenuation unit (second character)' )
