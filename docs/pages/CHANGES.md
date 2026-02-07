@@ -2,6 +2,20 @@
 title: AUBELLHOP CHANGELOG
 ---
 
+## Unreleased
+
+* Update Fortran code to satisfy fortitude v0.8
+  (mostly semicolons, line lengths, deprecated trig functions)
+* Fortitude also asked for error handling when `SELECT CASE` did not match an option;
+  this has been added (seems like a good idea) but probably needs more testing to ensure
+  that "do nothing by default" wasn't implicit in certain cases
+* Breaking change: `Environment().to_file()` had a particularly awkward interface and now
+  mirrors `Environment.from_file()` more closely
+* Added `overwrite=True/False` in `compute` and `to_file` contexts for controlling more
+  carefully whether files written by `aubellhop` can destroy other files
+* Small documentation fixes
+
+
 ## [0.1.9] - 2026-01-13
 
 * Remove `hatch` as package system — standardise on `uv`.
