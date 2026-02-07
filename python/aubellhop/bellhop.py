@@ -37,7 +37,7 @@ from importlib.resources import files
 import tempfile
 from typing import Any, Dict, Tuple
 
-from .constants import ModelDefaults, BHStrings, FileExt, FlagMaps
+from .constants import ModelDefaults, BHStrings, FileExt
 from .environment import Environment
 from .readers import read_shd, read_arrivals, read_rays
 
