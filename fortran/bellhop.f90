@@ -791,9 +791,9 @@ SUBROUTINE Reflect2D( is, HS, BotTop, tBdry, nBdry, kappa, RefC, Npts )
            ! I think the formulas are good, but this won't be reliable because it doesn't have the logic
            ! that tracks crossing into new segments after the ray displacement.
 
-           theta_bot = datan( tBdry( 2 ) / tBdry( 1 ))  ! bottom angle
-           ray2D( is1 )%x( 1 ) = ray2D( is1 )%x( 1 ) + real( delta ) * dcos( theta_bot )       ! range displacement
-           ray2D( is1 )%x( 2 ) = ray2D( is1 )%x( 2 ) + real( delta ) * dsin( theta_bot )       ! depth displacement
+           theta_bot = ATAN2( tBdry( 2 ) , tBdry( 1 ))  ! bottom angle
+           ray2D( is1 )%x( 1 ) = ray2D( is1 )%x( 1 ) + real( delta ) * COS( theta_bot )       ! range displacement
+           ray2D( is1 )%x( 2 ) = ray2D( is1 )%x( 2 ) + real( delta ) * SIN( theta_bot )       ! depth displacement
            ray2D( is1 )%tau    = ray2D( is1 )%tau + pdelta                                     ! phase change
            ray2D( is1 )%q      = ray2D( is1 )%q + sddelta * rddelta * si * c * ray2D( is )%p   ! beam-width change
         endif

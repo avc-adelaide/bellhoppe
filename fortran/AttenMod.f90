@@ -103,8 +103,8 @@ CONTAINS
 
        alphaT = alphaT + Thorp
     CASE ( 'F' )   ! Francois-Garrison
-       FG     = Franc_Garr( freq / 1000 );   ! dB/km
-       FG     = FG / 8685.8896;                           ! Nepers / m
+       FG     = Franc_Garr( freq / 1000 )   ! dB/km
+       FG     = FG / 8685.8896                           ! Nepers / m
        alphaT = alphaT + FG
     CASE ( 'B' )   ! biological attenuation per Orest Diachok
        DO iBio = 1, NBioLayers

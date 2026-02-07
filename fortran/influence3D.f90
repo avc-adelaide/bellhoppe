@@ -225,7 +225,8 @@ CONTAINS
                    Radials: DO itheta = 1, Pos%Ntheta   ! Loop over radials of receiver line
 
                       x_rcvr( 1 : 2 ) = x_rcvrMat( 1 : 2, itheta, ir )
-                      m_prime = ABS( DOT_PRODUCT( x_rcvr( 1 : 2 ) - x_ray( 1 : 2 ), n_ray_theta( 1 : 2 ) ) )  ! normal distance from rcvr to ray segment
+                      m_prime = ABS( DOT_PRODUCT( x_rcvr( 1 : 2 ) - x_ray( 1 : 2 ), n_ray_theta( 1 : 2 ) ) )
+                          ! normal distance from rcvr to ray segment
 
                       IF ( m_prime > L_diag ) THEN
                          ! IF ( itheta == 36 ) THEN
@@ -238,9 +239,12 @@ CONTAINS
                       ! However, extrapolating the beam backwards produces contributions with s negative and large
                       ! We do not want to accept these contributions--- they have the proper range but are 180 degrees
                       ! away from this segment of the ray
-                      ! s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - x_ray( 1 : 2 ), rayt( 1 : 2 ) / NORM2( rayt( 1 : 2 ) ) )   ! a distance along ray    (in x-y plane)
-                      ! s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - xs_3D( 1 : 2 ), t_rcvr( 1 : 2, itheta ) ) ! a distance along radial (in x-y plane)
-                      s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - xs_3D( 1 : 2 ), x_ray( 1 : 2 ) - xs_3D( 1 : 2 ) ) ! vector to rcvr dotted into vector to ray point
+                      ! s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - x_ray( 1 : 2 ), rayt( 1 : 2 ) / NORM2( rayt( 1 : 2 ) ) )
+                          ! a distance along ray    (in x-y plane)
+                      ! s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - xs_3D( 1 : 2 ), t_rcvr( 1 : 2, itheta ) )
+                          ! a distance along radial (in x-y plane)
+                      s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - xs_3D( 1 : 2 ), x_ray( 1 : 2 ) - xs_3D( 1 : 2 ) )
+                          ! vector to rcvr dotted into vector to ray point
 
                       ! The real receivers have an s-value in [0, R_len]
                       ! IF ( s < 0D0 .OR. s > NORM2( ray3D( is )%x( 1 : 2 ) - ray3D( is - 1 )%x( 1 : 2 ) ) ) THEN
@@ -637,9 +641,12 @@ CONTAINS
                       ! We do not want to accept these contributions--- they have the proper range but are 180 degrees
                       ! away from this segment of the ray
 !!! pre-calculate unit ray tangent
-                      ! s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - x_ray( 1 : 2 ), rayt( 1 : 2 ) / NORM2( rayt( 1 : 2 ) ) )   ! a distance along ray    (in x-y plane)
-                      ! s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - xs_3D( 1 : 2 ), t_rcvr( 1 : 2, itheta ) ) ! a distance along radial (in x-y plane)
-                      s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - xs_3D( 1 : 2 ), x_ray( 1 : 2 ) - xs_3D( 1 : 2 ) ) ! vector to rcvr dotted into vector to ray point
+                      ! s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - x_ray( 1 : 2 ), rayt( 1 : 2 ) / NORM2( rayt( 1 : 2 ) ) )
+                          ! a distance along ray    (in x-y plane)
+                      ! s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - xs_3D( 1 : 2 ), t_rcvr( 1 : 2, itheta ) )
+                          ! a distance along radial (in x-y plane)
+                      s = DOT_PRODUCT( x_rcvr( 1 : 2 ) - xs_3D( 1 : 2 ), x_ray( 1 : 2 ) - xs_3D( 1 : 2 ) )
+                          ! vector to rcvr dotted into vector to ray point
 
                       ! The real receivers have an s-value in [0, R_len]
                       ! IF ( s < 0D0 .OR. s > NORM2( ray3D( is )%x( 1 : 2 ) - ray3D( is - 1 )%x( 1 : 2 ) ) ) THEN

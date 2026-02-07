@@ -96,7 +96,8 @@ CONTAINS
 
     IF ( PlotType( 1 : 2 ) /= 'TL' ) THEN
        ! MAX( 41, ... ) below because Title is already 40 words (or 80 bytes)
-       LRecl = MAX( 41, 2 * Nfreq, Pos%Ntheta, Pos%NSx, Pos%NSy, Pos%NSz, Pos%NRz, 2 * Pos%NRr )   ! words/record (NRr doubled for complex pressure storage)
+       LRecl = MAX( 41, 2 * Nfreq, Pos%Ntheta, Pos%NSx, Pos%NSy, Pos%NSz, Pos%NRz, 2 * Pos%NRr )
+           ! words/record (NRr doubled for complex pressure storage)
 
        OPEN ( FILE = FileName, UNIT = SHDFile, STATUS = 'REPLACE', ACCESS = 'DIRECT', RECL = 4 * LRecl, FORM = 'UNFORMATTED')
        WRITE( SHDFile, REC = 1  ) LRecl, Title( 1 : 80 )
