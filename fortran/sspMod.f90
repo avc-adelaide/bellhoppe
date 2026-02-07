@@ -483,7 +483,8 @@ END SUBROUTINE EvaluateSSP2D
 
        ! interpolate the attenuation !!!! This will use the wrong segment if the ssp in the envil is sampled at different depths
        s2    = s2 / delta_z   ! convert to a proportional depth in the layer
-       cimag = AIMAG( ( 1.0D0 - s2 ) * SSP%c( Isegz )  + s2 * SSP%c( Isegz + 1 ) )   ! volume attenuation is taken from the single c(z) profile
+       cimag = AIMAG( ( 1.0D0 - s2 ) * SSP%c( Isegz )  + s2 * SSP%c( Isegz + 1 ) )
+           ! volume attenuation is taken from the single c(z) profile
 
        cz  = ( 1.0D0 - s1 ) * cz1 + s1 * cz2
 
@@ -676,7 +677,8 @@ END SUBROUTINE EvaluateSSP2D
 
        ! interpolate the attenuation !!!! This will use the wrong segment if the ssp in the envfil is sampled at different depths
        s3 = s3 / ( SSP%z( iSegz + 1 ) - SSP%z( iSegz ) )   ! convert s3 to a proportional distance in the layer
-       cimag = AIMAG( ( 1.0D0 - s3 ) * SSP%c( Isegz )  + s3 * SSP%c( Isegz + 1 ) )   ! volume attenuation is taken from the single c(z) profile
+       cimag = AIMAG( ( 1.0D0 - s3 ) * SSP%c( Isegz )  + s3 * SSP%c( Isegz + 1 ) )
+           ! volume attenuation is taken from the single c(z) profile
 
        cx = ( c2 - c1 ) / ( SSP%Seg%x( iSegx + 1 ) - SSP%Seg%x( iSegx ) )
 

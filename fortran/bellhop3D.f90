@@ -227,7 +227,8 @@ SUBROUTINE BellhopCore
            CALL EvaluateSSP3D( xs_3D, tdummy, c0, cimag0, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho, freq, 'TAB' )
            ray2D( 1 )%c = c0
            ray3D( 1 )%c = c0
-           CALL PickEpsilon( Beam%Type( 1 : 2 ), omega, c0, Angles%Dalpha, Angles%Dbeta, Beam%rLoop, Beam%epsMultiplier, epsilon ) ! beam constant
+           CALL PickEpsilon( Beam%Type( 1 : 2 ), omega, c0, Angles%Dalpha, Angles%Dbeta, Beam%rLoop, Beam%epsMultiplier, epsilon )
+               ! beam constant
 
            ! *** Trace successive beams ***
 

@@ -469,7 +469,8 @@ CONTAINS
        END IF
     END IF
 
-    h = MIN( h, hInt, hBoxx, hBoxy, hBoxz, hTop, hBot, hxSeg, hySeg, hTopDiag, hBotDiag )  ! take limit set by shortest distance to a crossing
+    h = MIN( h, hInt, hBoxx, hBoxy, hBoxz, hTop, hBot, hxSeg, hySeg, hTopDiag, hBotDiag )
+        ! take limit set by shortest distance to a crossing
     IF ( h < -1d-4 ) THEN
        WRITE( PRTFile, * ) 'ReduceStep3D: negative h'
        ! CALL ERROUT( 'ReduceStep3D', 'negative h' )
