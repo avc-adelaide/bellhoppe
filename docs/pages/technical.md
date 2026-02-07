@@ -24,7 +24,7 @@ The following are the major changes or additions:
 
 * A modern build system using UV is also used for building documentation and running tests. These are configured using [pyproject.toml](https://github.com/avc-adelaide/aubellhop/blob/main/pyproject.toml). This build system makes the GitHub CI processes quite straightforward to define.
 
-* The documentation system uses FORD, configured using [fdm.toml](https://github.com/avc-adelaide/aubellhop/blob/main/fpm.toml). Executing the documentation process is managed with
+* The documentation system uses FORD, configured using [fpm.toml](https://github.com/avc-adelaide/aubellhop/blob/main/docs/fpm.toml). Executing the documentation process is managed with
 
     make doc
 
@@ -32,6 +32,6 @@ The following are the major changes or additions:
 
     make test
 
-* The code coverage system uses both GCC tool `gcov` for Fortran code and `coverage.py` for Python code. This is controlled via the Makefile, with results compiled into HTML files. The unified coverage dashboard provides access to both Fortran and Python coverage reports in a single interface.
+* The code coverage system uses both GCC tool `gcov` for Fortran code and `coverage.py` for Python code. This is controlled via the Makefile, with results compiled into separate HTML reports for Fortran and Python.
 
-* There are two GitHub CI workflows: regression testing, and documentation build (which includes code coverage). They are set up using [check.yml](github.com/avc-adelaide/aubellhop/blob/main/.github/workflows/check.yml) and [docs.yml](github.com/avc-adelaide/aubellhop/blob/main/.github/workflows/docs.yml).
+* There are four GitHub CI workflows: regression testing, documentation build (which includes code coverage), linting, and publishing. They are set up using [check.yml](github.com/avc-adelaide/aubellhop/blob/main/.github/workflows/check.yml), [docs.yml](github.com/avc-adelaide/aubellhop/blob/main/.github/workflows/docs.yml), [lint.yml](github.com/avc-adelaide/aubellhop/blob/main/.github/workflows/lint.yml), and [publish.yml](github.com/avc-adelaide/aubellhop/blob/main/.github/workflows/publish.yml).
