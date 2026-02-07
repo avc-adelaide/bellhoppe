@@ -514,7 +514,8 @@ END SUBROUTINE EvaluateSSP2D
     REAL      (KIND=8), INTENT( IN  ) :: x( 3 )   ! x-y-z coordinate where sound speed is evaluated
     REAL      (KIND=8), INTENT( IN  ) :: t( 3 )   ! ray tangent; for edge cases of updating segments
     CHARACTER (LEN =3), INTENT( IN  ) :: Task
-    REAL      (KIND=8), INTENT( OUT ) :: c, cimag, gradc( 3 ), cxx, cyy, czz, cxy, cxz, cyz, rho ! sound speed and its derivatives
+    REAL      (KIND=8), INTENT( OUT ) :: c, cimag, gradc( 3 ), cxx, cyy, czz, cxy, cxz, cyz, rho
+        ! sound speed and its derivatives
     INTEGER                           :: AllocateStatus, iSegxt, iSegyt, iy2, iz2
     REAL      (KIND=8)                :: c1, c2, c11, c12, c21, c22, cz11, cz12, cz21, cz22, cz1, cz2, &
                                          cx, cy, cz, s1, s2, s3

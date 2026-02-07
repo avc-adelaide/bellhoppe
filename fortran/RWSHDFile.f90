@@ -114,7 +114,8 @@ CONTAINS
        WRITE( SHDFile, REC = 10 ) Pos%Rr( 1 : Pos%NRr )
 
     ELSE   ! compressed format for TL from FIELD3D
-       LRecl = MAX( 41, 2 * Nfreq, Pos%Ntheta, Pos%NSz, Pos%NRz, 2 * Pos%NRr )   ! words/record (NR doubled for complex pressure storage)
+       LRecl = MAX( 41, 2 * Nfreq, Pos%Ntheta, Pos%NSz, Pos%NRz, 2 * Pos%NRr )
+           ! words/record (NR doubled for complex pressure storage)
 
        OPEN ( FILE = FileName, UNIT = SHDFile, STATUS = 'REPLACE', ACCESS = 'DIRECT', RECL = 4 * LRecl, FORM = 'UNFORMATTED')
        WRITE( SHDFile, REC = 1  ) LRecl, Title( 1 : 80 )

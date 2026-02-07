@@ -252,7 +252,7 @@ CONTAINS
        w1     = Arr3D( itheta, id, ir, Nt )%A / AmpTot
        w2     = REAL( Amp ) / AmpTot
 
-       Arr3D( itheta, id, ir, Nt )%delay         = w1 * Arr3D( itheta, id, ir, Nt )%delay     + w2 * CMPLX( delay ) ! weighted sum
+       Arr3D( itheta, id, ir, Nt )%delay         = w1 * Arr3D( itheta, id, ir, Nt )%delay     + w2 * CMPLX( delay )
        Arr3D( itheta, id, ir, Nt )%A             = AmpTot
        Arr3D( itheta, id, ir, Nt )%SrcDeclAngle  = w1 * Arr3D( itheta, id, ir, Nt )%SrcDeclAngle  + w2 * SNGL( SrcDeclAngle )
        Arr3D( itheta, id, ir, Nt )%SrcAzimAngle  = w1 * Arr3D( itheta, id, ir, Nt )%SrcAzimAngle  + w2 * SNGL( SrcAzimAngle )

@@ -180,7 +180,8 @@ SUBROUTINE BellhopCore
   Angles%alpha  = DegRad * Angles%alpha   ! convert to radians
   Angles%Dalpha = 0.0
   IF ( Angles%Nalpha /= 1 ) &
-       Angles%Dalpha = ( Angles%alpha( Angles%Nalpha ) - Angles%alpha( 1 ) ) / ( Angles%Nalpha - 1 )  ! angular spacing between beams
+       Angles%Dalpha = ( Angles%alpha( Angles%Nalpha ) - Angles%alpha( 1 ) ) / ( Angles%Nalpha - 1 )
+       ! angular spacing between beams
 
   ! convert range-dependent geoacoustic parameters from user to program units
   IF ( atiType( 2 : 2 ) == 'L' ) THEN
@@ -666,7 +667,8 @@ SUBROUTINE Reflect2D( is, HS, BotTop, tBdry, nBdry, kappa, RefC, Npts )
   INTEGER,              INTENT( INOUT ) :: is
   INTEGER           :: is1
   REAL     (KIND=8) :: c, cimag, gradc( 2 ), crr, crz, czz, rho                  ! derivatives of sound speed
-  REAL     (KIND=8) :: RM, RN, Tg, Th, rayt( 2 ), rayn( 2 ), rayt_tilde( 2 ), rayn_tilde( 2 ), cnjump, csjump  ! for curvature change
+  REAL     (KIND=8) :: RM, RN, Tg, Th, rayt( 2 ), rayn( 2 ), rayt_tilde( 2 ), rayn_tilde( 2 )
+  REAL     (KIND=8) :: cnjump, csjump ! for curvature change
   REAL     (KIND=8) :: ck, co, si, cco, ssi, pdelta, rddelta, sddelta, theta_bot ! for beam shift
   COMPLEX  (KIND=8) :: kx, kz, kzP, kzS, kzP2, kzS2, mu, f, g, y2, y4, Refl      ! for tabulated reflection coef.
   COMPLEX  (KIND=8) :: ch, a, b, d, sb, delta, ddelta                            ! for beam shift

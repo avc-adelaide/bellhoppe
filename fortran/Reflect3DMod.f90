@@ -29,7 +29,8 @@ CONTAINS
     INTEGER          :: is1
     REAL    (KIND=8) :: rayt( 3 ), rayn1( 3 ), rayn2( 3 )             ! unit ray tangent and normals
     REAL    (KIND=8) :: rayt_tilde( 3 ), rayn1_tilde( 3 ), rayn2_tilde( 3 ), cn1jump, cn2jump, csjump
-    REAL    (KIND=8) :: c, cimag, gradc( 3 ), cxx, cyy, czz, cxy, cxz, cyz, rho   ! derivatives of sound speed in cartesian coordinates
+    REAL    (KIND=8) :: c, cimag, gradc( 3 ), cxx, cyy, czz, cxy, cxz, cyz, rho
+        ! derivatives of sound speed in cartesian coordinates
     REAL    (KIND=8) :: RM, R1, R2, R3, Tg, Th                        ! curvature corrections on reflection
     COMPLEX (KIND=8) :: gamma1, gamma2, gamma1Sq, gamma2Sq, GK, Refl
     TYPE(ReflectionCoef) :: RInt
@@ -42,8 +43,10 @@ CONTAINS
     is  = is + 1
     is1 = is + 1
 
-    !CALL ConeFormulas(    z_xx, z_xy, z_yy, nBdry, xs, ray3D( is )%x, BotTop ) ! analytic formulas for the curvature of the seamount
-    !CALL ParabotFormulas( z_xx, z_xy, z_yy, nBdry )                    ! analytic formulas for the curvature of the parabolic bottom
+    ! analytic formulas for the curvature of the seamount:
+    !CALL ConeFormulas(    z_xx, z_xy, z_yy, nBdry, xs, ray3D( is )%x, BotTop )
+    ! analytic formulas for the curvature of the parabolic bottom:
+    !CALL ParabotFormulas( z_xx, z_xy, z_yy, nBdry )
     !write( *, * ) 'z_xx, z_xy, z_yy', z_xx, z_xy, z_yy, 'nBdry', nBdry
     kappaMat( 1, 1 ) = z_xx / 2
     kappaMat( 1, 2 ) = z_xy / 2

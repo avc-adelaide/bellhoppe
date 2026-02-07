@@ -36,7 +36,7 @@ MODULE bdry3Dmod
   LOGICAL            :: Top_td_justSteppedTo, Bot_td_justSteppedTo
   LOGICAL            :: Top_td_outgoingSide, Bot_td_outgoingSide
   REAL (KIND=8), PARAMETER :: TRIDIAG_THRESH = 3D-6
-  REAL (KIND=8), PARAMETER :: big = 1E25                  ! large number used for domain termination when no altimetry/bathymetry given
+  REAL (KIND=8), PARAMETER :: big = 1E25 ! large number used for domain termination when no altimetry/bathymetry given
   !big = sqrt( huge( Top( 1, 1 )%x ) ) / 1.0d5
 
   CHARACTER  (LEN=1) :: atiType, btyType
@@ -671,7 +671,8 @@ CONTAINS
 
              tvec = Bdry( ix + 1, iy + 1 )%x - Bdry( ix, iy )%x
              Len  = SQRT( tvec( 1 ) ** 2 + tvec( 2 ) ** 2 + tvec( 3 ) ** 2 )
-             Bdry( ix, iy )%kappa_xy = ( Bdry( ix + 1, iy + 1 )%phi_xy - Bdry( ix, iy )%phi_xy ) / Len ! this is curvature = dphi/ds
+             Bdry( ix, iy )%kappa_xy = ( Bdry( ix + 1, iy + 1 )%phi_xy - Bdry( ix, iy )%phi_xy ) / Len
+             ! this is curvature = dphi/ds
 
              ! new
              tvec = Bdry( ix, iy + 1 )%x - Bdry( ix, iy )%x

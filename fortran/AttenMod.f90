@@ -16,7 +16,8 @@ MODULE AttenMod
   INTEGER, PRIVATE, PARAMETER      :: PRTFile = 6
   INTEGER, PARAMETER               :: MaxBioLayers = 200
   INTEGER                          :: iBio, NBioLayers
-  REAL    (KIND=8) :: T = 20, Salinity = 35, pH = 8, z_bar = 0, FG   ! Francois-Garrison volume attenuation; temperature, salinity, ...
+  REAL    (KIND=8) :: T = 20, Salinity = 35, pH = 8, z_bar = 0, FG
+      ! Francois-Garrison volume attenuation; temperature, salinity, ...
 
   TYPE bioStructure
      REAL (KIND=8) :: Z1, Z2, f0, Q, a0
