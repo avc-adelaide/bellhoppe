@@ -20,7 +20,7 @@ These fall into three classes:
 
 ## Reading environment files
 
-See [`aubellhop` environment configuration](environ.qmd) for full detail about the `Environment` class and its `.from_input()` class method.
+See [`aubellhop` environment configuration](environ.qmd) for full detail about the `Environment` class and its `.from_file()` class method.
 
 
 ## Reading input files
@@ -41,7 +41,7 @@ All six functions read in text-based `BELLHOP` input data and (usually) return t
 
 These functions are used internally by `aubellhop` where requested in the `.env` file, so their use is not generally necessary unless performing work that integrates a suite of legacy input data into a new set of simulations, or if you wish to use/visualise their data separately from running a `BELLHOP` simulation.
 
-### Surface altimetry** and **bottom bathymetry
+### Surface altimetry and bottom bathymetry
 
 Altimetry and bathymetry files (`.ati` and `.bty`) are [documented in the original Acoustics Toolbox files](https://avc-adelaide.github.io/aubellhop/media/ATI_BTY_File.htm).
 
