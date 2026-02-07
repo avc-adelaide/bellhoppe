@@ -417,7 +417,11 @@ class Environment(MutableMapping[str, Any]):
             if np.size(vec) == 1:
                 return float(vec)
             if isinstance(vec, np.ndarray):
-                return float(fn(vec[:, 1]))
+                arr = np.asarray(vec)
+                if arr.ndim == 1:
+                    return float(fn(arr))
+                if arr.ndim == 2:
+                    return float(fn(arr[:, 1]))
             raise TypeError(f"Unexpected type for _extremum argument: {type(vec)}")
 
         self._depth_max = _extremum(self.depth_max, self['depth'], np.max)
