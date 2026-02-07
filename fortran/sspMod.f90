@@ -14,6 +14,7 @@ MODULE sspmod
   USE FatalError
   USE monotonicMod
   USE splinec
+  USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: ERROR_UNIT
 
   IMPLICIT NONE
   PUBLIC
@@ -181,6 +182,11 @@ END SUBROUTINE EvaluateSSP2D
        cxy   = 0.0D0
        cxz   = 0.0D0
        cyz   = 0.0D0
+    CASE ( 'H', 'A' )
+       CONTINUE
+    CASE DEFAULT
+       WRITE( ERROR_UNIT, * ) 'EvaluateSSP3D: Unknown SSP type for derivative fixup: ', SSP%Type
+       CALL ERROUT( 'BELLHOP3D: EvaluateSSP3D', 'Invalid profile option' )
     END SELECT
 
   END SUBROUTINE EvaluateSSP3D
@@ -1003,4 +1009,3 @@ END SUBROUTINE Analytic3D
   END SUBROUTINE Update3DZSegmentT
 
 END MODULE sspmod
-

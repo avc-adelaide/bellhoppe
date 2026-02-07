@@ -16,6 +16,7 @@ MODULE bdry3Dmod
   USE monotonicMod
   USE SubTabulate
   USE FatalError
+  USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: ERROR_UNIT
 
   IMPLICIT NONE
   PUBLIC
@@ -558,6 +559,9 @@ CONTAINS
     CASE ( 'Top' )
        NPts = NatiPts
        CurvilinearFlag = atiType
+    CASE DEFAULT
+       WRITE( ERROR_UNIT, * ) 'ComputeBdryTangentNormal3D: Unknown BotTop flag: ', BotTop
+       CALL ERROUT( 'ComputeBdryTangentNormal3D', 'Unknown boundary flag' )
     END SELECT
 
     ! normals on triangle faces
@@ -718,5 +722,4 @@ CONTAINS
   END SUBROUTINE ComputeBdryTangentNormal
 
 END MODULE bdry3Dmod
-
 

@@ -8,6 +8,7 @@ MODULE ReadEnvironmentBell
   USE sspmod
   USE AttenMod
   USE FatalError
+  USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: ERROR_UNIT
 
   IMPLICIT NONE
   PUBLIC
@@ -541,6 +542,11 @@ CONTAINS
        WRITE( PRTFile, FMT = "( 'Converted sound speed =', 2F10.2, 3X, 'density = ', F10.2, 3X, 'loss parm = ', F10.4 )" ) &
             HS%cp, rhor, alphaI
 
+    CASE ( 'V', 'R', 'F', 'W', 'P' )
+       CONTINUE
+    CASE DEFAULT
+       WRITE( ERROR_UNIT, * ) 'TopBot: Unknown boundary condition type: ', HS%BC
+       CALL ERROUT( 'TopBot', 'Unknown boundary condition type' )
     END SELECT
 
   END SUBROUTINE TopBot

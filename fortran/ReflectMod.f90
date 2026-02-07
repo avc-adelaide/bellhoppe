@@ -3,6 +3,7 @@ MODULE ReflectMod
   !! Ray reflection computations at acoustic boundaries with loss and phase calculations
 
   USE bellhopMod
+  USE, INTRINSIC :: ISO_FORTRAN_ENV, ONLY: ERROR_UNIT
 
   IMPLICIT NONE
   PUBLIC
@@ -96,6 +97,11 @@ CONTAINS
        RN = 2.0 * RN
     CASE ( 'Z' )
        RN = 0.0
+    CASE ( 'F', 'M', 'W', ' ' )
+       CONTINUE
+    CASE DEFAULT
+       WRITE( ERROR_UNIT, * ) 'Reflect2D: Unknown beam curvature option: ', Beam%Type( 2 : 2 )
+       CALL ERROUT( 'Reflect2D', 'Unknown beam curvature option' )
     END SELECT
 
     ray2D( is1 )%c   = c
@@ -181,6 +187,9 @@ CONTAINS
           endif
 
        ENDIF
+    CASE DEFAULT
+       WRITE( ERROR_UNIT, * ) 'Reflect2D: Unknown boundary condition type: ', HS%BC
+       CALL ERROUT( 'Reflect2D', 'Unknown boundary condition type' )
     END SELECT
   END SUBROUTINE Reflect2D
 
