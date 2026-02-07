@@ -8,9 +8,9 @@ BELLHOP is an underwater acoustic simulator written in Fortran with Python and M
 
 ### Bootstrap, Build, and Install
 Bootstrap and build the complete system:
-- `make clean` -- cleans build artifacts (harmless error about tests/ is expected)  
-- `make` -- compiles Fortran executables. Takes ~19 seconds. NEVER CANCEL. Set timeout to 60+ seconds minimum.
-- `make install` -- installs bellhop.exe and bellhop3d.exe to ./bin/. Takes ~0.5 seconds. NEVER CANCEL. Set timeout to 60+ seconds minimum.
+- `make clean` -- cleans build artifacts
+- `make` -- compiles Fortran executables. Takes ~15-20 seconds. NEVER CANCEL. Set timeout to 60+ seconds minimum.
+- `make install` -- installs bellhop.exe and bellhop3d.exe to `./bin/`. Takes ~1 second. NEVER CANCEL. Set timeout to 60+ seconds minimum.
 - Add binaries to PATH: `export PATH="$PWD/bin:$PATH"`
 
 ### Dependencies
@@ -21,12 +21,14 @@ Core build requires only:
 
 Python interfaces require:
 - Python 3.12
-- `hatch` package manager (`pipx install hatch`)
-- Dependencies: `matplotlib`, `gcovr`, `numpy`, `scipy`, `pandas`, `bokeh` (may fail due to network timeouts in restricted environments)
+- `uv` package manager (`https://astral.sh/uv/`)
+- Dependencies are managed via `uv sync --extra dev`
 
 Optional tools:
 - `gcov-15` or `gcov` for coverage analysis
 - `ford` for documentation generation
+- `sphinx` for Python API documentation
+- `quarto` for tutorials
 
 MATLAB interfaces require:
 - MATLAB with paths configured per README.md instructions
@@ -40,9 +42,8 @@ MATLAB interfaces require:
 
 **Python Tests:**
 - `export PATH="$PWD/bin:$PATH"`
-- `hatch run test` -- runs Python test suite. Takes ~30 seconds when network access available. NEVER CANCEL. Set timeout to 180+ seconds minimum.
-- Alternative if hatch not available: `python3 -m pytest tests/ -v`
-- **NOTE**: Python tests may fail due to network timeouts downloading dependencies (arlpy, matplotlib). This is expected in restricted environments.
+- `uv run pytest tests/` -- runs Python test suite. Takes ~30 seconds when dependencies are available. NEVER CANCEL. Set timeout to 180+ seconds minimum.
+- **NOTE**: Python tests may fail due to network restrictions downloading dependencies. This is expected in restricted environments.
 
 ### Manual Validation Scenarios
 ALWAYS test acoustic simulation functionality after making changes:
@@ -76,7 +77,7 @@ ALWAYS test acoustic simulation functionality after making changes:
 **NEVER CANCEL builds or tests**. Set explicit timeouts:
 - `make` build: ~15 seconds actual, **set 60+ second timeout minimum**
 - `make install`: ~1 second actual, **set 60+ second timeout minimum**  
-- `hatch run test`: ~30 seconds when working, up to 5+ minutes with network issues, **set 180+ second timeout minimum**
+- `uv run pytest tests/`: ~30 seconds when working, up to 5+ minutes with network issues, **set 180+ second timeout minimum**
 - Individual acoustic simulations: typically <1 second, **set 30+ second timeout**
 - Coverage builds: ~30-60 seconds, **set 120+ second timeout minimum**
 
@@ -90,19 +91,19 @@ ALWAYS test acoustic simulation functionality after making changes:
 ### Key Directories
 - `fortran/` -- All Fortran source files (bellhop.f90, bellhop3D.f90, 32 .f90 files total)
 - `bin/` -- Installed executables (created by `make install`)
-- `examples/` -- 267+ example input files across 23+ test scenarios
+- `examples/` -- Example input files and test scenarios
 - `Matlab/` -- MATLAB interfaces and plotting functions
 - `python/` -- Python package source code and interfaces
-- `tests/` -- Python test suite (7+ test files)
+- `tests/` -- Python test suite
 - `docs/` -- Documentation including user guides and change logs
 
 ### Important Files  
 - `Makefile` (348 lines) -- Main build system with coverage and testing support
 - `README.md` -- Installation and usage instructions
-- `pyproject.toml` -- Python package configuration with hatch build system
-- `fpm.toml` -- FORD documentation generation configuration
-- `.github/workflows/check.yml` -- CI/CD pipeline
-- `docs/CHANGES.md` -- Detailed change log from UC San Diego team
+- `pyproject.toml` -- Python package configuration
+- `docs/fpm.toml` -- FORD documentation generation configuration
+- `.github/workflows/check.yml` -- CI workflow
+- `docs/pages/CHANGES.md` -- Detailed change log from UC San Diego team
 - `examples/Makefile` -- Example test suite
 
 ### Frequently Used Examples
@@ -119,21 +120,24 @@ Always run these validation steps:
 1. `make clean && make && make install` -- rebuild completely
 2. Test basic 2D: `cd examples/Munk && bellhop.exe MunkB_ray`  
 3. Test 3D functionality: `cd examples/Bellhop3DTests/free && bellhop3d.exe freeBhat`
-4. Run Python tests if network available: `hatch run test`
+4. Run Python tests if network available: `uv run pytest tests/`
 
 ### Coverage Testing
 The build system supports code coverage analysis:
-- `make coverage-full` -- Complete coverage build, test, and report generation
-- `make coverage-test` -- Run tests with coverage instrumentation
-- `make coverage-report` -- Generate GCOV reports
-- `make coverage-html` -- Generate HTML coverage reports for FORD integration
+- `make cov` -- Run both Fortran and Python coverage pipelines
+- `make covf` -- Fortran coverage pipeline
+- `make covp` -- Python coverage pipeline
+- `make coverage-full` -- Fortran coverage build, test, and report generation
+- `make coverage-html` -- Generate Fortran HTML coverage reports in `_coverage/`
 
 ### Documentation Generation
-- `hatch run doc` -- Generate FORD documentation in `doc/` directory
-- `make docs` -- Alternative documentation generation command
+- `make doc` -- Generate FORD, Sphinx, and Quarto documentation
+- Fortran docs output: `docs/_build/index.html`
+- Python API output: `docs/_build/media/python/`
+- Quarto tutorials output: `docs/_build/media/quarto/`
 
 ### Code Quality and Linting
-- `hatch run lint` -- Run fortitude Fortran linter on source code
+- `make lint` -- Run Python linting, type checking, and Fortran linting
 - Linter checks code style, formatting, and potential issues
 - Configuration in pyproject.toml limits line length to 129 characters
 
@@ -158,7 +162,7 @@ The build uses a modernized Makefile system:
 - Compiler flags are optimized for performance (`-O2`, `-ffast-math`)
 - Architecture-specific optimizations automatically selected
 - Support for coverage builds with GCOV integration
-- Hatch package manager integration for Python components
+- UV-based workflows for Python components
 
 ## Network-Independent Operation
 
@@ -169,6 +173,6 @@ Core BELLHOP functionality works without network access:
 - Basic functionality testing
 
 Network required only for:
-- Python package installation (`matplotlib`, `gcovr`, `numpy`, `scipy`, `pandas`, `bokeh`)
+- Python dependency installation
 - Full Python test suite execution
-- Documentation builds with FORD (if using network-dependent tools)
+- Documentation builds that install optional tools (FORD, Sphinx, Quarto)
