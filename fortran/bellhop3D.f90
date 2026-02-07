@@ -138,7 +138,8 @@ SUBROUTINE BellhopCore
   Angles%alpha  = DegRad * Angles%alpha   ! convert to radians
   Angles%Dalpha = 0.0
   IF ( Angles%Nalpha /= 1 ) &
-     Angles%Dalpha = ( Angles%alpha( Angles%Nalpha ) - Angles%alpha( 1 ) ) / ( Angles%Nalpha - 1 )  ! angular spacing between beams
+     Angles%Dalpha = ( Angles%alpha( Angles%Nalpha ) - Angles%alpha( 1 ) ) / ( Angles%Nalpha - 1 )
+     ! angular spacing between beams
   SELECT CASE ( Beam%RunType( 5 : 5 ) )
   CASE ( 'I' )
      NRz_per_range = 1         ! irregular grid
@@ -217,7 +218,8 @@ SUBROUTINE BellhopCore
            ! It is not clear that the pre-calculation saves time ...
            DO ir = 1, Pos%NRr
               DO itheta = 1, Pos%Ntheta
-                 x_rcvrMat( 1 : 2, itheta, ir ) = xs_3D( 1 : 2 ) + Pos%Rr( ir ) * t_rcvr( :, itheta )  ! x-y coordinate of the receiver
+                 x_rcvrMat( 1 : 2, itheta, ir ) = xs_3D( 1 : 2 ) + Pos%Rr( ir ) * t_rcvr( :, itheta )
+                     ! x-y coordinate of the receiver
               END DO
            END DO
 
@@ -227,8 +229,8 @@ SUBROUTINE BellhopCore
            CALL EvaluateSSP3D( xs_3D, tdummy, c0, cimag0, gradc, cxx, cyy, czz, cxy, cxz, cyz, rho, freq, 'TAB' )
            ray2D( 1 )%c = c0
            ray3D( 1 )%c = c0
-           CALL PickEpsilon( Beam%Type( 1 : 2 ), omega, c0, Angles%Dalpha, Angles%Dbeta, Beam%rLoop, Beam%epsMultiplier, epsilon )
-               ! beam constant
+           CALL PickEpsilon( Beam%Type( 1 : 2 ), omega, c0, Angles%Dalpha, Angles%Dbeta,
+                             Beam%rLoop, Beam%epsMultiplier, epsilon ) ! beam constant
 
            ! *** Trace successive beams ***
 
@@ -254,7 +256,8 @@ SUBROUTINE BellhopCore
                        END IF
                        !flush( prtfile )
 
-                       IBPvec = maxloc( SrcBmPat( :, 1 ), mask = SrcBmPat( :, 1 ) < SrcDeclAngle )  ! index of ray angle in beam pattern
+                       IBPvec = maxloc( SrcBmPat( :, 1 ), mask = SrcBmPat( :, 1 ) < SrcDeclAngle )
+                           ! index of ray angle in beam pattern
                        IBP    = IBPvec( 1 )
                        IBP    = MAX( IBP, 1 )               ! don't go before beginning of table
                        IBP    = MIN( IBP, NSBPPts - 1 )     ! don't go past end of table
@@ -366,13 +369,15 @@ SUBROUTINE BellhopCore
                        NArr3D( ibeta, :, :    ) = NArr( :, : )
                        Arr3D(  ibeta, :, :, : ) = Arr(  :, :, : )
                        Arr3D(  ibeta, :, :, : )%SrcAzimAngle  = SNGL( SrcAzimAngle )   ! angle
-                       Arr3D(  ibeta, :, :, : )%RcvrAzimAngle = SNGL( SrcAzimAngle )   ! angle (rcvr angle is same as source angle)
+                       Arr3D(  ibeta, :, :, : )%RcvrAzimAngle = SNGL( SrcAzimAngle )
+                           ! angle (rcvr angle is same as source angle)
                        Narr = 0   ! this clears out the 2D arrival structure
                     CASE ( 'a' )             ! arrivals calculation, binary
                        NArr3D( ibeta, :, :    ) = NArr( :, : )
                        Arr3D(  ibeta, :, :, : ) = Arr(  :, :, : )
                        Arr3D(  ibeta, :, :, : )%SrcAzimAngle  = SNGL( SrcAzimAngle )   ! angle
-                       Arr3D(  ibeta, :, :, : )%RcvrAzimAngle = SNGL( SrcAzimAngle )   ! angle (rcvr angle is same as source angle)
+                       Arr3D(  ibeta, :, :, : )%RcvrAzimAngle = SNGL( SrcAzimAngle )
+                           ! angle (rcvr angle is same as source angle)
                        Narr = 0   ! this clears out the 2D arrival structure
                     CASE ( 'R', 'E' )         ! ray trace or eigenrays
                        CONTINUE

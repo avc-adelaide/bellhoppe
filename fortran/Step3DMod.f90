@@ -62,7 +62,8 @@ CONTAINS
 
     CALL EvaluateSSP3D( ray0%x, ray0%t, c0, cimag0, gradc0, cxx0, cyy0, czz0, cxy0, cxz0, cyz0, rho, freq, 'TAB' )
     CALL RayNormal( ray0%t, ray0%phi, c0, e1, e2 ) ! Compute ray normals e1 and e2
-    CALL Get_c_partials( cxx0, cxy0, cxz0, cyy0, cyz0, czz0, e1, e2, cnn0, cmn0, cmm0 ) ! Compute second partials of c along ray normals
+    CALL Get_c_partials( cxx0, cxy0, cxz0, cyy0, cyz0, czz0, e1, e2, cnn0, cmn0, cmm0 )
+        ! Compute second partials of c along ray normals
     CALL ComputeDeltaPQ( ray0, c0, gradc0, cnn0, cmn0, cmm0, d_phi0, d_p_tilde0, d_p_hat0, d_q_tilde0, d_q_hat0)
 
 
@@ -87,7 +88,8 @@ CONTAINS
     ! LP: Fixed; should be ray1%phi; ray2%phi would be uninitialized memory or
     ! left over from the previous ray
     CALL RayNormal( ray1%t, ray1%phi, c1, e1, e2 )
-    CALL Get_c_partials( cxx1, cxy1, cxz1, cyy1, cyz1, czz1, e1, e2, cnn1, cmn1, cmm1 ) ! Compute second partials of c along ray normals
+    CALL Get_c_partials( cxx1, cxy1, cxz1, cyy1, cyz1, czz1, e1, e2, cnn1, cmn1, cmm1 )
+        ! Compute second partials of c along ray normals
     CALL ComputeDeltaPQ( ray1, c1, gradc1, cnn1, cmn1, cmm1, d_phi1, d_p_tilde1, d_p_hat1, d_q_tilde1, d_q_hat1)
 
     csq1   = c1 * c1

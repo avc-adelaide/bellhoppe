@@ -98,7 +98,8 @@ CONTAINS
              irA = RToIR( rA )
              irB = RToIR( rB )
              ! detect and skip duplicate points (happens at boundary reflection)
-             ! IF ( irA /= irB .AND. NORM2( ray3D( is )%x - ray3D( is - 1 )%x ) > 1.0D3 * SPACING( ray3D( is )%x( 1 ) ) ) THEN  ! too slow
+             ! IF ( irA /= irB .AND. NORM2( ray3D( is )%x - ray3D( is - 1 )%x ) > 1.0D3 * SPACING( ray3D( is )%x( 1 ) ) ) THEN
+             ! ^^ too slow ^^
              IF ( irA /= irB .AND. NORM2( ray3D( is )%x - ray3D( is - 1 )%x ) > 1.0e-4 ) THEN
 
                 ! *** Compute contributions to bracketed receivers ***
@@ -258,7 +259,9 @@ CONTAINS
                       ! calculate z-limits for the beam (could be pre-cacluated for each itheta)
                       ! LP: mbp seems to have realized only some of these components were being used
                       ! and is only calculating the needed ones, but still storing all of them
-                      e_theta      = [ -t_rcvr( 2, itheta ), t_rcvr( 1, itheta ), 0.0D0 ]  ! normal to the vertical receiver plane
+                      e_theta      = [ -t_rcvr( 2, itheta ), t_rcvr( 1, itheta ), 0.0D0 ]
+                      ! normal to the vertical receiver plane
+
                       ! n_ray_z    = CROSS_PRODUCT( rayt, e_theta )
                       n_ray_z( 3 ) = rayt( 1 ) * e_theta( 2 ) - rayt( 2 ) * e_theta( 1 )
                           ! normal to the ray in the vertical receiver plane
@@ -293,7 +296,8 @@ CONTAINS
                          m  = ABS( DOT_PRODUCT( x_rcvr_ray, e2 ) )         ! normal distance to ray
 
                          ! represent (m, n) as a linear combination a q + b q
-                         DetQint = q_tilde( 1 ) * q_hat( 2 ) - q_hat( 1 ) * q_tilde( 2 )   ! area of parallelogram formed by ray tube
+                         DetQint = q_tilde( 1 ) * q_hat( 2 ) - q_hat( 1 ) * q_tilde( 2 )
+                         ! area of parallelogram formed by ray tube
 
                          IF ( DetQint == 0.0 ) CYCLE ReceiverDepths
                          a = ABS( ( -q_hat(   1 ) * m + q_hat(   2 ) * n ) / DetQint )
@@ -478,7 +482,8 @@ CONTAINS
                          m       = ABS( mA                 + s * ( mB - mA ) )   ! normal distance to ray
 
                          ! represent (m, n) as a linear combination a q + b q
-                         DetQint = q_tilde( 1 ) * q_hat( 2 ) - q_hat( 1 ) * q_tilde( 2 )   ! area of parallelogram formed by ray tube
+                         DetQint = q_tilde( 1 ) * q_hat( 2 ) - q_hat( 1 ) * q_tilde( 2 )
+                         ! area of parallelogram formed by ray tube
                          IF ( DetQint == 0    ) CYCLE Ranges  ! receiver is outside the beam
 
                          a = ABS( ( -q_hat(   1 ) * m + q_hat(   2 ) * n ) / DetQint ) !!! sign is flipable inside abs
@@ -656,7 +661,9 @@ CONTAINS
                       IF ( s < 0D0 ) CYCLE Radials
 
                       ! calculate z-limits for the beam (could be pre-cacluated for each itheta)
-                      e_theta      = [ -t_rcvr( 2, itheta ), t_rcvr( 1, itheta ), 0.0D0 ]  ! normal to the vertical receiver plane
+                      e_theta      = [ -t_rcvr( 2, itheta ), t_rcvr( 1, itheta ), 0.0D0 ]
+                      ! normal to the vertical receiver plane
+
                       ! n_ray_z    = CROSS_PRODUCT( rayt, e_theta )
                       n_ray_z( 3 ) = rayt( 1 ) * e_theta( 2 ) - rayt( 2 ) * e_theta( 1 )
                           ! normal to the ray in the vertical receiver plane
@@ -698,7 +705,8 @@ CONTAINS
                          m  = ABS( DOT_PRODUCT( x_rcvr_ray, e2 ) )         ! normal distance to ray
 
                          ! represent (m, n) as a linear combination a q + b q
-                         DetQint = q_tilde( 1 ) * q_hat( 2 ) - q_hat( 1 ) * q_tilde( 2 )   ! area of parallelogram formed by ray tube
+                         DetQint = q_tilde( 1 ) * q_hat( 2 ) - q_hat( 1 ) * q_tilde( 2 )
+                         ! area of parallelogram formed by ray tube
                          IF ( DetQint == 0.0 ) THEN
                             ! IF ( ir-1 == 7 .AND. itheta-1 == 59 ) THEN
                             !    WRITE( PRTFile, * ) 'Skipping z b/c DetQint', iz
@@ -843,7 +851,8 @@ CONTAINS
     SELECT CASE ( RunType( 2 : 2 ) )
     CASE ( 'C' )   ! Cerveny Gaussian beams in Cartesian coordinates
        ! epsilon is normally imaginary here, so const is complex
-       const = SQRT( epsilon( 1 ) * epsilon( 2 ) ) * freq * Dbeta * Dalpha / ( SQRT( c ) ) **3  ! put this factor into the beam instead?
+       const = SQRT( epsilon( 1 ) * epsilon( 2 ) ) * freq * Dbeta * Dalpha / ( SQRT( c ) ) **3
+           ! put this factor into the beam instead?
        P( :, :, : ) = CMPLX( const, KIND=4 ) * P( :, :, : )
     CASE DEFAULT
        const = 1.0

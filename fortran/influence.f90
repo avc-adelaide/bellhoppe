@@ -368,7 +368,8 @@ CONTAINS
 
     IF ( Beam%RunType( 4 : 4 ) == 'R' ) Ratio1 = SQRT( ABS( COS( alpha ) ) )  ! point source
 
-    ray2D( 1 : Beam%Nsteps )%Amp = Ratio1 * SQRT( ray2D( 1 : Beam%Nsteps )%c ) * ray2D( 1 : Beam%Nsteps )%Amp   ! pre-apply some scaling
+    ray2D( 1 : Beam%Nsteps )%Amp = Ratio1 * SQRT( ray2D( 1 : Beam%Nsteps )%c ) * ray2D( 1 : Beam%Nsteps )%Amp
+        ! pre-apply some scaling
 
     RcvrDepths: DO iz = 1, NRz_per_range
        zR = Pos%Rz( iz )
@@ -455,7 +456,8 @@ CONTAINS
     ! what if there is a single receiver (ir = 0 possible)
     irT = MINLOC( Pos%Rr( 1 : Pos%NRr ), MASK = Pos%Rr( 1 : Pos%NRr ) > rA )   ! find index of first receiver to the right of rA
     ir  = irT( 1 )
-    IF ( ray2D( 1 )%t( 1 ) < 0.0d0 .AND. ir > 1 ) ir = ir - 1  ! if ray is left-traveling, get the first receiver to the left of rA
+    IF ( ray2D( 1 )%t( 1 ) < 0.0d0 .AND. ir > 1 ) ir = ir - 1
+    ! if ray is left-traveling, get the first receiver to the left of rA
 
     IF ( Beam%RunType( 4 : 4 ) == 'R' ) Ratio1 = SQRT( ABS( COS( alpha ) ) )  ! point source
 
@@ -562,10 +564,12 @@ CONTAINS
     ! what if never satisfied?
     ! what if there is a single receiver (ir = 0 possible)
 
-    irT = MINLOC( Pos%Rr( 1 : Pos%NRr ), MASK = Pos%Rr( 1 : Pos%NRr ) > rA )      ! find index of first receiver to the right of rA
+    irT = MINLOC( Pos%Rr( 1 : Pos%NRr ), MASK = Pos%Rr( 1 : Pos%NRr ) > rA )
+    ! find index of first receiver to the right of rA
     ir  = irT( 1 )
 
-    IF ( ray2D( 1 )%t( 1 ) < 0.0d0 .AND. ir > 1 ) ir = ir - 1  ! if ray is left-traveling, get the first receiver to the left of rA
+    IF ( ray2D( 1 )%t( 1 ) < 0.0d0 .AND. ir > 1 ) ir = ir - 1
+    ! if ray is left-traveling, get the first receiver to the left of rA
 
     ! sqrt( 2 * pi ) represents a sum of Gaussians in free space
     IF ( Beam%RunType( 4 : 4 ) == 'R' ) THEN
@@ -582,7 +586,8 @@ CONTAINS
        ! compute normalized tangent (compute it because we need to measure the step length)
        rayt = ray2D( iS )%x - ray2D( iS - 1 )%x
        rlen = NORM2( rayt )
-       IF ( rlen < 1.0D3 * SPACING( ray2D( iS )%x( 1 ) ) ) CYCLE Stepping  ! if duplicate point in ray, skip to next step along the ray
+       IF ( rlen < 1.0D3 * SPACING( ray2D( iS )%x( 1 ) ) ) CYCLE Stepping
+           ! if duplicate point in ray, skip to next step along the ray
        rayt = rayt / rlen
        rayn = [ -rayt( 2 ), rayt( 1 ) ]      ! unit normal to ray
        RcvrDeclAngle = RadDeg * ATAN2( rayt( 2 ), rayt( 1 ) )
