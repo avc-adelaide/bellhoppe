@@ -205,6 +205,7 @@ The three reading functions for output files are:
 ```
 All three functions process a respective `bellhop` output file and return the results in a Pandas `DataFrame`.
 The examples below show how to work with the raw data; more convenient plotting functions are also provided via the `plot` or `pyplot` modules.
+Each function attempts to automatically detect whether the file it is reading is 2D or 3D, but will accept an explicit `dim=2` or `dim=3` argument to force the decision.
 
 ### Arrivals
 

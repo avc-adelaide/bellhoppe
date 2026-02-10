@@ -13,6 +13,7 @@ title: AUBELLHOP CHANGELOG
   mirrors `Environment.from_file()` more closely
 * Added `overwrite=True/False` in `compute` and `to_file` contexts for controlling more
   carefully whether files written by `aubellhop` can destroy other files
+* Add `dim=2` / `dim=3` to the `read_rays()` function (with more intended)
 * Small documentation fixes
 
 

@@ -950,10 +950,10 @@ def read_arrivals(fname: str) -> pd.DataFrame:
     reader = BellhopOutputReader(fname)
     return reader.read_arrivals()
 
-def read_rays(fname: str) -> pd.DataFrame:
+def read_rays(fname: str, **kwargs) -> pd.DataFrame:
     """Read Bellhop rays file and parse data into a high level data structure"""
     reader = BellhopOutputReader(fname)
-    return reader.read_rays()
+    return reader.read_rays(**kwargs)
 
 def read_shd(fname: str) -> pd.DataFrame:
     """Read Bellhop shd file and parse data into a high level data structure"""
@@ -1047,20 +1047,33 @@ class BellhopOutputReader:
                 pressure[ird,:] = temp[::2] + 1j*temp[1::2]
         return pd.DataFrame(pressure, index=pd.Index(pos_r_depth), columns=pd.Index(pos_r_range))
 
-    def read_rays(self) -> pd.DataFrame:
-        """Read Bellhop rays file and parse data into a high level data structure"""
+    def read_rays(self, dim: int | None = None) -> pd.DataFrame:
+        """
+        Read Bellhop rays file and parse data into a high level data structure
+        Parameters
+        ----------
+        dim : {2, 3} or None
+            Spatial dimension. If None, inferred from the file header.
+        """
+        if dim not in (None, 2, 3):
+            raise ValueError(f"Invalid dim={dim}; expected 2 or 3")
+
         with self.filepath.open('rt') as f:
             hdr = f.readline()
-            if hdr.find('BELLHOP-') >= 0:
-                _dim = 2
-            elif hdr.find('BELLHOP3D-') >= 0:
-                _dim = 3
-            f.readline() # freq
-            f.readline() # 1  1 1
-            f.readline() # 50 50
-            f.readline() # 0.0
-            f.readline() # 25.0
-            f.readline() # 'xyz'
+            if dim is None:
+                if 'BELLHOP-' in hdr:
+                    dim = 2
+                elif 'BELLHOP3D-' in hdr:
+                    dim = 3
+                else:
+                    raise ValueError("Unable to infer dimension from Bellhop header in .ray file. Use `dim=2` or `dim=3` accordingly to specify explicitly.")
+
+            f.readline()  # freq
+            f.readline()  # 1  1 1
+            f.readline()  # 50 50
+            f.readline()  # 0.0
+            f.readline()  # 25.0
+            f.readline()  # 'xyz'
             rays = []
             while True:
                 s = f.readline()
@@ -1068,7 +1081,7 @@ class BellhopOutputReader:
                     break
                 a = float(s)
                 pts, sb, bb = self._read_array(f, (int, int, int))
-                ray = np.empty((pts, _dim))
+                ray = np.empty((pts, dim))
                 for k in range(pts):
                     ray[k,:] = self._read_array(f, (float,))
                 rays.append(pd.DataFrame({
