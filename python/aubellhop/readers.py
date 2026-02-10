@@ -882,13 +882,16 @@ def _read_refl_coeff(fname: str) -> NDArray[np.float64]:
 def _read_next_valid_line(f: TextIO) -> str:
     """Read the next valid text line of an input file, discarding empty content.
 
-    Args:
-        f: File handle to read from
+    Parameters
+    ----------
+        f : File handle to read from
 
-    Returns:
+    Returns
+    -------
         Non-empty line with comments and whitespace removed
 
-    Raises:
+    Raises
+    ------
         EOFError: If end of file reached without finding valid content
     """
     while True:
@@ -966,7 +969,8 @@ class BellhopOutputReader:
     def __init__(self, filename: str):
         """Initialize reader with filename.
 
-        Args:
+        Parameters
+        ----------
             filename: Path to file (with extension)
         """
         self.filename = filename
@@ -1050,10 +1054,15 @@ class BellhopOutputReader:
     def read_rays(self, dim: int | None = None) -> pd.DataFrame:
         """
         Read Bellhop rays file and parse data into a high level data structure
+
         Parameters
         ----------
         dim : {2, 3} or None
             Spatial dimension. If None, inferred from the file header.
+
+        Raises
+        ------
+            ValueError: if is_2d is not provided and parsing file header fails.
         """
         if dim not in (None, 2, 3):
             raise ValueError(f"Invalid dim={dim}; expected 2 or 3")
