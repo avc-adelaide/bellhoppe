@@ -9,11 +9,12 @@
 You can (hopefully) install `aubellhop` with pre-compiled binaries included straight from PyPI.
 This short script will create a demo folder, install `aubellhop` using `uv`, and then run the demo function:
 ```bash
-mkdir bellhop-example && cd $_
+dir=bellhop-example && mkdir -p "$dir" && cd "$dir"
 uv init --bare
 uv add aubellhop
 uv run python -c "import aubellhop as bh; bh.demo()"
 ```
+This creates the demo file `bellhop_demo.py` and runs it.
 Then to re-run the demo:
 ```bash
 uv run bellhop_demo.py
@@ -23,6 +24,7 @@ If you use Python with different build/environment setups, the standard approach
 ```bash
 pip install aubellhop
 ```
+Followed by setting up a virtual environment with `venv` and so on.
 
 See the [compilation and installation guide](https://avc-adelaide.github.io/aubellhop/page/installation.html) for building from source if you wish to edit the code or the prebuilt binaries don't work for you.
 
@@ -57,7 +59,7 @@ See the [compilation and installation guide](https://avc-adelaide.github.io/aube
 
 ## Impressum
 
-Copyright (C) 2025      Adelaide University, Australia \
+Copyright (C) 2025-2026 Adelaide University, Australia \
 Copyright (C) 2021-2025 The Regents of the University of California Marine Physical Lab at Scripps Oceanography, c/o Jules Jaffe, jjaffe@ucsd.edu \
 Copyright (C) 1983-2024 Michael B. Porter
 
