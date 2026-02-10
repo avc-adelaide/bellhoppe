@@ -40,19 +40,13 @@ jobs:
         enable-cache: true
         cache-dependency-glob: "pyproject.toml"
 
-    - name: Set up Python ${{ env.PYTHON_VERSION }}
-      run: uv python install ${{ env.PYTHON_VERSION }}
-
-    - name: Cache apt packages
-      uses: awalsh128/cache-apt-pkgs-action@latest
-      with:
-        packages: gfortran gcc graphviz
-        version: 1.0
-
     - name: Install system dependencies
       run: |
         sudo apt update
         sudo apt install -y gfortran gcc graphviz
+
+    - name: Set up Python ${{ env.PYTHON_VERSION }}
+      run: uv python install ${{ env.PYTHON_VERSION }}
 
     - name: Set up Quarto
       uses: quarto-dev/quarto-actions/setup@v2
@@ -60,12 +54,10 @@ jobs:
     - name: Install dependencies
       run: |
         uv sync --extra dev
-        uv pip install --force-reinstall --no-cache-dir coverage
 
     - name: Install additional tools
       run: |
         uv tool install FORD
-        uv tool install coverage
 
     - name: Run coverage (fortran)
       run: |
