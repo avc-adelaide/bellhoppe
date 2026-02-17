@@ -2,7 +2,7 @@
 title: AUBELLHOP CHANGELOG
 ---
 
-## Unreleased
+## [0.1.9] - 2026-02-17
 
 * Update Fortran code to satisfy fortitude v0.8
   (mostly semicolons, line lengths, deprecated trig functions)
@@ -13,15 +13,12 @@ title: AUBELLHOP CHANGELOG
   mirrors `Environment.from_file()` more closely
 * Added `overwrite=True/False` in `compute` and `to_file` contexts for controlling more
   carefully whether files written by `aubellhop` can destroy other files
-* Add `dim=2` / `dim=3` to the `read_rays()` function (with more intended)
 * Small documentation fixes
-
-
-## [0.1.9] - 2026-01-13
-
 * Remove `hatch` as package system — standardise on `uv`.
 * Improve documentation breadth.
 * Add `read_ssp_3d()`, `read_ati_3d()`, `read_bty_3d()` for BELLHOP3D
+* Add `dim=2` / `dim=3` to the `read_rays()` function (with more intended — and yes,
+  I realise there is some inconsistency with the 3D reading functions introduced above)
 
 
 ## [0.1.8] - 2025-11-30
