@@ -92,7 +92,13 @@ If you wish to use the Matlab interfaces, the following commands should be added
     addpath('<path to bellhop>/bin/')
 
 
+## Set up `uv` dev environment
 
+For `uv` to install the development dependencies (`pytest`, etc. etc.), run:
+
+    make uv
+
+This is equivalent to the standard one-liner `uv sync --extra dev` but means I don't have to remember it...
 
 ## Testing and linting
 

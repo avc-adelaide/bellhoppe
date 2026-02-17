@@ -139,15 +139,18 @@ help:
 
 ###### RUNNERS ######
 
+uv:
+	uv sync --extra dev
+
 cleantest: clean all install test
 
 test:
 	@echo "Running Python test suite..."
-	uv run pytest tests/
+	uv run python -m pytest tests/
 
 testv:
 	@echo "Running Python test suite (verbose)..."
-	uv run pytest --capture=tee-sys --exitfirst
+	uv run python -m pytest --capture=tee-sys --exitfirst tests/
 
 docf:
 	@echo "Generating Fortran/FORD documentation..."
