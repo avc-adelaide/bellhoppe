@@ -101,7 +101,7 @@ jobs:
           CIBW_ARCHS_MACOS: arm64
           MACOSX_DEPLOYMENT_TARGET: 15.0
           CIBW_BEFORE_BUILD_LINUX: |
-              yum install -y gcc-gfortran || apk add --no-cache gfortran || (apt-get update && apt-get install -y gfortran) || true
+              yum install -y gcc-gfortran openblas-devel || apk add --no-cache gfortran openblas-dev || (apt-get update && apt-get install -y gfortran libopenblas-dev) || true
           CIBW_BEFORE_BUILD_MACOS: |
               # Get the macOS SDK version used by Homebrew GCC
               SDK_VER=$(xcrun --show-sdk-version)
@@ -154,8 +154,8 @@ jobs:
 
       - name: Build sdist
         run: |
-          uv pip install build
-          uv run python -m build --sdist
+          pip install build
+          python -m build --sdist
 
       - name: Upload sdist
         uses: actions/upload-artifact@v4
