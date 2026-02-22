@@ -99,9 +99,12 @@ jobs:
           CIBW_SKIP: "*-musllinux* *-manylinux_i686 *-win32"
           CIBW_ARCHS_LINUX: x86_64
           CIBW_ARCHS_MACOS: arm64
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
           MACOSX_DEPLOYMENT_TARGET: 15.0
           CIBW_BEFORE_BUILD_LINUX: |
-              yum install -y gcc-gfortran openblas-devel || apk add --no-cache gfortran openblas-dev || (apt-get update && apt-get install -y gfortran libopenblas-dev) || true
+              dnf install -y gcc-gfortran openblas-devel || yum install -y gcc-gfortran openblas-devel || apk add --no-cache gfortran openblas-dev || (apt-get update && apt-get install -y gfortran libopenblas-dev) || true
+          CIBW_BEFORE_TEST_LINUX: |
+              pip install --only-binary :all: numpy scipy matplotlib pandas || true
           CIBW_BEFORE_BUILD_MACOS: |
               # Get the macOS SDK version used by Homebrew GCC
               SDK_VER=$(xcrun --show-sdk-version)
