@@ -106,3 +106,13 @@ _version.py
 uv.lock
 docs/quarto/bellhop_demo.py
 docs/quarto/demo.env
+
+# TeX
+*.synctex.gz
+*.run.xml
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+in26-robertson.pdf
