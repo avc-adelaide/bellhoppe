@@ -1,0 +1,175 @@
+% !TEX TS-program = LuaLaTeX
+
+\PassOptionsToPackage{hyperref}{urlcolor=black}
+\documentclass{internoise2026-wr}
+\usepackage{refstyle}
+\usepackage[style=numeric-comp,sorting=none]{biblatex}
+\bibliography{acoustics} 
+
+\begin{document}
+
+\title{Introducing aubellhop: a modern Python interface to the Bellhop underwater acoustics ray tracing tool}
+
+\maketitle
+
+  \begin{flushleft}
+    William S.P. Robertson,\markpresenting{1}
+    Mandar Chitre,\markinstitution{2}
+    Chung T.C. Fang,\markinstitution{1}
+    Anthony C. Zander\markinstitution{1}
+    
+    \correspondingpresentingemail{will.robertson@adelaide.edu.au}
+    
+    \begin{multicols}{2} % <= choose the number of columns
+    \institution[1]{%
+      School of Electrical and Mechanical Engineering\\
+      Adelaide University\\
+      SA, Australia\\
+    }
+    \institution[2]{%
+      Acoustic Research Laboratory,\\
+      Tropical Marine Science Institute\\
+      National University of Singapore\\
+      Singapore
+    }
+    \end{multicols}
+  \end{flushleft}
+
+\smallskip
+\begin{abstract}
+Bellhop is widely used for modelling underwater acoustic propagation using ray/beam-tracing. As part of The Acoustics Toolbox, Bellhop was written in Fortran by Michael B. Porter and colleagues, as part of a suite of open source underwater acoustics modelling tools, and others have reimplemented it in C++/CUDA for multithreaded operation. Interfaces to Bellhop have been developed for several languages, including Matlab, Python, and Julia, but these tools sometimes only provide access to a subset of Bellhop's features, and often assume that the Bellhop executable is already installed. This paper introduces a modern Python interface to Bellhop, which can be used both by users who wish to run Bellhop simulations, or by developers who wish to adapt or extend the Bellhop codebase. As with the Julia interface, the Bellhop executable is included in the installation. Features of the package include: a comprehensive test suite with coverage reports against both Python and Fortran sources; detailed, online documentation of the Fortran and Python sources; automatic code quality checking as part of the repository workflows; and a series of tutorials demonstrating the main use cases of the simulation tools.
+\end{abstract}
+
+\section{Introduction}
+
+Bellhop is an open source Fortran program for calculating underwater acoustic phenomena using ray tracing and beam tracing algorithms \cite{porter2025-foa}.
+It is written and maintained by Michael B. Porter, with early development in the 1980s (first release 1983 with Homer Bucker, Naval Ocean Systems Center), and continuous and active development through the 2000s and 2010s \cite{porter2024-at}.
+Bellhop is widely used in research, and its algorithms have been incorporated in a range of underwater acoustics software platforms, such as the MIT `Virtual Ocean' framework \cite{bhatt2021-thesis}.
+The Bellhop codebase in the Acoustics Toolbox includes both a wrapper and a translation of the code into Matlab, and wrappers for Bellhop have been provided in packages for Python \cite{chitre2025-arlpy} and Julia \cite{chitre2025-jl}.
+In the 2020s, another research group translated the codebase to C++ and CUDA in order to take advantage of multi-processor and GPU architectures \cite{jaffe2025-bellhopcuda}.
+Others have experimented with graphical user interfaces for Bellhop \cite{duncan2025-actup}, which can be very useful from a pedagogy and ease-of-use perspective.
+
+With more modern implementations and wrappers, we might question whether the Fortran source code is still of relevance.
+As the Bellhop authors provide both Fortran and Matlab implementations, we can make a direct performance comparison: the Fortran code runs approximately an order of magnitude faster than the Matlab code, which makes for an easy argument that the low-level Fortran (or C++) codebases should be retained.
+However, the legacy executables for Bellhop use an unstructured plain text approach to setting up simulation parameters.
+This approach was typical for programs written in an era before structured text languages such as JSON, YAML, or TOML, and before `keyval' interfaces in general, were commonplace.
+In the days of well-structured, readable, and easily parsable input files, the Bellhop user interface can be seen as somewhat cryptic and error-prone, particularly on account of the large number of options it now allows for.
+Providing a more useful interface for controlling Bellhop's many input parameters is a significant part of modernising the codebase.
+
+\section{Brief description of the \texttt{aubellhop} interface}
+
+If you are running a standard Python environment, you can install \texttt{aubellhop} using standard interfaces such as \verb|pip install aubellhop|. The \texttt{aubellhop} package contains a demo feature to quickly set up and execute an example simulation: \verb|import aubellhop as bh; bh.demo()|
+
+\section{Codebase improvements}
+
+Bellhop is an example of a long-standing open source software package that has enabled a large body of additional research to be built upon the foundation it provides.
+It makes for an interesting case study to discuss open science, as it is currently published openly, and widely used by the research community, with an ecosystem of tools that have been built to interface with it.
+Nonetheless, it is a `legacy' codebase in the sense that it is reliable and stable, and as a result does not make use of modern software development practices.
+The following key additions were undertaken to modernise the Bellhop codebase.
+
+\paragraph{Automatic code documentation, including dependency graphs}
+
+There are several widely-used automatic code documentation tools, including Doxygen and Sphinx.
+Because Bellhop is written in Fortran, the FORD tool was selected to generate its base documentation.
+Only minor changes to the Bellhop Fortran sources were needed for the comments in the file to match FORD's expectations.
+A modified comment prefix (\verb|!!|) creates specially tagged documentation strings that are extracted for the summary online documentation (\Figref{ford-modules}), which presents an overview of the collections of files, modules, procedures, and so on, in the codebase.
+
+FORD analyses the code and creates connected graphs (\Figref{graphvis}) to link files to files, modules to modules, and so on. Most importantly, this showed which source files were not being used in the Bellhop codebase, as it is provided in its original form alongside additional underwater acoustics programs -- Kraken, etc.\ -- with a shared library.
+
+The Python interface to bellhop is documented using Sphinx (following arlpy). The Sphinx output is combined with the main FORD output to create the documentation pages.
+
+\begin{figure*}
+\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/ford-modules-snap}}}
+\caption{Example output of the FORD Modules documentation.}
+\figlabel{ford-modules}
+\end{figure*}
+
+\begin{figure*}
+\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/graphvis}}}
+\caption{Extract from part of the Graphvis output from the FORD Modules documentation.}
+\figlabel{graphvis}
+\end{figure*}
+
+\paragraph{Regression and unit testing suite}
+
+Engineering software is uniquely well-suited to many types of testing approaches, as numerical outputs can be explicitly queried.
+For Bellhop, the Acoustics Toolbox distribution contains a very large number of examples, which allows verification testing that any changes to the source files do not result in execution failures.
+However, these examples do not attempt to perform validity checks that their numerical output is correct.
+Introducing a Python-based testing procedure was critical in being able to make changes to the Fortran sources with confidence.
+The Python-focussed tests ensure that interfaces are consistent with the legacy Bellhop input files, that complex environment configuration parameters are being correctly implemented, and that post-processing and visualisation data routines are operating as specified.
+At time of writing there are 35 test files, covering 192 unique tests.
+
+\paragraph{Code coverage reporting of the test suite}
+
+Even with good intentions to write tests as the code is written, it is difficult to manually assess whether a test suite actually checks all possible code paths of a program.
+Without feedback about what is being tested, we cannot independently verify that we have enough tests.
+`Code coverage' reporting is an automated approach to identifying how much of the source code is being executed when the test suite runs (\Figref{coverage}).
+A source file with less than 100\% coverage is likely to have branches which are not being tested; for instance, this often occurs when a feature is provided with a range of options, and not each option is explicitly tested (\Figref{cov-detailed}). 
+
+\begin{figure*}
+\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/coverage.pdf}}}
+\caption{Example of coverage report summary output. Each file contains a detailed report that shows the number of times each line of code is executed by running the test suite.}
+\figlabel{coverage}
+\end{figure*}
+
+\begin{figure*}
+\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/cov-detailed}}}
+\caption{Example of coverage report detailed output. The red highlight shows code which is not run as part of the test suite.}
+\figlabel{cov-detailed}
+\end{figure*}
+
+\paragraph{Coding standards (`lint' and type checking)}
+
+Modern `linter' tools such as \verb|ruff| (for Python) and \verb|fortitude| (for Fortran) are designed to enforce coding standards.
+Code written to standard are less likely to contain subtle bugs, and minimise friction moving between codebases.
+E.g., developers experience friction when there are inconsistencies with something trivial like spaces, or not, around maths operators.
+When coded to standards, a new contributor does not face having to adapt to another developer's personal style.
+
+When first used on the Bellhop repository, \verb|fortitude| reported 1168 `errors'.
+These include trivial issues such as trailing whitespace in source code, long lines of code, deprecated operators, hard-coded numeric values, and so on.
+To be clear, these 1168 so-called errors are not indicating there are any problems with the Bellhop code, nor that its developers were taking shortcuts in the development.
+Modern linter tools by default are strict about upholding what are now considered to be best practice guidelines, but which may not have been (or could not have been) rigorously followed in years past.
+
+\paragraph{Easy build systems}
+
+Traditional workflows used \verb|make|, and modern Python tools such as |\verb|uv| provide more complex environment setup options.
+The Bellhop repository is set up with UV used for running the main development tools, with a transparent user interface provided by Make to help streamline shifting from one build process to another in the future.
+
+The Make interface is as simple as (\verb|make help|):
+\begin{verbatim}
+  CODE BUILDING
+    [all] - default -- build binaries
+    clean - remove all temporary files
+  install - copy binaries into ./bin
+
+  CODE CHECKING
+     test - run test suite
+cleantest - rebuild entire codebase
+            and then run test suite
+     lint - run code linters
+      doc - build online documentation
+      cov - run code coverage process
+
+  DEVELOPMENT TOOLS
+     push - push code changes to repo
+            (checks lint, test first)
+\end{verbatim}
+
+\paragraph{Online repository hosting}
+
+This project is hosted on Github, likely the most popular online code repository at time of writing.
+Github provides generous support for educational and open source users.
+A publicly hosted project provides a stable home to access the work, but online platforms offer many desirable features, including collaboration and project management tools (such as pull requests and issue tracking), ability to serve websites based on project documentation, and so-called `continuous integration' workflows.
+Very recently (at time of writing), it is now possible to integrate AI agents into online repositories, who can run, analyse, and suggest changes to code directly.
+
+Building engineering software using these features helps mitigate the risk of unknown errors in the code, promotes reproducibility, and largely comes `for free' using modern programming tools and libraries.
+
+\section{Examples}
+
+\section{Conclusion}
+
+
+\printbibliography
+
+\end{document}
+
