@@ -20,6 +20,8 @@ website:
         text: Soundspeeds
       - href: surface.qmd
         text: Surfaces
+      - href: bellhop3d.qmd
+        text: Bellhop3D
 
 format:
   html:

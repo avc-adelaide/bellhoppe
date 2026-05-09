@@ -12,6 +12,7 @@ The main feature this enables is to provide seamless access to Bellhop3D.
 ## Bellhop3D environment definition
 
 Bellhop3D differs from Bellhop (2D) in roughly four ways:
+
 * Sources and receivers are now defined in 3D:
     * The source location can be shifted to any $(x,y,z)$ coordinate
     * The receiver locations can vary in their bearing angle $\theta$, with positions defined in cylindical coordinates $(r,\theta,z)$

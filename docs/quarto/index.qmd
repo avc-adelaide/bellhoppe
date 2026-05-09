@@ -24,6 +24,8 @@ jupyter: python3
 - [Surface properties](surface.qmd)
     - defining surface properties and range-dependent surface profiles
     - examples of a JONSWAP sea state distribution, and underwater sea ice
+- [Bellhop 3D](bellhop3d.qmd)
+    - setting up a 3D simulation
 
 ## Other Bellhop documentation
 

@@ -87,11 +87,11 @@ env = bh.Environment(
 \end{verbatim}
 The eigenrays of this environment can be calculated using \verb|erays = bh.compute_eigenrays(env)|, producing the plot shown in \Figref{erays}.
 
-\begin{figure*}
+\begin{figure}
 \centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/erays}}}
 \caption{Underwater eigenrays between a source and receiver, calculated using demo parameters (constant speed of sound).}
 \figlabel{erays}
-\end{figure*}
+\end{figure}
 
 If you have legacy Bellhop configuration files in use (say, a \texttt{seamount} environment file), you can load it directly using:
 \begin{verbatim}
@@ -101,6 +101,35 @@ The \texttt{Environment} class provides a number of helper functions to help man
 This flexible approach to defining environment configurations makes it possible to run Monte Carlo-style analyses simply, and \texttt{aubellhop} provides preliminary support for parallelising such operations for more efficient computation.
 
 
+\texttt{aubellhop} builds in the capability to execute different binaries according to the needs of the model.
+Initially this feature was added to support Bellhop3D, but it also facilitates comparison between multiple engines.
+Setting up a 3D environment is identical to a 2D environment, with some additional parameters possible to define 3D speed of sound profiles, cross-range bathymetries, and so on.
+Preliminary support has been added for visualising 3D beam propagation (\Figref{3D}):
+\begin{verbatim}
+import matplotlib.pyplot as plt
+import aubellhop as bh
+import aubellhop.pyplot as bhp
+
+env3d = bh.Environment(
+                       name="Example Bellhop3D",
+                       dimension="3D",
+                       beam_angle_min=-45,
+                       beam_angle_max=45,
+                       beam_num=10_000,
+                      ).check()
+rays3d = bh.compute_eigenrays(env3d)
+
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+bhp.pyplot_rays(rays3d,env=env3d,ax=ax)
+plt.show(fig); plt.close(fig)
+\end{verbatim}
+
+\begin{figure}
+\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/bellhop3d.png}}}
+\caption{Underwater eigenrays between a source and receiver in three dimensions, calculated using demo parameters and a smaller range of beam angles.}
+\figlabel{3D}
+\end{figure}
 
 
 \section{Examples}
@@ -127,17 +156,17 @@ FORD analyses the code and creates connected graphs (\Figref{graphvis}) to link 
 
 The Python interface to bellhop is documented using Sphinx (following arlpy). The Sphinx output is combined with the main FORD output to create the documentation pages.
 
-\begin{figure*}
+\begin{figure}
 \centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/ford-modules-snap}}}
 \caption{Example output of the FORD Modules documentation.}
 \figlabel{ford-modules}
-\end{figure*}
+\end{figure}
 
-\begin{figure*}
+\begin{figure}
 \centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/graphvis}}}
 \caption{Extract from part of the Graphvis output from the FORD Modules documentation.}
 \figlabel{graphvis}
-\end{figure*}
+\end{figure}
 
 \paragraph{Regression and unit testing suite}
 
@@ -155,17 +184,17 @@ Without feedback about what is being tested, we cannot independently verify that
 `Code coverage' reporting is an automated approach to identifying how much of the source code is being executed when the test suite runs (\Figref{coverage}).
 A source file with less than 100\% coverage is likely to have branches which are not being tested; for instance, this often occurs when a feature is provided with a range of options, and not each option is explicitly tested (\Figref{cov-detailed}). 
 
-\begin{figure*}
+\begin{figure}
 \centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/coverage.pdf}}}
 \caption{Example of coverage report summary output. Each file contains a detailed report that shows the number of times each line of code is executed by running the test suite.}
 \figlabel{coverage}
-\end{figure*}
+\end{figure}
 
-\begin{figure*}
+\begin{figure}
 \centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/cov-detailed}}}
 \caption{Example of coverage report detailed output. The red highlight shows code which is not run as part of the test suite.}
 \figlabel{cov-detailed}
-\end{figure*}
+\end{figure}
 
 \paragraph{Coding standards (`lint' and type checking)}
 
