@@ -273,6 +273,9 @@ class Environment(MutableMapping[str, Any]):
         if task_val is None:
             raise ValueError("Task must be specified via argument or env.task/interference_mode")
 
+        if isinstance(task_val, str):
+            task_val = BHStrings(task_val) # avoid strict type issue
+
         taskcode = FlagMaps.task_rev[task_val]
         fname_base = str(path.with_suffix(""))
 
