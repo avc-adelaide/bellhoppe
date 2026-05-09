@@ -4,7 +4,9 @@
 \documentclass{internoise2026-wr}
 \usepackage{refstyle}
 \usepackage[style=numeric-comp,sorting=none]{biblatex}
-\bibliography{acoustics} 
+\defbibheading{bibliography}[\refname]{%
+  \section*{\MakeUppercase{#1}}}
+\bibliography{acoustics,wspr-conf} 
 
 \begin{document}
 
@@ -41,6 +43,7 @@ Bellhop is widely used for modelling underwater acoustic propagation using ray/b
 \end{abstract}
 
 \section{Introduction}
+\label{sec:intro}
 
 Bellhop is an open source Fortran program for calculating underwater acoustic phenomena using ray tracing and beam tracing algorithms \cite{porter2025-foa}.
 It is written and maintained by Michael B. Porter, with early development in the 1980s (first release 1983 with Homer Bucker, Naval Ocean Systems Center), and continuous and active development through the 2000s and 2010s \cite{porter2024-at}.
@@ -56,11 +59,57 @@ This approach was typical for programs written in an era before structured text 
 In the days of well-structured, readable, and easily parsable input files, the Bellhop user interface can be seen as somewhat cryptic and error-prone, particularly on account of the large number of options it now allows for.
 Providing a more useful interface for controlling Bellhop's many input parameters is a significant part of modernising the codebase.
 
-\section{Brief description of the \texttt{aubellhop} interface}
+Mandar Chitre previously developed \texttt{arlpy} \cite{chitre2025-arlpy} as a Python wrapper for Bellhop.
+The main technical extension of \texttt{aubellhop} over \texttt{arlpy} is to support a broader range of environment parameters, and to provide tighter integration with legacy Bellhop configuration files.
+The embedding of the Fortran code sources within \texttt{aubellhop} allows further development and analysis of the Bellhop algorithms within a single codebase.
+Parallel work is being undertaken at Adelaide University to expand the utility of Bellhop for dynamic, large-scale simulations \cite{fang2024-aas,fang2025-aas,fang2026-internoise}.
+
+This article will discuss the \texttt{aubellhop} interfaces (\secref{interfaces}), provide examples to demonstrate some of its features (\secref{examples}), explain the improvements to the codebase (\secref{code}) and conclude with a short discussion (\secref{conclusion}).
+
+\section{Brief description of the \texttt{aubellhop} interfaces}
+\label{sec:interfaces}
 
 If you are running a standard Python environment, you can install \texttt{aubellhop} using standard interfaces such as \verb|pip install aubellhop|. The \texttt{aubellhop} package contains a demo feature to quickly set up and execute an example simulation: \verb|import aubellhop as bh; bh.demo()|
 
-\section{Codebase improvements}
+This creates code such as:
+\begin{verbatim}
+env = bh.Environment(
+    name='bellhop demo environment',
+    frequency=25000,         # 25 kHz
+    depth=25,                # 25 m water depth
+    soundspeed=1500,         # 1500 m/s (constant)
+    source_depth=5,          # 5 m depth
+    receiver_depth=10,       # 10 m depth
+    receiver_range=1000,     # 1 km range
+    bottom_soundspeed=1600,  # seabed sound speed
+    bottom_density=1600      # seabed density
+)
+\end{verbatim}
+The eigenrays of this environment can be calculated using \verb|erays = bh.compute_eigenrays(env)|, producing the plot shown in \Figref{erays}.
+
+\begin{figure*}
+\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/erays}}}
+\caption{Underwater eigenrays between a source and receiver, calculated using demo parameters (constant speed of sound).}
+\figlabel{erays}
+\end{figure*}
+
+If you have legacy Bellhop configuration files in use (say, a \texttt{seamount} environment file), you can load it directly using:
+\begin{verbatim}
+env = bh.Environment.from_file('seamount.env')
+\end{verbatim}
+The \texttt{Environment} class provides a number of helper functions to help manipulate the data, including serialisation to/from disk or \texttt{Dictionary} data structures. 
+This flexible approach to defining environment configurations makes it possible to run Monte Carlo-style analyses simply, and \texttt{aubellhop} provides preliminary support for parallelising such operations for more efficient computation.
+
+
+
+
+\section{Examples}
+\label{sec:examples}
+
+
+
+\section{Code improvements}
+\label{sec:code}
 
 Bellhop is an example of a long-standing open source software package that has enabled a large body of additional research to be built upon the foundation it provides.
 It makes for an interesting case study to discuss open science, as it is currently published openly, and widely used by the research community, with an ecosystem of tools that have been built to interface with it.
@@ -137,22 +186,12 @@ The Bellhop repository is set up with UV used for running the main development t
 
 The Make interface is as simple as (\verb|make help|):
 \begin{verbatim}
-  CODE BUILDING
-    [all] - default -- build binaries
-    clean - remove all temporary files
-  install - copy binaries into ./bin
-
-  CODE CHECKING
-     test - run test suite
-cleantest - rebuild entire codebase
-            and then run test suite
-     lint - run code linters
-      doc - build online documentation
-      cov - run code coverage process
-
-  DEVELOPMENT TOOLS
-     push - push code changes to repo
-            (checks lint, test first)
+CODE BUILDING                          CODE CHECKING
+  [all] - default: build binaries           test - run test suite
+  clean - remove all temporary files   cleantest - rebuild codebase, run tests
+install - copy binaries into ./bin          lint - run code linters
+                                             doc - build online documentation
+                                             cov - run code coverage processes
 \end{verbatim}
 
 \paragraph{Online repository hosting}
@@ -162,11 +201,18 @@ Github provides generous support for educational and open source users.
 A publicly hosted project provides a stable home to access the work, but online platforms offer many desirable features, including collaboration and project management tools (such as pull requests and issue tracking), ability to serve websites based on project documentation, and so-called `continuous integration' workflows.
 Very recently (at time of writing), it is now possible to integrate AI agents into online repositories, who can run, analyse, and suggest changes to code directly.
 
+
+
+\section{Discussion}
+\label{sec:conclusion}
+
+Bellhop retains its research potential some forty years after its first release, and we hope that by making this codebase more accessible it will provide easier access to this valuable tool by underwater acousticians and researchers.
 Building engineering software using these features helps mitigate the risk of unknown errors in the code, promotes reproducibility, and largely comes `for free' using modern programming tools and libraries.
 
-\section{Examples}
+Since work commenced on \texttt{aubellhop} there has been substantial discussion on the use of artificial intelligence agents to `vibe code' entire software projects.
+AI has been used as a tool in this project to accelerate testing and debugging processes, check best practices, and occasionally to mock up frameworks for implementing new features.
+However, all code has been reviewed and checked manually, and in most cases substantially rewritten and refined.
 
-\section{Conclusion}
 
 
 \printbibliography

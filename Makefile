@@ -122,18 +122,12 @@ clean: coverage-clean
 ###### HELP ######
 
 help:
-	@echo "  CODE BUILDING"
-	@echo "    [all] - default — build binaries"
-	@echo "    clean - remove all temporary files"
-	@echo "  install - copy built binaries into ./bin"
-	@echo "                                    "
-	@echo "  CODE CHECKING"
-	@echo "     test - run test suite"
-	@echo "cleantest - rebuild entire codebase and run test suite"
-	@echo "     lint - run code linters"
-	@echo "      doc - build online documentation"
-	@echo "      cov - run code coverage processes"
-	@echo "          -                         "
+	@echo "  CODE BUILDING                              CODE CHECKING"
+	@echo "    [all] - default — build binaries             test - run test suite"
+	@echo "    clean - remove all temporary files      cleantest - rebuild entire codebase and run test suite"
+	@echo "  install - copy built binaries into ./bin       lint - run code linters"
+	@echo "                                                  doc - build online documentation"
+	@echo "                                                  cov - run code coverage processes"
 	@echo "  DEVELOPMENT TOOLS"
 	@echo "     push - push code changes to repository"
 
