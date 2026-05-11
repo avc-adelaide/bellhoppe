@@ -60,8 +60,9 @@ In the days of well-structured, readable, and easily parsable input files, the B
 Providing a more useful interface for controlling Bellhop's many input parameters is a significant part of modernising the codebase.
 
 Mandar Chitre previously developed \texttt{arlpy} \cite{chitre2025-arlpy} as a Python wrapper for Bellhop.
-The main technical extension of \texttt{aubellhop} over \texttt{arlpy} is to support a broader range of environment parameters, and to provide tighter integration with legacy Bellhop configuration files.
-The embedding of the Fortran code sources within \texttt{aubellhop} allows further development and analysis of the Bellhop algorithms within a single codebase.
+The main technical extension of \texttt{aubellhop} over \texttt{arlpy} is to provide interfaces for a broader range of environment parameters, support the 3D version of Bellhop, and to provide tighter integration with legacy Bellhop configuration files.
+The embedding of the Fortran code sources within \texttt{aubellhop} allows seamless installation by users, without the need to manually set up a development environment.
+As part of this embedding, the Fortran code has been refactored slightly, permitting further development and analysis of the Bellhop algorithms within a holistic codebase.
 Parallel work is being undertaken at Adelaide University to expand the utility of Bellhop for dynamic, large-scale simulations \cite{fang2024-aas,fang2025-aas,fang2026-internoise}.
 
 This article will discuss the \texttt{aubellhop} interfaces (\secref{interfaces}), provide examples to demonstrate some of its features (\secref{examples}), explain the improvements to the codebase (\secref{code}) and conclude with a short discussion (\secref{conclusion}).
@@ -98,7 +99,7 @@ If you have legacy Bellhop configuration files in use (say, a \texttt{seamount} 
 env = bh.Environment.from_file('seamount.env')
 \end{verbatim}
 The \texttt{Environment} class provides a number of helper functions to help manipulate the data, including serialisation to/from disk or \texttt{Dictionary} data structures. 
-This flexible approach to defining environment configurations makes it possible to run Monte Carlo-style analyses simply, and \texttt{aubellhop} provides preliminary support for parallelising such operations for more efficient computation.
+This flexible approach to defining environment configurations makes it possible to run Monte Carlo-style analyses simply, with future plans to provide in-built support for parallelising such operations over multiple CPU cores automatically.
 
 
 \texttt{aubellhop} builds in the capability to execute different binaries according to the needs of the model.
@@ -164,7 +165,7 @@ The Python interface to bellhop is documented using Sphinx (following arlpy). Th
 
 \begin{figure}
 \centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/graphvis}}}
-\caption{Extract from part of the Graphvis output from the FORD Modules documentation.}
+\caption{Extract from part of the automatically-generated Graphvis output from the FORD Modules documentation.}
 \figlabel{graphvis}
 \end{figure}
 
@@ -210,9 +211,8 @@ Modern linter tools by default are strict about upholding what are now considere
 
 \paragraph{Easy build systems}
 
-Traditional workflows used \verb|make|, and modern Python tools such as |\verb|uv| provide more complex environment setup options.
+Traditional workflows used \verb|make|, and modern Python tools such as \verb|uv| provide more complex environment setup options.
 The Bellhop repository is set up with UV used for running the main development tools, with a transparent user interface provided by Make to help streamline shifting from one build process to another in the future.
-
 The Make interface is as simple as (\verb|make help|):
 \begin{verbatim}
 CODE BUILDING                          CODE CHECKING
@@ -230,6 +230,9 @@ Github provides generous support for educational and open source users.
 A publicly hosted project provides a stable home to access the work, but online platforms offer many desirable features, including collaboration and project management tools (such as pull requests and issue tracking), ability to serve websites based on project documentation, and so-called `continuous integration' workflows.
 Very recently (at time of writing), it is now possible to integrate AI agents into online repositories, who can run, analyse, and suggest changes to code directly.
 
+As part of the online repository, a comprehensive suite of documentation is being written, which covers the Fortan code and interfaces, the \texttt{aubellhop} code and interfaces, and a set of tutorials demonstrating common use cases.
+The accessibility of this modern documentation is intended to allow new uses to adopt Bellhop easily using free, open source workflows.
+
 
 
 \section{Discussion}
@@ -240,7 +243,7 @@ Building engineering software using these features helps mitigate the risk of un
 
 Since work commenced on \texttt{aubellhop} there has been substantial discussion on the use of artificial intelligence agents to `vibe code' entire software projects.
 AI has been used as a tool in this project to accelerate testing and debugging processes, check best practices, and occasionally to mock up frameworks for implementing new features.
-However, all code has been reviewed and checked manually, and in most cases substantially rewritten and refined.
+However, all code has been reviewed and checked manually, and for all non-trivial blocks of code has been substantially rewritten and refined.
 
 
 
