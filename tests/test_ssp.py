@@ -7,7 +7,7 @@ import pandas.testing as pdt
 
 def test_ssp_spline_points(): # not an error but anyway
     ssp = pd.DataFrame({ 'depth':[0,10,20,30], 'speed':[1540,1530,1520,1525]})
-    env = bh.Environment(soundspeed=ssp,depth=30,soundspeed_interp="spline")
+    env = bh.Environment(soundspeed=ssp,bottom_depth=30,soundspeed_interp="spline")
     env.check()
     arr = bh.compute_arrivals(env,debug=True)
 
@@ -17,17 +17,17 @@ def test_ssp_one_speed():
     """Test singleton SSP entries. All of these should be equivalent."""
 
     ssp1 = 1540
-    env1 = bh.Environment(soundspeed=ssp1, depth=30, soundspeed_interp="pchip").check()
+    env1 = bh.Environment(soundspeed=ssp1, bottom_depth=30, soundspeed_interp="pchip").check()
 
     ssp2 = [
         [ 0, 1540],  # equivalent to "constant"
     ]
-    env2 = bh.Environment(soundspeed=ssp2, depth=30, soundspeed_interp="pchip").check()
+    env2 = bh.Environment(soundspeed=ssp2, bottom_depth=30, soundspeed_interp="pchip").check()
 
     ssp3 = [
         [ 30, 1540],  # equivalent to "constant"
     ]
-    env3 = bh.Environment(soundspeed=ssp3, depth=30, soundspeed_interp="pchip").check()
+    env3 = bh.Environment(soundspeed=ssp3, bottom_depth=30, soundspeed_interp="pchip").check()
 
     pdt.assert_frame_equal(env1['soundspeed'],env2['soundspeed'])
     pdt.assert_frame_equal(env1['soundspeed'],env3['soundspeed'])
@@ -47,6 +47,6 @@ def test_ssp_error(): # too many columns
                 [1540,1530,1520,1525],
                 [1540,1530,1520,1525],
         ))
-    env = bh.Environment(soundspeed=ssp,depth=30,soundspeed_interp="spline")
+    env = bh.Environment(soundspeed=ssp,bottom_depth=30,soundspeed_interp="spline")
     with pytest.raises(TypeError, match='For an NDArray, soundspeed must be defined as a Nx2 array'):
         env.check()

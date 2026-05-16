@@ -89,8 +89,8 @@ class EnvironmentWriter:
             self._create_bty_ati_file(self.fname_base+'.ati', self.env['surface'], self.env['surface_interp'])
         if self.env['soundspeed_interp'] == BHStrings.quadrilateral:
             self._create_ssp_quad_file(self.fname_base+'.ssp', self.env['soundspeed'])
-        if np.size(self.env['depth']) > 1:
-            self._create_bty_ati_file(self.fname_base+'.bty', self.env['depth'], self.env['depth_interp'])
+        if np.size(self.env['bottom_depth']) > 1:
+            self._create_bty_ati_file(self.fname_base+'.bty', self.env['bottom_depth'], self.env['bottom_interp'])
         if self.env['bottom_boundary_condition'] == BHStrings.from_file:
             self._create_refl_coeff_file(self.fname_base+".brc", self.env['bottom_reflection_coefficient'])
         if self.env['source_directionality'] is not None:
@@ -291,7 +291,7 @@ class EnvironmentWriter:
         """
         with open(filename, 'wt') as f:
             format_flag = "S" if depth.shape[1] == 2 else "L"
-            f.write(f"'{FlagMaps.depth_interp_rev[interp]}{format_flag}'\n")
+            f.write(f"'{FlagMaps.bottom_interp_rev[interp]}{format_flag}'\n")
             f.write(str(depth.shape[0])+"\n")
             if depth.shape[1] == 2:
                 for j in range(depth.shape[0]):

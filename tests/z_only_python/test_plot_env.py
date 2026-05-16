@@ -32,7 +32,7 @@ def test_plot_env():
     rr = np.linspace(0,1000,1001)
     sf = np.array([[r, 0.5+0.5*np.sin(2*np.pi*0.005*r)] for r in rr]) # must be 0 at highest point
 
-    env = bh.Environment(depth=dp,surface=sf)
+    env = bh.Environment(bottom_depth=dp,surface=sf)
     erays = bh.compute_eigenrays(env)
 
     with bhp.figure() as f:

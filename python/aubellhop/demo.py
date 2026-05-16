@@ -43,7 +43,7 @@ def demo() -> pd.DataFrame:
     env = Environment(
         name='bellhop demo environment',
         frequency=25000,         # 25 kHz
-        depth=25,                # 25 m water depth
+        bottom_depth=25,                # 25 m water depth
         soundspeed=1500,         # 1500 m/s constant sound speed
         source_depth=5,          # source at 5 m depth
         receiver_depth=10,       # receiver at 10 m depth
@@ -53,7 +53,7 @@ def demo() -> pd.DataFrame:
     )
 
     print(f"  Frequency: {env.frequency} Hz")
-    print(f"  Water depth: {env.depth} m")
+    print(f"  Water depth: {env.bottom_depth} m")
     print(f"  Sound speed: {env.soundspeed} m/s")
     print(f"  Source depth: {env.source_depth} m")
     print(f"  Receiver depth: {env.receiver_depth} m")
@@ -118,7 +118,7 @@ import aubellhop as bh
 env = bh.Environment(
     name='bellhop demo environment',
     frequency=25000,         # 25 kHz
-    depth=25,                # 25 m water depth
+    bottom_depth=25,                # 25 m water depth
     soundspeed=1500,         # 1500 m/s constant sound speed
     source_depth=5,          # source at 5 m depth
     receiver_depth=10,       # receiver at 10 m depth
@@ -129,7 +129,7 @@ env = bh.Environment(
 
 print("Environment configuration:")
 print(f"  Frequency: {env.frequency} Hz")
-print(f"  Water depth: {env.depth} m")
+print(f"  Water depth: {env.bottom_depth} m")
 print(f"  Sound speed: {env.soundspeed} m/s")
 print(f"  Source depth: {env.source_depth} m")
 print(f"  Receiver depth: {env.receiver_depth} m")

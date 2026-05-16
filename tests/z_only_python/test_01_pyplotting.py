@@ -13,7 +13,7 @@ def test_pyplot_env2d():
 def test_pyplot_env2d_complex():
     """Test pyplot_env2d function with complex environment. Just check that there are no execution errors.
     """
-    env = bh.Environment(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000, 45]])
+    env = bh.Environment(bottom_depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000, 45]])
     bhp.pyplot_env2d(env)
 
 
@@ -27,7 +27,7 @@ def test_pyplot_ssp():
 def test_pyplot_ssp_complex():
     """Test pyplot_ssp function with complex sound speed profile. Just check that there are no execution errors.
     """
-    env = bh.Environment(depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
+    env = bh.Environment(bottom_depth=30,soundspeed=[[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
     bhp.pyplot_ssp(env)
 
 

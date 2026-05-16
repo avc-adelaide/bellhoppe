@@ -16,8 +16,8 @@ bty,interp_bty = bh.read_bty("tests/Dickins/DickinsB.bty")
 
 print(interp_bty)
 
-env["depth"] = bty
-env["depth_interp"] = interp_bty
+env["bottom_depth"] = bty
+env["bottom_interp"] = interp_bty
 
 tl = bh.compute_transmission_loss(env,fname_base="tests/Dickins/DickinsB_output",debug=True)
 tl_exp = read_shd("tests/Dickins/DickinsB.shd")
@@ -33,7 +33,7 @@ def test_DickensB():
     assert env['surface_boundary_condition'] == 'vacuum', "SSPOPT = 'CVW' => V == vacuum"
     assert env['attenuation_units'] == 'dB per wavelength',  "SSPOPT = 'CVW' => W == dB per wavelength"
 
-    assert env['depth'].shape == (5,2), "BTY file should contain 30 data points"
+    assert env['bottom_depth'].shape == (5,2), "BTY file should contain 30 data points"
 
     assert env['step_size'] ==      0.0, "0.0  3100.0  101.0		! STEP (m), ZBOX (m), RBOX (km)"
     assert env['simulation_depth'] ==   3100.0, "0.0  3100.0  101.0		! STEP (m), ZBOX (m), RBOX (km)"

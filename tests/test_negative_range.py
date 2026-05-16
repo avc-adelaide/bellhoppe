@@ -9,8 +9,8 @@ def test_negative_receiver_ranges():
     env = bh.Environment(name="Test negative ranges")
 
     # Set up environment with negative and positive receiver ranges
-    dp = env["depth"]
-    env["depth"] = np.array([[-2000, dp], [2000, dp]])
+    dp = env["bottom_depth"]
+    env["bottom_depth"] = np.array([[-2000, dp], [2000, dp]])
     env["receiver_depth"] = 10
     env["receiver_range"] = np.array([-1000, -500, -1, 1, 500, 1000])
 

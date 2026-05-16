@@ -24,7 +24,7 @@ def test_plot_rays():
     sf = np.array([[r, 0.5+0.5*np.sin(2*np.pi*0.005*r)] for r in rr]) # must be 0 at highest point
 
     env = bh.Environment(
-            depth=dp,
+            bottom_depth=dp,
             surface=sf,
             beam_num=100,
             receiver_range=1000,
@@ -42,7 +42,7 @@ def test_plot_rays_long():
     """
     dp = 50
     env = bh.Environment(
-            depth=dp,
+            bottom_depth=dp,
             beam_num=100,
             receiver_range=20000,
           )

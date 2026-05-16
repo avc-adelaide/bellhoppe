@@ -48,7 +48,7 @@ def pyplot_env2d(env: Environment, surface_color: str = 'dodgerblue', bottom_col
     Examples
     --------
     >>> import aubellhop as bh
-    >>> env = bh.Environment(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
+    >>> env = bh.Environment(bottom_depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
     >>> bh.plot_env(env)
     """
 
@@ -84,10 +84,10 @@ def pyplot_env2d(env: Environment, surface_color: str = 'dodgerblue', bottom_col
     else:
         _pyplt.plot(env['surface'][:, 0] / divisor, env['surface'][:, 1], color=surface_color, **kwargs)
 
-    if np.size(env['depth']) == 1:
-        _pyplt.plot([min_x, max_x], [env['depth'], env['depth']], color=bottom_color, **kwargs)
+    if np.size(env['bottom_depth']) == 1:
+        _pyplt.plot([min_x, max_x], [env['bottom_depth'], env['bottom_depth']], color=bottom_color, **kwargs)
     else:
-        _pyplt.plot(env['depth'][:, 0] / divisor, env['depth'][:, 1], color=bottom_color, **kwargs)
+        _pyplt.plot(env['bottom_depth'][:, 0] / divisor, env['bottom_depth'][:, 1], color=bottom_color, **kwargs)
 
     txd = env['source_depth']
     _pyplt.plot([0] * np.size(txd), txd, marker='*', markersize=6, color=source_color, **kwargs)
@@ -156,13 +156,13 @@ def pyplot_env3d(env: Environment, surface_color: str = 'dodgerblue', bottom_col
     else:
         _pyplt.plot(env['surface'][:, 0] / xdivisor, env['surface'][:, 1], color=surface_color, **kwargs)
 
-    if np.size(env['depth']) == 1:
-        z = float(env['depth'])
+    if np.size(env['bottom_depth']) == 1:
+        z = float(env['bottom_depth'])
         X, Y = np.meshgrid([min_x, max_x], [min_y, max_y])
         Z = np.full_like(X, z)
         ax.plot_surface(X, Y, Z, color=bottom_color, alpha=0.3, **kwargs)
     else:
-        _pyplt.plot(env['depth'][:, 0] / xdivisor, env['depth'][:, 1], color=bottom_color, **kwargs)
+        _pyplt.plot(env['bottom_depth'][:, 0] / xdivisor, env['bottom_depth'][:, 1], color=bottom_color, **kwargs)
 
     if env._source_num == 1:
         _pyplt.plot(
@@ -230,10 +230,10 @@ def pyplot_ssp(env: Environment, ax: Any | None = None, **kwargs: Any) -> None:
     if isinstance(svp, pd.DataFrame):
         svp = np.hstack((np.array([svp.index]).T, np.asarray(svp)))
     if np.size(svp) == 1:
-        if np.size(env['depth']) > 1:
-            max_y = np.max(env['depth'][:, 1])
+        if np.size(env['bottom_depth']) > 1:
+            max_y = np.max(env['bottom_depth'][:, 1])
         else:
-            max_y = env['depth']
+            max_y = env['bottom_depth']
         _pyplt.plot([svp, svp], [0, -max_y], **kwargs)
         _pyplt.xlabel('Soundspeed (m/s)')
         _pyplt.ylabel('Depth (m)')
@@ -246,7 +246,8 @@ def pyplot_ssp(env: Environment, ax: Any | None = None, **kwargs: Any) -> None:
         _pyplt.ylabel('Depth (m)')
         _pyplt.plot(svp[:, 1], -svp[:, 0], marker='.', **kwargs)
     else:
-        _pyplt.plot(svp[:, 1], -svp[:, 0], **kwargs)
+        for i in range(svp.shape[1]-1):
+            _pyplt.plot(svp[:, i+1], -svp[:, 0], **kwargs)
         _pyplt.xlabel('Soundspeed (m/s)')
         _pyplt.ylabel('Depth (m)')
 

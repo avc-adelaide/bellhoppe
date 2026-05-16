@@ -10,8 +10,8 @@ def test_simple():
     assert(env["bottom_density"] == 1600)
     assert(env["bottom_roughness"] == 0)
     assert(env["bottom_soundspeed"] == 1600)
-    assert(env["depth"] == 25)
-    assert(env["depth_interp"] == "linear")
+    assert(env["bottom_depth"] == 25)
+    assert(env["bottom_interp"] == "linear")
     assert(env["frequency"] == 25000)
     env["beam_angle_max"] == 80
     env["beam_angle_min"] == -80
@@ -98,7 +98,7 @@ def test_variable_soundspeed():
     ]
 
     # Create environment with variable sound speed profile
-    env = bh.Environment(soundspeed=ssp, soundspeed_interp="spline", depth=30, bottom_density=1600, bottom_soundspeed=1600.0, beam_angle_min=-80, beam_angle_max=80)
+    env = bh.Environment(soundspeed=ssp, soundspeed_interp="spline", bottom_depth=30, bottom_density=1600, bottom_soundspeed=1600.0, beam_angle_min=-80, beam_angle_max=80)
     print(env)
 
     # Compute arrivals
@@ -151,7 +151,7 @@ def test_bathy():
         [1000, 20]  # 25 m water depth at 1 km
 	]
 
-    env = bh.Environment(depth=bathy,bottom_density=1600,bottom_soundspeed=1600.0,beam_angle_max=80,beam_angle_min=-80,bottom_attenuation=0.0)
+    env = bh.Environment(bottom_depth=bathy,bottom_density=1600,bottom_soundspeed=1600.0,beam_angle_max=80,beam_angle_min=-80,bottom_attenuation=0.0)
 
     arrivals = bh.compute_arrivals(env)
     arrival_times = arrivals["time_of_arrival"]

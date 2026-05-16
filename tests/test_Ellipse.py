@@ -13,8 +13,8 @@ skip_if_coverage = pytest.mark.skipif(
 env = bh.Environment.from_file("tests/Ellipse/Ellipse.env")
 
 print(env["soundspeed"])
-print(env["depth"])
-print(env["depth_interp"])
+print(env["bottom_depth"])
+print(env["bottom_interp"])
 print(env["surface"])
 print(env["surface_interp"])
 
@@ -27,7 +27,7 @@ def test_Ellipse_read_data():
     assert env['surface_boundary_condition'] == 'vacuum', "SSPOPT = 'CVF *' => V == vacuum"
     assert env['attenuation_units'] == 'frequency dependent',  "SSPOPT = 'CVF *' => F == frequency dependent"
 
-    assert env['depth'].shape == (1000,2), "BTY file contains 1000 data points"
+    assert env['bottom_depth'].shape == (1000,2), "BTY file contains 1000 data points"
     assert env['surface'].shape == (1000,2), "ATI file contains 1000 data points"
 
     assert env['task'] == "rays", "Task description is 'RB RR'"

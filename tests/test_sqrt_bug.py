@@ -6,8 +6,8 @@ def test_sqrt_bug():
 
     env = bh.Environment(name="Test sqrt bug")
 
-    dp = env["depth"]
-    env["depth"] = np.array([[-2000,dp],[2000,dp]])
+    dp = env["bottom_depth"]
+    env["bottom_depth"] = np.array([[-2000,dp],[2000,dp]])
     env["receiver_depth"] = 10
     env["receiver_range"] = np.array([-1000, -500, -1, 1, 500, 1000])
     env["beam_num"] = 9999
@@ -16,8 +16,8 @@ def test_sqrt_bug():
 
     env.check()
 
-    assert(env["depth"].ndim == 2)
-    assert(env["depth"].size == 4)
+    assert(env["bottom_depth"].ndim == 2)
+    assert(env["bottom_depth"].size == 4)
     assert(env["receiver_range"].ndim == 1)
     assert(env["receiver_range"].size == nn)
 

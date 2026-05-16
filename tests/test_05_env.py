@@ -16,7 +16,7 @@ def test_copy():
     env1 = bh.Environment()
     range_vec = np.linspace(0,5000) # 5km simulation
     depth_vec = np.linspace(1000,2000) # ramp seabed
-    env1.depth = np.column_stack([range_vec,depth_vec])
+    env1.bottom_depth = np.column_stack([range_vec,depth_vec])
     assert env1._depth_max == None
     env1.check()
     assert env1._depth_max == 2000

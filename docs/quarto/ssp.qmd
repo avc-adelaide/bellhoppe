@@ -29,7 +29,7 @@ ssp = [[0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]]
 env = bh.Environment(
     soundspeed_interp="linear",
     soundspeed=ssp,
-    depth=30,
+    bottom_depth=30,
 )
 bhp.plot_ssp(env)
 ```
@@ -54,7 +54,7 @@ ssp = pd.DataFrame({
 env = bh.Environment(
     soundspeed_interp="spline",
     soundspeed=ssp,
-    depth=30,
+    bottom_depth=30,
 )
 bhp.plot_ssp(env)
 ```
@@ -214,7 +214,7 @@ import aubellhop.plot as bhp
 
 svp.columns = distance_km * 1000.0
 env = bh.Environment(
-  depth=5500,
+  bottom_depth=5500,
   soundspeed=svp, # see above for this 2D DataFrame definition
   soundspeed_interp="quadrilateral", # implied
   source_depth=2000,

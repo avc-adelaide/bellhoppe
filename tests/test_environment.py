@@ -26,7 +26,7 @@ def test_env_dict_round_trip():
     env_orig = bh.Environment(
         name="Dict round trip test",
         frequency=100.0,
-        depth=30.0,
+        bottom_depth=30.0,
         soundspeed=1520.0,
         bottom_soundspeed=1700.0,
         bottom_density=1800.0,
@@ -43,7 +43,7 @@ def test_env_dict_round_trip():
     env_dict = env_orig.to_dict()
     assert env_dict['name'] == env_orig['name']
     assert env_dict['frequency'] == env_orig['frequency']
-    assert env_dict['depth'] == env_orig['depth']
+    assert env_dict['bottom_depth'] == env_orig['bottom_depth']
     assert env_dict['bottom_soundspeed'] == env_orig['bottom_soundspeed']
     assert env_dict['beam_angle_min'] == env_orig['beam_angle_min']
     assert env_dict['beam_angle_max'] == env_orig['beam_angle_max']
@@ -55,7 +55,7 @@ def test_env_dict_round_trip():
     # Compare key values (allowing for expected transformations)
     assert env_read['name'] == env_orig['name']
     assert env_read['frequency'] == env_orig['frequency']
-    assert env_read['depth'] == env_orig['depth']
+    assert env_read['bottom_depth'] == env_orig['bottom_depth']
     assert env_read['bottom_soundspeed'] == env_orig['bottom_soundspeed']
     assert env_read['beam_angle_min'] == env_orig['beam_angle_min']
     assert env_read['beam_angle_max'] == env_orig['beam_angle_max']

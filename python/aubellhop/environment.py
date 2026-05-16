@@ -59,9 +59,9 @@ class Environment(MutableMapping[str, Any]):
     or modified later using dictionary notation:
 
     >>> import aubellhop as bh
-    >>> env = bh.Environment(depth=40, soundspeed=1540)
+    >>> env = bh.Environment(bottom_depth=40, soundspeed=1540)
     >>> print(env)
-    >>> env.depth = 25
+    >>> env.bottom_depth = 25
     >>> env.bottom_soundspeed = 1800
     >>> print(env)
 
@@ -69,7 +69,7 @@ class Environment(MutableMapping[str, Any]):
     A depth dependent sound speed profile be provided as a Nx2 array of (depth, sound speed):
 
     >>> import aubellhop as bh
-    >>> env = bh.Environment(depth=20,
+    >>> env = bh.Environment(bottom_depth=20,
     >>>         soundspeed=[[0,1540], [5,1535], [10,1535], [20,1530]])
 
     A range-and-depth dependent sound speed profile can be provided as a Pandas frame:
@@ -81,13 +81,13 @@ class Environment(MutableMapping[str, Any]):
     >>>     100: [1540, 1535, 1530, 1533],     # profile at 100 m range
     >>>     200: [1530, 1520, 1522, 1525] },   # profile at 200 m range
     >>>     index=[0, 10, 20, 30])             # depths of the profile entries in m
-    >>> env = bh.Environment(depth=20, soundspeed=ssp2)
+    >>> env = bh.Environment(bottom_depth=20, soundspeed=ssp2)
 
     The default environment has a constant water depth. A range dependent bathymetry
     can be provided as a Nx2 array of (range, water depth):
 
     >>> import aubellhop as bh
-    >>> env = bh.Environment(depth=[[0,20], [300,10], [500,18], [1000,15]])
+    >>> env = bh.Environment(bottom_depth=[[0,20], [300,10], [500,18], [1000,15]])
     """
 
     # Basic environment properties
@@ -103,8 +103,6 @@ class Environment(MutableMapping[str, Any]):
     soundspeed_interp: str = EnvDefaults.soundspeed_interp
 
     # Depth parameters
-    depth: float | Any = 25.0  # m
-    depth_interp: str = EnvDefaults.depth_interp
     _mesh_npts: int = 0 # ignored by bellhop
     _depth_sigma: float = 0.0 # ignored by bellhop
     depth_max: float | None = None  # m
@@ -117,7 +115,8 @@ class Environment(MutableMapping[str, Any]):
     _sbp_file: str = BHStrings.default # set to "from-file" if source_directionality defined
 
     # Bottom parameters
-    bottom_interp: str | None = None
+    bottom_depth: float | Any = 25.0  # m
+    bottom_interp: str = EnvDefaults.bottom_interp
     _bottom_depth: float | None = None  # m
     bottom_soundspeed: float = MiscDefaults.sound_speed # m/s
     _bottom_soundspeed_shear: float = 0.0  # m/s (ignored)
@@ -400,7 +399,7 @@ class Environment(MutableMapping[str, Any]):
         elif self.dimension == BHStrings.two_half_d or self.dimension == BHStrings.three_d:
             self._dimension = 3
 
-        if np.size(self['depth']) > 1:
+        if np.size(self['bottom_depth']) > 1:
             self["_bathymetry"] = BHStrings.from_file
         if self["surface"] is not None and np.size(self['surface']) > 1:
             self["_altimetry"] = BHStrings.from_file
@@ -427,7 +426,7 @@ class Environment(MutableMapping[str, Any]):
                     return float(fn(arr[:, 1]))
             raise TypeError(f"Unexpected type for _extremum argument: {type(vec)}")
 
-        self._depth_max = _extremum(self.depth_max, self['depth'], np.max)
+        self._depth_max = _extremum(self.depth_max, self['bottom_depth'], np.max)
         self._surface_min = _extremum(self.surface_min, self['surface'], np.min)
 
         if not isinstance(self['soundspeed'], pd.DataFrame):
@@ -531,12 +530,12 @@ class Environment(MutableMapping[str, Any]):
             assert self["surface_boundary_condition"] == BHStrings.from_file, "TRC values need to be read from file"
 
     def _check_env_depth(self) -> None:
-        assert self['depth'] is not None, 'depth must be defined or initialised'
-        if np.size(self['depth']) > 1:
-            assert self['depth'].ndim == 2, 'depth must be a scalar or an Nx2 array [ranges, depths]'
-            assert self['depth'].shape[1] == 2, 'depth must be a scalar or an Nx2 array [ranges, depths]'
-            assert self['depth'][-1,0] >= self._range_max, 'Last range in depth array must be beyond maximum range: '+str(self._range_max)+' m'
-            assert np.all(np.diff(self['depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
+        assert self['bottom_depth'] is not None, 'depth must be defined or initialised'
+        if np.size(self['bottom_depth']) > 1:
+            assert self['bottom_depth'].ndim == 2, 'depth must be a scalar or an Nx2 array [ranges, depths]'
+            assert self['bottom_depth'].shape[1] == 2, 'depth must be a scalar or an Nx2 array [ranges, depths]'
+            assert self['bottom_depth'][-1,0] >= self._range_max, 'Last range in depth array must be beyond maximum range: '+str(self._range_max)+' m'
+            assert np.all(np.diff(self['bottom_depth'][:,0]) > 0), 'Depth array must be strictly monotonic in range'
             assert self["_bathymetry"] == BHStrings.from_file, 'len(depth)>1 requires BTY file'
         if self["bottom_reflection_coefficient"] is not None:
             assert self["bottom_boundary_condition"] == BHStrings.from_file, "BRC values need to be read from file"

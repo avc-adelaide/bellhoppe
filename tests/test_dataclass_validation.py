@@ -35,17 +35,17 @@ class TestEnvironmentValidation:
             config = Environment(soundspeed_interp=option)
             assert config.soundspeed_interp == option
 
-    def test_invalid_depth_interp(self):
+    def test_invalid_bottom_interp(self):
         """Test that invalid depth interpolation raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid value for 'depth_interp'"):
-            Environment(depth_interp='invalid_interpolation')
+        with pytest.raises(ValueError, match="Invalid value for 'bottom_interp'"):
+            Environment(bottom_interp='invalid_interpolation')
 
-    def test_valid_depth_interp_options(self):
+    def test_valid_bottom_interp_options(self):
         """Test that all valid depth interpolation options work."""
         valid_options = ['linear', 'curvilinear']
         for option in valid_options:
-            config = Environment(depth_interp=option)
-            assert config.depth_interp == option
+            config = Environment(bottom_interp=option)
+            assert config.bottom_interp == option
 
     def test_invalid_surface_interp(self):
         """Test that invalid surface interpolation raises ValueError."""
@@ -134,12 +134,12 @@ class TestDataclassIntegration:
     def test_create_env_with_validation(self):
         """Test that create_env works with valid options and validation."""
         env = bh.Environment(
-            depth=40,
+            bottom_depth=40,
             soundspeed=1540,
             soundspeed_interp='linear'
         )
         assert isinstance(env, Environment)
-        assert env['depth'] == 40
+        assert env['bottom_depth'] == 40
         assert env['soundspeed'] == 1540
         assert env['soundspeed_interp'] == 'linear'
 
@@ -151,9 +151,9 @@ class TestDataclassIntegration:
     def test_backward_compatibility_preserved(self):
         """Test that existing dictionary-based interface still works."""
         # This should work exactly as before
-        env = bh.Environment(depth=40, soundspeed=1540)
+        env = bh.Environment(bottom_depth=40, soundspeed=1540)
         env.check()
-        assert env['depth'] == 40
+        assert env['bottom_depth'] == 40
         assert env['soundspeed'].iloc[0,0] == 1540
 
 
@@ -162,11 +162,11 @@ class TestDataclassUtilities:
 
     def test_to_dict_conversion(self):
         """Test conversion of dataclass to dictionary."""
-        config = Environment(depth=40, soundspeed=1540)
+        config = Environment(bottom_depth=40, soundspeed=1540)
         env_dict = config.to_dict()
 
         assert isinstance(env_dict, dict)
-        assert env_dict['depth'] == 40
+        assert env_dict['bottom_depth'] == 40
         assert env_dict['soundspeed'] == 1540
         assert 'name' in env_dict
         assert 'dimension' in env_dict

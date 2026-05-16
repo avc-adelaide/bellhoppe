@@ -2,6 +2,12 @@
 title: AUBELLHOP CHANGELOG
 ---
 
+## [0.2] - 2026-05-16
+
+* *Breaking change*: rename `depth` and `depth_interp` to `bottom_depth` and `bottom_interp`.
+  This is for consistency and to reduce ambiguity; without the rename, not clear if `depth`
+  refers to the simulation depth or the bathymetry.
+
 ## [0.1.9] - 2026-02-17
 
 * Update Fortran code to satisfy fortitude v0.8

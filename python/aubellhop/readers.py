@@ -141,7 +141,7 @@ class EnvironmentReader:
         self.env['_mesh_npts']   = _int(ssp_parts[0])
         self.env['_depth_sigma'] = _float(ssp_parts[1])
         self.env['depth_max']    = _float(ssp_parts[2])
-        self.env['depth'] = self.env['depth_max']
+        self.env['bottom_depth'] = self.env['depth_max']
 
         # Read SSP points and from file if applicable
         ssp_lines, next_line = self._read_until_quote(f)
@@ -223,7 +223,7 @@ class EnvironmentReader:
         self.env['bottom_beta']            = _float(bottom_parts[2])
         self.env['bottom_transition_freq'] = _float(bottom_parts[3])
         if self.env["_bathymetry"] == BHStrings.from_file:
-            self.env["depth"], self.env["bottom_interp"] = read_bty(self.fname_base)
+            self.env["bottom_depth"], self.env["bottom_interp"] = read_bty(self.fname_base)
 
         # Bottom properties (depth, sound_speed, density, absorption)
         if self.env["bottom_boundary_condition"] == BHStrings.acousto_elastic:
@@ -581,15 +581,15 @@ def _read_ati_bty(fname: str) -> tuple[NDArray[np.float64], str]:
 
     Notes
     -----
-    The returned array can be assigned to env["depth"] for range-dependent bathymetry.
+    The returned array can be assigned to env["bottom_depth"] for range-dependent bathymetry.
 
     **Examples:**
 
     >>> import aubellhop as bh
     >>> bty,bty_interp = bh.read_bty("tests/MunkB_geo_rot/MunkB_geo_rot.bty")
     >>> env = bh.Environment()
-    >>> env["depth"] = bty
-    >>> env["depth_interp"] = bty_interp
+    >>> env["bottom_depth"] = bty
+    >>> env["bottom_interp"] = bty_interp
     >>> arrivals = bh.calculate_arrivals(env)
 
     **File format example:**
@@ -661,7 +661,7 @@ def _read_ati_bty(fname: str) -> tuple[NDArray[np.float64], str]:
                          shear_speed_array,
                          shear_attenuation_array,
                         ]
-        return np.column_stack(val_array), FlagMaps.depth_interp[interp_type]
+        return np.column_stack(val_array), FlagMaps.bottom_interp[interp_type]
 
 def read_ati_3d(fname: str) -> dict[str, np.ndarray]:
     """Read an altimetry file used by Bellhop."""
@@ -697,7 +697,7 @@ def _read_ati_bty3d(fname: str) -> dict[str, NDArray[np.float64]]:
 
     Notes
     -----
-    The returned array can be assigned to env["depth"] for range-dependent bathymetry.
+    The returned array can be assigned to env["bottom_depth"] for range-dependent bathymetry.
 
     """
 

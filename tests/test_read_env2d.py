@@ -16,7 +16,7 @@ def test_read_env_basic():
     # Verify basic properties
     assert env['name'] == 'Munk profile'
     assert env['frequency'] == 50.0
-    assert env['depth'] == 5000.0
+    assert env['bottom_depth'] == 5000.0
     assert env['bottom_soundspeed'] == 1600.0
     assert env['beam_angle_min'] == -20.0
     assert env['beam_angle_max'] == 20.0
@@ -35,7 +35,7 @@ def test_read_env_free_space():
     # Verify basic properties
     assert env['name'] == 'Free space, point source, Hat beam'
     assert env['frequency'] == 5.0
-    assert env['depth'] == 10000.0
+    assert env['bottom_depth'] == 10000.0
     assert env['beam_angle_min'] == -89.0
     assert env['beam_angle_max'] == 89.0
     assert env['beam_num'] == 500
@@ -50,7 +50,7 @@ def test_read_env_round_trip():
     env_orig = bh.Environment(
         name="Round trip test",
         frequency=100.0,
-        depth=30.0,
+        bottom_depth=30.0,
         soundspeed=1520.0,
         bottom_soundspeed=1700.0,
         bottom_density=1800.0,
@@ -82,7 +82,7 @@ def test_read_env_round_trip():
         # Compare key values (allowing for expected transformations)
         assert env_read['name'] == env_orig['name']
         assert env_read['frequency'] == env_orig['frequency']
-        assert env_read['depth'] == env_orig['depth']
+        assert env_read['bottom_depth'] == env_orig['bottom_depth']
         assert env_read['bottom_soundspeed'] == env_orig['bottom_soundspeed']
         assert env_read['beam_angle_min'] == env_orig['beam_angle_min']
         assert env_read['beam_angle_max'] == env_orig['beam_angle_max']

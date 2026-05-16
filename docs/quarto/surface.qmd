@@ -75,7 +75,7 @@ wave_period = 100.0 # m
 npoints = 10 * env["receiver_range"] / wave_period # sample 10 points per wavelength
 dist_m = np.linspace(0,env["receiver_range"], int(npoints))
 surf = wave_amp * np.sin( 2 * np.pi * dist_m / wave_period )
-surf = surf - np.min(surf) # ensure minimum depth = 0m
+surf = surf - np.min(surf) # ensure minimum bottom_depth = 0m
 env["surface"] = np.column_stack((dist_m, surf))
 
 bhp.plot_env(env)
@@ -235,7 +235,7 @@ env = bh.Environment(
     beam_num=10,
     beam_angle_min=-45,
     beam_angle_max=45,
-    depth=50,
+    bottom_depth=50,
 )
 erays = bh.compute_rays(env)
 with bhp.figure() as f:

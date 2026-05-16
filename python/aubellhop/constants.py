@@ -135,7 +135,7 @@ class FlagMaps:
         "N": BHStrings.nlinear,
         " ": BHStrings.default,
     }
-    depth_interp = {
+    bottom_interp = {
         "L": BHStrings.linear,
         "C": BHStrings.curvilinear,
     }
@@ -237,7 +237,7 @@ class FlagMaps:
 
     # reverse maps
     soundspeed_interp_rev = {v: k for k, v in soundspeed_interp.items()}
-    depth_interp_rev = {v: k for k, v in depth_interp.items()}
+    bottom_interp_rev = {v: k for k, v in bottom_interp.items()}
     surface_interp_rev = {v: k for k, v in surface_interp.items()}
     bottom_boundary_condition_rev = {v: k for k, v in bottom_boundary_condition.items()}
     surface_boundary_condition_rev = {v: k for k, v in surface_boundary_condition.items()}
@@ -279,8 +279,8 @@ class EnvDefaults:
     attenuation_units: str = field(default=BHStrings.frequency_dependent, metadata={"desc": "Attenuation units to define volume attenuation (when setting `bottom_attenuation`, etc)"})
     bottom_attenuation: float = field(default=0.1, metadata={"units": "scale factor","desc": "When acousto-elastic bottom boundary condition is selected, this is the attenuation factor"})
     bottom_boundary_condition: str = field(default=BHStrings.acousto_elastic, metadata={"desc": "Standard boundary condition for seabed"})
+    bottom_interp: str = field(default=BHStrings.linear, metadata={"desc": "Interpolation for bathymetry depths"})
     comment_pad: int = field(default=50, metadata={"desc": "Number of characters used before the comment in the constructed .env files."})
-    depth_interp: str = field(default=BHStrings.linear, metadata={"desc": "Interpolation for bathymetry depths"})
     dimension: str = field(default=BHStrings.two_d, metadata={"desc": "Dimension of simulation (2D, 2.5D, 3D)"})
     _dimension: int = field(default=2, metadata={"desc": "Dimension of model (2, 3)"})
     frequency: float = field(default=25000.0, metadata={"desc": "Frequency of sound propagation", "units": "Hz"})

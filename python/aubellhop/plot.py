@@ -56,7 +56,7 @@ def plot_env(env: Environment,
     Examples
     --------
     >>> import aubellhop as bh
-    >>> env = bh.Environment(depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
+    >>> env = bh.Environment(bottom_depth=[[0, 40], [100, 30], [500, 35], [700, 20], [1000,45]])
     >>> bh.plot_env(env)
     """
 
@@ -92,12 +92,12 @@ def plot_env(env: Environment,
         yy = -s[:,1]
     _plt.plot(xx, yy, xlabel=xlabel, ylabel='Depth (m)', xlim=(min_x-mgn_x, max_x+mgn_x), ylim=(-max_y-mgn_y, -min_y+mgn_y), color=surface_color, **kwargs)
 
-    if np.size(env['depth']) == 1:
+    if np.size(env['bottom_depth']) == 1:
         xx = [min_x, max_x]
-        yy = [-env['depth'], -env['depth']]
+        yy = [-env['bottom_depth'], -env['bottom_depth']]
     else:
         # linear and curvilinear options use the same bathymetry, just with different normals
-        s = env['depth']
+        s = env['bottom_depth']
         xx = s[:,0]/divisor
         yy = -s[:,1]
     _plt.plot(xx, yy, color=bottom_color)

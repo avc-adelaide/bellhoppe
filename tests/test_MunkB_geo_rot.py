@@ -22,7 +22,7 @@ def test_MunkB_geo_rot_A():
     """
 
     assert env["soundspeed"].shape[1] == 30, "Should be N=30 SSP data points"
-    assert env['depth'].shape == (30,2), "BTY file should contain 30 data points"
+    assert env['bottom_depth'].shape == (30,2), "BTY file should contain 30 data points"
 
     assert env['soundspeed_interp'] == 'quadrilateral', "SSPOPT = 'QVF' => Q == quadrilateral"
     assert env['surface_boundary_condition'] == 'vacuum', "SSPOPT = 'QVF' => V == vacuum"

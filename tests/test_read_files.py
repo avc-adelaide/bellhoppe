@@ -160,7 +160,7 @@ def test_integration_with_env():
 
     # Assign loaded data (this should not raise errors)
     env["soundspeed"] = ssp
-    env["depth"] = bty
+    env["bottom_depth"] = bty
 
     # Verify the data is stored correctly
     # For multi-profile SSP files, read_ssp returns pandas DataFrame, for single-profile, numpy array
@@ -172,8 +172,8 @@ def test_integration_with_env():
         assert isinstance(env["soundspeed"], np.ndarray)
         assert env["soundspeed"].shape == ssp.shape
 
-    assert isinstance(env["depth"], np.ndarray)
-    assert env["depth"].shape == bty.shape
+    assert isinstance(env["bottom_depth"], np.ndarray)
+    assert env["bottom_depth"].shape == bty.shape
 
 def test_file_extensions():
     """Test that functions handle missing extensions correctly"""
