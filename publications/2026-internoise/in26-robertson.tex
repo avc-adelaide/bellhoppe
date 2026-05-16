@@ -136,6 +136,21 @@ plt.show(fig); plt.close(fig)
 \section{Examples}
 \label{sec:examples}
 
+The \texttt{aubellhop} repository includes a suite of examples written in a tutorial-style form to illustrate its capabilities and provide starting points for users to perform their own analyses.
+
+\subsection{Using variable sound speed data}
+
+An important consideration in underwater acoustics is the variable sound speed, which causes refraction of acoustic rays. The sound speed typically varies with depth due to changes in temperature, salinity, and pressure.
+
+Bellhop (the executable) provides a number of interpolation routines for interpreting discretised sound speed data; some care should be used in ensuring that an appropriate interpolation is used.
+
+In this example, we use sound speed data derived from the NOAA World Ocean Atlas by Brian Dushaw\footnote{\url{https://staff.washington.edu/dushaw/WOA/}}. A horizontal slice of this data at constant depth is shown in \Figref{lev_ssp}.
+
+\begin{figure}
+\includegraphics{fig/lev_ssp.pdf}
+\caption{Sound speed profile (constant depth) derived from NOAA World Ocean Atlas data.}
+\label{fig:lev_ssp}
+\end{figure}
 
 
 \section{Code improvements}
@@ -169,22 +184,6 @@ The Python interface to bellhop is documented using Sphinx (following arlpy). Th
 \figlabel{graphvis}
 \end{figure}
 
-\paragraph{Regression and unit testing suite}
-
-Engineering software is uniquely well-suited to many types of testing approaches, as numerical outputs can be explicitly queried.
-For Bellhop, the Acoustics Toolbox distribution contains a very large number of examples, which allows verification testing that any changes to the source files do not result in execution failures.
-However, these examples do not attempt to perform validity checks that their numerical output is correct.
-Introducing a Python-based testing procedure was critical in being able to make changes to the Fortran sources with confidence.
-The Python-focussed tests ensure that interfaces are consistent with the legacy Bellhop input files, that complex environment configuration parameters are being correctly implemented, and that post-processing and visualisation data routines are operating as specified.
-At time of writing there are 35 test files, covering 192 unique tests.
-
-\paragraph{Code coverage reporting of the test suite}
-
-Even with good intentions to write tests as the code is written, it is difficult to manually assess whether a test suite actually checks all possible code paths of a program.
-Without feedback about what is being tested, we cannot independently verify that we have enough tests.
-`Code coverage' reporting is an automated approach to identifying how much of the source code is being executed when the test suite runs (\Figref{coverage}).
-A source file with less than 100\% coverage is likely to have branches which are not being tested; for instance, this often occurs when a feature is provided with a range of options, and not each option is explicitly tested (\Figref{cov-detailed}). 
-
 \begin{figure}
 \centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/coverage.pdf}}}
 \caption{Example of coverage report summary output. Each file contains a detailed report that shows the number of times each line of code is executed by running the test suite.}
@@ -196,6 +195,22 @@ A source file with less than 100\% coverage is likely to have branches which are
 \caption{Example of coverage report detailed output. The red highlight shows code which is not run as part of the test suite.}
 \figlabel{cov-detailed}
 \end{figure}
+
+\paragraph{Regression and unit testing suite}
+
+Engineering software is uniquely well-suited to many types of testing approaches, as numerical outputs can be explicitly queried.
+For Bellhop, the Acoustics Toolbox distribution contains a very large number of examples, which allows verification testing that any changes to the source files do not result in execution failures.
+However, these examples do not attempt to perform validity checks that their numerical output is correct.
+Introducing a Python-based testing procedure was critical in being able to make changes to the Fortran sources with confidence.
+The Python-focussed tests ensure that interfaces are consistent with the legacy Bellhop input files, that complex environment configuration parameters are being correctly implemented, and that post-processing and visualisation data routines are operating as specified.
+At time of writing there are 35 test files, covering 192 unique tests.
+
+Even with good intentions to write tests as the code is written, it is difficult to manually assess whether a test suite actually checks all possible code paths of a program.
+Without feedback about what is being tested, we cannot independently verify that we have enough tests.
+`Code coverage' reporting is an automated approach to identifying how much of the source code is being executed when the test suite runs (\Figref{coverage}).
+A source file with less than 100\% coverage is likely to have branches which are not being tested; for instance, this often occurs when a feature is provided with a range of options, and not each option is explicitly tested (\Figref{cov-detailed}). 
+
+
 
 \paragraph{Coding standards (`lint' and type checking)}
 

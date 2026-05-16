@@ -198,7 +198,7 @@ def pyplot_env3d(env: Environment, surface_color: str = 'dodgerblue', bottom_col
     ax.set_ylim([min_y, max_y])
     ax.set_zlim([max_z + mgn_z, min_z - mgn_z])
 
-def pyplot_ssp(env: Environment, **kwargs: Any) -> None:
+def pyplot_ssp(env: Environment, ax: Any | None = None, **kwargs: Any) -> None:
     """Plots the sound speed profile with matplotlib.
 
     Parameters
@@ -218,6 +218,12 @@ def pyplot_ssp(env: Environment, **kwargs: Any) -> None:
     >>> env = bh.Environment(soundspeed=[[ 0, 1540], [10, 1530], [20, 1532], [25, 1533], [30, 1535]])
     >>> bh.plot_ssp(env)
     """
+
+    if ax is None:
+        fig = _pyplt.figure()
+        ax = fig.add_subplot()
+
+    assert(isinstance(ax, Axes))
 
     env.check()
     svp = env['soundspeed']
