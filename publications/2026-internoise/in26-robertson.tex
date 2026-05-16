@@ -6,6 +6,8 @@
 \usepackage[style=numeric-comp,sorting=none,maxnames=99]{biblatex}
 \defbibheading{bibliography}[\refname]{%
   \section*{\MakeUppercase{#1}}}
+\DeclareFieldFormat{labelnumberwidth}{#1.}
+\setlength{\biblabelsep}{0.5em}
 \bibliography{acoustics,wspr-conf}
 
 \begin{document}
@@ -45,12 +47,20 @@ Bellhop is widely used for modelling underwater acoustic propagation using ray/b
 \section{Introduction}
 \label{sec:intro}
 
-Bellhop is an open source Fortran program for calculating underwater acoustic phenomena using ray tracing and beam tracing algorithms \cite{porter2025-foa}.
+Bellhop is an open source Fortran program for calculating underwater acoustic phenomena \cite{porter2025-foa} using ray tracing and beam tracing algorithms (\Figref{erays}).
 It is written and maintained by Michael B. Porter, with early development in the 1980s (first release 1983 with Homer Bucker, Naval Ocean Systems Center), and continuous and active development through the 2000s and 2010s \cite{porter2024-at}.
 Bellhop is widely used in research, and its algorithms have been incorporated in a range of underwater acoustics software platforms, such as the MIT `Virtual Ocean' framework \cite{bhatt2021-thesis}.
 The Bellhop codebase in the Acoustics Toolbox includes both a wrapper and a translation of the code into Matlab, and wrappers for Bellhop have been provided in packages for Python \cite{chitre2025-arlpy} and Julia \cite{chitre2025-jl}.
 In the 2020s, another research group translated the codebase to C++ and CUDA in order to take advantage of multi-processor and GPU architectures \cite{pisha2023-jasa,jaffe2025-bellhopcuda}.
 Others have experimented with graphical user interfaces for Bellhop \cite{duncan2025-actup}, which can be very useful from a pedagogy and ease-of-use perspective.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.45\linewidth]{fig/erays-2d}\hfil
+\includegraphics[width=0.49\linewidth]{fig/erays-3d}
+\caption{Underwater eigenrays between a source and receiver, calculated using constant speed of sound (left); equivalent 2.5D analysis calculated in Bellhop3D (right).}
+\figlabel{erays}
+\end{figure}
 
 With more modern implementations and wrappers, we might question whether the Fortran source code is still of relevance.
 As the Bellhop authors provide both Fortran and Matlab implementations, we can make a direct performance comparison: the Fortran code runs approximately an order of magnitude faster than the Matlab code, which makes for an easy argument that the low-level Fortran (or C++) codebases should be retained.
@@ -77,7 +87,7 @@ All code has been reviewed and checked manually by the (human) authors, and all 
 
 If you are running a standard Python environment, you can install \texttt{aubellhop} using standard interfaces such as \verb|pip install aubellhop|. The \texttt{aubellhop} package contains a demo feature to quickly set up and execute an example simulation: \verb|import aubellhop as bh; bh.demo()|
 
-This creates code such as:
+The demo function creates an easily modifiable driver file along the following lines, which is subsequently used to calculate arrival times (as they are easy to summarise in a text-only form):
 \begin{verbatim}
 env = bh.Environment(
     name='bellhop demo environment',
@@ -93,12 +103,6 @@ env = bh.Environment(
 \end{verbatim}
 The eigenrays of this environment can be calculated using \verb|erays = bh.compute_eigenrays(env)|, producing the plot shown in \Figref{erays}.
 
-\begin{figure}
-\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/erays}}}
-\caption{Underwater eigenrays between a source and receiver, calculated using demo parameters (constant speed of sound).}
-\figlabel{erays}
-\end{figure}
-
 If you have legacy Bellhop configuration files in use (say, a \texttt{seamount} environment file), you can load it directly using:
 \begin{verbatim}
 env = bh.Environment.from_file('seamount.env')
@@ -111,7 +115,7 @@ This flexible approach to defining environment configurations makes it possible 
 Initially this feature was added to support Bellhop3D, but it also facilitates comparison between multiple engines such as \texttt{bellhopcuda}, which are gaining support due to the multithreaded and GPU-accelerated operation, with example applications in studying 3D acoustic refraction around seamounts \cite{jerome2025-jasa}.
 
 Setting up a 3D environment in \texttt{aubellhop} is identical to a 2D environment, with some additional parameters possible to define 3D speed of sound profiles, cross-range bathymetries, and so on.
-Preliminary support has been added for visualising 3D beam propagation (\Figref{3D}):
+Preliminary support has been added for visualising 3D beam propagation (\Figref{erays}):
 \begin{verbatim}
 import matplotlib.pyplot as plt
 import aubellhop.pyplot as bhp
@@ -127,11 +131,6 @@ bhp.pyplot_rays(rays3d,env=env3d,ax=ax)
 plt.show(fig); plt.close(fig)
 \end{verbatim}
 
-\begin{figure}
-\centerline{\includegraphics{fig/bellhop3d.png}}
-\caption{Underwater eigenrays between a source and receiver in three dimensions, calculated using demo parameters and a smaller range of beam angles.}
-\figlabel{3D}
-\end{figure}
 
 
 \section{Examples}
@@ -141,7 +140,7 @@ The \texttt{aubellhop} repository includes a suite of examples written in a tuto
 
 \begin{figure}
 \centering
-\includegraphics{fig/tute.png}
+\includegraphics[width=0.8\linewidth]{fig/tute.png}
 \caption{Screenshot of the \texttt{aubellhop} tutorials page.}
 \figlabel{tute}
 \end{figure}
@@ -183,40 +182,36 @@ The eigenrays exhibit the typical refraction and focussing behaviour seen in dee
 \subsection{Using altimetry data}
 
 The concept of this example was heavily inspired by the work of \textcite{alexander2013-aa}.
-Surface profile data was extracted from a database of submarine upwards looking sonar data from the National Snow And Ice Data Center \cite{nsidc2006-ice}.
+Surface profile data was extracted from a database of submarine upwards looking sonar data from the National Snow And Ice Data Center \cite{nsidc1998-ice}.
 A section of this data was extracted directly from the source files of the database (file \texttt{2000a-000b-uwa.series}) and shown in \Figref{ice}.
 Altimetry data of this sort can be used to define surface profiles for Bellhop:
+\small
 \begin{verbatim}
 env = bh.Environment(
-    source_depth=20,
+    source_depth=20,  bottom_depth=50,
     surface_depth=ice_data, # see code for details
     surface_boundary_condition="acousto-elastic",
-    surface_soundspeed=3500,
-    surface_density=890,
+    surface_soundspeed=3500, surface_density=890,
     surface_attenuation=0.4,
     attenuation_units="dB per wavelength",
-    beam_num=15,
-    beam_angle_min=-45,
-    beam_angle_max=45,
-    bottom_depth=50,
+    beam_num=20, beam_angle_min=-45, beam_angle_max=45,
 )
 \end{verbatim}
+\normalsize
 As the reflections off the ice are not governed by standard `vacuum' boundary conditions, addition settings are provided to capture these behaviours correctly.
-The impact of the scattered reflections is shown in transmission loss contours (\Figref{ice-tl}).
+The impact of the scattered reflections is shown in transmission loss contours (\Figref{ice-tl}) for \qty{400}{Hz} coherent reflections, \qty{20}{mm} grid spacing.
 Although not intended to illustrate a substantive scientific conclusion, it is interesting to see the potential challenges that may be faced trying to predict or estimate acoustic properties in such environments.
 
 \begin{figure}
 \centering
 \centerline{\includegraphics{fig/ice.pdf}
 \includegraphics{fig/ice-rays.pdf}}
-\caption{Left --- Artic ice profile from upwards looking sonar data. Right --- Ray propagation for a region of the ice sheet.}
+\caption{Artic ice profile from upwards looking sonar data (left); ray propagation for a region of the ice sheet (right).}
 \figlabel{ice}
-\end{figure}
 
-\begin{figure}
 \centerline{\includegraphics{fig/ice-tl.png}
 \includegraphics{fig/ice-tl-flat.png}}
-\caption{Using measured ice profile data to calculate transmission loss (\qty{400}{Hz} coherent reflections, \qty{20}{mm} grid spacing), compared to a smooth ice surface.}
+\caption{Using measured ice profile data to calculate transmission loss (left), compared to a smooth ice surface (right). The source is at a depth of \qty{20}{m}.}
 \figlabel{ice-tl}
 \end{figure}
 
@@ -240,30 +235,6 @@ FORD analyses the code and creates connected graphs (\Figref{graphvis}) to link 
 
 The Python interface to bellhop is documented using Sphinx (following arlpy). The Sphinx output is combined with the main FORD output to create the documentation pages.
 
-\begin{figure}
-\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/ford-modules-snap}}}
-\caption{Example output of the FORD Modules documentation.}
-\figlabel{ford-modules}
-\end{figure}
-
-\begin{figure}
-\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/graphvis}}}
-\caption{Extract from part of the automatically-generated Graphvis output from the FORD Modules documentation.}
-\figlabel{graphvis}
-\end{figure}
-
-\begin{figure}
-\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/coverage.pdf}}}
-\caption{Example of coverage report summary output. Each file contains a detailed report that shows the number of times each line of code is executed by running the test suite.}
-\figlabel{coverage}
-\end{figure}
-
-\begin{figure}
-\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/cov-detailed}}}
-\caption{Example of coverage report detailed output. The red highlight shows code which is not run as part of the test suite.}
-\figlabel{cov-detailed}
-\end{figure}
-
 \paragraph{Regression and unit testing suite}
 
 Engineering software is uniquely well-suited to many types of testing approaches, as numerical outputs can be explicitly queried.
@@ -275,8 +246,8 @@ At time of writing there are 35 test files, covering 192 unique tests.
 
 Even with good intentions to write tests as the code is written, it is difficult to manually assess whether a test suite actually checks all possible code paths of a program.
 Without feedback about what is being tested, we cannot independently verify that we have enough tests.
-`Code coverage' reporting is an automated approach to identifying how much of the source code is being executed when the test suite runs (\Figref{coverage}).
-A source file with less than 100\% coverage is likely to have branches which are not being tested; for instance, this often occurs when a feature is provided with a range of options, and not each option is explicitly tested (\Figref{cov-detailed}).
+`Code coverage' reporting is an automated approach to identifying how much of the source code is being executed when the test suite runs (\Figref{coverage}, left).
+A source file with less than 100\% coverage is likely to have branches which are not being tested; for instance, this often occurs when a feature is provided with a range of options, and not each option is explicitly tested (\Figref{coverage}, right).
 
 
 
@@ -316,6 +287,24 @@ Very recently (at time of writing), it is now possible to integrate AI agents in
 As part of the online repository, a comprehensive suite of documentation is being written, which covers the Fortan code and interfaces, the \texttt{aubellhop} code and interfaces, and a set of tutorials demonstrating common use cases.
 The accessibility of this modern documentation is intended to allow new uses to adopt Bellhop easily using free, open source workflows.
 
+\begin{figure}
+\includegraphics[width=0.45\linewidth]{fig/ford-modules-snap.png}\hfil
+\includegraphics[width=0.45\linewidth]{fig/api}
+\caption{Example output of the FORD Fortran Modules documentation (left) and the Sphinx Python API documentation (right).}
+\figlabel{ford-modules}
+\bigskip
+
+\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/graphvis}}}
+\caption{Extract from part of the automatically-generated Graphvis output from the FORD Modules documentation.}
+\figlabel{graphvis}
+\bigskip
+
+\centering
+\includegraphics[width=0.45\linewidth]{fig/coverage.pdf}\hfil
+\includegraphics[width=0.45\linewidth]{fig/cov-detailed}
+\caption{Example of coverage report summary output (left) and detailed per-file output (right). Each file contains a detailed report that shows the number of times each line of code is executed by running the test suite. In the detailed output, the red highlight shows code which is not run as part of the test suite.}
+\figlabel{coverage}
+\end{figure}
 
 
 \section{Conclusion}
@@ -323,6 +312,9 @@ The accessibility of this modern documentation is intended to allow new uses to 
 
 Bellhop retains its research potential some forty years after its first release, and we hope that by making this codebase more accessible it will provide easier access to this valuable tool by underwater acousticians and researchers.
 Building engineering software using these features helps mitigate the risk of unknown errors in the code, promotes reproducibility, and largely comes `for free' using modern programming tools and libraries.
+
+This work builds off \texttt{arlpy} to provide a user-friendly interface to Bellhop in Python. Extensions to \texttt{arlpy} in \texttt{aubellhop} include streamlining of the main interfaces, adding additional features associated with data processing and plotting, and providing further interfaces to the underlying Bellhop executable(s).
+Future work will involve testing against the \texttt{bellhopcuda} executables, expanding support for 3D data visualisation, and building parallelisation into the interface.
 
 As beam- and ray-tracing algorithms are inherently sensitive to their modelling conditions, providing well-tested and reproducible development environments for simulation work is critical to ensure that results are meaningful and verifiable.
 We thank the authors of Bellhop and its peers for the substantial contributions they have made to the acoustics community in sharing their work openly, and trust that there will be many decades of further evolution of these tools.
