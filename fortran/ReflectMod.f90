@@ -185,9 +185,9 @@ CONTAINS
              ray2D( is1 )%x( 1 ) = ray2D( is1 )%x( 1 ) + real( delta )   ! displacement
              ray2D( is1 )%tau    = ray2D( is1 )%tau + pdelta             ! phase change
              ray2D( is1 )%q      = ray2D( is1 )%q + sddelta * rddelta * si * c * ray2D( is )%p   ! beam-width change
-          endif
+          END IF
 
-       ENDIF
+       END IF
     CASE DEFAULT
        WRITE( ERROR_UNIT, * ) 'Reflect2D: Unknown boundary condition type: ', HS%BC
        CALL ERROUT( 'Reflect2D', 'Unknown boundary condition type' )

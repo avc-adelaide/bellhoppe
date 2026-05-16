@@ -354,8 +354,8 @@ SUBROUTINE BellhopCore
                        ! Optionally dump rays to a disk file
                        IF ( Beam%RunType( 1 : 1 ) == 'R' ) THEN
                           CALL WriteRay3D( Angles%alpha( ialpha ), Angles%beta( ibeta ), Beam%Nsteps )
-                       ENDIF
-                    ENDIF   ! closes iSingle test
+                       END IF
+                    END IF   ! closes iSingle test
                  END DO DeclinationAngle
 
                  ! for a 2D TL run, scale the pressure and copy the 2D slice into the radial of the 3D field
@@ -386,7 +386,7 @@ SUBROUTINE BellhopCore
                        CALL ERROUT( 'BELLHOP3D', 'Unknown RunType in 2D merge' )
                     END SELECT
                  END IF
-              ENDIF   ! closes iSingle test
+              END IF   ! closes iSingle test
            END DO AzimuthalAngle
 
            ! *** Scale the complex pressure field ***

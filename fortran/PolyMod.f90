@@ -35,7 +35,7 @@ CONTAINS
                   &            ( h( j + i ) - h( j ) )
           END DO
        END DO
-    ENDIF
+    END IF
 
     PolyR = ft( 1 )
 
@@ -63,7 +63,7 @@ CONTAINS
                   &                       ( h( J+I ) - h(  J   ) )
           END DO
        END DO
-    ENDIF
+    END IF
 
     PolyC = ft( 1 )
 
@@ -89,7 +89,7 @@ CONTAINS
              fT( j ) = ( h( j + i ) * fT( j ) - h( j ) * fT( j + 1 ) ) / ( h( j + i ) - h( j ) )
           END DO
        END DO
-    ENDIF
+    END IF
     PolyZ = fT( 1 )
 
   END FUNCTION PolyZ

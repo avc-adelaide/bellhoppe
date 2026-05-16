@@ -370,7 +370,7 @@ CONTAINS
        IsegTopT = MAXLOC( Top( : )%x( 1 ), Top( : )%x( 1 ) <= r )
     ELSE
        IsegTopT = MAXLOC( Top( : )%x( 1 ), Top( : )%x( 1 ) <  r )
-    ENDIF
+    END IF
 
     IF ( IsegTopT( 1 ) > 0 .AND. IsegTopT( 1 ) < NatiPts ) THEN  ! IsegTop MUST LIE IN [ 1, NatiPts-1 ]
        IsegTop = IsegTopT( 1 )
@@ -380,7 +380,7 @@ CONTAINS
        WRITE( PRTFile, * ) 'rLeft  = ', Top( 1       )%x( 1 )
        WRITE( PRTFile, * ) 'rRight = ', Top( NatiPts )%x( 1 )
        CALL ERROUT( 'GetTopSeg', 'Top altimetry undefined above the ray' )
-    ENDIF
+    END IF
 
   END SUBROUTINE GetTopSeg
 
@@ -401,7 +401,7 @@ CONTAINS
        IsegBotT = MAXLOC( Bot( : )%x( 1 ), Bot( : )%x( 1 ) <= r )
     ELSE
        IsegBotT = MAXLOC( Bot( : )%x( 1 ), Bot( : )%x( 1 ) <  r )
-    ENDIF
+    END IF
 
     IF ( IsegBotT( 1 ) > 0 .AND. IsegBotT( 1 ) < NbtyPts ) THEN  ! IsegBot MUST LIE IN [ 1, NbtyPts-1 ]
        IsegBot = IsegBotT( 1 )
@@ -411,7 +411,7 @@ CONTAINS
        WRITE( PRTFile, * ) 'rLeft  = ', Bot( 1       )%x( 1 )
        WRITE( PRTFile, * ) 'rRight = ', Bot( NbtyPts )%x( 1 )
        CALL ERROUT( 'GetBotSeg', 'Bottom bathymetry undefined below the source' )
-    ENDIF
+    END IF
 
   END SUBROUTINE GetBotSeg
 

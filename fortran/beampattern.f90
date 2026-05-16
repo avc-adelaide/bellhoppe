@@ -64,7 +64,7 @@ CONTAINS
        IF ( IAllocStat /= 0 ) CALL ERROUT( 'BELLHOP-ReadPat', 'Insufficient memory'  )
        SrcBmPat( 1, : ) = [ -180.0, 0.0 ]
        SrcBmPat( 2, : ) = [  180.0, 0.0 ]
-    ENDIF
+    END IF
 
     IF ( .NOT. monotonic( SrcBmPat( :, 1 ) , NSBPPts ) ) &
        CALL ERROUT( 'beampattern : ReadPat', 'Source beam-pattern angles are not monotonic' )

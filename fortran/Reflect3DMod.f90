@@ -147,7 +147,7 @@ CONTAINS
        ELSE
           ray3D( is1 )%Amp   = ABS( Refl ) * ray3D(  is )%Amp
           ray3D( is1 )%Phase = ray3D( is )%Phase + ATAN2( AIMAG( Refl ), REAL( Refl ) )
-       ENDIF
+       END IF
     CASE DEFAULT
        WRITE( ERROR_UNIT, * ) 'Reflect3D: Unknown boundary condition type: ', HS%BC
        CALL ERROUT( 'Reflect3D', 'Unknown boundary condition type' )

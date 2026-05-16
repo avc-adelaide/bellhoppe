@@ -873,7 +873,7 @@ END SUBROUTINE Analytic3D
           END IF
 
           RETURN
-       ENDIF
+       END IF
 
        SSP%NPts = SSP%NPts + 1
     END DO
@@ -907,7 +907,7 @@ END SUBROUTINE Analytic3D
         DO WHILE ( x( 2 ) <= SSP%z( iSegz ) .AND. iSegz > 1 )
            iSegz = iSegz - 1
         END DO
-     ENDIF
+     END IF
 
   END SUBROUTINE UpdateDepthSegmentT
 
@@ -932,7 +932,7 @@ END SUBROUTINE Analytic3D
         DO WHILE ( x( 1 ) <= SSP%Seg%r( iSegr ) .AND. iSegr > 1 )
            iSegr = iSegr - 1
         END DO
-     ENDIF
+     END IF
 
   END SUBROUTINE UpdateRangeSegmentT
 
@@ -957,7 +957,7 @@ END SUBROUTINE Analytic3D
         DO WHILE ( x( 1 ) <= SSP%Seg%x( iSegx ) .AND. iSegx > 1 )
            iSegx = iSegx - 1
         END DO
-     ENDIF
+     END IF
 
   END SUBROUTINE Update3DXSegmentT
 
@@ -982,7 +982,7 @@ END SUBROUTINE Analytic3D
         DO WHILE ( x( 2 ) <= SSP%Seg%y( iSegy ) .AND. iSegy > 1 )
            iSegy = iSegy - 1
         END DO
-     ENDIF
+     END IF
 
   END SUBROUTINE Update3DYSegmentT
 
@@ -1007,7 +1007,7 @@ END SUBROUTINE Analytic3D
         DO WHILE ( x( 3 ) <= SSP%Seg%z( iSegz ) .AND. iSegz > 1 )
            iSegz = iSegz - 1
         END DO
-     ENDIF
+     END IF
 
   END SUBROUTINE Update3DZSegmentT
 

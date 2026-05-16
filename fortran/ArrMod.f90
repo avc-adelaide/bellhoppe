@@ -64,7 +64,7 @@ CONTAINS
              Arr( id, ir, iArr( 1 ) )%RcvrDeclAngle = SNGL( RcvrDeclAngle ) ! angle ray reaches receiver
              Arr( id, ir, iArr( 1 ) )%NTopBnc       = NumTopBnc         ! Number of top     bounces
              Arr( id, ir, iArr( 1 ) )%NBotBnc       = NumBotBnc         !   "       bottom
-          ENDIF
+          END IF
        ELSE
           NArr( id, ir         )               = Nt + 1              ! # of arrivals
           Arr(  id, ir, Nt + 1 )%A             = SNGL( Amp )         ! amplitude
@@ -74,7 +74,7 @@ CONTAINS
           Arr(  id, ir, Nt + 1 )%RcvrDeclAngle = SNGL( RcvrDeclAngle )   ! angle ray reaches receiver
           Arr(  id, ir, Nt + 1 )%NTopBnc       = NumTopBnc           ! Number of top     bounces
           Arr(  id, ir, Nt + 1 )%NBotBnc       = NumBotBnc           !   "       bottom
-       ENDIF
+       END IF
     ELSE      ! not a new ray
        !PhaseArr(   id, ir, Nt ) = PhaseArr( id, ir, Nt )
 
@@ -87,7 +87,7 @@ CONTAINS
        Arr( id, ir, Nt )%A             = AmpTot
        Arr( id, ir, Nt )%SrcDeclAngle  = w1 * Arr( id, ir, Nt )%SrcDeclAngle  + w2 * SNGL( SrcDeclAngle  )
        Arr( id, ir, Nt )%RcvrDeclAngle = w1 * Arr( id, ir, Nt )%RcvrDeclAngle + w2 * SNGL( RcvrDeclAngle )
-    ENDIF
+    END IF
 
     RETURN
   END SUBROUTINE AddArr
@@ -232,7 +232,7 @@ CONTAINS
              Arr3D( itheta,  id, ir, iArr( 1 ) )%RcvrAzimAngle = SNGL( RcvrAzimAngle ) ! angle
              Arr3D( itheta,  id, ir, iArr( 1 ) )%NTopBnc       = NumTopBnc         ! Number of top     bounces
              Arr3D( itheta,  id, ir, iArr( 1 ) )%NBotBnc       = NumBotBnc         !   "       bottom
-          ENDIF
+          END IF
        ELSE
           NArr3D( itheta,  id, ir         )               = Nt + 1              ! # of arrivals
           Arr3D( itheta,   id, ir, Nt + 1 )%A             = SNGL( Amp )         ! amplitude
@@ -244,7 +244,7 @@ CONTAINS
           Arr3D( itheta,   id, ir, Nt + 1 )%RcvrAzimAngle = SNGL( RcvrAzimAngle )   ! angle
           Arr3D( itheta,   id, ir, Nt + 1 )%NTopBnc       = NumTopBnc           ! Number of top     bounces
           Arr3D( itheta,   id, ir, Nt + 1 )%NBotBnc       = NumBotBnc           !   "       bottom
-       ENDIF
+       END IF
     ELSE      ! not a new ray
        !PhaseArr(   id, ir, Nt ) = PhaseArr( id, ir, Nt )
        ! calculate weightings of old ray information vs. new, based on amplitude of the arrival
@@ -258,7 +258,7 @@ CONTAINS
        Arr3D( itheta, id, ir, Nt )%SrcAzimAngle  = w1 * Arr3D( itheta, id, ir, Nt )%SrcAzimAngle  + w2 * SNGL( SrcAzimAngle )
        Arr3D( itheta, id, ir, Nt )%RcvrDeclAngle = w1 * Arr3D( itheta, id, ir, Nt )%RcvrDeclAngle + w2 * SNGL( RcvrDeclAngle )
        Arr3D( itheta, id, ir, Nt )%RcvrAzimAngle = w1 * Arr3D( itheta, id, ir, Nt )%RcvrAzimAngle + w2 * SNGL( RcvrAzimAngle )
-    ENDIF
+    END IF
 
     RETURN
   END SUBROUTINE AddArr3D

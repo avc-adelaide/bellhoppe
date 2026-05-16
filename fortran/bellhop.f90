@@ -274,7 +274,7 @@ SUBROUTINE BellhopCore
      IF ( Beam%RunType( 1 : 1 ) == 'C' .AND. Angles%Nalpha < NalphaOpt ) THEN
         WRITE( PRTFile, * ) 'Warning in BELLHOP : Too few beams'
         WRITE( PRTFile, * ) 'Nalpha should be at least = ', NalphaOpt
-     ENDIF
+     END IF
 
      ! Trace successive beams
 
@@ -416,7 +416,7 @@ COMPLEX (KIND=8 ) FUNCTION PickEpsilon( BeamType, omega, c, gradc, alpha, Dalpha
            epsilonOpt = 1.0D10
         ELSE
            epsilonOpt = ( -SIN( alpha ) / COS( alpha ** 2 ) ) * c * c / cz
-        ENDIF
+        END IF
      CASE DEFAULT
         WRITE( ERROR_UNIT, * ) 'BELLHOP: Unknown beam width option: ', BeamType( 2 : 2 )
         CALL ERROUT( 'BELLHOP', 'Unknown beam width option' )
@@ -769,7 +769,7 @@ SUBROUTINE Reflect2D( is, HS, BotTop, tBdry, nBdry, kappa, RefC, Npts )
         IF ( REAL( kzP ) == 0.0D0 .AND. AIMAG( kzP ) < 0.0D0 ) kzP = -kzP
         f   = kzP
         g   = HS%rho
-     ENDIF
+     END IF
 
      Refl =  - ( rho * f - i * kz * g ) / ( rho * f + i * kz * g )   ! complex reflection coef.
 
@@ -826,9 +826,9 @@ SUBROUTINE Reflect2D( is, HS, BotTop, tBdry, nBdry, kappa, RefC, Npts )
            ray2D( is1 )%x( 2 ) = ray2D( is1 )%x( 2 ) + real( delta ) * SIN( theta_bot )       ! depth displacement
            ray2D( is1 )%tau    = ray2D( is1 )%tau + pdelta                                     ! phase change
            ray2D( is1 )%q      = ray2D( is1 )%q + sddelta * rddelta * si * c * ray2D( is )%p   ! beam-width change
-        endif
+        END IF
 
-     ENDIF
+     END IF
   CASE DEFAULT
      WRITE( PRTFile, * ) 'HS%BC = ', HS%BC
      CALL ERROUT( 'Reflect2D', 'Unknown boundary condition type' )

@@ -45,14 +45,14 @@ CONTAINS
                 IRight = IMiddle
              ELSE
                 ILeft  = IMiddle
-             ENDIF
+             END IF
           END DO
 
           ! Shift and insert
           x( IRight + 1 : I ) = x( IRight : I - 1 )
           x( IRight ) = xTemp
 
-       ENDIF
+       END IF
 
     END DO
 
@@ -87,14 +87,14 @@ CONTAINS
                 IRight = IMiddle
              ELSE
                 ILeft  = IMiddle
-             ENDIF
+             END IF
           END DO
 
           ! Shift and insert
           x( IRight + 1 : I ) = x( IRight : I - 1 )
           x( IRight ) = xTemp
 
-       ENDIF
+       END IF
 
     END DO
 

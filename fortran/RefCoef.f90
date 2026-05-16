@@ -67,7 +67,7 @@ CONTAINS
     ELSE   ! should allocate something anyway, since variable is passed
        IF ( ALLOCATED( RBot ) ) DEALLOCATE( RBot )
        ALLOCATE(  RBot( 1 ), Stat = IAllocStat )
-    ENDIF
+    END IF
 
     ! Optionally read in top reflection coefficient
 
@@ -99,7 +99,7 @@ CONTAINS
     ELSE   ! should allocate something anyway, since variable is passed
        IF ( ALLOCATED( RTop ) ) DEALLOCATE( RTop )
        ALLOCATE( RTop( 1 ), Stat = iAllocStat )
-    ENDIF
+    END IF
 
     ! Optionally read in internal reflection coefficient data
 
@@ -120,7 +120,7 @@ CONTAINS
 
        READ( IRCFile, FMT = "( 5G15.7, I5 )" ) ( xTab( ik ), fTab( ik ), gTab( ik ), iTab( ik ), ik = 1, NkTab )
        CLOSE( IRCFile )
-    ENDIF
+    END IF
 
   END SUBROUTINE ReadReflectionCoefficient
 
@@ -171,7 +171,7 @@ CONTAINS
              iRight = iMid
           ELSE
              iLeft  = iMid
-          ENDIF
+          END IF
        END DO
 
        ! Linear interpolation for reflection coef
@@ -180,7 +180,7 @@ CONTAINS
        RInt%R   = ( 1 - alpha ) * R( iLeft )%R   + alpha * R( iRight )%R
        RInt%phi = ( 1 - alpha ) * R( iLeft )%phi + alpha * R( iRight )%phi
 
-    ENDIF
+    END IF
 
   END SUBROUTINE InterpolateReflectionCoefficient
 
@@ -228,7 +228,7 @@ CONTAINS
              iRight = iMid
           ELSE
              iLeft  = iMid
-          ENDIF
+          END IF
        END DO
 
        ! Extract the subset for interpolation and scale
@@ -250,7 +250,7 @@ CONTAINS
        f      = Poly( x, xT, fT, NAct )
        g      = Poly( x, xT, gT, NAct )
        iPower = iTab( iLeft )
-    ENDIF
+    END IF
 
   END SUBROUTINE InterpolateIRC
 END MODULE RefCoef

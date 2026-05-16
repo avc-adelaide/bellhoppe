@@ -89,7 +89,7 @@ CONTAINS
        x = [ 0.0D0, Bdry%Bot%HS%Depth ]   ! tells SSP Depth to read to
        t = [ 0.0, 1.0 ]
        CALL EvaluateSSP( x, t, c, cimag, gradc, crr, crz, czz, rho, freq, 'INI' )
-    ENDIF
+    END IF
 
     Bdry%Top%HS%Depth = SSP%z( 1 )   ! Depth of top boundary is taken from first SSP point
     ! bottom depth should perhaps be set the same way?
