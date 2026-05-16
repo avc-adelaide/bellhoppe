@@ -2,11 +2,11 @@
 
 \PassOptionsToPackage{hyperref}{urlcolor=black}
 \documentclass{internoise2026-wr}
-\usepackage{refstyle}
+\usepackage{refstyle,siunitx}
 \usepackage[style=numeric-comp,sorting=none]{biblatex}
 \defbibheading{bibliography}[\refname]{%
   \section*{\MakeUppercase{#1}}}
-\bibliography{acoustics,wspr-conf} 
+\bibliography{acoustics,wspr-conf}
 
 \begin{document}
 
@@ -19,9 +19,9 @@
     Mandar Chitre,\markinstitution{2}
     Chung T.C. Fang,\markinstitution{1}
     Anthony C. Zander\markinstitution{1}
-    
+
     \correspondingpresentingemail{will.robertson@adelaide.edu.au}
-    
+
     \begin{multicols}{2} % <= choose the number of columns
     \institution[1]{%
       School of Electrical and Mechanical Engineering\\
@@ -77,7 +77,7 @@ This creates code such as:
 env = bh.Environment(
     name='bellhop demo environment',
     frequency=25000,         # 25 kHz
-    depth=25,                # 25 m water depth
+    bottom_depth=25,                # 25 m water depth
     soundspeed=1500,         # 1500 m/s (constant)
     source_depth=5,          # 5 m depth
     receiver_depth=10,       # 10 m depth
@@ -98,7 +98,7 @@ If you have legacy Bellhop configuration files in use (say, a \texttt{seamount} 
 \begin{verbatim}
 env = bh.Environment.from_file('seamount.env')
 \end{verbatim}
-The \texttt{Environment} class provides a number of helper functions to help manipulate the data, including serialisation to/from disk or \texttt{Dictionary} data structures. 
+The \texttt{Environment} class provides a number of helper functions to help manipulate the data, including serialisation to/from disk or \texttt{Dictionary} data structures.
 This flexible approach to defining environment configurations makes it possible to run Monte Carlo-style analyses simply, with future plans to provide in-built support for parallelising such operations over multiple CPU cores automatically.
 
 
@@ -144,12 +144,38 @@ An important consideration in underwater acoustics is the variable sound speed, 
 
 Bellhop (the executable) provides a number of interpolation routines for interpreting discretised sound speed data; some care should be used in ensuring that an appropriate interpolation is used.
 
-In this example, we use sound speed data derived from the NOAA World Ocean Atlas by Brian Dushaw\footnote{\url{https://staff.washington.edu/dushaw/WOA/}}. A horizontal slice of this data at constant depth is shown in \Figref{lev_ssp}.
+In this example, we use sound speed data derived from the NOAA World Ocean Atlas by Brian Dushaw\footnote{\url{https://staff.washington.edu/dushaw/WOA/}}. A world-wide horizontal slices of this data at constant depth is shown in \Figref{lev_ssp}, with a vertical slice for constant longitude shown in \Figref{lev_ssp_long}. The code to perform the data manipulation into Python DataFrame format is not interesting here (see the repository page for a worked example), but once this is set up an example eigenray analysis with 2D sound speed data can be undertaken as follows:
+\begin{verbatim}
+env = bh.Environment(
+  bottom_depth=5500,
+  soundspeed=svp,
+  soundspeed_interp="quadrilateral", # implied for 2D
+  source_depth=2000,
+  receiver_depth=1000,
+  receiver_range=40_000,
+)
+erays = bh.compute_eigenrays(env)
+bhp.pyplot_rays(erays, env=env)
+\end{verbatim}
+The eigenrays exhibit the typical refraction and focussing behaviour seen in deep ocean acoustic wave propagation due to the varying speed of sound (\Figref{lev_ssp_rays}).
 
 \begin{figure}
-\includegraphics{fig/lev_ssp.pdf}
-\caption{Sound speed profile (constant depth) derived from NOAA World Ocean Atlas data.}
-\label{fig:lev_ssp}
+\centering
+\includegraphics[scale=0.9]{fig/lev_ssp.pdf}
+\vspace*{-\baselineskip}
+\caption{Sound speed profile (constant depth \qty{300}{m}), from NOAA World Ocean Atlas data.}
+\figlabel{lev_ssp}
+
+\centerline{\includegraphics[scale=0.9]{fig/lev_ssp_long.pdf}\quad\includegraphics[scale=0.9]{fig/lev_ssp_chk.pdf}}
+\vspace*{-\baselineskip}
+\caption{Sound speed profile for constant longitude \ang{200.5}.}
+\figlabel{lev_ssp_long}
+
+\centering
+\includegraphics[scale=0.9]{fig/lev_ssp_rays.pdf}
+\vspace*{-\baselineskip}
+\caption{Eigenray analysis between a source and receiver with a 2D sound speed profile.}
+\figlabel{lev_ssp_rays}
 \end{figure}
 
 
@@ -208,7 +234,7 @@ At time of writing there are 35 test files, covering 192 unique tests.
 Even with good intentions to write tests as the code is written, it is difficult to manually assess whether a test suite actually checks all possible code paths of a program.
 Without feedback about what is being tested, we cannot independently verify that we have enough tests.
 `Code coverage' reporting is an automated approach to identifying how much of the source code is being executed when the test suite runs (\Figref{coverage}).
-A source file with less than 100\% coverage is likely to have branches which are not being tested; for instance, this often occurs when a feature is provided with a range of options, and not each option is explicitly tested (\Figref{cov-detailed}). 
+A source file with less than 100\% coverage is likely to have branches which are not being tested; for instance, this often occurs when a feature is provided with a range of options, and not each option is explicitly tested (\Figref{cov-detailed}).
 
 
 

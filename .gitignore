@@ -116,3 +116,5 @@ docs/quarto/demo.env
 *.blg
 *.log
 in26-robertson.pdf
+
+*.pdf
