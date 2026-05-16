@@ -1,7 +1,7 @@
-BELLHOP Python API Documentation
-=========================================
+AUBELLHOP Python API Documentation
+==================================
 
-This is the Python API documentation for BELLHOP, an underwater acoustic propagation modeling toolbox.
+This is the `aubellhop` Python API documentation for Bellhop, an underwater acoustic propagation modeling toolbox.
 
 .. toctree::
    :maxdepth: 3
