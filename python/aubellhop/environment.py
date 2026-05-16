@@ -131,7 +131,7 @@ class Environment(MutableMapping[str, Any]):
     bottom_grain_size: float | None = None
 
     # Surface parameters
-    surface: Any | None = None  # surface profile
+    surface_depth: Any | None = None  # surface profile
     surface_interp: str = EnvDefaults.surface_interp  # curvilinear/linear
     surface_boundary_condition: str = BHStrings.vacuum
     surface_reflection_coefficient: Any | None = None
@@ -401,14 +401,14 @@ class Environment(MutableMapping[str, Any]):
 
         if np.size(self['bottom_depth']) > 1:
             self["_bathymetry"] = BHStrings.from_file
-        if self["surface"] is not None and np.size(self['surface']) > 1:
+        if self["surface_depth"] is not None and np.size(self["surface_depth"]) > 1:
             self["_altimetry"] = BHStrings.from_file
         if self["bottom_reflection_coefficient"] is not None:
             self["bottom_boundary_condition"] = BHStrings.from_file
         if self["surface_reflection_coefficient"] is not None:
             self["surface_boundary_condition"] = BHStrings.from_file
 
-        self.surface = self.surface if self.surface is not None else EnvDefaults.surface
+        self.surface_depth = self.surface_depth if self.surface_depth is not None else EnvDefaults.surface_depth
         def _extremum(
                         expl: float | None,
                         vec: float | NDArray[np.float64],
@@ -427,7 +427,7 @@ class Environment(MutableMapping[str, Any]):
             raise TypeError(f"Unexpected type for _extremum argument: {type(vec)}")
 
         self._depth_max = _extremum(self.depth_max, self['bottom_depth'], np.max)
-        self._surface_min = _extremum(self.surface_min, self['surface'], np.min)
+        self._surface_min = _extremum(self.surface_min, self['surface_depth'], np.min)
 
         if not isinstance(self['soundspeed'], pd.DataFrame):
             if np.size(self['soundspeed']) == 1:
@@ -519,13 +519,13 @@ class Environment(MutableMapping[str, Any]):
         assert self["_num_media"] == 1, f"BELLHOP only supports 1 medium, found {self['_num_media']}"
 
     def _check_env_surface(self) -> None:
-        assert self['surface'] is not None, 'surface must be defined or initialised'
-        if np.size(self['surface']) > 1:
-            assert self['surface'].ndim == 2, 'surface must be a scalar or an Nx2 array'
-            assert self['surface'].shape[1] == 2, 'surface must be a scalar or an Nx2 array'
-            assert self['surface'][0,0] <= 0, 'First range in surface array must be 0 m'
-            assert self['surface'][-1,0] >= self._range_max, 'Last range in surface array must be beyond maximum range: '+str(self._range_max)+' m'
-            assert np.all(np.diff(self['surface'][:,0]) > 0), 'surface array must be strictly monotonic in range'
+        assert self['surface_depth'] is not None, 'surface must be defined or initialised'
+        if np.size(self['surface_depth']) > 1:
+            assert self['surface_depth'].ndim == 2, 'surface must be a scalar or an Nx2 array'
+            assert self['surface_depth'].shape[1] == 2, 'surface must be a scalar or an Nx2 array'
+            assert self['surface_depth'][0,0] <= 0, 'First range in surface array must be 0 m'
+            assert self['surface_depth'][-1,0] >= self._range_max, 'Last range in surface array must be beyond maximum range: '+str(self._range_max)+' m'
+            assert np.all(np.diff(self['surface_depth'][:,0]) > 0), 'surface array must be strictly monotonic in range'
         if self["surface_reflection_coefficient"] is not None:
             assert self["surface_boundary_condition"] == BHStrings.from_file, "TRC values need to be read from file"
 

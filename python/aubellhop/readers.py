@@ -84,7 +84,7 @@ class EnvironmentReader:
         self.env["_altimetry"]                 = self._opt_lookup("Altimetry",              topopt[4], FlagMaps._altimetry)
         self.env["_single_beam"]               = self._opt_lookup("Single beam",            topopt[5], FlagMaps._single_beam)
         if self.env["_altimetry"] == BHStrings.from_file:
-            self.env["surface"], self.env["surface_interp"] = read_ati(self.fname_base)
+            self.env["surface_depth"], self.env["surface_interp"] = read_ati(self.fname_base)
 
         if self.env["volume_attenuation"] == BHStrings.francois_garrison:
             fg_spec_line = _read_next_valid_line(f)

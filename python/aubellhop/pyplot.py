@@ -18,8 +18,17 @@ from .constants import BHStrings
 from .environment import Environment
 
 
-def pyplot_env2d(env: Environment, surface_color: str = 'dodgerblue', bottom_color: str = 'peru', source_color: str = 'orangered', receiver_color: str = 'midnightblue',
-               receiver_plot: bool | None = None, ax: Any | None = None, **kwargs: Any) -> None:
+def pyplot_env2d(
+                 env: Environment,
+                 surface_color: str = 'dodgerblue',
+                 bottom_color: str = 'peru',
+                 source_color: str = 'orangered',
+                 receiver_color: str = 'midnightblue',
+                 receiver_plot: bool | None = None,
+                 fill: bool | None = None,
+                 ax: Any | None = None,
+                 **kwargs: Any
+                ) -> None:
     """Plots a visual representation of the environment with matplotlib.
 
     Parameters
@@ -71,18 +80,21 @@ def pyplot_env2d(env: Environment, surface_color: str = 'dodgerblue', bottom_col
     else:
         divisor = 1
         range_unit = ' (m)'
-    if np.size(env['surface']) == 1:
+    if np.size(env['surface_depth']) == 1:
         min_y = 0
     else:
-        min_y = np.min(env['surface'][:, 1])
+        min_y = np.min(env['surface_depth'][:, 1])
     max_y = env['_depth_max']
     mgn_x = 0.01 * (max_x - min_x)
     mgn_y = 0.1 * (max_y - min_y)
 
-    if np.size(env['surface']) == 1:
-        _pyplt.plot([min_x, max_x], [0, 0], color=surface_color, **kwargs)
+    if np.size(env['surface_depth']) == 1:
+        surface_x = [min_x, max_x]
+        surface_y = [0, 0]
     else:
-        _pyplt.plot(env['surface'][:, 0] / divisor, env['surface'][:, 1], color=surface_color, **kwargs)
+        surface_x = env['surface_depth'][:, 0] / divisor
+        surface_y = env['surface_depth'][:, 1]
+    _pyplt.plot(surface_x, surface_y, color=surface_color, **kwargs)
 
     if np.size(env['bottom_depth']) == 1:
         _pyplt.plot([min_x, max_x], [env['bottom_depth'], env['bottom_depth']], color=bottom_color, **kwargs)
@@ -101,6 +113,11 @@ def pyplot_env2d(env: Environment, surface_color: str = 'dodgerblue', bottom_col
         for r in np.array(rxr):
             rxd = env['receiver_depth']
             _pyplt.plot([r / divisor] * np.size(rxd), rxd, marker='o', color=receiver_color, **kwargs)
+
+    if fill:
+        y0 = 0.0
+        _pyplt.axhline(y0, color="w", linestyle="-")
+        _pyplt.fill_between(surface_x, surface_y, y0, color="w")
 
     _pyplt.xlabel('Range'+range_unit)
     _pyplt.ylabel('Depth (m)')
@@ -140,21 +157,21 @@ def pyplot_env3d(env: Environment, surface_color: str = 'dodgerblue', bottom_col
         min_y /= ydivisor
         max_y /= ydivisor
         yrange_unit = ' (km)'
-    if np.size(env['surface']) == 1:
+    if np.size(env['surface_depth']) == 1:
         min_z = 0
     else:
-        min_z = np.min(env['surface'][:, 1])
+        min_z = np.min(env['surface_depth'][:, 1])
     max_z = env['simulation_depth']
     mgn_x = 0.01 * (max_x - min_x)
     mgn_z = 0.1 * (max_z - min_z)
 
-    if np.size(env['surface']) == 1:
-        z = float(env['surface'])
+    if np.size(env['surface_depth']) == 1:
+        z = float(env['surface_depth'])
         X, Y = np.meshgrid([min_x, max_x], [min_y, max_y])
         Z = np.full_like(X, z)
         ax.plot_surface(X, Y, Z, color=surface_color, alpha=0.3, **kwargs)
     else:
-        _pyplt.plot(env['surface'][:, 0] / xdivisor, env['surface'][:, 1], color=surface_color, **kwargs)
+        _pyplt.plot(env['surface_depth'][:, 0] / xdivisor, env['surface_depth'][:, 1], color=surface_color, **kwargs)
 
     if np.size(env['bottom_depth']) == 1:
         z = float(env['bottom_depth'])
@@ -292,7 +309,13 @@ def pyplot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwar
         _pyplt.xlabel('Arrival time (s)')
         _pyplt.ylabel(ylabel)
 
-def pyplot_rays(rays: Any, env: Environment | None = None, invert_colors: bool = False, ax: Any | None = None, **kwargs: Any) -> Axes:
+def pyplot_rays(
+                rays: Any,
+                env: Environment | None = None,
+                invert_colors: bool = False,
+                ax: Any | None = None,
+                **kwargs: Any
+               ) -> Axes:
     """Plots ray paths with matplotlib
 
     Parameters
@@ -359,13 +382,18 @@ def pyplot_rays(rays: Any, env: Environment | None = None, invert_colors: bool =
                 ax.plot(row.ray[:, 0] / divisor, row.ray[:, 1], row.ray[:, 2], color=col_str, **kwargs)
     if env is not None:
         if dim == 2:
-            pyplot_env2d(env,ax=ax)
+            pyplot_env2d(env,ax=ax,receiver_plot=False)
         elif dim == 3:
             pyplot_env3d(env,ax=ax)
 
     return ax
 
-def pyplot_transmission_loss(tloss: Any, env: Environment | None = None, **kwargs: Any) -> None:
+def pyplot_transmission_loss(
+                             tloss: Any,
+                             env: Environment | None = None,
+                             ax: Any | None = None,
+                             **kwargs: Any
+                            ) -> Axes:
     """Plots transmission loss with matplotlib.
 
     Parameters
@@ -397,28 +425,35 @@ def pyplot_transmission_loss(tloss: Any, env: Environment | None = None, **kwarg
     """
     if env is not None:
         env.check()
+
+    if ax is None:
+        fig = _pyplt.figure()
+        ax = fig.add_subplot()
+    assert(isinstance(ax, Axes))
+
     xr = (min(tloss.columns), max(tloss.columns))
-    yr = (-max(tloss.index), -min(tloss.index))
+    yr = (max(tloss.index), min(tloss.index))
     xlabel = 'Range (m)'
     if xr[1] - xr[0] > 10000:
         xr = (min(tloss.columns) / 1000, max(tloss.columns) / 1000)
         xlabel = 'Range (km)'
+
     trans_loss = 20 * np.log10(_fi.epsilon + np.abs(np.flipud(np.array(tloss))))
-    x_mesh, ymesh = np.meshgrid(np.linspace(xr[0], xr[1], trans_loss.shape[1]),
-                                 np.linspace(yr[0], yr[1], trans_loss.shape[0]))
-    trans_loss = trans_loss.reshape(-1)
-    # print(trans_loss.shape)
-    if "vmin" in kwargs.keys():
-        trans_loss[trans_loss < kwargs["vmin"]] = kwargs["vmin"]
-    if "vmax" in kwargs.keys():
-        trans_loss[trans_loss > kwargs["vmax"]] = kwargs["vmax"]
-    trans_loss = trans_loss.reshape((x_mesh.shape[0], -1))
-    _pyplt.contourf(x_mesh, ymesh, trans_loss, cmap="jet", **kwargs)
+    x_mesh, y_mesh = np.meshgrid(np.linspace(xr[0], xr[1], trans_loss.shape[1]),
+                                np.linspace(yr[0], yr[1], trans_loss.shape[0]))
+
+    vmin = kwargs.get("vmin", None)
+    vmax = kwargs.get("vmax", None)
+    trans_loss = np.clip(trans_loss, vmin, vmax)
+
+    _pyplt.contourf(x_mesh, y_mesh, trans_loss, cmap="jet", **kwargs)
     _pyplt.xlabel(xlabel)
     _pyplt.ylabel('Depth (m)')
-    _pyplt.colorbar(label="Transmission Loss(dB)")
+    _pyplt.colorbar(label="Transmission loss (dB)")
     if env is not None:
-        pyplot_env2d(env, receiver_plot=False)
+        pyplot_env2d(env, ax=ax, receiver_plot=False, fill=True)
+
+    return ax
 
 
 ### Export module names for auto-importing in __init__.py

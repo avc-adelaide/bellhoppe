@@ -290,7 +290,7 @@ class EnvDefaults:
     simulation_cross_range_scale: float = field(default=2.0,metadata={'desc': 'Scaling factor on the maximum cross range of the receivers (based on maximum bearing angle) to calculate the maximum simulation cross range extent.'})
     simulation_cross_range_min: float = field(default=10.0,metadata={'desc': 'For very small bearing angles there may be numerical issues with a cross range size approaching zero. This parameter specifies the minimum cross range size of the simulation extent.',"units": "m"})
     soundspeed_interp: str = field(default=BHStrings.linear, metadata={"desc": "Interpolation for sound speed profile data"})
-    surface: float = field(default=0.0, metadata={"units": "m", "desc": "Depth of the surface. Should always be `0.0` for flat altimetry."})
+    surface_depth: float = field(default=0.0, metadata={"units": "m", "desc": "Depth of the surface. Should always be `0.0` for flat altimetry."})
     surface_interp: str = field(default=BHStrings.linear, metadata={"desc": "Interpolation for altimetry surface depths"})
     volume_attenuation: str = field(default=BHStrings.none, metadata={"desc": "Type of volume attenuation to apply"})
 

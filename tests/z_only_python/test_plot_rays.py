@@ -25,7 +25,7 @@ def test_plot_rays():
 
     env = bh.Environment(
             bottom_depth=dp,
-            surface=sf,
+            surface_depth=sf,
             beam_num=100,
             receiver_range=1000,
           )

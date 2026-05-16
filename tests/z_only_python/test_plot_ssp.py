@@ -37,7 +37,7 @@ def test_plot_ssp_spline():
 
 def test_plot_ssp_dataframe():
     """Test plot_ssp function with complex sound speed profile. Just check that there are no execution errors."""
-    ssp = pd.DataFrame({ 'bottom_depth':[0,10,20,30], 'speed':[1540,1530,1532,1535]})
+    ssp = pd.DataFrame({ 'depth':[0,10,20,30], 'speed':[1540,1530,1532,1535]})
     env = bh.Environment(soundspeed=ssp,bottom_depth=30,soundspeed_interp="spline")
     env.check()
 

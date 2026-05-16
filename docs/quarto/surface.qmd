@@ -13,7 +13,7 @@ Further description of the surface options are documented in the [environment fi
 
 Option                            Description
 ------                            -----------
-`surface`                         2xN array of (range,topdepth) pairs
+`surface_depth`                   2xN array of (range,topdepth) pairs
 `surface_interp`                  Interpolation: `"linear"` or `"curvilinear"`
 `surface_boundary_condition`      See below
 `surface_reflection_coefficient`  3xN array of (angle, mag, phase) triplets
@@ -76,7 +76,7 @@ npoints = 10 * env["receiver_range"] / wave_period # sample 10 points per wavele
 dist_m = np.linspace(0,env["receiver_range"], int(npoints))
 surf = wave_amp * np.sin( 2 * np.pi * dist_m / wave_period )
 surf = surf - np.min(surf) # ensure minimum bottom_depth = 0m
-env["surface"] = np.column_stack((dist_m, surf))
+env["surface_depth"] = np.column_stack((dist_m, surf))
 
 bhp.plot_env(env)
 ```
@@ -160,7 +160,7 @@ The distribution above can now be easily used in a Bellhop calculation:
 
 env = bh.Environment(receiver_range=200)
 eta = eta - np.min(eta) # ensure highest point is zero
-env["surface"] = np.column_stack((x, eta))
+env["surface_depth"] = np.column_stack((x, eta))
 erays = bh.compute_eigenrays(env)
 bhp.plot_rays(erays,env=env)
 ```
@@ -209,7 +209,7 @@ ax.text(1,0,"ICE",ha="center",color="white")
 ax.text(1,-12,"WATER",ha="center",color="white")
 ```
 
-This profile can be used to set the altimetry data in Bellhop using the `surface` option. For efficiency only 50 rays are shown (@fig-ice-rays). The uneven surface profile creates a complex series of reflections. A simple acousto-elastic surface boundary condition can be set up using parameters from:
+This profile can be used to set the altimetry data in Bellhop using the `surface_depth` option. For efficiency only 50 rays are shown (@fig-ice-rays). The uneven surface profile creates a complex series of reflections. A simple acousto-elastic surface boundary condition can be set up using parameters from:
 
 > Alexander, Polly and Duncan, Alec and Bose, Neil and Smith, Daniel. 2013. Modelling acoustic transmission loss due to sea ice cover. Acoustics Australia. 41 (1): pp. 79-89.
 > https://www.acoustics.asn.au/journal/2013/2013_41_1_Alexander.pdf
@@ -226,7 +226,7 @@ import aubellhop.plot as bhp
 ice_data = np.column_stack((dist_m, alti_ice))
 env = bh.Environment(
     source_depth=20,
-    surface=ice_data,
+    surface_depth=ice_data,
     surface_boundary_condition="acousto-elastic",
     surface_soundspeed=3500,
     surface_density=890,

@@ -20,7 +20,7 @@ def test_simple():
     assert(env["receiver_range"] == 1000)
     assert(env["soundspeed"] == 1500)
     assert(env["soundspeed_interp"] == "linear")
-    assert(env["surface"] == None)
+    assert(env["surface_depth"] == None)
     assert(env["surface_interp"] == "linear")
     assert(env["source_depth"] == 5)
     assert(env["source_directionality"] == None)

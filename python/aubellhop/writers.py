@@ -85,8 +85,8 @@ class EnvironmentWriter:
 
         if self.env['surface_boundary_condition'] == BHStrings.from_file:
             self._create_refl_coeff_file(self.fname_base+".trc", self.env['surface_reflection_coefficient'])
-        if np.size(self.env["surface"]) > 1:
-            self._create_bty_ati_file(self.fname_base+'.ati', self.env['surface'], self.env['surface_interp'])
+        if np.size(self.env["surface_depth"]) > 1:
+            self._create_bty_ati_file(self.fname_base+'.ati', self.env['surface_depth'], self.env['surface_interp'])
         if self.env['soundspeed_interp'] == BHStrings.quadrilateral:
             self._create_ssp_quad_file(self.fname_base+'.ssp', self.env['soundspeed'])
         if np.size(self.env['bottom_depth']) > 1:

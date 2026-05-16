@@ -25,7 +25,7 @@ def test_plot_tl():
 
     env = bh.Environment(
             bottom_depth=dp,
-            surface=sf,
+            surface_depth=sf,
             receiver_depth=np.arange(0, 45),
             receiver_range=np.arange(0, 1000),
             beam_num=100,

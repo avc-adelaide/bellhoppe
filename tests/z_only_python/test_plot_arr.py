@@ -25,7 +25,7 @@ def test_plot_arr():
 
     env = bh.Environment(
             bottom_depth=dp,
-            surface=sf,
+            surface_depth=sf,
             beam_num=100,
             receiver_range=1000,
           )
@@ -45,7 +45,7 @@ def test_plot_arr_db():
 
     env = bh.Environment(
             bottom_depth=dp,
-            surface=sf,
+            surface_depth=sf,
             beam_num=100,
             receiver_range=1000,
           )

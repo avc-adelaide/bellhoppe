@@ -73,21 +73,21 @@ def plot_env(env: Environment,
     else:
         divisor = 1.0
         xlabel = 'Range (m)'
-    if np.size(env['surface']) == 1:
+    if np.size(env['surface_depth']) == 1:
         min_y = 0
     else:
-        min_y = np.min(env['surface'][:,1])
+        min_y = np.min(env['surface_depth'][:,1])
     max_y = env['_depth_max']
     mgn_x = 0.01*(max_x-min_x)
     mgn_y = 0.1*(max_y-min_y)
 
     oh = _plt.hold()
-    if np.size(env['surface']) == 1:
+    if np.size(env['surface_depth']) == 1:
         xx = [min_x, max_x]
         yy = [0, 0]
     else:
         # linear and curvilinear options use the same altimetry, just with different normals
-        s = env['surface']
+        s = env['surface_depth']
         xx = s[:,0]/divisor
         yy = -s[:,1]
     _plt.plot(xx, yy, xlabel=xlabel, ylabel='Depth (m)', xlim=(min_x-mgn_x, max_x+mgn_x), ylim=(-max_y-mgn_y, -min_y+mgn_y), color=surface_color, **kwargs)
