@@ -140,8 +140,8 @@ class EnvironmentReader:
         ssp_parts = _parse_line(ssp_spec_line, none_pad=3)
         self.env['_mesh_npts']   = _int(ssp_parts[0])
         self.env['_depth_sigma'] = _float(ssp_parts[1])
-        self.env['depth_max']    = _float(ssp_parts[2])
-        self.env['bottom_depth'] = self.env['depth_max']
+        self.env['_depth_max']    = _float(ssp_parts[2])
+        self.env['bottom_depth'] = self.env['_depth_max'] # TODO: interrogate this, looks unsafe
 
         # Read SSP points and from file if applicable
         ssp_lines, next_line = self._read_until_quote(f)

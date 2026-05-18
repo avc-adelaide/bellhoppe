@@ -105,7 +105,6 @@ class Environment(MutableMapping[str, Any]):
     # Depth parameters
     _mesh_npts: int = 0 # ignored by bellhop
     _depth_sigma: float = 0.0 # ignored by bellhop
-    depth_max: float | None = None  # m
     _depth_max: float | None = None  # m
     _range_max: float | None = None  # m -- not used in the environment file
 
@@ -426,7 +425,7 @@ class Environment(MutableMapping[str, Any]):
                     return float(fn(arr[:, 1]))
             raise TypeError(f"Unexpected type for _extremum argument: {type(vec)}")
 
-        self._depth_max = _extremum(self.depth_max, self['bottom_depth'], np.max)
+        self._depth_max = _extremum(self._depth_max, self['bottom_depth'], np.max)
         self._surface_min = _extremum(self.surface_min, self['surface_depth'], np.min)
 
         if not isinstance(self['soundspeed'], pd.DataFrame):

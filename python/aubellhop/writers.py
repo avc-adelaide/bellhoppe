@@ -148,7 +148,7 @@ class EnvironmentWriter:
     def _write_env_sound_speed(self, fh: TextIO) -> None:
         """Writes sound speed profile lines of env file."""
 
-        comment = "[Npts - ignored]  [Sigma - ignored]  Depth_Max"
+        comment = "[Npts - ignored]  [Sigma - ignored]  [Depth_Max - inferred]"
         self._print_env_line(fh,f"{self.env['_mesh_npts']} {self.env['_depth_sigma']} {self.env['_depth_max']}",comment)
 
         svp = self.env['soundspeed']
