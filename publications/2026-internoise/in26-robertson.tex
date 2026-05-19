@@ -4,6 +4,7 @@
 \documentclass{internoise2026-wr}
 \usepackage{booktabs,refstyle,siunitx}
 \usepackage[style=numeric-comp,sorting=none,maxnames=99]{biblatex}
+\renewcommand*{\bibfont}{\small}
 \defbibheading{bibliography}[\refname]{%
   \section*{\MakeUppercase{#1}}}
 \DeclareFieldFormat{labelnumberwidth}{#1.}
@@ -47,12 +48,13 @@ Bellhop is widely used for modelling underwater acoustic propagation using ray/b
 \section{Introduction}
 \label{sec:intro}
 
-Bellhop is an open source Fortran program for calculating underwater acoustic phenomena \cite{porter2025-foa} using ray tracing and beam tracing algorithms (\Figref{erays}).
-It is written and maintained by Michael B. Porter, with early development in the 1980s (first release 1983 with Homer Bucker, Naval Ocean Systems Center), and continuous and active development through the 2000s and 2010s \cite{porter2024-at}.
+This paper introduces \texttt{aubellhop} \parencite{robertson2026-bellhop}, a modern Python interface for Bellhop, 
+an open source Fortran program for calculating underwater acoustic phenomena \cite{porter2025-foa} using ray tracing and beam tracing algorithms (\Figref{erays}).
+Bellhop is written and maintained by Michael B. Porter, with early development in the 1980s (first release 1983 with Homer Bucker, Naval Ocean Systems Center), and continuous and active development through the 2000s and 2010s as part of the Acoustic Toolbox \cite{porter2024-at}.
 Bellhop is widely used in research, and its algorithms have been incorporated in a range of underwater acoustics software platforms, such as the MIT `Virtual Ocean' framework \cite{bhatt2021-thesis}.
-The Bellhop codebase in the Acoustics Toolbox includes both a wrapper and a translation of the code into Matlab, and wrappers for Bellhop have been provided in packages for Python \cite{chitre2025-arlpy} and Julia \cite{chitre2025-jl}.
+The Bellhop codebase in the Acoustics Toolbox includes both a wrapper and a translation of the code into Matlab, and wrappers for Bellhop have been provided in packages for Python \cite{chitre2025-arlpy,rodriguez2026-pyat} and Julia \cite{chitre2025-jl}.
 In the 2020s, another research group translated the codebase to C++ and CUDA in order to take advantage of multi-processor and GPU architectures \cite{pisha2023-jasa,jaffe2025-bellhopcuda}.
-Others have experimented with graphical user interfaces for Bellhop \cite{duncan2025-actup}, which can be very useful from a pedagogy and ease-of-use perspective.
+Others have provided detailed graphical user interfaces for Bellhop \cite{duncan2025-actup}, which are useful from a pedagogical and ease-of-use perspective.
 
 \begin{figure}
 \centering
@@ -62,14 +64,17 @@ Others have experimented with graphical user interfaces for Bellhop \cite{duncan
 \figlabel{erays}
 \end{figure}
 
-With more modern implementations and wrappers, we might question whether the Fortran source code is still of relevance.
-As the Bellhop authors provide both Fortran and Matlab implementations, we can make a direct performance comparison: the Fortran code runs approximately an order of magnitude faster than the Matlab code, which makes for an easy argument that the low-level Fortran (or C++) codebases should be retained.
-However, the legacy executables for Bellhop use an unstructured plain text approach to setting up simulation parameters.
+With modern implementations and wrappers, we might question whether the original source code is still of relevance.
+The compiled Fortran code runs an order of magnitude faster than the Matlab code, and the C++/CUDA reimplementations \parencite{jaffe2025-bellhopcuda} can be orders of magnitude faster again.
+The C++/CUDA reimplementation of Fortran maintains strict compatibility with the Fortran interfaces in terms of input and output files.
+However, the executables for Bellhop use an unstructured plain text approach to setting up simulation parameters.
 This approach was typical for programs written in an era before structured text languages such as JSON, YAML, or TOML, and before `keyval' interfaces in general, were commonplace.
 In the days of well-structured, readable, and easily parsable input files, the Bellhop user interface can be seen as somewhat cryptic and error-prone, particularly on account of the large number of options it now allows for.
-Providing a more useful interface for controlling Bellhop's many input parameters is a significant part of modernising the codebase.
+Providing a more useful interface for controlling Bellhop's many input parameters is a significant part of the \texttt{aubellhop} codebase.
 
-Mandar Chitre previously developed \texttt{arlpy} \cite{chitre2025-arlpy} as a Python wrapper for Bellhop.
+Other work in Bellhop Python interfaces include PYAT by \textcite{rodriguez2026-pyat} and \texttt{arlpy} \textcite{chitre2025-arlpy}.
+The approach of PYAT is to echo the original Fortran interfaces and to streamline the execution of its example files, but it does not provide a `user friendly' interface and requires the Acoustic Toolbox to be installed separately.
+The \texttt{arlpy} interface provides a modern interface, but it is no longer under active development and only supports a subset of Bellhop's features.
 The main technical extension of \texttt{aubellhop} over \texttt{arlpy} is to provide interfaces for a broader range of environment parameters, support the 3D version of Bellhop, and to provide tighter integration with legacy Bellhop configuration files, with read and/or write support provided for the full set of files outlined in \Tabref{files}.
 The embedding of the Fortran code sources within \texttt{aubellhop} allows seamless installation by users, without the need to manually set up a development environment.
 As part of this embedding, the Fortran code has been refactored slightly, permitting further development and analysis of the Bellhop algorithms within a holistic codebase.
@@ -85,6 +90,7 @@ All code has been reviewed and checked manually by the (human) authors, and all 
 \begin{table}
 \centering
 \caption{File types supported by \texttt{aubellhop} with read and/or write functions.}
+\tablabel{files}
 \begin{tabular}{cl}
 \toprule
 File type & Description \\
@@ -110,6 +116,7 @@ File type & Description \\
 If you are running a standard Python environment, you can install \texttt{aubellhop} using standard interfaces such as \verb|pip install aubellhop|. The \texttt{aubellhop} package contains a demo feature to quickly set up and execute an example simulation: \verb|import aubellhop as bh; bh.demo()|
 
 The demo function creates an easily modifiable driver file along the following lines, which is subsequently used to calculate arrival times (as they are easy to summarise in a text-only form):
+\small
 \begin{verbatim}
 env = bh.Environment(
     name='bellhop demo environment',
@@ -123,21 +130,19 @@ env = bh.Environment(
     bottom_density=1600      # seabed density
 )
 \end{verbatim}
-The eigenrays of this environment can be calculated using \verb|erays = bh.compute_eigenrays(env)|, producing the plot shown in \Figref{erays}.
-
-If you have legacy Bellhop configuration files in use (say, a \texttt{seamount} environment file), you can load it directly using:
-\begin{verbatim}
-env = bh.Environment.from_file('seamount.env')
-\end{verbatim}
-The \texttt{Environment} class provides a number of helper functions to help manipulate the data, including serialisation to/from disk or \texttt{Dictionary} data structures.
+\normalsize
+The eigenrays of this environment can be calculated using \verb|erays = bh.compute_eigenrays(env)| (see \Figref{erays}).
+If you have legacy Bellhop configuration files in use (say, a \texttt{seamount} environment file), you can load it directly using \verb|bh.Environment.from_file('seamount.env')|.
+The \texttt{Environment} class provides a number of helper functions to help manipulate the data, including serialisation to/from disk or data structures.
 This flexible approach to defining environment configurations makes it possible to run Monte Carlo-style analyses simply, with future plans to provide in-built support for parallelising such operations over multiple CPU cores automatically.
 
 
-\texttt{aubellhop} builds in the capability to execute different binaries according to the needs of the model.
-Initially this feature was added to support Bellhop3D, but it also facilitates comparison between multiple engines such as \texttt{bellhopcuda}, which are gaining support due to the multithreaded and GPU-accelerated operation, with example applications in studying 3D acoustic refraction around seamounts \cite{jerome2025-jasa}.
+\texttt{aubellhop} has the capability to execute different binaries according to the needs of the model.
+This allows direct support for Bellhop3D, and also facilitates comparison between multiple engines such as \texttt{bellhopcuda}, which are gaining support due to the multithreaded and GPU-accelerated operation, with example applications in studying 3D acoustic refraction around seamounts \cite{jerome2025-jasa}.
 
 Setting up a 3D environment in \texttt{aubellhop} is identical to a 2D environment, with some additional parameters possible to define 3D speed of sound profiles, cross-range bathymetries, and so on.
 Preliminary support has been added for visualising 3D beam propagation (\Figref{erays}):
+\small
 \begin{verbatim}
 import matplotlib.pyplot as plt
 import aubellhop.pyplot as bhp
@@ -152,6 +157,7 @@ ax = fig.add_subplot(projection='3d')
 bhp.pyplot_rays(rays3d,env=env3d,ax=ax)
 plt.show(fig); plt.close(fig)
 \end{verbatim}
+\normalsize
 
 The examples above show just a few examples of the parameters which Bellhop can use via its environment configuration and associated data files. A full listing of the \texttt{aubellhop} \texttt{Environment} class parameters are shown in \Tabref{param}. Not all parameters are relevant for all simulations, and there are a number of defaults and `inferred' values that allow simulations to be set up with a minimal set of input parameters (all fully configurable for full control when needed).
 
@@ -275,7 +281,8 @@ The \texttt{aubellhop} repository includes a suite of examples written in a tuto
 An important consideration in underwater acoustics is the variable sound speed, which causes refraction of acoustic rays. The sound speed typically varies with depth due to changes in temperature, salinity, and pressure.
 Bellhop (the executable) provides a number of interpolation routines for interpreting discretised sound speed data; some care should be used in ensuring that an appropriate interpolation is used.
 
-In this example, we use sound speed data derived from the NOAA World Ocean Atlas by Brian Dushaw\footnote{\url{https://staff.washington.edu/dushaw/WOA/}}. A world-wide horizontal slices of this data at constant depth is shown in \Figref{lev_ssp}, with a vertical slice for constant longitude shown in \Figref{lev_ssp_long}. The code to perform the data manipulation into Python DataFrame format is not interesting here (see the repository page for a worked example), but once this is set up an example eigenray analysis with 2D sound speed data can be undertaken as follows:
+In this example, we use sound speed data derived from the NOAA World Ocean Atlas by Brian Dushaw\footnote{\url{https://staff.washington.edu/dushaw/WOA/}}. A world-wide horizontal slices of this data at constant depth is shown in \Figref{lev_ssp}, with a vertical slice for constant longitude shown in \Figref{lev_ssp_long}. The code to perform the data manipulation into Python DataFrame format is not interesting here (see the repository page for a worked example), but once this is set up an eigenray analysis with 2D sound speed data can be undertaken with:
+\small
 \begin{verbatim}
 env = bh.Environment( soundspeed=svp,
   bottom_depth=5500, source_depth=2000,
@@ -283,6 +290,7 @@ env = bh.Environment( soundspeed=svp,
 erays = bh.compute_eigenrays(env)
 bhp.pyplot_rays(erays, env=env)
 \end{verbatim}
+\normalsize
 The eigenrays exhibit the typical refraction and focussing behaviour seen in deep ocean acoustic wave propagation due to the varying speed of sound (\Figref{lev_ssp_rays}).
 
 \begin{figure}
@@ -319,11 +327,10 @@ env = bh.Environment(
     surface_soundspeed=3500, surface_density=890,
     surface_attenuation=0.4,
     attenuation_units="dB per wavelength",
-    beam_num=20, beam_angle_min=-45, beam_angle_max=45,
-)
+    beam_num=20, beam_angle_min=-45, beam_angle_max=45, )
 \end{verbatim}
 \normalsize
-As the reflections off the ice are not governed by standard `vacuum' boundary conditions, addition settings are provided to capture these behaviours correctly.
+As the reflections off the ice are not governed by standard boundary conditions, addition settings are provided to capture these behaviours correctly.
 The impact of the scattered reflections is shown in transmission loss contours (\Figref{ice-tl}) for \qty{400}{Hz} coherent reflections, \qty{20}{mm} grid spacing.
 Although not intended to illustrate a substantive scientific conclusion, it is interesting to see the potential challenges that may be faced trying to predict or estimate acoustic properties in such environments.
 
@@ -334,6 +341,7 @@ Although not intended to illustrate a substantive scientific conclusion, it is i
 \caption{Artic ice profile from upwards looking sonar data (left); ray propagation for a region of the ice sheet (right).}
 \figlabel{ice}
 
+\bigskip
 \centerline{\includegraphics{fig/ice-tl.png}
 \includegraphics{fig/ice-tl-flat.png}}
 \caption{Using measured ice profile data to calculate transmission loss (left), compared to a smooth ice surface (right). The source is at a depth of \qty{20}{m}.}
@@ -345,9 +353,8 @@ Although not intended to illustrate a substantive scientific conclusion, it is i
 \label{sec:code}
 
 Bellhop is an example of a long-standing open source software package that has enabled a large body of additional research to be built upon the foundation it provides.
-It makes for an interesting case study to discuss open science, as it is currently published openly, and widely used by the research community, with an ecosystem of tools that have been built to interface with it.
-Nonetheless, it is a `legacy' codebase in the sense that it is reliable and stable, and as a result does not make use of modern software development practices.
-The following key additions were undertaken to modernise the Bellhop codebase.
+Nonetheless, it is a `legacy' codebase in the sense that it is reliable and stable, and does not (need to) make use of modern software development practices.
+The following key processes were added to modernise the Bellhop codebase.
 
 \paragraph{Automatic code documentation, including dependency graphs}
 
@@ -359,6 +366,26 @@ A modified comment prefix (\verb|!!|) creates specially tagged documentation str
 FORD analyses the code and creates connected graphs (\Figref{graphvis}) to link files to files, modules to modules, and so on. Most importantly, this showed which source files were not being used in the Bellhop codebase, as it is provided in its original form alongside additional underwater acoustics programs -- Kraken, etc.\ -- with a shared library.
 
 The Python interface to bellhop is documented using Sphinx (following arlpy). The Sphinx output is combined with the main FORD output to create the documentation pages.
+
+
+\begin{figure}
+\includegraphics[width=0.45\linewidth]{fig/ford-modules-snap.png}\hfil
+\includegraphics[width=0.45\linewidth]{fig/api}
+\caption{Example output of the FORD Fortran Modules documentation (left) and the Sphinx Python API documentation (right).}
+\figlabel{ford-modules}
+\bigskip
+
+\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/graphvis}}}
+\caption{Extract from part of the automatically-generated Graphvis output from the FORD Modules documentation.}
+\figlabel{graphvis}
+\bigskip
+
+\centering
+\includegraphics[width=0.45\linewidth]{fig/coverage.pdf}\hfil
+\includegraphics[width=0.45\linewidth]{fig/cov-detailed}
+\caption{Example of coverage report summary output (left) and detailed per-file output (right). Each file contains a detailed report that shows the number of times each line of code is executed by running the test suite. In the detailed output, the red highlight shows code which is not run as part of the test suite.}
+\figlabel{coverage}
+\end{figure}
 
 \paragraph{Regression and unit testing suite}
 
@@ -391,7 +418,7 @@ Modern linter tools by default are strict about upholding what are now considere
 \paragraph{Easy build systems}
 
 Traditional workflows used \verb|make|, and modern Python tools such as \verb|uv| provide more complex environment setup options.
-The Bellhop repository is set up with UV used for running the main development tools, with a transparent user interface provided by Make to help streamline shifting from one build process to another in the future.
+The Bellhop repository is set up with a commandline interface provided by Make to help streamline shifting from one build process to another in the future.
 The Make interface is as simple as (\verb|make help|):
 \begin{verbatim}
 CODE BUILDING                          CODE CHECKING
@@ -412,24 +439,6 @@ Very recently (at time of writing), it is now possible to integrate AI agents in
 As part of the online repository, a comprehensive suite of documentation is being written, which covers the Fortan code and interfaces, the \texttt{aubellhop} code and interfaces, and a set of tutorials demonstrating common use cases.
 The accessibility of this modern documentation is intended to allow new uses to adopt Bellhop easily using free, open source workflows.
 
-\begin{figure}
-\includegraphics[width=0.45\linewidth]{fig/ford-modules-snap.png}\hfil
-\includegraphics[width=0.45\linewidth]{fig/api}
-\caption{Example output of the FORD Fortran Modules documentation (left) and the Sphinx Python API documentation (right).}
-\figlabel{ford-modules}
-\bigskip
-
-\centerline{\fbox{\includegraphics[width=0.8\linewidth]{fig/graphvis}}}
-\caption{Extract from part of the automatically-generated Graphvis output from the FORD Modules documentation.}
-\figlabel{graphvis}
-\bigskip
-
-\centering
-\includegraphics[width=0.45\linewidth]{fig/coverage.pdf}\hfil
-\includegraphics[width=0.45\linewidth]{fig/cov-detailed}
-\caption{Example of coverage report summary output (left) and detailed per-file output (right). Each file contains a detailed report that shows the number of times each line of code is executed by running the test suite. In the detailed output, the red highlight shows code which is not run as part of the test suite.}
-\figlabel{coverage}
-\end{figure}
 
 
 \section{Conclusion}
