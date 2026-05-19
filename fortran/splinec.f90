@@ -206,7 +206,7 @@ SUBROUTINE VSPLINE (TAU, C, M, MDIM, F, N)
 10   J1 = J + 1
      IF (TAU(J1) < REAL(F(I)) .AND. J1 < M) THEN ! CHECK TO MAKE SURE
         J = J + 1                                ! THIS POINT IS NOT
-        GO TO 10                                 ! IN THE NEXT INTERVAL.
+        GOTO 10                                  ! IN THE NEXT INTERVAL.
      END IF
      H = DBLE (F(I)) - TAU(J)              ! DISTANCE FROM START OF INTERVAL
      F(I) = SPLINE (C(1,J), H)
