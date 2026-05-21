@@ -27,6 +27,7 @@
 
     \begin{multicols}{2} % <= choose the number of columns
     \institution[1]{%
+      Acoustics, Vibrations, and Control Group,\\
       School of Electrical and Mechanical Engineering\\
       Adelaide University\\
       SA, Australia\\
@@ -40,7 +41,6 @@
     \end{multicols}
   \end{flushleft}
 
-\smallskip
 \begin{abstract}
 Bellhop is widely used for modelling underwater acoustic propagation using ray/beam-tracing. As part of The Acoustics Toolbox, Bellhop was written in Fortran by Michael B. Porter and colleagues, as part of a suite of open source underwater acoustics modelling tools, and others have reimplemented it in C++/CUDA for multithreaded operation. Interfaces to Bellhop have been developed for several languages, including Matlab, Python, and Julia, but these tools sometimes only provide access to a subset of Bellhop's features, and often assume that the Bellhop executable is already installed. This paper introduces a modern Python interface to Bellhop, which can be used both by users who wish to run Bellhop simulations, or by developers who wish to adapt or extend the Bellhop codebase. As with the Julia interface, the Bellhop executable is included in the installation. Features of the package include: a comprehensive test suite with coverage reports against both Python and Fortran sources; detailed, online documentation of the Fortran and Python sources; automatic code quality checking as part of the repository workflows; and a series of tutorials demonstrating the main use cases of the simulation tools.
 \end{abstract}
@@ -159,17 +159,18 @@ plt.show(fig); plt.close(fig)
 \end{verbatim}
 \normalsize
 
-The examples above show just a few examples of the parameters which Bellhop can use via its environment configuration and associated data files. A full listing of the \texttt{aubellhop} \texttt{Environment} class parameters are shown in \Tabref{param}. Not all parameters are relevant for all simulations, and there are a number of defaults and `inferred' values that allow simulations to be set up with a minimal set of input parameters (all fully configurable for full control when needed).
+The examples in this paper show just a few variations of the parameters which Bellhop can use via its environment configuration and associated data files. A full listing of the \texttt{aubellhop} \texttt{Environment} class parameters are shown in \Tabref{param}. Not all parameters are relevant for all simulations, and there are a number of defaults and `inferred' values that allow simulations to be set up with a minimal set of input parameters (all fully configurable for full control when needed).
 
 \begin{table}
 \catcode`\_=12\relax
-\def\MIDTITLE#1{\midrule\emph{\ignorespaces #1}}
+\def\MIDTITLE#1{\midrule\normalfont\emph{\ignorespaces #1}}
 \footnotesize\ttfamily\centering
 \caption{Parameters for the \texttt{Environment} class in \texttt{aubellhop} for both 2D and 3D simulations.}
 \tablabel{param}
+\begin{minipage}[t]{0.4\textwidth}\centering
 \begin{tabular}[t]{l}
 		\toprule
-		\textbf{Parameter} \\
+		\normalfont\textbf{Parameter} \\
     \MIDTITLE{ Metadata}            \\
     name                                                \\   
     dimension                                           \\        
@@ -215,10 +216,12 @@ The examples above show just a few examples of the parameters which Bellhop can 
     receiver_nrange                                     \\          
     receiver_nbearing                                   \\          
     \bottomrule
-\end{tabular}\qquad
+\end{tabular}
+\end{minipage}\qquad
+\begin{minipage}[t]{0.4\textwidth}\centering
 \begin{tabular}[t]{l}
 		\toprule
-		\textbf{Parameter} \\
+		\normalfont\textbf{Parameter} \\
     \MIDTITLE{ Beam settings}            \\
     beam_type                                           \\        
     beam_angle_min                                      \\          
@@ -254,13 +257,20 @@ The examples above show just a few examples of the parameters which Bellhop can 
     volume_attenuation                                  \\           
     attenuation_units                                   \\          
     biological_layer_parameters                         \\                
-    \MIDTITLE{ Francois-Garrison volume attenuation}    \\        
+    \MIDTITLE{ Francois-Garrison volume attenuation\textsuperscript\textdagger}    \\        
     _fg_salinity                                        \\          
     _fg_temperature                                     \\          
     _fg_pH                                              \\     
-    _fg_depth                                           \\         
+    _fg_depth                                           \\
     \bottomrule 
 \end{tabular}
+
+\medskip
+\normalfont
+\raggedright
+ \footnotesize
+\emph{\textsuperscript\textdagger denoted as internal as there is a separate `setter' function}
+\end{minipage}
 \end{table}
 
 
@@ -281,7 +291,7 @@ The \texttt{aubellhop} repository includes a suite of examples written in a tuto
 An important consideration in underwater acoustics is the variable sound speed, which causes refraction of acoustic rays. The sound speed typically varies with depth due to changes in temperature, salinity, and pressure.
 Bellhop (the executable) provides a number of interpolation routines for interpreting discretised sound speed data; some care should be used in ensuring that an appropriate interpolation is used.
 
-In this example, we use sound speed data derived from the NOAA World Ocean Atlas by Brian Dushaw\footnote{\url{https://staff.washington.edu/dushaw/WOA/}}. A world-wide horizontal slices of this data at constant depth is shown in \Figref{lev_ssp}, with a vertical slice for constant longitude shown in \Figref{lev_ssp_long}. The code to perform the data manipulation into Python DataFrame format is not interesting here (see the repository page for a worked example), but once this is set up an eigenray analysis with 2D sound speed data can be undertaken with:
+In this example, we use sound speed data derived from the NOAA World Ocean Atlas by Brian Dushaw \parencite{dushaw2015-woa}. A world-wide horizontal slices of this data at constant depth is shown in \Figref{lev_ssp}, with a vertical slice for constant longitude shown in \Figref{lev_ssp_long}. The code to perform the data manipulation into Python DataFrame format is not interesting here (see the repository page for a worked example), but once this is set up an eigenray analysis with 2D sound speed data can be undertaken with:
 \small
 \begin{verbatim}
 env = bh.Environment( soundspeed=svp,
@@ -296,18 +306,17 @@ The eigenrays exhibit the typical refraction and focussing behaviour seen in dee
 \begin{figure}
 \centering
 \includegraphics[scale=0.9]{fig/lev_ssp.pdf}
-\vspace*{-\baselineskip}
 \caption{Sound speed profile (constant depth \qty{300}{m}), from NOAA World Ocean Atlas data.}
 \figlabel{lev_ssp}
+\bigskip
 
 \centerline{\includegraphics[scale=0.9]{fig/lev_ssp_long.pdf}\quad\includegraphics[scale=0.9]{fig/lev_ssp_chk.pdf}}
-\vspace*{-\baselineskip}
 \caption{Sound speed profile for constant longitude \ang{200.5}.}
 \figlabel{lev_ssp_long}
+\bigskip
 
 \centering
 \includegraphics[scale=0.9]{fig/lev_ssp_rays.pdf}
-\vspace*{-\baselineskip}
 \caption{Eigenray analysis between a source and receiver with a 2D sound speed profile.}
 \figlabel{lev_ssp_rays}
 \end{figure}
@@ -363,12 +372,13 @@ Because Bellhop is written in Fortran, the FORD tool was selected to generate it
 Only minor changes to the Bellhop Fortran sources were needed for the comments in the file to match FORD's expectations.
 A modified comment prefix (\verb|!!|) creates specially tagged documentation strings that are extracted for the summary online documentation (\Figref{ford-modules}), which presents an overview of the collections of files, modules, procedures, and so on, in the codebase.
 
-FORD analyses the code and creates connected graphs (\Figref{graphvis}) to link files to files, modules to modules, and so on. Most importantly, this showed which source files were not being used in the Bellhop codebase, as it is provided in its original form alongside additional underwater acoustics programs -- Kraken, etc.\ -- with a shared library.
+FORD analyses the code and creates connected graphs (\Figref{graphvis}) to link files to files, modules to modules, and so on. Most importantly, this showed which source files were not being used in the Bellhop codebase, as the Fortran sources are shared alongside additional underwater acoustics programs -- Kraken, etc.\ -- with a shared library in the Acoustics Toolbox.
 
-The Python interface to bellhop is documented using Sphinx (following arlpy). The Sphinx output is combined with the main FORD output to create the documentation pages.
+The Python interface to bellhop is documented using Sphinx (following \texttt{arlpy}). The Sphinx output is combined with the main FORD output to create the documentation pages.
 
 
 \begin{figure}
+\centering
 \includegraphics[width=0.45\linewidth]{fig/ford-modules-snap.png}\hfil
 \includegraphics[width=0.45\linewidth]{fig/api}
 \caption{Example output of the FORD Fortran Modules documentation (left) and the Sphinx Python API documentation (right).}
@@ -420,6 +430,7 @@ Modern linter tools by default are strict about upholding what are now considere
 Traditional workflows used \verb|make|, and modern Python tools such as \verb|uv| provide more complex environment setup options.
 The Bellhop repository is set up with a commandline interface provided by Make to help streamline shifting from one build process to another in the future.
 The Make interface is as simple as (\verb|make help|):
+\small
 \begin{verbatim}
 CODE BUILDING                          CODE CHECKING
   [all] - default: build binaries           test - run test suite
@@ -428,6 +439,7 @@ install - copy binaries into ./bin          lint - run code linters
                                              doc - build online documentation
                                              cov - run code coverage processes
 \end{verbatim}
+\normalsize
 
 \paragraph{Online repository hosting}
 
@@ -445,7 +457,7 @@ The accessibility of this modern documentation is intended to allow new uses to 
 \label{sec:conclusion}
 
 Bellhop retains its research potential some forty years after its first release, and we hope that by making this codebase more accessible it will provide easier access to this valuable tool by underwater acousticians and researchers.
-Building engineering software using these features helps mitigate the risk of unknown errors in the code, promotes reproducibility, and largely comes `for free' using modern programming tools and libraries.
+Building engineering software using automatic documentation, checking, and testing tools helps mitigate the risk of unknown errors in the code, promotes reproducibility, and largely comes `for free' using modern programming tools and libraries.
 
 This work builds off \texttt{arlpy} to provide a user-friendly interface to Bellhop in Python. Extensions to \texttt{arlpy} in \texttt{aubellhop} include streamlining of the main interfaces, adding additional features associated with data processing and plotting, and providing further interfaces to the underlying Bellhop executable(s).
 Future work will involve testing against the \texttt{bellhopcuda} executables, expanding support for 3D data visualisation, and building parallelisation into the interface.
@@ -453,7 +465,6 @@ Future work will involve testing against the \texttt{bellhopcuda} executables, e
 As beam- and ray-tracing algorithms are inherently sensitive to their modelling conditions, providing well-tested and reproducible development environments for simulation work is critical to ensure that results are meaningful and verifiable.
 We thank the authors of Bellhop and its peers for the substantial contributions they have made to the acoustics community in sharing their work openly, and trust that there will be many decades of further evolution of these tools.
 
-\clearpage
 \printbibliography
 
 \end{document}
