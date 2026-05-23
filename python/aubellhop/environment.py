@@ -312,7 +312,7 @@ class Environment(MutableMapping[str, Any]):
         new_env = type(self)(**data)
         return new_env
 
-    def unwrap(self, *keys: str) -> list[Self]:
+    def unwrap(self, *keys: str) -> list[Environment]:
         """Return a list of Environment copies expanded over the given keys.
 
         If multiple keys are provided, all combinations are produced.
