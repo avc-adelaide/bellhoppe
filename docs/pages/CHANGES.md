@@ -2,7 +2,7 @@
 title: AUBELLHOP CHANGELOG
 ---
 
-## [0.2] - 2026-05-16
+## [0.2] - 2026-05-23
 
 *Breaking changes*
 
@@ -10,6 +10,11 @@ title: AUBELLHOP CHANGELOG
   This is for consistency and to reduce ambiguity; without the rename, not clear if `depth`
   refers to the simulation depth or the bathymetry.
 * Rename `surface` to `surface_depth` for consistency with the above.
+
+*Other changes*
+
+* Add Internoise 2026 conference paper to repository
+* Add extra Fortran style ignore flags (Fortitude updated and is more strict now)
 
 ## [0.1.9] - 2026-02-17
 
