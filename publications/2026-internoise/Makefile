@@ -9,3 +9,8 @@ py:
 
 tex:
 	@echo "TODO :)"
+
+bib:
+	biber in26-robertson.bcf \
+	    --output_format=bibtex
+	    --output_file=in26-references.bib

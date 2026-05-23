@@ -9,7 +9,14 @@
   \section*{\MakeUppercase{#1}}}
 \DeclareFieldFormat{labelnumberwidth}{#1.}
 \setlength{\biblabelsep}{0.5em}
-\bibliography{acoustics,wspr-conf}
+
+\IfFileExists{wspr.tex}{
+  % WR live/local copies
+  \bibliography{acoustics,wspr-conf}
+}{
+  % extracted with `make bib`
+  \bibliography{in26-references}
+}
 
 \begin{document}
 
@@ -48,7 +55,7 @@ Bellhop is widely used for modelling underwater acoustic propagation using ray/b
 \section{Introduction}
 \label{sec:intro}
 
-This paper introduces \texttt{aubellhop} \parencite{robertson2026-bellhop}, a modern Python interface for Bellhop, 
+This paper introduces \texttt{aubellhop} \parencite{robertson2026-bellhop}, a modern Python interface for Bellhop,
 an open source Fortran program for calculating underwater acoustic phenomena \cite{porter2025-foa} using ray tracing and beam tracing algorithms (\Figref{erays}).
 Bellhop is written and maintained by Michael B. Porter, with early development in the 1980s (first release 1983 with Homer Bucker, Naval Ocean Systems Center), and continuous and active development through the 2000s and 2010s as part of the Acoustic Toolbox \cite{porter2024-at}.
 Bellhop is widely used in research, and its algorithms have been incorporated in a range of underwater acoustics software platforms, such as the MIT `Virtual Ocean' framework \cite{bhatt2021-thesis}.
@@ -172,49 +179,49 @@ The examples in this paper show just a few variations of the parameters which Be
 		\toprule
 		\normalfont\textbf{Parameter} \\
     \MIDTITLE{ Metadata}            \\
-    name                                                \\   
-    dimension                                           \\        
+    name                                                \\
+    dimension                                           \\
     \MIDTITLE{ Sound speed parameters}            \\
-    frequency                                           \\        
-    soundspeed                                          \\         
-    soundspeed_interp                                   \\          
+    frequency                                           \\
+    soundspeed                                          \\
+    soundspeed_interp                                   \\
     \MIDTITLE{ Bottom parameters}            \\
-    bottom_depth                                        \\          
-    bottom_interp                                       \\          
-    bottom_soundspeed                                   \\          
-    bottom_density                                      \\          
-    bottom_attenuation                                  \\           
-    bottom_roughness                                    \\          
-    bottom_beta                                         \\          
-    bottom_transition_freq                              \\               
-    bottom_boundary_condition                           \\                
-    bottom_reflection_coefficient                       \\                
-    bottom_grain_size                                   \\          
+    bottom_depth                                        \\
+    bottom_interp                                       \\
+    bottom_soundspeed                                   \\
+    bottom_density                                      \\
+    bottom_attenuation                                  \\
+    bottom_roughness                                    \\
+    bottom_beta                                         \\
+    bottom_transition_freq                              \\
+    bottom_boundary_condition                           \\
+    bottom_reflection_coefficient                       \\
+    bottom_grain_size                                   \\
     \MIDTITLE{ Surface parameters}            \\
-    surface_depth                                       \\          
-    surface_interp                                      \\          
-    surface_boundary_condition                          \\                
-    surface_reflection_coefficient                      \\                
-    surface_soundspeed                                  \\           
-    surface_density                                     \\          
-    surface_attenuation                                 \\            
-    surface_min                                         \\          
+    surface_depth                                       \\
+    surface_interp                                      \\
+    surface_boundary_condition                          \\
+    surface_reflection_coefficient                      \\
+    surface_soundspeed                                  \\
+    surface_density                                     \\
+    surface_attenuation                                 \\
+    surface_min                                         \\
     \MIDTITLE{ Source parameters}            \\
-    source_type                                         \\          
-    source_range                                        \\          
-    source_cross_range                                  \\           
-    source_depth                                        \\          
-    source_ndepth                                       \\          
-    source_nrange                                       \\          
-    source_ncrossrange                                  \\           
-    source_directionality                               \\              
+    source_type                                         \\
+    source_range                                        \\
+    source_cross_range                                  \\
+    source_depth                                        \\
+    source_ndepth                                       \\
+    source_nrange                                       \\
+    source_ncrossrange                                  \\
+    source_directionality                               \\
     \MIDTITLE{ Receiver parameters}            \\
-    receiver_depth                                      \\          
-    receiver_range                                      \\          
-    receiver_bearing                                    \\          
-    receiver_ndepth                                     \\          
-    receiver_nrange                                     \\          
-    receiver_nbearing                                   \\          
+    receiver_depth                                      \\
+    receiver_range                                      \\
+    receiver_bearing                                    \\
+    receiver_ndepth                                     \\
+    receiver_nrange                                     \\
+    receiver_nbearing                                   \\
     \bottomrule
 \end{tabular}
 \end{minipage}\qquad
@@ -223,46 +230,46 @@ The examples in this paper show just a few variations of the parameters which Be
 		\toprule
 		\normalfont\textbf{Parameter} \\
     \MIDTITLE{ Beam settings}            \\
-    beam_type                                           \\        
-    beam_angle_min                                      \\          
-    beam_angle_max                                      \\          
-    beam_bearing_min                                    \\          
-    beam_bearing_max                                    \\          
-    beam_num                                            \\       
-    beam_bearing_num                                    \\          
-    single_beam_index                                   \\          
+    beam_type                                           \\
+    beam_angle_min                                      \\
+    beam_angle_max                                      \\
+    beam_bearing_min                                    \\
+    beam_bearing_max                                    \\
+    beam_num                                            \\
+    beam_bearing_num                                    \\
+    single_beam_index                                   \\
     \MIDTITLE{ Cerveny Gaussian Beams}            \\
-    beam_width_type                                     \\          
-    beam_reflection_curvature_change                    \\                
-    beam_reflection_shift                               \\              
-    beam_epsilon_multipler                              \\               
-    beam_range_loop                                     \\          
-    beam_images_num                                     \\          
-    beam_window                                         \\          
-    beam_component                                      \\          
+    beam_width_type                                     \\
+    beam_reflection_curvature_change                    \\
+    beam_reflection_shift                               \\
+    beam_epsilon_multipler                              \\
+    beam_range_loop                                     \\
+    beam_images_num                                     \\
+    beam_window                                         \\
+    beam_component                                      \\
     \MIDTITLE{ Simulation extent}            \\
-    simulation_depth                                    \\          
-    simulation_range                                    \\          
-    simulation_cross_range                              \\               
-    simulation_depth_scale                              \\               
-    simulation_range_scale                              \\               
-    simulation_cross_range_scale                        \\                
-    simulation_cross_range_min                          \\                
+    simulation_depth                                    \\
+    simulation_range                                    \\
+    simulation_cross_range                              \\
+    simulation_depth_scale                              \\
+    simulation_range_scale                              \\
+    simulation_cross_range_scale                        \\
+    simulation_cross_range_min                          \\
     \MIDTITLE{ Solution parameters}            \\
-    step_size                                           \\        
-    grid_type                                           \\        
-    task                                                \\   
-    interference_mode                                   \\          
+    step_size                                           \\
+    grid_type                                           \\
+    task                                                \\
+    interference_mode                                   \\
     \MIDTITLE{ Attenuation parameters}            \\
-    volume_attenuation                                  \\           
-    attenuation_units                                   \\          
-    biological_layer_parameters                         \\                
-    \MIDTITLE{ Francois-Garrison volume attenuation\textsuperscript\textdagger}    \\        
-    _fg_salinity                                        \\          
-    _fg_temperature                                     \\          
-    _fg_pH                                              \\     
+    volume_attenuation                                  \\
+    attenuation_units                                   \\
+    biological_layer_parameters                         \\
+    \MIDTITLE{ Francois-Garrison volume attenuation\textsuperscript\textdagger}    \\
+    _fg_salinity                                        \\
+    _fg_temperature                                     \\
+    _fg_pH                                              \\
     _fg_depth                                           \\
-    \bottomrule 
+    \bottomrule
 \end{tabular}
 
 \medskip

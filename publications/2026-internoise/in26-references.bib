@@ -1,0 +1,153 @@
+@MISC{robertson2026-bellhop,
+  AUTHOR = {Robertson, William SP},
+  URL = {https://github.com/avc-adelaide/aubellhop},
+  DATE = {2026},
+  HOWPUBLISHED = {Online repository},
+  TITLE = {AUBELLHOP: underwater acoustics ray tracing},
+}
+
+@INBOOK{porter2025-foa,
+  ABSTRACT = {The propagation of sound in the ocean involves many complicated effects. At a basic level, the sound reflects off the ocean surface and ocean bottom, producing a sort of barber-shop mirror effect that leads to multiple images of the sound source. The strength of these echoes depends on the quality of the surface and bottom reflectors. A rough sea is more like a broken mirror that scatters sound energy; a soft silty bottom is a weak reflector that may be compared to a dark mirror. However, it gets still more complicated. The ocean sound speed depends on temperature, salinity, and depth. Gradients in these environmental parameters cause the sound to bend leading, for instance, to ``convergence zone''propagation in which the sound refocuses near the ocean surface in loops spaced some 55 km apart. Modeling these effects is the province of computational ocean acoustics. This is a field that has been extensively studied over decades for navy sonar applications; however, it continues to be an active area of research. The basic physics of sound propagation in the ocean and suitable computational approaches are discussed.},
+  AUTHOR = {Porter, Michael B. and Henderson, Laurel J. and Houser, Dorian and Erbe, Christine},
+  EDITOR = {Erbe, Christine and Houser, Dorian and Bowles, Ann and Porter, Michael B.},
+  PUBLISHER = {Springer Nature Switzerland},
+  BOOKTITLE = {Marine Mammal Acoustics in a Noisy Ocean},
+  DATE = {2025},
+  DOI = {10.1007/978-3-031-77022-7_1},
+  PAGES = {1--83},
+  TITLE = {Fundamentals of Ocean Acoustics},
+}
+
+@URL{porter2024-at,
+  AUTHOR = {Porter, Michael B.},
+  URL = {http://oalib.hlsresearch.com/AcousticsToolbox/},
+  TITLE = {The Acoustics Toolbox, version 2024-12-25},
+  URLDATE = {2025-09-18},
+}
+
+@THESIS{bhatt2021-thesis,
+  AUTHOR = {Bhatt, EeShan Chetan},
+  INSTITUTION = {Department of Mechanical Engineering, Massachusetts Institute of Technology},
+  DATE = {2021},
+  TITLE = {A Virtual Ocean framework for environmentally adaptive, embedded acoustic navigation on autonomous underwater vehicles},
+  TYPE = {phdthesis},
+}
+
+@MISC{chitre2025-arlpy,
+  AUTHOR = {Chitre, Mandar},
+  URL = {https://github.com/org-arl/arlpy},
+  HOWPUBLISHED = {Online repository},
+  TITLE = {ARL Python Tools (arlpy)},
+}
+
+@MISC{rodriguez2026-pyat,
+  AUTHOR = {Rodríguez, Orlando Camargo},
+  URL = {https://github.com/BochicTrdar/PYAT},
+  DATE = {2026},
+  HOWPUBLISHED = {Online repository},
+  NOTE = {Date accessed: 2026-05-19},
+  TITLE = {PYAT: Python tools for the Acoustic Toolbox},
+}
+
+@MISC{chitre2025-jl,
+  AUTHOR = {Chitre, Mandar},
+  URL = {https://github.com/org-arl/UnderwaterAcoustics.jl},
+  HOWPUBLISHED = {Online repository},
+  TITLE = {Julia toolbox for underwater acoustic modeling},
+}
+
+@ARTICLE{pisha2023-jasa,
+  ABSTRACT = {BELLHOP and BELLHOP3D are popular ray/beam based underwater acoustics simulation programs, written in Fortran by Dr. Michael B. Porter starting in 1983. We introduce bellhopcxx/bellhopcuda, a translation of these programs into a modern, multithreaded C + +/CUDA codebase. This open-source codebase can be built and run on a multicore CPU or an NVIDIA GPU and can also be built as a library for integration into other software without requiring output data to be written to files. The new version is typically somewhat faster than the Fortran version even in single-threaded mode, and in multithreaded mode usually scales roughly with the number of logical CPU cores minus some overhead. In runs with large numbers of rays, depending on the hardware, the CUDA version can bring several times additional performance gain over the multithreaded CPU version, sometimes reaching over 100x the performance of BELLHOP or BELLHOP3D. The results of the new version closely match those of the original version in most cases, but there are occasionally mismatches, partly due to edge case issues inherent in the BELLHOP physics model. We have improved the handling of these cases and made other improvements to the Fortran version, bringing these changes to the new version.},
+  AUTHOR = {Pisha, Louis A. and Snider, Joseph and Jackson, Khalil and Jaffe, Jules S.},
+  DATE = {2023-03},
+  DOI = {10.1121/10.0018709},
+  JOURNALTITLE = {The Journal of the Acoustical Society of America},
+  NUMBER = {3 (supplement)},
+  PAGES = {A218--A218},
+  TITLE = {Introducing bellhopcxx / bellhopcuda: Modern, parallel BELLHOP(3D)},
+  VOLUME = {153},
+}
+
+@MISC{jaffe2025-bellhopcuda,
+  AUTHOR = {et al., Jules Jaffe},
+  URL = {https://github.com/A-New-Bellhope/bellhopcuda},
+  HOWPUBLISHED = {Online repository},
+  TITLE = {CUDA and C++ port of BELLHOP / BELLHOP3D underwater acoustics simulator},
+}
+
+@URL{duncan2025-actup,
+  AUTHOR = {Duncan, Alec},
+  URL = {https://cmst.curtin.edu.au/products/underwater/},
+  TITLE = {Underwater acoustic propagation modelling software -- AcTUP V2.2L},
+  URLDATE = {2025-09-18},
+}
+
+@INPROCEEDINGS{fang2024-aas,
+  ABSTRACT = {Bellhop is an established underwater acoustic raytracing model. Modern wrapper libraries have allowed integration with popular environments such as Python and it remains a relevant and useful tool. However, its practical performance can be limiting when trying to simulate scenarios to capture transient interactions between multiple sources in detail much greater than 10,000 nodes. In this study, we document the techniques we found useful in overcoming many of these limitations. The facility to simulates underwater sound propagation using Bellhop has been conveniently brought into the Python environment through wrapper libraries such as Arlpy, expediently interfacing with popular tools for machine learning and data analysis. Yet, for the most part, the libraries only act as data conduits to the core Bellhop legacy code. Developed in FORTRAN decades ago, this code base has not kept pace with evolution of the modern PC. Naive application of the Bellhop model strictly according to documentation severely underutilises modern hardware. Consequently, simulation detail and productivity experience avoidable limitations. Our particular interest was in simulating the combined sound field from many local emitters while also observing the effect in the far field. This required a dense resolution simulation over a wide expanse in area, time and frequency. The modelling requirements presented a series of challenges when starting from a straightforward direct application that extends beyond the raytracing task and include handling of large simulation data output. Specifically, producing a simulation for numerous sources using Bellhop quickly exhausted available memory and led to prohibitive processing time. These bounds to productivity and simulation detail can be pushed back by leveraging the potential of modern hardware through data parallelisation of large time series datasets to utilise multiple CPU cores and the use of vastly improved speeds in non-volatile solid-state storage to judiciously free up faster volatile memory while minimising the impact on performance. We built upon functionalities provided by Arlpy by tailoring algorithmic strategy and data flow pathways for modern hardware, achieving orders of magnitude performance gains in speed and model resolution. A case study will be presented with a PC composed of typical hardware (Intel i13900 CPU, 112GB DDR5 RAM, 4TB PCIe4 M.2 SSD), demonstrating a ten-fold speed-up and 20-times better memory efficiency over the initial naive implementation. This paper describes useful generalised methodologies we found in the Bellhop Python workflow so that they may benefit other projects.},
+  AUTHOR = {Fang, C and Zander, AC and Larizza, F and Hassan, ER and Robertson, WSP},
+  LOCATION = {Gold Coast, Queensland, Australia},
+  ORGANIZATION = {Australian Acoustical Society, QLD Division},
+  BOOKTITLE = {Proceedings of Acoustics 2024: Acoustics in the Sun},
+  DATE = {2024-11},
+  NUMBER = {53},
+  TITLE = {Bellhop Underwater Acoustic Simulation and Data Processing Optimisations: Getting Hi Def on the Desktop},
+}
+
+@INPROCEEDINGS{fang2025-aas,
+  ABSTRACT = {Bellhop is a widely used underwater acoustic ray-tracing model, but its 1990s Fortran core imposes legacy constraints including half-space simulations and single-frequency absorption. We identify and correct a key numerical issue in the ArrMod.f90 module that prevented negative-range propagation, enabling single-run full-space simulations without separate half space runs. In addition, we extended Bellhop's single frequency ab-sorption to broadband application by post processing along individual ray trajectories at lower computational cost. Validation against analytical solution shows agreement in both positive and negative ranges and accurate frequency-dependent attenuation. These improvements simplify Bellhop workflows and provide a more general-ised volume attenuation solution.},
+  AUTHOR = {Fang, CTC and Zander, A and Hassan, E and Franklin, S and Robertson, W},
+  LOCATION = {Joondalup, Western Australia},
+  PUBLISHER = {Australian Acoustical Society},
+  BOOKTITLE = {Proceedings of Acoustics 2025: Sounds of the Sunset Coast: Annual Conference of the Australian Acoustical Society},
+  DATE = {2025-11},
+  PAGES = {1--10},
+  TITLE = {Resolving Bellhop Issues: Negative Range Arrivals and Volume Attenuation},
+}
+
+@INPROCEEDINGS{fang2026-internoise,
+  AUTHOR = {Fang, Chung T.C. and Zander, Anthony C. and Hassan, Eyad R. and Franklin, Stephen and Robertson, William S. P.},
+  LOCATION = {Adelaide, Australia},
+  BOOKTITLE = {Proceeedings of Inter-Noise 2026},
+  DATE = {2026},
+  TITLE = {Scaling Bellhop Acoustic Field Simulation Beyond RAM: A Disk-Cached Pipeline for Time-Reversal Underwater Field Visualisation},
+}
+
+@ARTICLE{jerome2025-jasa,
+  ABSTRACT = {This paper reports on measurements of out-of-plane arrivals from an airgun transect over the north slope of the Atlantis II Seamount Complex in the North Atlantic. The data were collected by a set of three near-bottom single-channel acoustic recorders. Time delay analysis is applied to assess the directionality of anomalous arrivals in the received time series that are interwoven between the in-plane bottom-surface and multiple bottom-surface reflected paths. Back propagation using estimated arrival angles in a three-dimensional ray-tracing model facilitates identification of bathymetric features associated with the arrivals. The responsible features were most commonly identified as local maxima that appear as steep-sided spires rising several hundred meters above the seafloor on the slope and near the base of Atlantis II. Arrival times for the predicted propagation paths are recreated by combining two-dimensional ray traces from the source to the bathymetric feature and from the bathymetric feature to the receiver to obtain modeled arrival times for comparison with observations. Multiple examples are analyzed, providing insight into likely contributors to the complex propagation in seamount environments. Forward modeling of the identified propagation paths using three-dimensional ray traces highlights challenges for ray-based acoustic modeling of propagation in the presence of highly variable bathymetry.},
+  AUTHOR = {Jerome, Thomas and Ballard, Megan and Bonnel, Julien and Sagers, Jason},
+  DATE = {2025-08},
+  DOI = {10.1121/10.0039041},
+  JOURNALTITLE = {The Journal of the Acoustical Society of America},
+  NUMBER = {2},
+  PAGES = {1377--1385},
+  TITLE = {Observation and modeling of out-of-plane arrivals on near-bottom recorders at the Atlantis II Seamount Complex},
+  VOLUME = {158},
+}
+
+@URL{dushaw2015-woa,
+  AUTHOR = {Dushaw, Brian},
+  URL = {https://staff.washington.edu/dushaw/WOA/},
+  TITLE = {Worldwide Sound Speed, Temperature, Salinity, and Buoyancy from the NOAA World Ocean Atlas},
+  URLDATE = {2015-07-10},
+}
+
+@ARTICLE{alexander2013-aa,
+  AUTHOR = {Alexander, Polly and Duncan, Alec and Bose, Neil and Smith, Daniel},
+  URL = {http://www.acoustics.asn.au/journal/2013/2013_41_1_Alexander.pdf},
+  DATE = {2013},
+  JOURNALTITLE = {Acoustics Australia},
+  NUMBER = {1},
+  PAGES = {79--89},
+  TITLE = {Modelling acoustic transmission loss due to sea ice cover},
+  VOLUME = {41},
+}
+
+@MISC{nsidc1998-ice,
+  AUTHOR = {{National Snow And Ice Data Center}},
+  URL = {http://nsidc.org/data/G01360/versions/1},
+  DATE = {1998},
+  DOI = {10.7265/N54Q7RWK},
+  HOWPUBLISHED = {NSIDC Data set ID G01360, Version 1},
+  TITLE = {Submarine Upward Looking Sonar Ice Draft Profile Data and Statistics},
+}
+
