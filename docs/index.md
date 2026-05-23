@@ -9,6 +9,7 @@ BELLHOP is a beam/ray tracing model by Michael B. Porter (Heat, Light, and Sound
 - Both 2D (range-depth) and 3D (range-depth-azimuth) propagation modeling
 
 The core algorithms implement:
+
 - Geometric ray tracing
 - Gaussian beam superposition for smooth field predictions
 - Arrival time and amplitude calculations
@@ -53,5 +54,6 @@ Acoustics Toolbox project and subsequent development efforts:
 - **[Acoustics Toolbox Changes](page/changes_at.html)**
 
 ### Miscellaneous
+- [Code repository](https://github.com/avc-adelaide/aubellhop)
 - [Repository information](page/technical.html)
 - [Compiler notes from original Makefile](page/compiler.html)
