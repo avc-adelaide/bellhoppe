@@ -659,7 +659,7 @@ CONTAINS
              ELSE
                 IF ( hnew >= h ) THEN
                    WRITE( PRTFile, * ) 'StepToBdry3D Top BHC_WARN_TRIDIAG_H_GROWING'
-                END
+                END IF
                 h = hnew
              END IF
              IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D Top tri diag crossing hnew dot(n, d0) dot(n, d)', &
