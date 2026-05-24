@@ -87,8 +87,9 @@ CONTAINS
        WRITE( PRTFile, * ) 'Number of altimetry points in x', NatiPts( 1 )
 
        ALLOCATE( TopGlobalx( MAX( NatiPts( 1 ), 3 ) ), Stat = IAllocStat )
-       IF ( IAllocStat /= 0 ) &
+       IF ( IAllocStat /= 0 ) THEN
           CALL ERROUT( 'BELLHOP3D:ReadATI3D', 'Insufficient memory for altimetry data: reduce # ati points' )
+       END IF
 
        TopGlobalx( 3 ) = -999.9
        READ(  ATIFile, * ) TopGlobalx( 1 : NatiPts( 1 ) )
@@ -105,8 +106,9 @@ CONTAINS
        WRITE( PRTFile, * ) 'Number of altimetry points in y', NatiPts( 2 )
 
        ALLOCATE( TopGlobaly( MAX( NatiPts( 2 ), 3 ) ), Stat = IAllocStat )
-       IF ( IAllocStat /= 0 ) &
+       IF ( IAllocStat /= 0 ) THEN
           CALL ERROUT( 'BELLHOP3D:ReadATI3D', 'Insufficient memory for altimetry data: reduce # ati points' )
+       END IF
 
        TopGlobaly( 3 ) = -999.9
        READ(  ATIFile, * ) TopGlobaly( 1 : NatiPts( 2 ) )
@@ -122,8 +124,9 @@ CONTAINS
 
        ! z values
        ALLOCATE( Top( NatiPts( 1 ), NatiPts( 2 ) ), Temp( NatiPts( 1 ) ), Stat = IAllocStat )
-       IF ( IAllocStat /= 0 ) &
+       IF ( IAllocStat /= 0 ) THEN
             CALL ERROUT( 'BELLHOP3D:ReadATI3D', 'Insufficient memory for altimetry data: reduce # ati points' )
+       END IF
 
        WRITE( PRTFile, * )
 
@@ -228,8 +231,9 @@ CONTAINS
        WRITE( PRTFile, * ) 'Number of bathymetry points in x', NbtyPts( 1 )
 
        ALLOCATE( BotGlobalx( MAX( NbtyPts( 1 ), 3 ) ), Stat = IAllocStat )
-       IF ( IAllocStat /= 0 ) &
+       IF ( IAllocStat /= 0 ) THEN
           CALL ERROUT( 'BELLHOP3D:ReadBTY3D', 'Insufficient memory for bathymetry data: reduce # bty points' )
+       END IF
 
        BotGlobalx( 3 ) = -999.9
        READ(  BTYFile, * ) BotGlobalx( 1 : NbtyPts( 1 ) )
@@ -246,8 +250,9 @@ CONTAINS
        WRITE( PRTFile, * ) 'Number of bathymetry points in y', NbtyPts( 2 )
 
        ALLOCATE( BotGlobaly( MAX( NbtyPts( 2 ), 3 ) ), Stat = IAllocStat )
-       IF ( IAllocStat /= 0 ) &
+       IF ( IAllocStat /= 0 ) THEN
           CALL ERROUT( 'BELLHOP3D:ReadBTY3D', 'Insufficient memory for bathymetry data: reduce # bty points' )
+       END IF
 
        BotGlobaly( 3 ) = -999.9
        READ(  BTYFile, * ) BotGlobaly( 1 : NbtyPts( 2 ) )
@@ -263,8 +268,9 @@ CONTAINS
 
        ! z values
        ALLOCATE( Bot( NbtyPts( 1 ), NbtyPts( 2 ) ), Temp( NbtyPts( 1 ) ), Stat = IAllocStat )
-       IF ( IAllocStat /= 0 ) &
+       IF ( IAllocStat /= 0 ) THEN
           CALL ERROUT( 'BELLHOP3D:ReadBTY3D', 'Insufficient memory for bathymetry data: reduce # bty points' )
+       END IF
 
        WRITE( PRTFile, * )
 

@@ -303,9 +303,10 @@ CONTAINS
                   CALL ERROUT( 'InfluenceCervenyCart', 'Unknown image index' )
                END SELECT
 
-                IF ( omega * AIMAG( gamma ) * deltaz ** 2 < iBeamWindow2 ) &
+                IF ( omega * AIMAG( gamma ) * deltaz ** 2 < iBeamWindow2 ) THEN
                      contri =  contri + Polarity * ray2D( iS )%Amp * Hermite( deltaz, RadiusMax, 2.0 * RadiusMax ) * &
                      EXP( -i * ( omega * ( tau + rayt( 2 ) * deltaz + gamma * deltaz**2 ) - ray2D( iS )%Phase ) )
+                END IF
              END DO ImageLoop
 
              ! contribution to field
@@ -917,8 +918,9 @@ CONTAINS
     END IF
 
     phaseInt = ray2D( phaseStepNum )%Phase + phase
-    IF ( IsAtCaustic( .TRUE. ) ) &
+    IF ( IsAtCaustic( .TRUE. ) ) THEN
        phaseInt = phase + pi / 2.
+    END IF
 
   END SUBROUTINE FinalPhase
 
@@ -930,8 +932,9 @@ CONTAINS
 
     LOGICAL, INTENT( IN ) :: qleq0
 
-    IF ( IsAtCaustic( qleq0 ) ) &
+    IF ( IsAtCaustic( qleq0 ) ) THEN
        phase = phase + pi / 2.
+    END IF
 
   END SUBROUTINE IncPhaseIfCaustic
 

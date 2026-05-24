@@ -179,9 +179,10 @@ SUBROUTINE BellhopCore
 
   Angles%alpha  = DegRad * Angles%alpha   ! convert to radians
   Angles%Dalpha = 0.0
-  IF ( Angles%Nalpha /= 1 ) &
+  IF ( Angles%Nalpha /= 1 ) THEN
        Angles%Dalpha = ( Angles%alpha( Angles%Nalpha ) - Angles%alpha( 1 ) ) / ( Angles%Nalpha - 1 )
        ! angular spacing between beams
+  END IF
 
   ! convert range-dependent geoacoustic parameters from user to program units
   IF ( atiType( 2 : 2 ) == 'L' ) THEN
@@ -213,8 +214,9 @@ SUBROUTINE BellhopCore
   SELECT CASE ( Beam%RunType( 1 : 1 ) )
   CASE ( 'C', 'S', 'I' )        ! TL calculation
      ALLOCATE ( U( NRz_per_range, Pos%NRr ), Stat = IAllocStat )
-     IF ( IAllocStat /= 0 ) &
+     IF ( IAllocStat /= 0 ) THEN
           CALL ERROUT( 'BELLHOP', 'Insufficient memory for TL matrix: reduce Nr * NRz'  )
+     END IF
   CASE ( 'A', 'a', 'R', 'E' )   ! Arrivals calculation
      ALLOCATE ( U( 1, 1 ), Stat = IAllocStat )   ! open a dummy variable
   CASE DEFAULT
@@ -293,8 +295,9 @@ SUBROUTINE BellhopCore
            Amp0 = ( 1 - s ) * SrcBmPat( IBP, 2 ) + s * SrcBmPat( IBP + 1, 2 )
 
            ! Lloyd mirror pattern for semi-coherent option
-           IF ( Beam%RunType( 1 : 1 ) == 'S' ) &
+           IF ( Beam%RunType( 1 : 1 ) == 'S' ) THEN
               Amp0 = Amp0 * SQRT( 2.0 ) * ABS( SIN( omega / c * xs( 2 ) * SIN( Angles%alpha( ialpha ) ) ) )
+           END IF
 
            ! show progress ...
            IF ( MOD( ialpha - 1, max( Angles%Nalpha / 50, 1 ) ) == 0 ) THEN

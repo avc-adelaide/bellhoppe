@@ -80,8 +80,9 @@ CONTAINS
 
        ALLOCATE( Top( NatiPts ), Stat = IAllocStat )
        ! ALLOCATE( phi( NatiPts ), Stat = IAllocStat ) ! LP: Removed as seems to have been moved to ComputeBdryTangentNormal
-       IF ( IAllocStat /= 0 ) &
+       IF ( IAllocStat /= 0 ) THEN
             CALL ERROUT( 'BELLHOP:ReadATI', 'Insufficient memory for altimetry data: reduce # ati points' )
+       END IF
 
        WRITE( PRTFile, * )
        WRITE( PRTFile, * ) ' Range (km)  Depth (m)'
@@ -170,8 +171,9 @@ CONTAINS
 
        NbtyPts = NbtyPts + 2   ! we'll be extending the bathymetry to infinity on both sides
        ALLOCATE( Bot( NbtyPts ), Stat = IAllocStat )
-       IF ( IAllocStat /= 0 ) &
+       IF ( IAllocStat /= 0 ) THEN
             CALL ERROUT( 'BELLHOP:ReadBTY', 'Insufficient memory for bathymetry data: reduce # bty points' )
+       END IF
 
        WRITE( PRTFile, * )
        BathyTypeB: SELECT CASE ( btyType( 2 : 2 ) )

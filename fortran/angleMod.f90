@@ -66,9 +66,11 @@ CONTAINS
 
     ! full 360-degree sweep? remove duplicate beam
     ! LP: Changed from TINY( ), see README.md.
-    IF ( Angles%Nalpha > 1 .AND. ABS( MOD( Angles%alpha( Angles%Nalpha ) - Angles%alpha( 1 ), &
-       360.0D0 ) ) < 10.0 * SPACING( 360.0D0 ) ) &
+    IF ( Angles%Nalpha > 1 .AND. &
+         ABS( MOD( Angles%alpha( Angles%Nalpha ) - Angles%alpha( 1 ), 360.0D0 ) ) &
+           < 10.0 * SPACING( 360.0D0 ) ) THEN
        Angles%Nalpha = Angles%Nalpha - 1
+    END IF
 
     WRITE( PRTFile, * ) '__________________________________________________________________________'
     WRITE( PRTFile, * )
@@ -79,12 +81,14 @@ CONTAINS
     IF ( Angles%Nalpha >= 1 ) WRITE( PRTFile, "( 5G14.6 )" ) Angles%alpha( 1 : MIN( Angles%Nalpha, Number_to_Echo ) )
     IF ( Angles%Nalpha > Number_to_Echo ) WRITE( PRTFile,  "( G14.6 )" ) ' ... ', Angles%alpha( Angles%Nalpha )
 
-    IF ( Angles%Nalpha > 1 .AND. Angles%alpha( Angles%Nalpha ) == Angles%alpha( 1 ) ) &
+    IF ( Angles%Nalpha > 1 .AND. Angles%alpha( Angles%Nalpha ) == Angles%alpha( 1 ) ) THEN
          CALL ERROUT( 'ReadRayElevationAngles', 'First and last beam take-off angle are identical' )
+    END IF
 
     IF ( TopOpt( 6 : 6 ) == 'I' ) THEN
-       IF ( Angles%iSingle_alpha < 1 .OR. Angles%iSingle_alpha > Angles%Nalpha ) &
+       IF ( Angles%iSingle_alpha < 1 .OR. Angles%iSingle_alpha > Angles%Nalpha ) THEN
             CALL ERROUT( 'ReadRayElevationAngles', 'Selected beam, iSingle_alpha not in [ 1, Angles%Nalpha ]' )
+       END IF
     END IF
 
   END SUBROUTINE ReadRayElevationAngles
@@ -122,8 +126,9 @@ CONTAINS
     ! full 360-degree sweep? remove duplicate beam
     ! LP: Changed from TINY( ), see README.md.
     IF ( Angles%Nbeta > 1 .AND. ABS( MOD( Angles%beta( Angles%Nbeta ) - Angles%beta( 1 ), &
-       360.0D0 ) ) < 10.0 * SPACING( 360.0D0 ) ) &
+       360.0D0 ) ) < 10.0 * SPACING( 360.0D0 ) ) THEN
        Angles%Nbeta = Angles%Nbeta - 1
+    END IF
 
     ! Nx2D CASE: beams must lie on rcvr radials--- replace beta with theta
     IF ( RunType( 6 : 6 ) == '2' .AND. RunType( 1 : 1 ) /= 'R' ) THEN
@@ -145,12 +150,14 @@ CONTAINS
     IF ( Angles%Nbeta >= 1 ) WRITE( PRTFile, "( 5G14.6 )" ) Angles%beta( 1 : MIN( Angles%Nbeta, Number_to_Echo ) )
     IF ( Angles%Nbeta > Number_to_Echo ) WRITE( PRTFile, "( G14.6 )" ) ' ... ', Angles%beta( Angles%Nbeta )
 
-    IF ( Angles%Nbeta > 1 .AND. Angles%beta( Angles%Nbeta ) == Angles%beta( 1 ) ) &
+    IF ( Angles%Nbeta > 1 .AND. Angles%beta( Angles%Nbeta ) == Angles%beta( 1 ) ) THEN
          CALL ERROUT( 'ReadRayBearingAngles', 'First and last beam take-off angle are identical' )
+    END IF
 
     IF ( TopOpt( 6 : 6 ) == 'I' ) THEN
-       IF ( Angles%iSingle_beta < 1 .OR. Angles%iSingle_beta > Angles%Nbeta ) &
+       IF ( Angles%iSingle_beta < 1 .OR. Angles%iSingle_beta > Angles%Nbeta ) THEN
             CALL ERROUT( 'ReadRayBearingAngles', 'Selected beam, iSingle_beta not in [ 1, Angles%Nbeta ]' )
+       END IF
     END IF
     Angles%beta  = DegRad * Angles%beta   ! convert to radians
 

@@ -189,8 +189,9 @@ CONTAINS
 
     ! full 360-degree sweep? remove duplicate angle
     IF ( Pos%Ntheta > 1 ) THEN
-       IF ( ABS( MOD( Pos%theta( Pos%Ntheta ) - Pos%theta( 1 ), 360.0 ) ) < 10.0 * TINY( 1.0D0 ) ) &
+       IF ( ABS( MOD( Pos%theta( Pos%Ntheta ) - Pos%theta( 1 ), 360.0 ) ) < 10.0 * TINY( 1.0D0 ) ) THEN
           Pos%Ntheta = Pos%Ntheta - 1
+       END IF
     END IF
 
     ! calculate angular spacing

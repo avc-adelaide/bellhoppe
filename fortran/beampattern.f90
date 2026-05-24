@@ -47,8 +47,9 @@ CONTAINS
        WRITE( PRTFile, * ) 'Number of source beam pattern points', NSBPPts
 
        ALLOCATE( SrcBmPat( NSBPPts, 2 ), Stat = IAllocStat )
-       IF ( IAllocStat /= 0 ) &
+       IF ( IAllocStat /= 0 ) THEN
             CALL ERROUT( 'BELLHOP-ReadPat', 'Insufficient memory for source beam pattern data: reduce # SBP points' )
+       END IF
 
        WRITE( PRTFile, * )
        WRITE( PRTFile, * ) ' Angle (degrees)  Power (dB)'
@@ -66,8 +67,9 @@ CONTAINS
        SrcBmPat( 2, : ) = [  180.0, 0.0 ]
     END IF
 
-    IF ( .NOT. monotonic( SrcBmPat( :, 1 ) , NSBPPts ) ) &
+    IF ( .NOT. monotonic( SrcBmPat( :, 1 ) , NSBPPts ) ) THEN
        CALL ERROUT( 'beampattern : ReadPat', 'Source beam-pattern angles are not monotonic' )
+    END IF
 
     SrcBmPat( :, 2 ) = 10 ** ( SrcBmPat( :, 2 ) / 20 )  ! convert dB to linear scale
 

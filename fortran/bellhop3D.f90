@@ -137,9 +137,10 @@ SUBROUTINE BellhopCore
 
   Angles%alpha  = DegRad * Angles%alpha   ! convert to radians
   Angles%Dalpha = 0.0
-  IF ( Angles%Nalpha /= 1 ) &
+  IF ( Angles%Nalpha /= 1 ) THEN
      Angles%Dalpha = ( Angles%alpha( Angles%Nalpha ) - Angles%alpha( 1 ) ) / ( Angles%Nalpha - 1 )
      ! angular spacing between beams
+  END IF
   SELECT CASE ( Beam%RunType( 5 : 5 ) )
   CASE ( 'I' )
      NRz_per_range = 1         ! irregular grid
@@ -155,8 +156,9 @@ SUBROUTINE BellhopCore
   CASE ( 'C', 'S', 'I' )        ! TL calculation
      ALLOCATE ( P( Pos%Ntheta, NRz_per_range, Pos%NRr ), Stat = IAllocStat )
      ALLOCATE ( U( NRz_per_range, Pos%NRr ), Stat = IAllocStat )    ! used for 2D option
-     IF ( IAllocStat /= 0 ) &
+     IF ( IAllocStat /= 0 ) THEN
           CALL ERROUT( 'BELLHOP', 'Insufficient memory for TL matrix: reduce Nr * NRz'  )
+     END IF
   CASE ( 'A', 'a', 'R', 'E' )   ! Arrivals calculation
      ALLOCATE ( P( 1, 1, 1 ), Stat = IAllocStat )   ! open a dummy variable
      ALLOCATE ( U( 1, 1 ),    Stat = IAllocStat )   ! open a dummy variable
@@ -267,8 +269,9 @@ SUBROUTINE BellhopCore
                        Amp0 = ( 1             -                    s ) * SrcBmPat( IBP, 2 ) + s * SrcBmPat( IBP + 1, 2 )
 
                        ! Lloyd mirror pattern for semi-coherent option
-                       IF ( Beam%RunType( 1 : 1 ) == 'S' ) &
+                       IF ( Beam%RunType( 1 : 1 ) == 'S' ) THEN
                           Amp0 = Amp0 * SQRT( 2.0 ) * ABS( SIN( omega / c0 * xs_3D( 3 ) * SIN( Angles%alpha( ialpha ) ) ) )
+                       END IF
 
                        SELECT CASE ( Beam%RunType( 6 : 6 ) )   ! flag for 2D or 3D calculation
                        CASE ( '2' )   ! Nx2D calculation, neglecting horizontal refraction
@@ -1037,8 +1040,9 @@ SUBROUTINE TraceRay3D( alpha, beta, epsilon, Amp0 )
      CALL Distances3D( ray3D( is1 )%x, Topx, Botx, Topn, Botn, DistEndTop, DistEndBot )
 
      IF ( topRefl ) THEN
-        IF ( STEP_DEBUGGING ) &
+        IF ( STEP_DEBUGGING ) THEN
            WRITE( PRTFile, * ) 'Top reflecting'
+        END IF
         IF ( atiType == 'C' ) THEN
            s1 = ( ray3D( is1 )%x( 1 ) - Topx( 1 ) ) / ( xTopSeg( 2 ) - xTopSeg( 1 ) )   ! proportional distance along segment
            s2 = ( ray3D( is1 )%x( 2 ) - Topx( 2 ) ) / ( yTopSeg( 2 ) - yTopSeg( 1 ) )   ! proportional distance along segment
@@ -1070,8 +1074,9 @@ SUBROUTINE TraceRay3D( alpha, beta, epsilon, Amp0 )
         CALL Distances3D( ray3D( is + 1 )%x, Topx,  Botx, Topn, Botn, DistEndTop, DistEndBot )
 
      ELSE IF ( botRefl ) THEN
-        IF ( STEP_DEBUGGING ) &
+        IF ( STEP_DEBUGGING ) THEN
            WRITE( PRTFile, * ) 'Bottom reflecting'
+        END IF
 
         IF ( btyType == 'C' ) THEN
            s1 = ( ray3D( is1 )%x( 1 ) - Botx( 1 ) ) / ( xBotSeg( 2 ) - xBotSeg( 1 ) )   ! proportional distance along segment

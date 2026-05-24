@@ -118,8 +118,9 @@ CONTAINS
     CALL UpdateRayPQ ( ray2, ray0, hw0, d_phi0, d_p_tilde0, d_p_hat0, d_q_tilde0, d_q_hat0 )
     CALL UpdateRayPQ ( ray2, ray2, hw1, d_phi1, d_p_tilde1, d_p_hat1, d_q_tilde1, d_q_hat1 ) ! Not a typo, accumulating into 2
 
-    IF ( STEP_DEBUGGING ) &
+    IF ( STEP_DEBUGGING ) THEN
        WRITE( PRTFile, * ) 'ray2%t', ray2%t
+    END IF
 
     ray2%Amp       = ray0%Amp
     ray2%Phase     = ray0%Phase
@@ -299,8 +300,7 @@ CONTAINS
     REAL (KIND=8) :: over_diag_amount
     LOGICAL       :: newSide, newOnEdge
 
-    IF ( STEP_DEBUGGING ) &
-       WRITE( PRTFile, * ) 'ReduceStep3D'
+    IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'ReduceStep3D'
 
     ! Detect SSP interface or boundary crossing and reduce step, if necessary, to land on that crossing.
     ! Keep in mind possibility that user put source right on an interface
@@ -316,12 +316,10 @@ CONTAINS
     IF ( ABS( urayt( 3 ) ) > EPSILON( hInt ) ) THEN
        IF        ( SSP%z( iSegz0     ) > x(  3 ) .AND. iSegz0     > 1  ) THEN
           hInt = ( SSP%z( iSegz0     ) - x0( 3 ) ) / urayt( 3 )
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'Shallower bound SSP Z > z; hInt', SSP%z( iSegz0     ), x( 3 ), hInt
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Shallower bound SSP Z > z; hInt', SSP%z( iSegz0     ), x( 3 ), hInt
        ELSE IF   ( SSP%z( iSegz0 + 1 ) < x(  3 ) .AND. iSegz0 + 1 < SSP%Nz ) THEN
           hInt = ( SSP%z( iSegz0 + 1 ) - x0( 3 ) ) / urayt( 3 )
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'Deeper bound SSP Z < z; hInt', SSP%z( iSegz0 + 1 ), x( 3 ), hInt
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Deeper bound SSP Z < z; hInt', SSP%z( iSegz0 + 1 ), x( 3 ), hInt
        END IF
     END IF
 
@@ -329,22 +327,19 @@ CONTAINS
     hBoxx    = huge( hBoxx )
     IF ( ABS( x( 1 ) - xs_3D( 1 ) ) > Beam%Box%x ) THEN
        hBoxx = ( Beam%Box%x - ABS( ( x0( 1 ) - xs_3D( 1 ) ) ) ) / ABS( urayt( 1 ) )
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'Beam box crossing X, hBoxx', Beam%Box%x, hBoxx
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Beam box crossing X, hBoxx', Beam%Box%x, hBoxx
     END IF
 
     hBoxy    = huge( hBoxy )
     IF ( ABS( x( 2 ) - xs_3D( 2 ) ) > Beam%Box%y ) THEN
        hBoxy = ( Beam%Box%y - ABS( ( x0( 2 ) - xs_3D( 2 ) ) ) ) / ABS( urayt( 2 ) )
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'Beam box crossing Y, hBoxy', Beam%Box%y, hBoxy
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Beam box crossing Y, hBoxy', Beam%Box%y, hBoxy
     END IF
 
     hBoxz    = huge( hBoxz )
     IF ( ABS( x( 3 )              ) > Beam%Box%z ) THEN
        hBoxz = ( Beam%Box%z - ABS(   x0( 3 )                ) ) / ABS( urayt( 3 ) )
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'Beam box crossing Z, hBoxz', Beam%Box%z, hBoxz
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Beam box crossing Z, hBoxz', Beam%Box%z, hBoxz
     END IF
 
     ! top crossing
@@ -354,8 +349,7 @@ CONTAINS
     IF ( DOT_PRODUCT( Topn, d )  >= 0.0D0 ) THEN
        d0   = x0 - Topx   ! vector from top    node to ray origin
        hTop = -DOT_PRODUCT( d0, Topn ) / DOT_PRODUCT( urayt, Topn )
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'Top crossing hTop', hTop
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Top crossing hTop', hTop
     END IF
 
     ! bottom crossing
@@ -366,8 +360,7 @@ CONTAINS
     IF ( DOT_PRODUCT( Botn, d ) >= 0.0D0 ) THEN
        d0   = x0 - Botx   ! vector from bottom node to ray origin
        hBot = -DOT_PRODUCT( d0, Botn ) / DOT_PRODUCT( urayt, Botn )
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'Bottom crossing hBot', hBot
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Bottom crossing hBot', hBot
     END IF
 
     ! top/bottom/ocean segment crossing in x
@@ -383,12 +376,10 @@ CONTAINS
     IF ( ABS( urayt( 1 ) ) > EPSILON( hxSeg ) ) THEN
        IF          ( x(  1 ) < xSeg( 1 ) ) THEN
           hxSeg = -( x0( 1 ) - xSeg( 1 ) ) / urayt( 1 )
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'Min bound SSP X > x; hxSeg', xSeg( 1 ), x( 1 ), hxSeg
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Min bound SSP X > x; hxSeg', xSeg( 1 ), x( 1 ), hxSeg
        ELSE IF     ( x(  1 ) > xSeg( 2 ) ) THEN
           hxSeg = -( x0( 1 ) - xSeg( 2 ) ) / urayt( 1 )
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'Max bound SSP X < x; hxSeg', xSeg( 2 ), x( 1 ), hxSeg
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Max bound SSP X < x; hxSeg', xSeg( 2 ), x( 1 ), hxSeg
        END IF
     END IF
 
@@ -406,12 +397,10 @@ CONTAINS
     IF ( ABS( urayt( 2 ) ) > EPSILON( hySeg ) ) THEN
        IF          ( x(  2 ) < ySeg( 1 ) ) THEN
           hySeg = -( x0( 2 ) - ySeg( 1 ) ) / urayt( 2 )
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'Min bound SSP Y > y; hySeg', ySeg( 1 ), x( 2 ), hySeg
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Min bound SSP Y > y; hySeg', ySeg( 1 ), x( 2 ), hySeg
        ELSE IF     ( x(  2 ) > ySeg( 2 ) ) THEN
           hySeg = -( x0( 2 ) - ySeg( 2 ) ) / urayt( 2 )
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'Max bound SSP Y < y; hySeg', ySeg( 2 ), x( 2 ), hySeg
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Max bound SSP Y < y; hySeg', ySeg( 2 ), x( 2 ), hySeg
        END IF
     END IF
 
@@ -427,17 +416,17 @@ CONTAINS
        IF ( newSide .NEQV. Top_td_side ) THEN
           newOnEdge = ( ABS( over_diag_amount ) < TRIDIAG_THRESH )
           IF ( newOnEdge ) THEN
-             IF ( STEP_DEBUGGING ) &
+             IF ( STEP_DEBUGGING ) THEN
                 WRITE( PRTFile, * ) 'ReduceStep3D Top naturally stepped to tri diag edge, h over_diag_amount', &
                    over_diag_amount
+             END IF
           ELSE
              hTopDiag = -DOT_PRODUCT( d0, tri_n ) / DOT_PRODUCT( urayt, tri_n )
              IF ( hTopDiag < 0.0D0 ) THEN
                 WRITE( PRTFile, * ) 'ReduceStep3D Top BHC_WARN_TRIDIAG_H_NEGATIVE'
                 hTopDiag = 0.0D0
              END IF
-             IF ( STEP_DEBUGGING ) &
-                WRITE( PRTFile, * ) 'Top tri diag crossing hTopDiag dot(n, d0) dot(n, d)', &
+             IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Top tri diag crossing hTopDiag dot(n, d0) dot(n, d)', &
                    hTopDiag, DOT_PRODUCT( tri_n, d0 ), over_diag_amount
           END IF
        END IF
@@ -455,17 +444,17 @@ CONTAINS
        IF ( newSide .NEQV. Bot_td_side ) THEN
           newOnEdge = ( ABS( over_diag_amount ) < TRIDIAG_THRESH )
           IF ( newOnEdge ) THEN
-             IF ( STEP_DEBUGGING ) &
+             IF ( STEP_DEBUGGING ) THEN
                 WRITE( PRTFile, * ) 'ReduceStep3D Bot naturally stepped to tri diag edge, h over_diag_amount', &
                    over_diag_amount
+             END IF
           ELSE
              hBotDiag = -DOT_PRODUCT( d0, tri_n ) / DOT_PRODUCT( urayt, tri_n )
              IF ( hBotDiag < 0.0D0 ) THEN
                 WRITE( PRTFile, * ) 'ReduceStep3D Bot BHC_WARN_TRIDIAG_H_NEGATIVE'
                 hBotDiag = 0.0D0
              END IF
-             IF ( STEP_DEBUGGING ) &
-                WRITE( PRTFile, * ) 'Bot tri diag crossing hBotDiag dot(n, d0) dot(n, d)', &
+             IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'Bot tri diag crossing hBotDiag dot(n, d0) dot(n, d)', &
                    hBotDiag, DOT_PRODUCT( tri_n, d0 ), over_diag_amount
           END IF
        END IF
@@ -513,15 +502,13 @@ CONTAINS
           x2 = x0 + h * urayt
           x2( 3 ) = SSP%z( iSegz0 )
           snapDim = 2
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'StepToBdry3D shallower h to', h, x2
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D shallower h to', h, x2
        ELSE IF ( SSP%z( iSegz0 + 1 ) < x2( 3 ) .AND. iSegz0 + 1 < SSP%Nz ) THEN
           h  = ( SSP%z( iSegz0 + 1 ) - x0( 3 ) ) / urayt( 3 )
           x2 = x0 + h * urayt
           x2( 3 ) = SSP%z( iSegz0 + 1 )
           snapDim = 2
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'StepToBdry3D deeper h to', h, x2
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D deeper h to', h, x2
        END IF
     END IF
 
@@ -531,24 +518,21 @@ CONTAINS
        x2 = x0 + h * urayt
        x2( 1 ) = xs_3D( 1 ) + SIGN( Beam%Box%x, x0( 1 ) - xs_3D( 1 ) )
        snapDim = 0
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'StepToBdry3D beam box crossing X h to', h, x2
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D beam box crossing X h to', h, x2
     END IF
     IF ( ABS( x2( 2 ) - xs_3D( 2 ) ) > Beam%Box%y ) THEN
        h = ( Beam%Box%y - ABS( ( x0( 2 ) - xs_3D( 2 ) ) ) ) / ABS( urayt( 2 ) )
        x2 = x0 + h * urayt
        x2( 2 ) = xs_3D( 2 ) + SIGN( Beam%Box%y, x0( 2 ) - xs_3D( 2 ) )
        snapDim = 1
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'StepToBdry3D beam box crossing Y h to', h, x2
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D beam box crossing Y h to', h, x2
     END IF
     IF ( ABS( x2( 3 )              ) > Beam%Box%z ) THEN
        h = ( Beam%Box%z - ABS(   x0( 3 )                ) ) / ABS( urayt( 3 ) )
        x2 = x0 + h * urayt
        x2( 3 ) =              SIGN( Beam%Box%z, x0( 3 )              )
        snapDim = 2
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'StepToBdry3D beam box crossing Y h to', h, x2
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D beam box crossing Y h to', h, x2
     END IF
 
     ! top crossing
@@ -566,8 +550,7 @@ CONTAINS
           x2( 3 ) = Topx( 3 )
        END IF
        snapDim = 2 ! Even if not flat, exactness in Z most important
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'StepToBdry3D top crossing h to', h, x2
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D top crossing h to', h, x2
        topRefl = .TRUE.
     ELSE
        topRefl = .FALSE.
@@ -585,8 +568,7 @@ CONTAINS
           x2( 3 ) = Botx( 3 )
        END IF
        snapDim = 2 ! Even if not flat, exactness in Z most important
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'StepToBdry3D bottom crossing h to', h, x2
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D bottom crossing h to', h, x2
        botRefl = .TRUE.
        ! Should not ever be able to cross both, but in case it does, make sure
        ! only the crossing we exactly landed on is active
@@ -612,8 +594,7 @@ CONTAINS
           snapDim = 0
           topRefl = .FALSE.
           botRefl = .FALSE.
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'StepToBdry3D X min bound h to', h, x2
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D X min bound h to', h, x2
        ELSE IF  ( x2( 1 ) > xSeg( 2 ) ) THEN
           h  = -( x0( 1 ) - xSeg( 2 ) ) / urayt( 1 )
           x2 = x0 + h * urayt
@@ -621,8 +602,7 @@ CONTAINS
           snapDim = 0
           topRefl = .FALSE.
           botRefl = .FALSE.
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'StepToBdry3D X max bound h to', h, x2
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D X max bound h to', h, x2
        END IF
     END IF
 
@@ -644,8 +624,7 @@ CONTAINS
           snapDim = 1
           topRefl = .FALSE.
           botRefl = .FALSE.
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'StepToBdry3D Y min bound h to', h, x2
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D Y min bound h to', h, x2
        ELSE IF  ( x2( 2 ) > ySeg( 2 ) ) THEN
           h  = -( x0( 2 ) - ySeg( 2 ) ) / urayt( 2 )
           x2 = x0 + h * urayt
@@ -653,8 +632,7 @@ CONTAINS
           snapDim = 1
           topRefl = .FALSE.
           botRefl = .FALSE.
-          IF ( STEP_DEBUGGING ) &
-             WRITE( PRTFile, * ) 'StepToBdry3D Y max bound h to', h, x2
+          IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D Y max bound h to', h, x2
        END IF
     END IF
 
@@ -669,21 +647,22 @@ CONTAINS
        IF ( newSide .NEQV. Top_td_side ) THEN
           newOnEdge = ( ABS( over_diag_amount ) < TRIDIAG_THRESH )
           IF ( newOnEdge ) THEN
-             IF ( STEP_DEBUGGING ) &
+             IF ( STEP_DEBUGGING ) THEN
                 WRITE( PRTFile, * ) 'StepToBdry3D Top naturally stepped to tri diag edge, h over_diag_amount', &
                    over_diag_amount
+             END IF
           ELSE
              hnew = -DOT_PRODUCT( d0, tri_n ) / DOT_PRODUCT( urayt, tri_n )
              IF ( hnew < 0.0D0 ) THEN
                 WRITE( PRTFile, * ) 'StepToBdry3D Top BHC_WARN_TRIDIAG_H_NEGATIVE'
                 h = 0.0D0
              ELSE
-                IF ( hnew >= h ) &
+                IF ( hnew >= h ) THEN
                    WRITE( PRTFile, * ) 'StepToBdry3D Top BHC_WARN_TRIDIAG_H_GROWING'
+                END
                 h = hnew
              END IF
-             IF ( STEP_DEBUGGING ) &
-                WRITE( PRTFile, * ) 'StepToBdry3D Top tri diag crossing hnew dot(n, d0) dot(n, d)', &
+             IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D Top tri diag crossing hnew dot(n, d0) dot(n, d)', &
                    hnew, DOT_PRODUCT( tri_n, d0 ), over_diag_amount
              x2 = x0 + h * urayt
              Top_td_justSteppedTo = .TRUE.
@@ -706,21 +685,22 @@ CONTAINS
        IF ( newSide .NEQV. Bot_td_side ) THEN
           newOnEdge = ( ABS( over_diag_amount ) < TRIDIAG_THRESH )
           IF ( newOnEdge ) THEN
-             IF ( STEP_DEBUGGING ) &
+             IF ( STEP_DEBUGGING ) THEN
                 WRITE( PRTFile, * ) 'StepToBdry3D Bot naturally stepped to tri diag edge, h over_diag_amount', &
                    over_diag_amount
+             END IF
           ELSE
              hnew = -DOT_PRODUCT( d0, tri_n ) / DOT_PRODUCT( urayt, tri_n )
              IF ( hnew < 0.0D0 ) THEN
                 WRITE( PRTFile, * ) 'StepToBdry3D Bot BHC_WARN_TRIDIAG_H_NEGATIVE'
                 h = 0.0D0
              ELSE
-                IF ( hnew >= h ) &
+                IF ( hnew >= h ) THEN
                    WRITE( PRTFile, * ) 'StepToBdry3D Bot BHC_WARN_TRIDIAG_H_GROWING'
+                END IF
                 h = hnew
              END IF
-             IF ( STEP_DEBUGGING ) &
-                WRITE( PRTFile, * ) 'StepToBdry3D Bot tri diag crossing hnew dot(n, d0) dot(n, d)', &
+             IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D Bot tri diag crossing hnew dot(n, d0) dot(n, d)', &
                    hnew, DOT_PRODUCT( tri_n, d0 ), over_diag_amount
              x2 = x0 + h * urayt
              Bot_td_justSteppedTo = .TRUE.
@@ -736,8 +716,7 @@ CONTAINS
        h = INFINITESIMAL_STEP_SIZE * Beam%deltas                 ! make sure we make some motion
        x2 = x0 + h * urayt
        snapDim = -1
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'StepToBdry3D small step forced h to ', h, x2
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D small step forced h to ', h, x2
        ! Recheck reflection conditions
        d = x2 - Topx ! vector from top to ray
        IF ( DOT_PRODUCT( Topn, d ) > EPSILON( d( 1 ) ) ) THEN
@@ -759,8 +738,7 @@ CONTAINS
           botRefl = .FALSE.
        END IF
     ELSE
-       IF ( STEP_DEBUGGING ) &
-          WRITE( PRTFile, * ) 'StepToBdry3D regular h to ', h, x2
+       IF ( STEP_DEBUGGING ) WRITE( PRTFile, * ) 'StepToBdry3D regular h to ', h, x2
     END IF
   END SUBROUTINE StepToBdry3D
 

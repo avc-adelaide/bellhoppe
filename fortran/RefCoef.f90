@@ -53,8 +53,9 @@ CONTAINS
 
        IF ( ALLOCATED( RBot ) ) DEALLOCATE( RBot )
        ALLOCATE( RBot( NBotPts ), Stat = IAllocStat )
-       IF ( IAllocStat /= 0 ) &
+       IF ( IAllocStat /= 0 ) THEN
           CALL ERROUT( 'ReadReflectionCoefficient', 'Insufficient memory for bot. refl. coef.: reduce # points'  )
+       END IF
 
        READ(  BRCFile, * ) ( RBot( itheta ), itheta = 1, NBotPts )
        IF ( .NOT. monotonic( RBot( : )%theta, NBotPts ) ) THEN
@@ -86,8 +87,9 @@ CONTAINS
 
        IF ( ALLOCATED( RTop ) ) DEALLOCATE( RTop )
        ALLOCATE( RTop( NTopPts ), Stat = IAllocStat )
-       IF ( iAllocStat /= 0 ) &
+       IF ( iAllocStat /= 0 ) THEN
           CALL ERROUT( 'ReadReflectionCoefficient', 'Insufficient memory for top refl. coef.: reduce # points'  )
+       END IF
 
        READ(  TRCFile, * ) ( RTop( itheta ), itheta = 1, NTopPts )
        IF ( .NOT. monotonic( RTop( : )%theta, NTopPts ) ) THEN
