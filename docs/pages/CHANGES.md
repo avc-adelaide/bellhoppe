@@ -2,6 +2,12 @@
 title: AUBELLHOP CHANGELOG
 ---
 
+## [0.2.1] - 2026-05-24
+
+* Some Fortran style fixes (fortitude C152)
+* Something went wrong in the uploading/publishing of the last release, so pushing this out quickly to fix
+
+
 ## [0.2] - 2026-05-23
 
 *Breaking changes*
@@ -15,6 +21,7 @@ title: AUBELLHOP CHANGELOG
 
 * Add Internoise 2026 conference paper to repository
 * Add extra Fortran style ignore flags (Fortitude updated and is more strict now)
+
 
 ## [0.1.9] - 2026-02-17
 
