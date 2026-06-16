@@ -122,8 +122,8 @@ def pyplot_env2d(
     _pyplt.xlabel('Range'+range_unit)
     _pyplt.ylabel('Depth (m)')
     ax.yaxis.set_inverted(True)
-    _pyplt.xlim([min_x - mgn_x, max_x + mgn_x])
-    _pyplt.ylim([max_y + mgn_y, min_y - mgn_y])
+    _pyplt.xlim((min_x - mgn_x, max_x + mgn_x))
+    _pyplt.ylim((max_y + mgn_y, min_y - mgn_y))
 
 def pyplot_env3d(env: Environment, surface_color: str = 'dodgerblue', bottom_color: str = 'peru', source_color: str = 'orangered', receiver_color: str = 'midnightblue',
                receiver_plot: bool | None = None, ax: Any | None = None, **kwargs: Any) -> None:
