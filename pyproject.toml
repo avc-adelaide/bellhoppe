@@ -53,6 +53,7 @@ dev = [
     "sphinxcontrib-mermaid",
     "quarto>=0.1.0",
     "fortitude-lint",
+    "ty",
 ]
 
 

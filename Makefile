@@ -181,7 +181,7 @@ lintp:
 
 typep: uvsync
 	@echo "Type checking with TY..."
-	uvx ty check python/$(PKGNAME) --exclude python/$(PKGNAME)/plotutils.py
+	uv run ty check python/$(PKGNAME) --exclude python/$(PKGNAME)/plotutils.py
 
 lintf:
 	@echo "Linting fortran with FORTITUDE..."
