@@ -109,8 +109,8 @@ clean: coverage-clean
 	-rm -f bin/*.exe
 	-rm -rf doc
 	find . -name '*.dSYM' -exec rm -r {} +
-	find . -name '*.png'  -exec rm -r {} +
-	find . -name '*.eps'  -exec rm -r {} +
+	find . -name '*.png' -not -path './publications/*' -exec rm -r {} +
+	find . -name '*.eps' -not -path './publications/*' -exec rm -r {} +
 	find . -name '*.mod'  -exec rm -r {} +
 	find . -name '*.grn'  -exec rm -r {} +
 	find . -name '*.shd.mat'  -exec rm -r {} +
