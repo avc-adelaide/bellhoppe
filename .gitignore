@@ -115,6 +115,10 @@ docs/quarto/demo.env
 *.bcf
 *.blg
 *.log
+*.nav
+*.snm
+*.toc
+*.vrb
 in26-robertson.pdf
 
 *.pdf
