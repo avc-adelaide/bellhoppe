@@ -544,6 +544,8 @@ class Environment(MutableMapping[str, Any]):
     def _check_env_ssp(self) -> None:
         assert isinstance(self['soundspeed'], pd.DataFrame), 'Soundspeed should always be a DataFrame by this point'
         assert self['soundspeed'].size > 1, "Soundspeed DataFrame should have been constructed internally to be two elements"
+        assert not (self._dimension == 3 and self['soundspeed_interp'] in (BHStrings.pchip, BHStrings.quadrilateral)), \
+            f"soundspeed_interp={self['soundspeed_interp']!r} is not supported by BELLHOP3D (only linear, nlinear, spline, hexahedral, or analytic)"
         if self['soundspeed_interp'] == BHStrings.spline:
             assert self['soundspeed'].shape[0] > 3, 'soundspeed profile must have at least 4 points for spline interpolation'
         else:
