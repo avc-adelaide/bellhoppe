@@ -357,7 +357,7 @@ class EnvironmentReader:
 
     def _read_gaussian_params(self, f: TextIO) -> None:
         """Read parameters for Cerveny Gaussian Beams, if applicable"""
-        if self.env['beam_type'] not in (BHStrings.gaussian_simple, BHStrings.ray):
+        if self.env['beam_type'] not in (BHStrings.cartesian, BHStrings.ray):
             return None
         line = _read_next_valid_line(f)
         parts = _parse_line(line, none_pad=3)

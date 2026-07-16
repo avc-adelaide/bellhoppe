@@ -159,6 +159,7 @@ CONTAINS
                    contri = Polarity * contri
 
                    SELECT CASE ( Beam%RunType( 1 : 1 ) )
+                   CASE ( 'C' )        ! coherent TL: contribution used as-is
                    CASE ( 'I', 'S' )   ! Incoherent or Semi-coherent TL
                       contri = ABS( contri ) ** 2
                    CASE DEFAULT
