@@ -57,11 +57,15 @@ install:
 clean:
 	-rm -f *.o *.mod *.exe *_genmod.f90 *.a
 
-# Suffix rules for automatic compilation
-.SUFFIXES: .f90 .o .mod
+# Cancel GNU make's built-in Modula-2 rule. When a same-named .mod file
+# exists (as it always does for Fortran modules), the built-in `%.o: %.mod`
+# rule outranks the .f90 suffix rule, so incremental builds silently skipped
+# recompiling edited .f90 files (symptom: "Circular influence.mod <-
+# influence.o dependency dropped" and stale objects judged up to date).
+%.o: %.mod
 
 # Fortran 90 source to object
-.f90.o:
+%.o: %.f90
 	$(FC) -c $(FFLAGS) $<
 
 # Module files are created as a side effect of object compilation
