@@ -392,6 +392,8 @@ def pyplot_transmission_loss(
                              tloss: Any,
                              env: Environment | None = None,
                              ax: Any | None = None,
+                             vmin: float | None = None,
+                             vmax: float | None = None,
                              **kwargs: Any
                             ) -> Axes:
     """Plots transmission loss with matplotlib.
@@ -402,6 +404,9 @@ def pyplot_transmission_loss(
         Complex transmission loss
     env : Environment, optional
         Environment definition
+    vmin, vmax : float, optional
+        Colour limits in dB (equivalent to Matlab's `clim`). Values outside the
+        range saturate at the end colours. Ignored if `levels` is passed explicitly.
     **kwargs
         Other keyword arguments applicable for `bellhop.plot.image()` are also supported
 
@@ -442,9 +447,11 @@ def pyplot_transmission_loss(
     x_mesh, y_mesh = np.meshgrid(np.linspace(xr[0], xr[1], trans_loss.shape[1]),
                                 np.linspace(yr[0], yr[1], trans_loss.shape[0]))
 
-    vmin = kwargs.get("vmin", None)
-    vmax = kwargs.get("vmax", None)
-    trans_loss = np.clip(trans_loss, vmin, vmax)
+    if vmin is not None or vmax is not None:
+        lo = vmin if vmin is not None else trans_loss.min()
+        hi = vmax if vmax is not None else trans_loss.max()
+        kwargs.setdefault("levels", np.linspace(lo, hi, 21))
+        kwargs.setdefault("extend", "both")
 
     _pyplt.contourf(x_mesh, y_mesh, trans_loss, cmap="jet", **kwargs)
     _pyplt.xlabel(xlabel)
