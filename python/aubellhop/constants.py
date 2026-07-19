@@ -203,8 +203,8 @@ class FlagMaps:
     beam_type = {
         "C": BHStrings.cartesian,
         "R": BHStrings.ray,
-        "G": BHStrings.hat_cartesian,
         "^": BHStrings.hat_cartesian,
+        "G": BHStrings.hat_cartesian,  # after "^" so the reverse map emits the documented flag
         "g": BHStrings.hat_ray,
         "S": BHStrings.gaussian_simple,
         "B": BHStrings.gaussian_cartesian,
