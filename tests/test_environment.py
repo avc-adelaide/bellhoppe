@@ -69,3 +69,32 @@ def test_env_dict_round_trip():
     np.testing.assert_array_equal(env_read['receiver_depth'], env_orig['receiver_depth'])
     np.testing.assert_array_equal(env_read['receiver_range'], env_orig['receiver_range'])
 
+
+
+def test_stale_count_after_reassignment():
+    """A count cached by check() must not survive reassignment of the array it describes.
+
+    Regression test: check() ran while receiver_range was the scalar default,
+    caching receiver_nrange = 1; a subsequently assigned array was then written
+    to the .env file as a raw numpy repr (brackets included).
+    """
+    env = bh.Environment(receiver_depth=np.arange(0, 25))
+    env.check()
+    assert env.receiver_nrange == 1
+
+    env.receiver_range = np.linspace(0, 100, 50)
+    env.check()
+    assert env.receiver_nrange == 50
+
+    env.receiver_depth = np.linspace(0, 20, 30)
+    env.check()
+    assert env.receiver_ndepth == 30
+
+
+def test_count_interpolation_shorthand_preserved():
+    """An explicit count with <= 2 values is the Bellhop first/last shorthand and must be kept."""
+    env = bh.Environment(receiver_depth=np.arange(0, 25),
+                         receiver_range=np.array([0.0, 100.0]),
+                         receiver_nrange=1001)
+    env.check()
+    assert env.receiver_nrange == 1001

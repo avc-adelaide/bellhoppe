@@ -234,14 +234,17 @@ def compute_eigenrays(env: Environment, source_depth_ndx: int = 0, receiver_dept
     >>> rays = bh.compute_eigenrays(env)
     >>> bh.plot_rays(rays, width=1000)
     """
-    env.check()
     env = env.copy()
+    env.check()
     if np.size(env['source_depth']) > 1:
         env['source_depth'] = env['source_depth'][source_depth_ndx]
+        env['source_ndepth'] = None  # count is recomputed on the next check()
     if np.size(env['receiver_depth']) > 1:
         env['receiver_depth'] = env['receiver_depth'][receiver_depth_ndx]
+        env['receiver_ndepth'] = None
     if np.size(env['receiver_range']) > 1:
         env['receiver_range'] = env['receiver_range'][receiver_range_ndx]
+        env['receiver_nrange'] = None
     output = compute(env, model, BHStrings.eigenrays, debug, fname_base, overwrite)
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
@@ -276,10 +279,11 @@ def compute_rays(env: Environment, source_depth_ndx: int = 0, model: Any | None 
     >>> rays = bh.compute_rays(env)
     >>> bh.plot_rays(rays, width=1000)
     """
+    env = env.copy()
     env.check()
     if np.size(env['source_depth']) > 1:
-        env = env.copy()
         env['source_depth'] = env['source_depth'][source_depth_ndx]
+        env['source_ndepth'] = None  # count is recomputed on the next check()
     output = compute(env, model, BHStrings.rays, debug, fname_base, overwrite)
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']
@@ -322,6 +326,7 @@ def compute_transmission_loss(env: Environment, source_depth_ndx: int = 0, mode:
     env.check()
     if np.size(env['source_depth']) > 1:
         env['source_depth'] = env['source_depth'][source_depth_ndx]
+        env['source_ndepth'] = None  # count is recomputed on the next check()
     output = compute(env, model, task, debug, fname_base, overwrite)
     assert isinstance(output, dict), "Single env should return single result"
     return output['results']

@@ -457,14 +457,18 @@ class Environment(MutableMapping[str, Any]):
 
         self.bottom_attenuation = self._float_or_default('bottom_attenuation', EnvDefaults.bottom_attenuation)
 
-        self.source_ndepth = self.source_ndepth or np.size(self.source_depth)
-        self.source_nrange = self.source_nrange or np.size(self.source_range)
-        self.source_ncrossrange = self.source_ncrossrange or np.size(self.source_cross_range)
+        self.source_ndepth = self._reconcile_count(self.source_ndepth, self.source_depth, 'source_ndepth', 'source_depth')
+        self.source_nrange = self._reconcile_count(self.source_nrange, self.source_range, 'source_nrange', 'source_range')
+        self.source_ncrossrange = self._reconcile_count(self.source_ncrossrange, self.source_cross_range,
+                                                        'source_ncrossrange', 'source_cross_range')
         self._source_num = self.source_ndepth * self.source_nrange * self.source_ncrossrange
 
-        self.receiver_ndepth      = self.receiver_ndepth      or np.size(self.receiver_depth)
-        self.receiver_nrange      = self.receiver_nrange      or np.size(self.receiver_range)
-        self.receiver_nbearing    = self.receiver_nbearing    or np.size(self.receiver_bearing)
+        self.receiver_ndepth   = self._reconcile_count(self.receiver_ndepth, self.receiver_depth,
+                                                       'receiver_ndepth', 'receiver_depth')
+        self.receiver_nrange   = self._reconcile_count(self.receiver_nrange, self.receiver_range,
+                                                       'receiver_nrange', 'receiver_range')
+        self.receiver_nbearing = self._reconcile_count(self.receiver_nbearing, self.receiver_bearing,
+                                                       'receiver_nbearing', 'receiver_bearing')
         self._receiver_num        = self.receiver_ndepth * self.receiver_nrange * self.receiver_nbearing
 
         # Beam angle ranges default to half-space if source is left-most, otherwise full-space:
@@ -505,6 +509,20 @@ class Environment(MutableMapping[str, Any]):
             np.max([self.simulation_cross_range_min, self.simulation_cross_range_scale * cross_range_max]))
 
         return self
+
+    def _reconcile_count(self, nn: int | None, arr: Any, nn_name: str, arr_name: str) -> int:
+        """Reconcile a stored point count against the array it describes.
+
+        A count differing from the array size is only meaningful for the Bellhop
+        first/last shorthand, where up to two values are given and the count tells
+        Bellhop how many points to interpolate between them. Any other mismatch
+        (typically a count cached by a previous `check()` before the array was
+        reassigned) is stale, so the array size wins.
+        """
+        na = int(np.size(arr))
+        if nn is not None and (nn == na or (na <= 2 and nn > na)):
+            return nn
+        return na
 
     def _float_or_default(self, key: str, default: float) -> float:
         """Return the current value if not None, otherwise return and set a default."""

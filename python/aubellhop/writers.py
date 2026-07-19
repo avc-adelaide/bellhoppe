@@ -254,12 +254,14 @@ class EnvironmentWriter:
         na = np.size(a)
         if nn is None:
             nn = na
-        if nn == 1 or na == 1:
-            self._print_env_line(fh, 1, f"{label} (single value)")
-            self._print_env_line(fh, f"{a} /",f"{label} (single value)")
+        if nn < na:
+            raise ValueError(f"Cannot write '{label}': point count ({nn}) is smaller than the number of values ({na})")
+        if na == 1:
+            self._print_env_line(fh, nn, f"{label} (single value)")
+            self._print_env_line(fh, f"{np.ravel(a)[0]} /", f"{label} (single value)")
         else:
             self._print_env_line(fh, nn, f"{label}s ({nn} values)")
-            for j in a:
+            for j in np.ravel(a):
                 self._print(fh, f"{j} ", newline=False)
             self._print(fh, " /")
 
