@@ -401,6 +401,7 @@ def pyplot_arrivals(
         norm = _mplc.BoundaryNorm(np.arange(nmax + 2) - 0.5, cmap.N)
         cbar = ax.figure.colorbar(_pyplt.cm.ScalarMappable(cmap=cmap, norm=norm), ax=ax, label='Bounces')
         cbar.set_ticks(np.arange(0, nmax + 1, max(1, int(np.ceil((nmax + 1) / 11)))).tolist())
+        cbar.ax.invert_yaxis()  # darkest (direct) arrival at the top, matching the tallest stems
 
 def pyplot_rays(
                 rays: Any,
