@@ -18,6 +18,27 @@ from .constants import BHStrings
 from .environment import Environment
 
 
+# Scale factors from seconds, for the `time_units` argument of `pyplot_arrivals`
+_TIME_UNITS = {'s': 1.0, 'ms': 1e3, 'us': 1e6, 'µs': 1e6, 'ns': 1e9}
+
+
+def _resolve_time_units(time_units: str, tmax: float) -> tuple[str, float]:
+    """Resolve a time unit name to its name and scale factor from seconds.
+
+    'auto' selects the largest unit that keeps the maximum time at or above one.
+    """
+    if time_units == 'auto':
+        if not np.isfinite(tmax) or tmax <= 0:
+            return 's', _TIME_UNITS['s']
+        for unit in ('s', 'ms', 'us'):
+            if tmax * _TIME_UNITS[unit] >= 1:
+                return unit, _TIME_UNITS[unit]
+        return 'ns', _TIME_UNITS['ns']
+    if time_units not in _TIME_UNITS:
+        raise ValueError(f"Unknown time_units {time_units!r}; expected 'auto' or one of {sorted(_TIME_UNITS)}")
+    return time_units, _TIME_UNITS[time_units]
+
+
 def pyplot_env2d(
                  env: Environment,
                  surface_color: str = 'dodgerblue',
@@ -268,7 +289,8 @@ def pyplot_ssp(env: Environment, ax: Any | None = None, **kwargs: Any) -> None:
         _pyplt.xlabel('Soundspeed (m/s)')
         _pyplt.ylabel('Depth (m)')
 
-def pyplot_arrivals(arrivals: Any, dB: bool = False, ax: Any | None = None, color: str = 'blue', **kwargs: Any) -> None:
+def pyplot_arrivals(arrivals: Any, dB: bool = False, ax: Any | None = None, color: str = 'blue',
+                    baseline: float | None = 0.0, time_units: str = 'auto', **kwargs: Any) -> None:
     """Plots the arrival times and amplitudes with matplotlib.
 
     Parameters
@@ -279,6 +301,14 @@ def pyplot_arrivals(arrivals: Any, dB: bool = False, ax: Any | None = None, colo
         True to plot in dB, False for linear scale
     color : str, default='blue'
         Line color (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
+    baseline : float, optional, default=0.0
+        Amplitude at which to draw a horizontal reference line spanning the plot
+        (equivalent to Matlab's `yline`). None to omit the line.
+    time_units : str, default='auto'
+        Units for the time axis: 'auto', or one of 's', 'ms', 'us' (or 'µs'), 'ns'.
+        Both the scaling of the arrival times and the axis label follow from this.
+        'auto' picks the largest unit keeping the latest arrival at or above one;
+        pin it explicitly to keep the axis consistent across several plots.
     **kwargs
         Other keyword arguments applicable for `bellhop.plot.plot()` are also supported
 
@@ -289,29 +319,29 @@ def pyplot_arrivals(arrivals: Any, dB: bool = False, ax: Any | None = None, colo
     >>> arrivals = bh.compute_arrivals(env)
     >>> bh.plot_arrivals(arrivals)
     """
+    times = np.real(np.asarray(arrivals.time_of_arrival))
+    tmax = float(np.max(np.abs(times))) if times.size else 0.0
+    time_units, tscale = _resolve_time_units(time_units, tmax)
+
     if ax is None:
         fig = _pyplt.figure()
         ax = fig.add_subplot()
 
-    t0 = min(arrivals.time_of_arrival)
-    t1 = max(arrivals.time_of_arrival)
-    if dB:
-        min_y = 20 * np.log10(np.max(np.abs(arrivals.arrival_amplitude))) - 60
-        ylabel = 'Amplitude (dB)'
-    else:
-        ylabel = 'Amplitude'
-        _pyplt.plot([t0, t1], [0, 0], color=color, **kwargs)
-        _pyplt.xlabel('Arrival time (s)')
-        _pyplt.ylabel(ylabel)
-        min_y = 0
+    ylabel = 'Amplitude, dB' if dB else 'Amplitude'
+    if baseline is not None:
+        ax.axhline(baseline, color='black', linewidth=0.8, zorder=0)
+
     for _, row in arrivals.iterrows():
-        t = row.time_of_arrival.real
+        t = row.time_of_arrival.real * tscale
         y = np.abs(row.arrival_amplitude)
         if dB:
-            y = max(20 * np.log10(_fi.epsilon + y), min_y)
-        _pyplt.plot([t, t], [min_y, y], color=color, **kwargs)
-        _pyplt.xlabel('Arrival time (s)')
-        _pyplt.ylabel(ylabel)
+            y = 20 * np.log10(_fi.epsilon + y)
+        ax.plot([t, t], [0, y], color=color, **kwargs)
+        ax.plot(t, y, color=color, marker='.', **kwargs)
+
+
+    ax.set_xlabel(f'Arrival time, {time_units}')
+    ax.set_ylabel(ylabel)
 
 def pyplot_rays(
                 rays: Any,
