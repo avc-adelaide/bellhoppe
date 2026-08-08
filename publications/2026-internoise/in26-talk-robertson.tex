@@ -9,7 +9,10 @@
 \setbeamertemplate{navigation symbols}{}
 
 \definecolor{maincolour}{HTML}{F57D1D}
+\definecolor{darkcolour}{HTML}{BE1E2D}
+\definecolor{lightcolour}{HTML}{FDBD0A}
 
+\setbeamercolor{alerted text}{fg=lightcolour}
 \setbeamercolor{structure}{fg=maincolour}
 \setbeamercolor{palette primary}{bg=maincolour, fg=white}
 \setbeamercolor{palette secondary}{bg=maincolour!80, fg=white}
@@ -71,8 +74,13 @@ Introducing aubellhop: a modern Python interface to the Bellhop underwater acous
 \begin{frame}
 \frametitle{Overview}
 
+\begin{columns}
+\column{0.4\textwidth}
+\parskip3ex\relax
 \tableofcontents
-
+\column{0.6\textwidth}
+\centerline{\includegraphics[width=1.1\linewidth]{fig/bellhop-structure.pdf}}
+\end{columns}
 \end{frame}
 
 \section{Outline of Bellhop}
@@ -102,6 +110,16 @@ Introducing aubellhop: a modern Python interface to the Bellhop underwater acous
 \includegraphics[height=0.8\textheight]{fig/demo-rays.pdf}
 \end{frame}
 \begin{frame}
+\frametitle{Bellhop does eigenrays\dots}
+\centering
+\includegraphics[height=0.8\textheight]{fig/demo-erays.pdf}
+\end{frame}
+\begin{frame}
+\frametitle{\dots from which we get arrivals\dots}
+\centering
+\includegraphics[height=0.8\textheight]{fig/demo-arr.pdf}
+\end{frame}
+\begin{frame}
 \frametitle{Bellhop does transmission loss\dots}
 \centering
 \includegraphics[height=0.8\textheight]{fig/demo-tlc.pdf}
@@ -127,14 +145,15 @@ Introducing aubellhop: a modern Python interface to the Bellhop underwater acous
 
 The main Bellhop developments:
 \begin{itemize}
-\item \texttt{Acoustics Toolbox (Fortran)} by \textcite{porter2024-at}
-\item \texttt{bellhopcpp} and \texttt{bellhopcuda} by \textcite{jaffe2025-bellhopcuda}
+\item \alert{bellhop} and \alert{bellhop3d}, in \texttt{Acoustics Toolbox} by \textcite{porter2024-at}\\ (Heat, Light, and Sound Research, Inc.)
+\item \alert{{bellhopcpp}} and \alert{{bellhopcuda}} by \textcite{jaffe2025-bellhopcuda}\\ (Marine Physical Lab at Scripps Oceanography)
 \end{itemize}
 Competitors or other ray/beam tracers, e.g.:
 \begin{itemize}
-\item \texttt{TRACEO3D} by \textcite{calazan2017-traceo3d}
-\item dBSea by Marshall Day Acoustics and Irwin Carr Consulting (\url{https://www.dbsea.co.uk})
+\item \alert{{TRACEO3D}} by \textcite{calazan2017-traceo3d}\\ (LARSyS, University of Algarve, Portugal)
+\item \alert{dBSea} by Marshall Day Acoustics and Irwin Carr Consulting (\url{https://www.dbsea.co.uk})
 \end{itemize}
+\& other proprietary software\dots
 \end{frame}
 
 \begin{frame}
@@ -162,6 +181,14 @@ Competitors or other ray/beam tracers, e.g.:
 
 \begin{frame}
 \sectionpage
+\end{frame}
+
+\begin{frame}
+\frametitle{aubellhop flowchart}
+
+\includegraphics<1>[width=\linewidth]{fig/flowchart-1.pdf}%
+\includegraphics<2>[width=\linewidth]{fig/flowchart-2.pdf}%
+
 \end{frame}
 
 \begin{frame}[fragile]
@@ -260,26 +287,32 @@ env = bh.Environment(
 \frametitle{Varying speed of sound}
 \begin{figure}
 \includegraphics[width=\linewidth]{fig/lev_ssp_rays.pdf}
-\caption{Eigenray analysis between a source and receiver with a 2D sound speed profile.}
+\caption{Eigenrays between a source and receiver with a 2D sound speed profile.}
 \end{figure}
 \end{frame}
 
 
 \begin{frame}[fragile]
-\frametitle{Varying surface conditions (inspired by \textcite{alexander2013-aa})}
+\frametitle{Varying surface conditions}
+\framesubtitle{Inspired by \textcite{alexander2013-aa}}
 
 Surface profile data extracted from a database of submarine upwards looking sonar data from the National Snow And Ice Data Center \cite{nsidc1998-ice}.
 
 \small
 \begin{verbatim}
 env = bh.Environment(
-    source_depth=20,  bottom_depth=50,
+    source_depth=20,
+    bottom_depth=50,
+    
     surface_depth=ice_data, # see code for details
+    
     surface_boundary_condition="acousto-elastic",
-    surface_soundspeed=3500, surface_density=890,
+    surface_soundspeed=3500, 
+    surface_density=890,
     surface_attenuation=0.4,
     attenuation_units="dB per wavelength",
-    beam_num=20, beam_angle_min=-45, beam_angle_max=45, )
+    
+    beam_num=20, beam_angle_min=-45, beam_angle_max=45 )
 \end{verbatim}
 
 \end{frame}
@@ -363,6 +396,16 @@ Many software development tools used to ensure this is useful beyond just me:
 \includegraphics[width=0.8\linewidth]{fig/cov-detailed}
 \caption{Example of coverage report summary output (top) and detailed per-file output (bottom).}
 \end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Tutorials}
+\begin{figure}
+\centering
+\includegraphics[width=0.8\linewidth]{fig/tute.png}
+\caption{Example of `tutorial' documentation.}
+\end{figure}
+
 \end{frame}
 
 \section{Outlook}

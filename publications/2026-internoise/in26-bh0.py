@@ -35,6 +35,27 @@ bhp.pyplot_rays(rays,env=env,ax=ax)
 plt.savefig("fig/demo-rays.pdf")
 plt.close()
 
+env2 = bh.Environment(
+    frequency = 200,
+    beam_num = 1000,
+    receiver_depth = 10,
+    receiver_range = 80,
+)
+
+rays = bh.compute_eigenrays(env2)
+fig = plt.figure(figsize=(5,5))
+ax = fig.add_subplot()
+bhp.pyplot_rays(rays,env=env2,ax=ax)
+plt.savefig("fig/demo-erays.pdf")
+plt.close()
+
+arr = bh.compute_arrivals(env2)
+fig = plt.figure(figsize=(5,5))
+ax = fig.add_subplot()
+bhp.pyplot_arrivals(arr,ax=ax,dB=True,baseline=-100)
+plt.savefig("fig/demo-arr.pdf", bbox_inches='tight')
+plt.close()
+
 env.interference_mode="incoherent"
 tl = bh.compute_transmission_loss(env,debug=True)
 fig = plt.figure(figsize=(5,5))
