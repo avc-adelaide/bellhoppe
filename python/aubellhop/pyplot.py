@@ -289,8 +289,14 @@ def pyplot_ssp(env: Environment, ax: Any | None = None, **kwargs: Any) -> None:
         _pyplt.xlabel('Soundspeed (m/s)')
         _pyplt.ylabel('Depth (m)')
 
-def pyplot_arrivals(arrivals: Any, dB: bool = False, ax: Any | None = None, color: str = 'blue',
-                    baseline: float | None = 0.0, time_units: str = 'auto', **kwargs: Any) -> None:
+def pyplot_arrivals(
+        arrivals: Any,
+        dB: bool = False,
+        ax: Any | None = None,
+        color: str = 'blue',
+        baseline: float | None = 0.0,
+        time_units: str = 'auto',
+        **kwargs: Any) -> None:
     """Plots the arrival times and amplitudes with matplotlib.
 
     Parameters
@@ -336,7 +342,7 @@ def pyplot_arrivals(arrivals: Any, dB: bool = False, ax: Any | None = None, colo
         y = np.abs(row.arrival_amplitude)
         if dB:
             y = 20 * np.log10(_fi.epsilon + y)
-        ax.plot([t, t], [0, y], color=color, **kwargs)
+        ax.plot([t, t], [baseline, y], color=color, **kwargs)
         ax.plot(t, y, color=color, marker='.', **kwargs)
 
 
