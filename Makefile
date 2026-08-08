@@ -177,7 +177,7 @@ lint: lintp typep lintf
 
 lintp:
 	@echo "Linting with RUFF..."
-	uvx ruff check python/$(PKGNAME)/
+	uv run ruff check python/$(PKGNAME)/
 
 typep: uvsync
 	@echo "Type checking with TY..."
