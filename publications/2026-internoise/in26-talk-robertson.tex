@@ -1,10 +1,21 @@
 % !TEX TS-program = LuaLaTeX
 
 \documentclass[10pt]{beamer}
-\usepackage{booktabs,refstyle,siunitx,multicol}
+\usepackage{booktabs,refstyle,siunitx,multicol,tikz}
 \usepackage[style=numeric-comp,sorting=none,maxnames=99]{biblatex}
 \renewcommand*{\bibfont}{\fontsize{5}{5}\selectfont}
 \setlength{\biblabelsep}{0.1em}
+
+\setbeamertemplate{navigation symbols}{}
+
+\definecolor{maincolour}{HTML}{F57D1D}
+
+\setbeamercolor{structure}{fg=maincolour}
+\setbeamercolor{palette primary}{bg=maincolour, fg=white}
+\setbeamercolor{palette secondary}{bg=maincolour!80, fg=white}
+\setbeamercolor{palette tertiary}{bg=maincolour!60, fg=white}
+\setbeamercolor{title}{fg=maincolour}
+\setbeamercolor{frametitle}{fg=maincolour}
 
 \usepackage{fontspec}
 \setsansfont{palatino-sans}
@@ -19,28 +30,30 @@
 
 \begin{document}
 
-\title{Introducing aubellhop: a modern Python interface to the Bellhop underwater acoustics ray tracing tool}
+\title{%
+\vspace*{-0.5cm}\par
+\includegraphics[height=2cm]{fig/conf-logo.pdf}\par
+Introducing aubellhop: a modern Python interface to the Bellhop underwater acoustics ray tracing tool}
 \author{    William S.P. Robertson,\textsuperscript{1}
     Mandar Chitre,\textsuperscript{2}\\
     Chung T.C. Fang,\textsuperscript{1}
     Anthony C. Zander\textsuperscript{1}
 }
+\date{August 12, 2026}
 \begin{frame}
 
 \maketitle
 
-
-\bigskip
+\medskip
 
   \begin{flushleft}
 
 \tiny
-    \begin{multicols}{2} % <= choose the number of columns
+    \begin{multicols}{3} % <= choose the number of columns
     \makebox[0pt][r]{\textsuperscript 1}{%
       Acoustics, Vibrations, and Control Group,\\
-      School of Electrical and Mechanical Engineering\\
-      Adelaide University\\
-      SA, Australia\\
+      School of Elec.\ and Mech.\ Engineering\\
+      Adelaide University\\ SA, Australia\\
     }
     \makebox[0pt][r]{\textsuperscript 2}{%
       Acoustic Research Laboratory,\\
@@ -48,9 +61,9 @@
       National University of Singapore\\
       Singapore
     }
+    \includegraphics[height=1cm]{fig/uni-logo.pdf}
     \end{multicols}
   \end{flushleft}
-
 
 \end{frame}
 
