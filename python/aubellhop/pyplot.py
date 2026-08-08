@@ -268,7 +268,7 @@ def pyplot_ssp(env: Environment, ax: Any | None = None, **kwargs: Any) -> None:
         _pyplt.xlabel('Soundspeed (m/s)')
         _pyplt.ylabel('Depth (m)')
 
-def pyplot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwargs: Any) -> None:
+def pyplot_arrivals(arrivals: Any, dB: bool = False, ax: Any | None = None, color: str = 'blue', **kwargs: Any) -> None:
     """Plots the arrival times and amplitudes with matplotlib.
 
     Parameters
@@ -277,6 +277,8 @@ def pyplot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwar
         Arrivals times (s) and coefficients
     dB : bool, default=False
         True to plot in dB, False for linear scale
+    ax : matplotlib.axes.Axes, optional
+        Axes to plot into; creates a new figure if not provided
     color : str, default='blue'
         Line color (see `Bokeh colors <https://bokeh.pydata.org/en/latest/docs/reference/colors.html>`_)
     **kwargs
@@ -289,6 +291,10 @@ def pyplot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwar
     >>> arrivals = bh.compute_arrivals(env)
     >>> bh.plot_arrivals(arrivals)
     """
+    if ax is None:
+        fig = _pyplt.figure()
+        ax = fig.add_subplot()
+
     t0 = min(arrivals.time_of_arrival)
     t1 = max(arrivals.time_of_arrival)
     if dB:
@@ -296,18 +302,16 @@ def pyplot_arrivals(arrivals: Any, dB: bool = False, color: str = 'blue', **kwar
         ylabel = 'Amplitude (dB)'
     else:
         ylabel = 'Amplitude'
-        _pyplt.plot([t0, t1], [0, 0], color=color, **kwargs)
-        _pyplt.xlabel('Arrival time (s)')
-        _pyplt.ylabel(ylabel)
+        ax.plot([t0, t1], [0, 0], color=color, **kwargs)
         min_y = 0
     for _, row in arrivals.iterrows():
         t = row.time_of_arrival.real
         y = np.abs(row.arrival_amplitude)
         if dB:
             y = max(20 * np.log10(_fi.epsilon + y), min_y)
-        _pyplt.plot([t, t], [min_y, y], color=color, **kwargs)
-        _pyplt.xlabel('Arrival time (s)')
-        _pyplt.ylabel(ylabel)
+        ax.plot([t, t], [min_y, y], color=color, **kwargs)
+    ax.set_xlabel('Arrival time (s)')
+    ax.set_ylabel(ylabel)
 
 def pyplot_rays(
                 rays: Any,
