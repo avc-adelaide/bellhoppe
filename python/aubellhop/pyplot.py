@@ -39,6 +39,24 @@ def _resolve_time_units(time_units: str, tmax: float) -> tuple[str, float]:
     return time_units, _TIME_UNITS[time_units]
 
 
+def _bounce_shades(color: Any, nbounce: Any, lightest: float, scale: str) -> Any:
+    """Tint `color` towards white in proportion to bounce count, one RGB row per arrival.
+
+    The tint is normalised against the largest bounce count present, so the palest
+    arrival sits `lightest` of the way to white whether the maximum is 3 or 30.
+    """
+    base = np.asarray(_mplc.to_rgb(color))
+    nb = np.asarray(nbounce, dtype=float)
+    nmax = float(nb.max()) if nb.size else 0.0
+    if nmax <= 0:
+        frac = np.zeros_like(nb)
+    elif scale == 'linear':
+        frac = nb / nmax
+    else:
+        frac = np.log1p(nb) / np.log1p(nmax)
+    return base + lightest * frac[:, None] * (1.0 - base)
+
+
 def pyplot_env2d(
                  env: Environment,
                  surface_color: str = 'dodgerblue',
@@ -296,6 +314,9 @@ def pyplot_arrivals(
         color: str = 'blue',
         baseline: float | None = 0.0,
         time_units: str = 'auto',
+        bounce_shading: str | None = 'linear',
+        lightest: float = 0.7,
+        colorbar: bool = False,
         **kwargs: Any) -> None:
     """Plots the arrival times and amplitudes with matplotlib.
 
@@ -315,6 +336,18 @@ def pyplot_arrivals(
         Both the scaling of the arrival times and the axis label follow from this.
         'auto' picks the largest unit keeping the latest arrival at or above one;
         pin it explicitly to keep the axis consistent across several plots.
+    bounce_shading : str, optional, default='linear'
+        Lighten each arrival towards white in proportion to its total number of
+        surface and bottom bounces: 'linear' for an equal step per bounce, 'log'
+        to spread the low-order arrivals out when the bounce count spans a wide
+        range. None to draw every arrival in `color`. The shading is normalised
+        against the largest bounce count present, so the range of shades is the
+        same whether the maximum is 3 bounces or 30.
+    lightest : float, default=0.7
+        How far towards white the most-bounced arrival is drawn, from 0 to 1.
+    colorbar : bool, default=False
+        Draw a discrete colorbar keying each shade to its bounce count. Requires
+        `bounce_shading`.
     **kwargs
         Other keyword arguments applicable for `bellhop.plot.plot()` are also supported
 
@@ -325,9 +358,20 @@ def pyplot_arrivals(
     >>> arrivals = bh.compute_arrivals(env)
     >>> bh.plot_arrivals(arrivals)
     """
+    if bounce_shading is not None and bounce_shading not in ('linear', 'log'):
+        raise ValueError(f"Unknown bounce_shading {bounce_shading!r}; expected 'linear', 'log' or None")
+    if colorbar and bounce_shading is None:
+        raise ValueError("colorbar=True has nothing to key without bounce_shading")
+
     times = np.real(np.asarray(arrivals.time_of_arrival))
     tmax = float(np.max(np.abs(times))) if times.size else 0.0
     time_units, tscale = _resolve_time_units(time_units, tmax)
+
+    shades = None
+    nbounce = np.zeros(0)
+    if bounce_shading is not None:
+        nbounce = np.asarray(arrivals.surface_bounces + arrivals.bottom_bounces, dtype=float)
+        shades = _bounce_shades(color, nbounce, lightest, bounce_shading)
 
     if ax is None:
         fig = _pyplt.figure()
@@ -337,17 +381,26 @@ def pyplot_arrivals(
     if baseline is not None:
         ax.axhline(baseline, color='black', linewidth=0.8, zorder=0)
 
-    for _, row in arrivals.iterrows():
+    for j, (_, row) in enumerate(arrivals.iterrows()):
         t = row.time_of_arrival.real * tscale
         y = np.abs(row.arrival_amplitude)
         if dB:
             y = 20 * np.log10(_fi.epsilon + y)
-        ax.plot([t, t], [baseline, y], color=color, **kwargs)
-        ax.plot(t, y, color=color, marker='.', **kwargs)
+        c = color if shades is None else shades[j]
+        ax.plot([t, t], [baseline, y], color=c, **kwargs)
+        ax.plot(t, y, color=c, marker='.', **kwargs)
 
 
     ax.set_xlabel(f'Arrival time, {time_units}')
     ax.set_ylabel(ylabel)
+
+    if colorbar and bounce_shading is not None:
+        # One colormap entry per whole bounce count, so the bar matches the stems exactly
+        nmax = int(nbounce.max()) if nbounce.size else 0
+        cmap = _mplc.ListedColormap(_bounce_shades(color, np.arange(nmax + 1), lightest, bounce_shading))
+        norm = _mplc.BoundaryNorm(np.arange(nmax + 2) - 0.5, cmap.N)
+        cbar = ax.figure.colorbar(_pyplt.cm.ScalarMappable(cmap=cmap, norm=norm), ax=ax, label='Bounces')
+        cbar.set_ticks(np.arange(0, nmax + 1, max(1, int(np.ceil((nmax + 1) / 11)))).tolist())
 
 def pyplot_rays(
                 rays: Any,
