@@ -50,9 +50,9 @@ plt.savefig("fig/demo-erays.pdf")
 plt.close()
 
 arr = bh.compute_arrivals(env2)
-fig = plt.figure(figsize=(5,5))
+fig = plt.figure(figsize=(8,5))
 ax = fig.add_subplot()
-bhp.pyplot_arrivals(arr,ax=ax,dB=True,baseline=-100)
+bhp.pyplot_arrivals(arr,ax=ax,dB=True,baseline=-100,colorbar=True)
 plt.savefig("fig/demo-arr.pdf", bbox_inches='tight')
 plt.close()
 

@@ -7,6 +7,7 @@ py:
 	uv run in26-bh0.py
 	uv run in26-bh1.py
 	uv run in26-bh2.py
+	uv run in26-bh3.py
 
 tex:
 	@echo "TODO :)"

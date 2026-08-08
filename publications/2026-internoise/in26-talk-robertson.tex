@@ -184,6 +184,11 @@ Competitors or other ray/beam tracers, e.g.:
 \end{frame}
 
 \begin{frame}
+\frametitle{What is aubellhop?}
+
+\end{frame}
+
+\begin{frame}
 \frametitle{aubellhop flowchart}
 
 \includegraphics<1>[width=\linewidth]{fig/flowchart-1.pdf}%
@@ -255,16 +260,22 @@ File type & Description \\
 \begin{verbatim}
 env = bh.Environment(
     name='bellhop demo environment',
-    frequency=25000,         # 25 kHz
-    soundspeed=1500,         # 1500 m/s (constant)
-    source_depth=5,          # 5 m depth
-    receiver_depth=10,       # 10 m depth
-    receiver_range=1000,     # 1 km range
-    bottom_depth=25,         # 25 m bathymetry depth
-    bottom_soundspeed=1600,  # seabed sound speed
-    bottom_density=1600      # seabed density
+    frequency = 25000,         # Hz
+    soundspeed = 1500,         # m/s (constant, doesn't have to be)
+    source_depth = 5,          # m
+    receiver_depth = 10,       # m
+    receiver_range = 1000,     # m
+    bottom_depth = 25,         # m (constant, doesn't need to be)
+    bottom_soundspeed = 1600,  # m/s
+    bottom_density = 1600      # kg/m^3
 )
 \end{verbatim}
+\end{frame}
+
+\section{Two quick examples}
+
+\begin{frame}
+\sectionpage
 \end{frame}
 
 \begin{frame}

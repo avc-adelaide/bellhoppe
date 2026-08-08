@@ -390,7 +390,6 @@ def pyplot_arrivals(
         ax.plot([t, t], [baseline, y], color=c, **kwargs)
         ax.plot(t, y, color=c, marker='.', **kwargs)
 
-
     ax.set_xlabel(f'Arrival time, {time_units}')
     ax.set_ylabel(ylabel)
 
