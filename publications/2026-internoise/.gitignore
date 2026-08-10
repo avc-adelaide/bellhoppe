@@ -1,0 +1,4 @@
+# Proprietary fonts — do not commit
+*.ttf
+*.otf
+*.fontspec
